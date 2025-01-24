@@ -2,7 +2,6 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="true" />
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
@@ -21,16 +20,5 @@
         <module name="ourdoc.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="backend" target="17" />
-      <module name="backend.main" target="17" />
-      <module name="backend.test" target="17" />
-      <module name="booklog" target="17" />
-      <module name="booklog.main" target="17" />
-      <module name="booklog.test" target="17" />
-      <module name="woodok" target="17" />
-      <module name="woodok.main" target="17" />
-      <module name="woodok.test" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>

@@ -167,4 +167,4 @@ build/
 *.env
 src/main/generated
 .gradle/
-gradle/
+backend/gradle/
