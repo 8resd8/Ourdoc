@@ -7,6 +7,9 @@
 
 # User-specific stuff
 .idea/
+*.iml
+*.iws
+out/
 
 # AWS User-specific
 .idea/**/aws.xml
