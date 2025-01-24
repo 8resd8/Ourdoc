@@ -1,0 +1,10 @@
+spring:
+  config:
+    import: secret.yml
+
+
+database:
+  user:
+    name: ${database.name}
+    password: ${database.password}
+  url: ${database.url}
