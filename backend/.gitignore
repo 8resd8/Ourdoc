@@ -6,7 +6,7 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
-.idea
+.idea/
 
 # AWS User-specific
 .idea/**/aws.xml
@@ -163,6 +163,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,intellij,java
-build
+build/
 *.env
 src/main/generated
+.gradle/
+gradle/
