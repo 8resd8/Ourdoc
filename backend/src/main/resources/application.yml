@@ -2,7 +2,9 @@ spring:
   application:
     name: backend
   config:
-    import: secret.yml
+    import:
+      - classpath:secret.yml
+      - classpath:ocr.yml
 
 
 database:
