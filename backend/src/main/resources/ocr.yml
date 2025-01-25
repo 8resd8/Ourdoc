@@ -1,0 +1,3 @@
+ocr:
+  api-url: ${api-url}
+  secret-key: ${secret-key}
