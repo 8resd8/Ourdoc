@@ -44,6 +44,10 @@ dependencies {
 
     // JSON 추가
     implementation group: 'org.json', name: 'json', version: '20240303'
+
+    // AWS S3
+    implementation(platform("software.amazon.awssdk:bom:2.27.21"))
+    implementation("software.amazon.awssdk:s3")
 }
 
 tasks.named('test') {
