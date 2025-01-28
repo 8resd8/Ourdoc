@@ -1,4 +1,9 @@
 spring:
+  ai:
+    openai:
+      api-key: ${spring-ai.gpt.api-key}
+      options:
+        model: ${spring-ai.gpt.model}
   application:
     name: backend
   config:
