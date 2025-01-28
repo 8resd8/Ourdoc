@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 
+import com.ssafy.ourdoc.global.common.S3StorageService;
+
 @SpringBootTest
 class StorageServiceTest {
 

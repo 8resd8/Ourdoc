@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.global.util;
+package com.ssafy.ourdoc.global.common;
 
 import java.io.IOException;
 import java.util.ArrayList;
