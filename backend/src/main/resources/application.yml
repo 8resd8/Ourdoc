@@ -21,3 +21,7 @@ aws:
     secret-key: ${aws.secret-key}
     upload:
       access-url: ${aws.upload.access-url}
+
+book:
+  api-url: ${book.nl-api-url}
+  cert-key: ${book.nl-cert-key}
