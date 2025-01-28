@@ -12,3 +12,12 @@ database:
     name: ${database.name}
     password: ${database.password}
   url: ${database.url}
+
+aws:
+  s3:
+    bucket-name: ${aws.bucket-name}
+    region: ${aws.region}
+    access-key: ${aws.access-key}
+    secret-key: ${aws.secret-key}
+    upload:
+      access-url: ${aws.upload.access-url}
