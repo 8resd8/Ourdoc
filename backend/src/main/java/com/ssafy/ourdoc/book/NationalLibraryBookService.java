@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.book.dto.NationalLibraryBookRequest;
 import com.ssafy.ourdoc.book.dto.NationalLibraryBookResponse;
+import com.ssafy.ourdoc.book.exception.NationLibraryNoSuchBookException;
 import com.ssafy.ourdoc.global.enums.KDC;
 
 @Service
@@ -40,6 +41,9 @@ public class NationalLibraryBookService {
 		Map<String, String> params = buildQueryParams(nationalLibraryBookRequest);
 		String response = getHttpResponse(params);
 		List<NationalLibraryBookResponse> bookList = parseBooksFromResponse(response);
+		if (bookList.isEmpty()) {
+			throw new NationLibraryNoSuchBookException("검색 결과에 해당하는 책이 없습니다.");
+		}
 		return bookList;
 	}
 

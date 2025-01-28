@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.book;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.ssafy.ourdoc.book.dto.NationalLibraryBookRequest;
 import com.ssafy.ourdoc.book.dto.NationalLibraryBookResponse;
+import com.ssafy.ourdoc.book.exception.NationLibraryNoSuchBookException;
 
 @SpringBootTest
 class NationalLibraryServiceTest {
@@ -81,5 +84,21 @@ class NationalLibraryServiceTest {
 			.build());
 
 		System.out.println("검색된 책: " + books.get(0));
+	}
+
+	@Test
+	@DisplayName("검색 결과에 해당하는 책이 없음")
+	void searchNoSuchBooksTest() {
+		// 제목으로 검색
+		Map<String, String> params = new HashMap<>();
+		params.put("title", "세상에서가장재미있는책이있다면너에게줄게");
+
+		NationalLibraryBookRequest request = NationalLibraryBookRequest.builder()
+			.title(params.get("title"))
+			.build();
+
+		assertThrows(NationLibraryNoSuchBookException.class, () -> {
+			service.parseBook(request);
+		});
 	}
 }
