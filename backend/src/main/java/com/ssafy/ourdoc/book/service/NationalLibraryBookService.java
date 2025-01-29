@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.book;
+package com.ssafy.ourdoc.book.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;

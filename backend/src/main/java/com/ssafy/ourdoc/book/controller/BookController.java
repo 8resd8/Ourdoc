@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.ourdoc.book.NationalLibraryBookService;
 import com.ssafy.ourdoc.book.dto.NationalLibraryBookRequest;
 import com.ssafy.ourdoc.book.dto.NationalLibraryBookResponse;
+import com.ssafy.ourdoc.book.service.NationalLibraryBookService;
 
 import lombok.RequiredArgsConstructor;
 
