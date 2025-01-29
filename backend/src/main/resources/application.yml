@@ -1,4 +1,9 @@
 spring:
+  ai:
+    openai:
+      api-key: ${spring-ai.gpt.api-key}
+      options:
+        model: ${spring-ai.gpt.model}
   application:
     name: backend
   datasource:
@@ -16,9 +21,20 @@ spring:
       - classpath:secret.yml
       - classpath:ocr.yml
 
+aws:
+  s3:
+    bucket-name: ${aws.bucket-name}
+    region: ${aws.region}
+    access-key: ${aws.access-key}
+    secret-key: ${aws.secret-key}
+    upload:
+      access-url: ${aws.upload.access-url}
 
-#database:
-#  user:
-#    name: ${database.name}
-#    password: ${database.password}
-#  url: ${database.url}
+book:
+  api-url: ${book.nl-api-url}
+  cert-key: ${book.nl-cert-key}
+
+logging:
+  level:
+    root: info
+    com.ssafy.ourdoc: debug

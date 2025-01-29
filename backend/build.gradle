@@ -21,6 +21,17 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+ext {
+    set('springAiVersion', "1.0.0-M5")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
 }
 
 dependencies {
@@ -44,7 +55,15 @@ dependencies {
 
     // JSON 추가
     implementation group: 'org.json', name: 'json', version: '20240303'
+
+    // AWS S3
+    implementation(platform("software.amazon.awssdk:bom:2.27.21"))
+    implementation("software.amazon.awssdk:s3")
+
+    // AI
+    implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()
