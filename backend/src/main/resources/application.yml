@@ -1,6 +1,18 @@
 spring:
   application:
     name: backend
+  datasource:
+    url: ${database.url}
+    username: ${database.name}
+    password: ${database.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
   config:
     import:
       - classpath:secret.yml
