@@ -25,12 +25,12 @@ public class Prompt {
 	}
 
 	// OCR 인식결과 AI 보정
-	public static String ocrEnhancer(int studentYear, String content) {
+	public static String ocrEnhancer(String content) {
 		return """
-			     다음 글은 초등학교 %d학년 학생이 손글씨로 작성한 독서록을 OCR로 변환한 결과입니다.
+			     다음 글은 초등학교 학생이 손글씨로 작성한 독서록을 OCR로 변환한 결과입니다.
 			     내용: [%s]
-			     %d학년임을 인지하고 "변환"에만 초점을 맞춰서 문장의 단어, 맞춤법을 수정하지 않고 있는 그대로 보여주세요.
-			     손글씨 특성상 일부 단어가 끊기거나 빠져 있을 수 있습니다. 어색한 단어, 말이 안되는 단어가 있다면 앞, 뒤문장을 기반으로 단어를 이용해 유추하여 그 단어만 바꿔주세요.
-			""".formatted(studentYear, content, studentYear);
+			     초등학생인 점을 생각해 "변환"에만 초점을 맞춰서 문장의 단어, 맞춤법을 수정하지 않고 있는 그대로 보여주세요.
+			     손글씨 특성상 일부 단어가 끊기거나 빠져 있을 수 있습니다. 어색한 단어, 말이 안되는 단어가 있다면 앞, 뒤 문장을 기반으로 단어를 유추하여 단어를 바꿔주세요.
+			""".formatted(content);
 	}
 }
