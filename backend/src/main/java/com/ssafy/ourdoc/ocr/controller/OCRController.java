@@ -13,8 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ourdoc.ocr.dto.FeedbackResponse;
 import com.ssafy.ourdoc.ocr.dto.HandOCRResponse;
-import com.ssafy.ourdoc.ocr.dto.SpellingRequest;
-import com.ssafy.ourdoc.ocr.service.AiFeedbackService;
+import com.ssafy.ourdoc.ocr.dto.FeedbackRequest;
+import com.ssafy.ourdoc.ocr.service.AIFeedbackService;
 import com.ssafy.ourdoc.ocr.service.OCRService;
 
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class OCRController {
 
 	private final OCRService ocrService;
-	private final AiFeedbackService aiFeedbackService;
+	private final AIFeedbackService aiFeedbackService;
 
 	@PostMapping("/{studentId}/hand")
 	@ResponseStatus(OK)
@@ -36,13 +36,13 @@ public class OCRController {
 
 	@PostMapping("/{studentId}/spelling")
 	public FeedbackResponse checkSpelling(@PathVariable("studentId") Long studentId,
-		@RequestBody SpellingRequest request) {
+		@RequestBody FeedbackRequest request) {
 		return aiFeedbackService.spelling(studentId, request);
 	}
 
 	@PostMapping("/{studentId}/feedback")
 	public FeedbackResponse provideFeedback(@PathVariable("studentId") Long studentId,
-		@RequestBody SpellingRequest request) {
+		@RequestBody FeedbackRequest request) {
 		return aiFeedbackService.spelling(studentId, request);
 	}
 
