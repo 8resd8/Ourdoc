@@ -27,6 +27,7 @@ public class Student extends BaseTimeEntity {
     private String tempPassword;
 
     @Column(name = "auth_status", nullable = true)
+    @Enumerated(EnumType.STRING)
     private AuthStatus authStatus;
 
     @Column(name = "certificate_time", nullable = true)

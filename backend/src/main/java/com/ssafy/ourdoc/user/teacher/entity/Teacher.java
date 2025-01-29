@@ -30,6 +30,7 @@ public class Teacher extends BaseTimeEntity {
     private String phone;
 
     @Column(name = "employment_status", nullable = true)
+    @Enumerated(EnumType.STRING)
     private EmploymentStatus employmentStatus;
 
     @Column(name = "certificate_time", nullable = true)
