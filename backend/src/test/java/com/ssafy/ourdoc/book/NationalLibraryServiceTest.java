@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.ssafy.ourdoc.book.dto.NationalLibraryBookRequest;
 import com.ssafy.ourdoc.book.dto.NationalLibraryBookResponse;
+import com.ssafy.ourdoc.book.service.NationalLibraryBookService;
 
 @SpringBootTest
 class NationalLibraryServiceTest {
