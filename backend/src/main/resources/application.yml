@@ -19,8 +19,8 @@ spring:
       - classpath:ocr.yml
 
 
-database:
-  user:
-    name: ${database.name}
-    password: ${database.password}
-  url: ${database.url}
+#database:
+#  user:
+#    name: ${database.name}
+#    password: ${database.password}
+#  url: ${database.url}
