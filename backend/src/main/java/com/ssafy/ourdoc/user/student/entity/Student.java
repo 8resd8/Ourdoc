@@ -5,6 +5,7 @@ import com.ssafy.ourdoc.global.enums.AuthStatus;
 import com.ssafy.ourdoc.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Table(name = "student")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Student extends BaseTimeEntity {
 
@@ -32,5 +34,13 @@ public class Student extends BaseTimeEntity {
 
     @Column(name = "certificate_time", nullable = true)
     private LocalDateTime certificateTime;
+
+    @Builder
+    public Student(User user, String tempPassword, AuthStatus authStatus, LocalDateTime certificateTime) {
+        this.user = user;
+        this.tempPassword = tempPassword;
+        this.authStatus = authStatus;
+        this.certificateTime = certificateTime;
+    }
 
 }
