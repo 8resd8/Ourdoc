@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.ssafy.ourdoc.book.dto.NationalLibraryBookRequest;
 import com.ssafy.ourdoc.book.dto.NationalLibraryBookResponse;
-import com.ssafy.ourdoc.book.exception.NationLibraryNoSuchBookException;
 
 @SpringBootTest
 class NationalLibraryServiceTest {
@@ -88,7 +87,7 @@ class NationalLibraryServiceTest {
 
 	@Test
 	@DisplayName("검색 결과에 해당하는 책이 없음")
-	void searchNoSuchBooksTest() {
+	void searchNoSuchBooksTest() throws IOException {
 		// 제목으로 검색
 		Map<String, String> params = new HashMap<>();
 		params.put("title", "세상에서가장재미있는책이있다면너에게줄게");
@@ -97,8 +96,6 @@ class NationalLibraryServiceTest {
 			.title(params.get("title"))
 			.build();
 
-		assertThrows(NationLibraryNoSuchBookException.class, () -> {
-			service.parseBook(request);
-		});
+		assertEquals(0, service.parseBook(request).size());
 	}
 }
