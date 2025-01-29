@@ -43,7 +43,7 @@ public class OCRController {
 	@PostMapping("/{studentId}/feedback")
 	public FeedbackResponse provideFeedback(@PathVariable("studentId") Long studentId,
 		@RequestBody FeedbackRequest request) {
-		return aiFeedbackService.spelling(studentId, request);
+		return aiFeedbackService.feedback(studentId, request);
 	}
 
 	@PostMapping
