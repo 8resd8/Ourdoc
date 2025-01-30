@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.ssafy.ourdoc.ocr.exception.OCRFailException;
-import com.ssafy.ourdoc.ocr.exception.OCRNoImageException;
+import com.ssafy.ourdoc.global.integration.ocr.exception.OCRFailException;
+import com.ssafy.ourdoc.global.integration.ocr.exception.OCRNoImageException;
 
 @RestControllerAdvice
 public class OCRExceptionHandler {

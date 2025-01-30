@@ -11,8 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ai.chat.model.ChatModel;
 
-import com.ssafy.ourdoc.ocr.dto.FeedbackRequest;
-import com.ssafy.ourdoc.ocr.dto.FeedbackResponse;
+import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackRequest;
+import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackResponse;
+import com.ssafy.ourdoc.global.integration.gpt.service.AIFeedbackService;
 
 @ExtendWith(MockitoExtension.class)
 class AIFeedbackServiceTest {
