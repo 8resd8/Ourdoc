@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.user.teacher.entity;
 import java.time.LocalDateTime;
 
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 import com.ssafy.ourdoc.global.common.enums.Active;
 
@@ -35,7 +36,7 @@ public class TeacherClass extends BaseTimeEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
-	private Teacher teacher;
+	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "class_id", nullable = false)
@@ -52,8 +53,8 @@ public class TeacherClass extends BaseTimeEntity {
 	private LocalDateTime workEndTime;
 
 	@Builder
-	public TeacherClass(Teacher teacher, ClassRoom classRoom, Active active) {
-		this.teacher = teacher;
+	public TeacherClass(User user, ClassRoom classRoom, Active active) {
+		this.user = user;
 		this.classRoom = classRoom;
 		this.active = active;
 	}
