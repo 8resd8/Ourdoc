@@ -1,6 +1,6 @@
-package com.ssafy.ourdoc.user.repository;
+package com.ssafy.ourdoc.domain.user.repository;
 
-import com.ssafy.ourdoc.user.entity.User;
+import com.ssafy.ourdoc.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

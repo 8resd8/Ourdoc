@@ -1,9 +1,9 @@
-package com.ssafy.ourdoc.user.service;
+package com.ssafy.ourdoc.domain.user.service;
 
-import com.ssafy.ourdoc.user.dto.LoginRequest;
-import com.ssafy.ourdoc.user.dto.LoginResponse;
-import com.ssafy.ourdoc.user.entity.User;
-import com.ssafy.ourdoc.user.repository.UserRepository;
+import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
+import com.ssafy.ourdoc.domain.user.dto.LoginResponse;
+import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;

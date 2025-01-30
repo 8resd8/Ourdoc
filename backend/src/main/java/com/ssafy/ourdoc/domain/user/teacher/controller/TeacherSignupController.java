@@ -1,7 +1,7 @@
-package com.ssafy.ourdoc.user.teacher.controller;
+package com.ssafy.ourdoc.domain.user.teacher.controller;
 
-import com.ssafy.ourdoc.user.teacher.dto.TeacherSignupRequest;
-import com.ssafy.ourdoc.user.teacher.service.TeacherSignupService;
+import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
+import com.ssafy.ourdoc.domain.user.teacher.service.TeacherSignupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

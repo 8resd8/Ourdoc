@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.user.dto;
+package com.ssafy.ourdoc.domain.user.dto;
 
 import lombok.Getter;
 

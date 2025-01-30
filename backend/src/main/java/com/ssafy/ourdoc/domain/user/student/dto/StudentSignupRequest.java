@@ -1,8 +1,8 @@
-package com.ssafy.ourdoc.user.student.dto;
+package com.ssafy.ourdoc.domain.user.student.dto;
 
-import com.ssafy.ourdoc.global.enums.Active;
-import com.ssafy.ourdoc.global.enums.AuthStatus;
-import com.ssafy.ourdoc.global.enums.Gender;
+import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
+import com.ssafy.ourdoc.global.common.enums.Gender;
 import lombok.Getter;
 
 import java.sql.Date;

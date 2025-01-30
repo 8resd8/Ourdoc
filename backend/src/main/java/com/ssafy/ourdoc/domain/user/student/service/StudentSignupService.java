@@ -1,11 +1,11 @@
-package com.ssafy.ourdoc.user.student.service;
+package com.ssafy.ourdoc.domain.user.student.service;
 
-import com.ssafy.ourdoc.global.enums.UserType;
-import com.ssafy.ourdoc.user.entity.User;
-import com.ssafy.ourdoc.user.repository.UserRepository;
-import com.ssafy.ourdoc.user.student.dto.StudentSignupRequest;
-import com.ssafy.ourdoc.user.student.entity.Student;
-import com.ssafy.ourdoc.user.student.repository.StudentRepository;
+import com.ssafy.ourdoc.global.common.enums.UserType;
+import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.repository.UserRepository;
+import com.ssafy.ourdoc.domain.user.student.dto.StudentSignupRequest;
+import com.ssafy.ourdoc.domain.user.student.entity.Student;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
