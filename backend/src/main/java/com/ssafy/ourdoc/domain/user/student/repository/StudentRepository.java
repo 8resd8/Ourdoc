@@ -1,6 +1,6 @@
-package com.ssafy.ourdoc.user.student.repository;
+package com.ssafy.ourdoc.domain.user.student.repository;
 
-import com.ssafy.ourdoc.user.student.entity.Student;
+import com.ssafy.ourdoc.domain.user.student.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
