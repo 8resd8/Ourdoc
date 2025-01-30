@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockMultipartFile;
 
-import com.ssafy.ourdoc.global.common.S3StorageService;
+import com.ssafy.ourdoc.global.integration.s3.S3StorageService;
 
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;

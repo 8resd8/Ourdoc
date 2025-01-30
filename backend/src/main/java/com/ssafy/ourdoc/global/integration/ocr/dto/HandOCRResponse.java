@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.global.ocr.dto;
+package com.ssafy.ourdoc.global.integration.ocr.dto;
 
 public record HandOCRResponse(
 	String afterContent

@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.ourdoc.global.ocr.dto.HandOCRResponse;
-import com.ssafy.ourdoc.global.ocr.service.OCRService;
+import com.ssafy.ourdoc.global.integration.ocr.dto.HandOCRResponse;
+import com.ssafy.ourdoc.global.integration.ocr.service.OCRService;
 
 import lombok.RequiredArgsConstructor;
 

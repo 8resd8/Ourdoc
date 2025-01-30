@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.global.ocr.service;
+package com.ssafy.ourdoc.global.integration.ocr.service;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -19,8 +19,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.ourdoc.global.ocr.exception.OCRFailException;
-import com.ssafy.ourdoc.global.ocr.exception.OCRNoImageException;
+import com.ssafy.ourdoc.global.integration.ocr.exception.OCRFailException;
+import com.ssafy.ourdoc.global.integration.ocr.exception.OCRNoImageException;
 
 import lombok.RequiredArgsConstructor;
 

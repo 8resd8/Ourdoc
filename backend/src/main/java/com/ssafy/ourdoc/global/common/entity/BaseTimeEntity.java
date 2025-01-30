@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.global.entity;
+package com.ssafy.ourdoc.global.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class BaseTimeEntity {
 
     @CreatedDate
-    @Column(updatable = false)
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate

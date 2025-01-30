@@ -2,7 +2,7 @@ package com.ssafy.ourdoc.book.entity;
 
 import java.time.LocalDate;
 
-import com.ssafy.ourdoc.global.entity.BaseTimeEntity;
+import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

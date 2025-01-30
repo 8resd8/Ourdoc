@@ -3,8 +3,8 @@ package com.ssafy.ourdoc.user.student.entity;
 import java.time.LocalDateTime;
 
 import com.ssafy.ourdoc.classroom.entity.ClassRoom;
-import com.ssafy.ourdoc.global.entity.BaseTimeEntity;
-import com.ssafy.ourdoc.global.enums.AuthStatus;
+import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.user.entity.User;
 
 import jakarta.persistence.Column;

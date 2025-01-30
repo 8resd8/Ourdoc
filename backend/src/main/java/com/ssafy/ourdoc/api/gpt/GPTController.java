@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.ourdoc.global.gpt.dto.FeedbackRequest;
-import com.ssafy.ourdoc.global.gpt.dto.FeedbackResponse;
-import com.ssafy.ourdoc.global.gpt.service.AIFeedbackService;
+import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackRequest;
+import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackResponse;
+import com.ssafy.ourdoc.global.integration.gpt.service.AIFeedbackService;
 
 import lombok.RequiredArgsConstructor;
 

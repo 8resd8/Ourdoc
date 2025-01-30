@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.global.ocr.service;
+package com.ssafy.ourdoc.global.integration.ocr.service;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;

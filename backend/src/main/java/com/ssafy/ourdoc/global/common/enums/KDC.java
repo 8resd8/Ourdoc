@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.global.enums;
+package com.ssafy.ourdoc.global.common.enums;
 
 public enum KDC {
 	총류("0"),

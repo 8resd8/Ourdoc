@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.global.enums;
+package com.ssafy.ourdoc.global.common.enums;
 
 import lombok.Getter;
 

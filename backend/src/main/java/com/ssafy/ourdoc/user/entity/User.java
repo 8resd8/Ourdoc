@@ -1,9 +1,9 @@
 package com.ssafy.ourdoc.user.entity;
 
-import com.ssafy.ourdoc.global.entity.BaseTimeEntity;
-import com.ssafy.ourdoc.global.enums.Active;
-import com.ssafy.ourdoc.global.enums.Gender;
-import com.ssafy.ourdoc.global.enums.UserType;
+import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
+import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.Gender;
+import com.ssafy.ourdoc.global.common.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

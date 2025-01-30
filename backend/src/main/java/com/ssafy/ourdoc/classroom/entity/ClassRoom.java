@@ -4,7 +4,7 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ssafy.ourdoc.global.entity.BaseTimeEntity;
+import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 import com.ssafy.ourdoc.user.student.entity.Student;
 import com.ssafy.ourdoc.user.teacher.entity.Teacher;
 

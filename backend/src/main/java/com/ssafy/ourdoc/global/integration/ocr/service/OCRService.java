@@ -1,9 +1,9 @@
-package com.ssafy.ourdoc.global.ocr.service;
+package com.ssafy.ourdoc.global.integration.ocr.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.ourdoc.global.ocr.dto.HandOCRResponse;
+import com.ssafy.ourdoc.global.integration.ocr.dto.HandOCRResponse;
 
 import lombok.RequiredArgsConstructor;
 

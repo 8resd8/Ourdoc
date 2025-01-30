@@ -3,7 +3,7 @@ package com.ssafy.ourdoc.classroom.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ssafy.ourdoc.global.entity.BaseTimeEntity;
+import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

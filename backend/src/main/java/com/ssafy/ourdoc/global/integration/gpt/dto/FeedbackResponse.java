@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.global.gpt.dto;
+package com.ssafy.ourdoc.global.integration.gpt.dto;
 
 public record FeedbackResponse (String feedbackContent) {
 }
