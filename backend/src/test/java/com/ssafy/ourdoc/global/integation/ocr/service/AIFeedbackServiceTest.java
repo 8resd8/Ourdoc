@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.ocr.service;
+package com.ssafy.ourdoc.global.integation.ocr.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

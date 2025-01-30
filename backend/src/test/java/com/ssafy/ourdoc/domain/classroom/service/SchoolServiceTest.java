@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.classroom.service;
+package com.ssafy.ourdoc.domain.classroom.service;
 
 import java.io.IOException;
 import java.util.List;
