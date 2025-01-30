@@ -1,7 +1,7 @@
 package com.ssafy.ourdoc.user.student.controller;
 
 import com.ssafy.ourdoc.user.student.dto.StudentSignupRequest;
-import com.ssafy.ourdoc.user.student.service.interf.StudentSignupService;
+import com.ssafy.ourdoc.user.student.service.StudentSignupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
