@@ -35,3 +35,7 @@ logging:
   level:
     root: info
     com.ssafy.ourdoc: debug
+
+school:
+  api-url: ${school.elesch-api-url}
+  api-key: ${school.elesch-api-key}
