@@ -6,17 +6,20 @@ spring:
         model: ${spring-ai.gpt.model}
   application:
     name: backend
+  datasource:
+    url: ${database.url}
+    username: ${database.name}
+    password: ${database.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
   config:
     import:
       - classpath:secret.yml
       - classpath:ocr.yml
-
-
-database:
-  user:
-    name: ${database.name}
-    password: ${database.password}
-  url: ${database.url}
 
 aws:
   s3:
