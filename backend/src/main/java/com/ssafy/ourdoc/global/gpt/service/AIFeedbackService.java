@@ -1,10 +1,10 @@
-package com.ssafy.ourdoc.global.ai.service;
+package com.ssafy.ourdoc.global.gpt.service;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.global.ai.dto.FeedbackRequest;
-import com.ssafy.ourdoc.global.ai.dto.FeedbackResponse;
+import com.ssafy.ourdoc.global.gpt.dto.FeedbackRequest;
+import com.ssafy.ourdoc.global.gpt.dto.FeedbackResponse;
 import com.ssafy.ourdoc.global.util.Prompt;
 
 import lombok.RequiredArgsConstructor;
