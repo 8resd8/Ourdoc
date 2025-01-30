@@ -1,10 +1,9 @@
-package com.ssafy.ourdoc.user.service.impl;
+package com.ssafy.ourdoc.user.service;
 
 import com.ssafy.ourdoc.user.dto.LoginRequest;
 import com.ssafy.ourdoc.user.dto.LoginResponse;
 import com.ssafy.ourdoc.user.entity.User;
 import com.ssafy.ourdoc.user.repository.UserRepository;
-import com.ssafy.ourdoc.user.service.interf.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +11,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class LoginServiceImpl implements LoginService {
+public class LoginService {
 
     private final UserRepository userRepository;
 
-    @Override
     public LoginResponse login(LoginRequest request) {
         // (1) 아이디 & 비밀번호로 User 조회
         Optional<User> existingUser = userRepository.findByLoginIdAndPassword(

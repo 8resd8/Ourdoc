@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.user.student.service.impl;
+package com.ssafy.ourdoc.user.student.service;
 
 import com.ssafy.ourdoc.global.enums.UserType;
 import com.ssafy.ourdoc.user.entity.User;
@@ -6,7 +6,6 @@ import com.ssafy.ourdoc.user.repository.UserRepository;
 import com.ssafy.ourdoc.user.student.dto.StudentSignupRequest;
 import com.ssafy.ourdoc.user.student.entity.Student;
 import com.ssafy.ourdoc.user.student.repository.StudentRepository;
-import com.ssafy.ourdoc.user.student.service.interf.StudentSignupService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,13 +15,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class StudentSignupServiceImpl implements StudentSignupService {
+public class StudentSignupService {
 
     private final UserRepository userRepository;
     private final StudentRepository studentRepository;
 
     // 1. 학생 회원가입
-    @Override
     public Long signup(StudentSignupRequest request) {
         // 아이디 중복 체크
         Optional<User> existingUser = userRepository.findByLoginId(request.getLoginId());

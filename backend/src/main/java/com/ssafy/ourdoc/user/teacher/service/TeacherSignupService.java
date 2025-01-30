@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.user.teacher.service.impl;
+package com.ssafy.ourdoc.user.teacher.service;
 
 import com.ssafy.ourdoc.global.enums.UserType;
 import com.ssafy.ourdoc.user.entity.User;
@@ -6,7 +6,6 @@ import com.ssafy.ourdoc.user.repository.UserRepository;
 import com.ssafy.ourdoc.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.user.teacher.entity.Teacher;
 import com.ssafy.ourdoc.user.teacher.repository.TeacherRepository;
-import com.ssafy.ourdoc.user.teacher.service.interf.TeacherSignupService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,13 +15,12 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class TeacherSignupServiceImpl implements TeacherSignupService {
+public class TeacherSignupService {
 
     private final UserRepository userRepository;
     private final TeacherRepository teacherRepository;
 
     // 1. 교사 회원가입
-    @Override
     public Long signup(TeacherSignupRequest request) {
 
         // 중복 ID 체크
