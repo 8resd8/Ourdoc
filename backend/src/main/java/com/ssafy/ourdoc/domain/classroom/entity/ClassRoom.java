@@ -54,7 +54,8 @@ public class ClassRoom extends BaseTimeEntity {
 	private List<Teacher> teachers = new ArrayList<>();
 
 	@Builder
-	public ClassRoom(int grade, int classNumber, Year year) {
+	public ClassRoom(School school, int grade, int classNumber, Year year) {
+		this.school = school;
 		this.grade = grade;
 		this.classNumber = classNumber;
 		this.year = year;
