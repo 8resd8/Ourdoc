@@ -1,11 +1,11 @@
-package com.ssafy.ourdoc.ocr.service;
+package com.ssafy.ourdoc.global.ai.service;
 
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.ourdoc.global.ai.dto.FeedbackRequest;
+import com.ssafy.ourdoc.global.ai.dto.FeedbackResponse;
 import com.ssafy.ourdoc.global.util.Prompt;
-import com.ssafy.ourdoc.ocr.dto.FeedbackResponse;
-import com.ssafy.ourdoc.ocr.dto.FeedbackRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,16 +17,16 @@ public class AIFeedbackService {
 
 	public FeedbackResponse spelling(Long studentId, FeedbackRequest request) {
 		// studentId로 class와 조인해 학년 찾기
-		int year = 1;
-		String aiSpellingFeedback = chatModel.call(Prompt.feedback(year, request.content()));
+		int studentGrade = 1;
+		String aiSpellingFeedback = chatModel.call(Prompt.feedback(studentGrade, request.content()));
 
 		return new FeedbackResponse(aiSpellingFeedback);
 	}
 
 	public FeedbackResponse feedback(Long studentId, FeedbackRequest request) {
 		// studentId로 class와 조인해 학년 찾기
-		int year = 1;
-		String aiSpellingFeedback = chatModel.call(Prompt.feedback(year, request.content()));
+		int studentGrade = 1;
+		String aiSpellingFeedback = chatModel.call(Prompt.feedback(studentGrade, request.content()));
 
 		return new FeedbackResponse(aiSpellingFeedback);
 	}

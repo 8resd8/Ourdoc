@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.ocr.dto;
+package com.ssafy.ourdoc.global.ai.dto;
 
 public record FeedbackResponse (String feedbackContent) {
 }
