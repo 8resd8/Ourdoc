@@ -1,12 +1,12 @@
-package com.ssafy.ourdoc.classroom.service;
+package com.ssafy.ourdoc.domain.classroom.service;
 
 import java.time.Year;
 
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.classroom.dto.CreateClassRequest;
+import com.ssafy.ourdoc.domain.classroom.dto.CreateClassRequest;
 import com.ssafy.ourdoc.classroom.entity.ClassRoom;
-import com.ssafy.ourdoc.classroom.repository.ClassRoomRepository;
+import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

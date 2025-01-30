@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.classroom.service;
+package com.ssafy.ourdoc.domain.classroom.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.classroom.dto.SchoolResponse;
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolResponse;
 
 @Service
 public class SchoolService {

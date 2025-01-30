@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.classroom.dto;
+package com.ssafy.ourdoc.domain.classroom.dto;
 
 public record SchoolResponse(
 	String schoolName,

@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.classroom.controller;
+package com.ssafy.ourdoc.domain.classroom.controller;
 
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.ourdoc.classroom.dto.CreateClassRequest;
-import com.ssafy.ourdoc.classroom.service.ClassService;
+import com.ssafy.ourdoc.domain.classroom.dto.CreateClassRequest;
+import com.ssafy.ourdoc.domain.classroom.service.ClassService;
 
 import lombok.RequiredArgsConstructor;
 

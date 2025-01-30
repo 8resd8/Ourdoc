@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.classroom.repository;
+package com.ssafy.ourdoc.domain.classroom.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

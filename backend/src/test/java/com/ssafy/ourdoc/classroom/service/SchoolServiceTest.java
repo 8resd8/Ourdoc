@@ -8,7 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.ssafy.ourdoc.classroom.dto.SchoolResponse;
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolResponse;
+import com.ssafy.ourdoc.domain.classroom.service.SchoolService;
 
 @SpringBootTest
 class SchoolServiceTest {
