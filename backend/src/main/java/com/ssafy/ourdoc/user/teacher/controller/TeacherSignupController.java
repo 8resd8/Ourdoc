@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Slf4j
 @RequestMapping("/teachers")
 @RequiredArgsConstructor
 public class TeacherSignupController {
@@ -17,6 +18,7 @@ public class TeacherSignupController {
     // 1. 교사 회원가입
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody TeacherSignupRequest request) {
+        log.info("교사 회원가입 진입");
         Long teacherId = teacherSignupService.signup(request);
         return ResponseEntity.ok("교사 회원가입 완료. teacher_id = " + teacherId);
     }
