@@ -5,7 +5,7 @@ import java.time.Year;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.classroom.dto.CreateClassRequest;
-import com.ssafy.ourdoc.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 
 import jakarta.transaction.Transactional;
@@ -26,7 +26,5 @@ public class ClassService {
 			.year(Year.of(request.year()))
 			.build();
 		classRoomRepository.save(classRoom);
-
-
 	}
 }
