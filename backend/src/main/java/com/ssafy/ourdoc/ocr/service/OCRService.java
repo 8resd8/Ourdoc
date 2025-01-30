@@ -14,21 +14,28 @@ import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.ourdoc.global.util.Prompt;
 import com.ssafy.ourdoc.ocr.dto.HandOCRResponse;
 import com.ssafy.ourdoc.ocr.exception.OCRFailException;
 import com.ssafy.ourdoc.ocr.exception.OCRNoImageException;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class OCRService {
 
 	@Value("${ocr.api-url}")
 	private String apiURL;
 	@Value("${ocr.secret-key}")
 	private String secretKey;
+
+	private final ChatModel chatModel;
 
 	@SuppressWarnings("checkstyle:RegexpSinglelineJava")
 	public HandOCRResponse handOCRConvert(MultipartFile multipartFile) {
@@ -78,7 +85,10 @@ public class OCRService {
 				}
 			}
 
-			return new HandOCRResponse(sb.toString());
+			String content = sb.toString();
+			String afterContent = chatModel.call(Prompt.ocrEnhancer(content));
+
+			return new HandOCRResponse(afterContent);
 		} catch (Exception e) {
 			throw new OCRFailException(e.getMessage());
 		}
