@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.book.service;
+package com.ssafy.ourdoc.domain.book.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,8 +17,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.book.dto.NationalLibraryBookRequest;
-import com.ssafy.ourdoc.book.dto.NationalLibraryBookResponse;
+import com.ssafy.ourdoc.domain.book.dto.NationalLibraryBookRequest;
+import com.ssafy.ourdoc.domain.book.dto.NationalLibraryBookResponse;
 import com.ssafy.ourdoc.global.common.enums.KDC;
 
 @Service

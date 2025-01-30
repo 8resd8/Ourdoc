@@ -1,12 +1,12 @@
-package com.ssafy.ourdoc.classroom.entity;
+package com.ssafy.ourdoc.domain.classroom.entity;
 
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
-import com.ssafy.ourdoc.user.student.entity.Student;
-import com.ssafy.ourdoc.user.teacher.entity.Teacher;
+import com.ssafy.ourdoc.domain.user.student.entity.Student;
+import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

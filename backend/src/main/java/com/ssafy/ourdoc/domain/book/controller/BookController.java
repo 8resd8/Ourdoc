@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.book.controller;
+package com.ssafy.ourdoc.domain.book.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.ourdoc.book.dto.NationalLibraryBookRequest;
-import com.ssafy.ourdoc.book.dto.NationalLibraryBookResponse;
-import com.ssafy.ourdoc.book.service.NationalLibraryBookService;
+import com.ssafy.ourdoc.domain.book.dto.NationalLibraryBookRequest;
+import com.ssafy.ourdoc.domain.book.dto.NationalLibraryBookResponse;
+import com.ssafy.ourdoc.domain.book.service.NationalLibraryBookService;
 
 import lombok.RequiredArgsConstructor;
 

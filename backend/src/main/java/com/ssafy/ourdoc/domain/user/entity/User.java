@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.user.entity;
+package com.ssafy.ourdoc.domain.user.entity;
 
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 import com.ssafy.ourdoc.global.common.enums.Active;

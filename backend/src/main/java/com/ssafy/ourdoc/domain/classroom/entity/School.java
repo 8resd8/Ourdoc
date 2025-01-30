@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.classroom.entity;
+package com.ssafy.ourdoc.domain.classroom.entity;
 
 import java.util.ArrayList;
 import java.util.List;

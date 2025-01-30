@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.book.dto;
+package com.ssafy.ourdoc.domain.book.dto;
 
 import lombok.Builder;
 

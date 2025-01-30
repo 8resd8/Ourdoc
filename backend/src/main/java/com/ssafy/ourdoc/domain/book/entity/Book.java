@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.book.entity;
+package com.ssafy.ourdoc.domain.book.entity;
 
 import java.time.LocalDate;
 
