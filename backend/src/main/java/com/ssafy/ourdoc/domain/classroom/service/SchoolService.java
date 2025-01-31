@@ -25,9 +25,13 @@ public class SchoolService {
 	@Value("${school.api-key}")
 	private String apiKey;
 
-	public List<SchoolResponse> parseSchool(String schoolName) throws
-		IOException {
-		String response = getHttpResponse(schoolName);
+	public List<SchoolResponse> parseSchool(String schoolName) {
+		String response = null;
+		try {
+			response = getHttpResponse(schoolName);
+		} catch (IOException e) {
+			throw new RuntimeException("학교검색 API에 문제가 생겼습니다.", e);
+		}
 		List<SchoolResponse> schoolList = parseBooksFromResponse(response);
 		return schoolList;
 	}
