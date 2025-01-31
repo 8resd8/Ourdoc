@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.classroom.service;
+package com.ssafy.ourdoc.domain.classroom.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.classroom.dto.SchoolResponse;
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolResponse;
 
 @Service
 public class SchoolService {
@@ -25,9 +25,13 @@ public class SchoolService {
 	@Value("${school.api-key}")
 	private String apiKey;
 
-	public List<SchoolResponse> parseSchool(String schoolName) throws
-		IOException {
-		String response = getHttpResponse(schoolName);
+	public List<SchoolResponse> parseSchool(String schoolName) {
+		String response = null;
+		try {
+			response = getHttpResponse(schoolName);
+		} catch (IOException e) {
+			throw new RuntimeException("학교검색 API에 문제가 생겼습니다.", e);
+		}
 		List<SchoolResponse> schoolList = parseBooksFromResponse(response);
 		return schoolList;
 	}

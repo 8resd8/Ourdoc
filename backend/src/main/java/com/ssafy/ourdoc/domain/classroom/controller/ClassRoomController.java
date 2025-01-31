@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.classroom.controller;
+package com.ssafy.ourdoc.domain.classroom.controller;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.ourdoc.classroom.dto.SchoolResponse;
-import com.ssafy.ourdoc.classroom.service.SchoolService;
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolResponse;
+import com.ssafy.ourdoc.domain.classroom.service.SchoolService;
 
 import lombok.RequiredArgsConstructor;
 

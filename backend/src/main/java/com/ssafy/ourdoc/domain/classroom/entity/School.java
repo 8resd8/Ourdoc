@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,4 +33,10 @@ public class School extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "school")
 	private List<ClassRoom> classRoomList = new ArrayList<>();
+
+	@Builder
+	public School(String schoolName, String address) {
+		this.schoolName = schoolName;
+		this.address = address;
+	}
 }
