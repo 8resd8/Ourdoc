@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.ssafy.ourdoc.global.exception.FileUploadException;
+import com.ssafy.ourdoc.global.integration.s3.exception.FileUploadException;
 
 @RestControllerAdvice
 public class FileExceptionHandler {

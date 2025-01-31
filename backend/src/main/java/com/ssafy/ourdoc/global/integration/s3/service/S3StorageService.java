@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.global.integration.s3;
+package com.ssafy.ourdoc.global.integration.s3.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.ourdoc.global.exception.FileUploadException;
+import com.ssafy.ourdoc.global.integration.s3.exception.FileUploadException;
 
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
