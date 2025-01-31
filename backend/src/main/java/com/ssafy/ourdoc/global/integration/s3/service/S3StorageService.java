@@ -49,7 +49,7 @@ public class S3StorageService {
 		PutObjectRequest putObjectRequest = PutObjectRequest.builder()
 			.bucket(bucketName)
 			.key(fileName)
-			.acl("public-read") // 퍼블릭 읽기 권한
+			.acl("public-read")
 			.build();
 
 		try {
