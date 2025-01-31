@@ -1,1 +1,107 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@import 'tailwindcss';
+
+@theme {
+  /* Primary Colors */
+  --color-primary-50: #fff1ef;
+  --color-primary-100: #ffd2ce;
+  --color-primary-200: #ffb6b5;
+  --color-primary-300: #ff9595;
+  --color-primary-400: #ff6c81;
+  --color-primary-500: #ff6f61;
+  --color-primary-600: #e85558;
+  --color-primary-700: #be4545;
+  --color-primary-800: #8c3d35;
+  --color-primary-900: #682729;
+
+  /* Secondary Colors */
+  --color-secondary-50: #f2fef7;
+  --color-secondary-100: #d8e6cc;
+  --color-secondary-200: #b6d6c4;
+  --color-secondary-300: #96c6ae;
+  --color-secondary-400: #61b19d;
+  --color-secondary-500: #27ac82;
+  --color-secondary-600: #106554;
+  --color-secondary-700: #0d5741;
+  --color-secondary-800: #0a4333;
+  --color-secondary-900: #083327;
+
+  /* System Colors */
+  --color-system-danger: #c22820;
+  --color-system-warning: #ffea99;
+  --color-system-success: #00c380;
+  --color-system-info: #4fa5ff;
+
+  /* Navy Colors */
+  --color-navy-50: #e8ebf2;
+  --color-navy-100: #d5ddee;
+  --color-navy-200: #b9c4bb;
+  --color-navy-300: #a5b1d2;
+  --color-navy-400: #8698b9;
+  --color-navy-500: #7184a8;
+  --color-navy-600: #586d94;
+  --color-navy-700: #3f528a;
+  --color-navy-800: #2f3d58;
+  --color-navy-900: #182831;
+
+  /* Gray Colors */
+  --color-gray-0: #ffffff;
+  --color-gray-50: #f5f5f5;
+  --color-gray-100: #eaeaea;
+  --color-gray-200: #e0e0e0;
+  --color-gray-300: #cccccc;
+  --color-gray-400: #afafaf;
+  --color-gray-500: #8c8c8c;
+  --color-gray-600: #666666;
+  --color-gray-700: #4c4c4c;
+  --color-gray-800: #262626;
+  --color-gray-900: #000000;
+
+  /* Shadow 설정 */
+  --shadow-xxsmall: 0px 2px 14px 2px rgba(33, 33, 33, 0.03);
+  --shadow-xsmall: 0px 2px 12px 1px rgba(33, 33, 33, 0.09);
+  --shadow-small: 0px 3px 6px 0px rgba(33, 33, 33, 0.23);
+  --shadow-medium: 0px 8px 18px 0px rgba(33, 33, 33, 0.14);
+  --shadow-large: 0px 8px 20px 0px rgba(33, 33, 33, 0.22);
+  --shadow-xlarge: 0px 8px 24px 0px rgba(33, 33, 33, 0.37);
+
+  /* Font Family */
+  --font-pretendard: 'Pretendard';
+
+  /* Display Styles */
+  --display-xlarge: 72px;
+  --display-xlarge-line: 74px;
+  --display-large: 64px;
+  --display-large-line: 70px;
+  --display-medium: 48px;
+  --display-medium-line: 54px;
+  --display-small: 40px;
+  --display-small-line: 44px;
+
+  /* Headline Styles */
+  --headline-xlarge: 32px;
+  --headline-xlarge-line: 36px;
+  --headline-large: 26px;
+  --headline-large-line: 30px;
+  --headline-medium: 22px;
+  --headline-medium-line: 26px;
+  --headline-small: 18px;
+  --headline-small-line: 24px;
+
+  /* Body Styles */
+  --body-medium: 16px;
+  --body-medium-line: 24px;
+  --body-small: 14px;
+  --body-small-line: 20px;
+
+  /* Caption Styles */
+  --caption-medium: 12px;
+  --caption-medium-line: 16px;
+  --caption-small: 10px;
+  --caption-small-line: 12px;
+}
+
+body {
+  font-family: 'Pretendard', sans-serif;
+}
