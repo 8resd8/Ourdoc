@@ -41,13 +41,12 @@ public class TeacherQrService {
 //        int classNumber = teacher.getClassRoom().getClassNumber();
 
         // 3) QR에 담을 json 데이터
-        String jsonData = String.format(
-                "{\"teacherId\":%d, \"schoolId\":\"%s\", \"grade\":%d, \"classNumber\":%d}",
-//                teacherId,
-//                teacher.getClassRoom().getSchoolId(),
-//                teacher.getClassRoom().getGrade(),
-//                teacher.getClassRoom().getClassNumber()
-                teacherId, "ㅇㅇ초등학교", 1, 2
+        // 학교, 학년, 반은 추후 jpa 사용하도록 수정 필요(현재는 예시로 넣어본 것)
+        String googleFormLink = String.format(
+                "https://docs.google.com/forms/d/e/1FAIpQLSfxNCzcxL07Kzo27rCINXu4PHxco7Y4aT8iyi3ys-3PU5j5fg/viewform?usp=pp_url&entry.93879875=%s&entry.631690045=%d&entry.581945071=%d",
+                "ㅇㅇ초등학교", // 학교
+                1,             // 학년
+                2              // 반
         );
 
         // json 데이터의 한글이 깨지지 않도록 설정
@@ -58,7 +57,7 @@ public class TeacherQrService {
         try {
             // 4) QR BitMatrix 생성
             BitMatrix bitMatrix = new MultiFormatWriter()
-                    .encode(jsonData, // 여기 데이터를 넣음
+                    .encode(googleFormLink, // 여기 데이터를 넣음
                             BarcodeFormat.QR_CODE,
                             300, // width
                             300, // height
