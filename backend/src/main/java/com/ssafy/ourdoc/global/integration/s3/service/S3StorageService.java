@@ -33,7 +33,7 @@ public class S3StorageService {
 	@Value("${aws.s3.bucket-name}")
 	private String bucketName;
 
-	@Value("${aws.s3.upload.access-url}") // AWS S3 접근 URL
+	@Value("${aws.s3.upload.access-url}") // AWS S3 URL
 	private String uploadAccessUrl;
 
 	// 단일 파일 업로드
@@ -49,7 +49,7 @@ public class S3StorageService {
 		PutObjectRequest putObjectRequest = PutObjectRequest.builder()
 			.bucket(bucketName)
 			.key(fileName)
-			.acl("public-read") // 퍼블릭 읽기 권한
+			.acl("public-read")
 			.build();
 
 		try {
@@ -58,7 +58,7 @@ public class S3StorageService {
 			throw new FileUploadException("파일 업로드 실패: " + file.getOriginalFilename(), e);
 		}
 
-		return uploadAccessUrl + fileName; // 클라이언트가 접속할 수 있는 URL
+		return uploadAccessUrl + fileName; // 클라이언트 접속 URL
 	}
 
 	// 다중 파일 업로드
