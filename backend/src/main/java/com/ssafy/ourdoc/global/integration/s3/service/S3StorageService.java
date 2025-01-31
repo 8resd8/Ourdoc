@@ -58,7 +58,7 @@ public class S3StorageService {
 			throw new FileUploadException("파일 업로드 실패: " + file.getOriginalFilename(), e);
 		}
 
-		return uploadAccessUrl + fileName; // 클라이언트가 접속할 수 있는 URL
+		return uploadAccessUrl + fileName; // 클라이언트 접속 URL
 	}
 
 	// 다중 파일 업로드
