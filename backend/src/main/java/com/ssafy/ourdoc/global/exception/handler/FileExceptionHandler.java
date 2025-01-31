@@ -5,13 +5,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.ssafy.ourdoc.global.exception.ErrorResponse;
 import com.ssafy.ourdoc.global.integration.s3.exception.FileUploadException;
 
 @RestControllerAdvice
 public class FileExceptionHandler {
 
 	@ExceptionHandler
-	public ResponseEntity<String> handleFileUploadException(FileUploadException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+	public ResponseEntity<ErrorResponse> handleFileUploadException(FileUploadException ex) {
+		return ErrorResponse.toResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage());
 	}
 }
