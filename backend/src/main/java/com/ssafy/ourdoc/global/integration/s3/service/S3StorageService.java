@@ -33,7 +33,7 @@ public class S3StorageService {
 	@Value("${aws.s3.bucket-name}")
 	private String bucketName;
 
-	@Value("${aws.s3.upload.access-url}") // AWS S3 접근 URL
+	@Value("${aws.s3.upload.access-url}") // AWS S3 URL
 	private String uploadAccessUrl;
 
 	// 단일 파일 업로드
