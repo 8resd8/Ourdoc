@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.book;
+package com.ssafy.ourdoc.domain.book;
 
 import static org.junit.jupiter.api.Assertions.*;
 
