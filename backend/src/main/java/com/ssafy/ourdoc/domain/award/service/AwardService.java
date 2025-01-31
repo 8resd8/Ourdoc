@@ -11,7 +11,7 @@ import com.ssafy.ourdoc.domain.award.dto.AwardListResponse;
 import com.ssafy.ourdoc.domain.award.dto.CreateAwardRequest;
 import com.ssafy.ourdoc.domain.award.entity.Award;
 import com.ssafy.ourdoc.domain.award.repository.AwardRepository;
-import com.ssafy.ourdoc.global.integration.s3.S3StorageService;
+import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
