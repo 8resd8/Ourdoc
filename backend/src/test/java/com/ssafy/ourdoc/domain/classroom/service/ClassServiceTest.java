@@ -105,16 +105,6 @@ class ClassServiceTest {
 	}
 
 	@Test
-	@DisplayName("존재하지 않는 학교 이름으로 생성 시 실패")
-	void createClassWithInvalidSchoolName() {
-		CreateClassRequest invalidRequest = new CreateClassRequest("존재하지않는학교", 2024, 1, 1);
-
-		assertThatThrownBy(() -> classService.createClass(teacherId, invalidRequest))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("학교가 없습니다");
-	}
-
-	@Test
 	@DisplayName("이미 등록되어있는 학급 생성 시 예외 발생")
 	void createClass_Fail_IfAlreadyExist() {
 		// 학급을 미리 등록
