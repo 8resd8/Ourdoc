@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.award.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,6 +44,6 @@ public class AwardService {
 	}
 
 	private Award getFindAward(Long id) {
-		return awardRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당하는 상장이 없습니다."));
+		return awardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당하는 상장이 없습니다."));
 	}
 }

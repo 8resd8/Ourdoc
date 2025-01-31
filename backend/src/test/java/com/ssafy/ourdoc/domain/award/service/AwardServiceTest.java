@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import com.ssafy.ourdoc.domain.award.dto.AwardDto;
@@ -95,7 +96,7 @@ class AwardServiceTest {
 		when(awardRepository.findById(405L)).thenReturn(Optional.empty());
 
 		assertThatThrownBy(() -> awardService.searchAward(405L))
-			.isInstanceOf(IllegalArgumentException.class)
+			.isInstanceOf(NoSuchElementException.class)
 			.hasMessage("해당하는 상장이 없습니다.");
 	}
 }
