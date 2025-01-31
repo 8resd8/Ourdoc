@@ -20,6 +20,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -51,4 +52,12 @@ public class ClassRoom extends BaseTimeEntity {
 
 	@OneToMany(mappedBy = "classRoom", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Teacher> teachers = new ArrayList<>();
+
+	@Builder
+	public ClassRoom(School school, int grade, int classNumber, Year year) {
+		this.school = school;
+		this.grade = grade;
+		this.classNumber = classNumber;
+		this.year = year;
+	}
 }
