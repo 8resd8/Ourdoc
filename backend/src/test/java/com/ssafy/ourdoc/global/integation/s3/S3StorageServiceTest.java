@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.global.integation;
+package com.ssafy.ourdoc.global.integation.s3;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
