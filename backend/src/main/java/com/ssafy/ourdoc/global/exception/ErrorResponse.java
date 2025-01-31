@@ -15,8 +15,9 @@ public class ErrorResponse {
 	private int status;
 	private String error;
 	private String message;
+	private String path;
 
-	public static ResponseEntity<ErrorResponse> toResponseEntity(HttpStatus httpStatus, String message) {
+	public static ResponseEntity<ErrorResponse> toResponseEntity(HttpStatus httpStatus, String message, String path) {
 		return ResponseEntity
 			.status(httpStatus)
 			.body(ErrorResponse.builder()
@@ -24,6 +25,7 @@ public class ErrorResponse {
 				.status(httpStatus.value())
 				.error(httpStatus.name())
 				.message(message)
+				.path(path)
 				.build());
 	}
 }

@@ -9,16 +9,18 @@ import com.ssafy.ourdoc.global.exception.ErrorResponse;
 import com.ssafy.ourdoc.global.integration.ocr.exception.OCRFailException;
 import com.ssafy.ourdoc.global.integration.ocr.exception.OCRNoImageException;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestControllerAdvice
 public class OCRExceptionHandler {
 
 	@ExceptionHandler
-	public ResponseEntity<ErrorResponse> handOCRFailException(OCRFailException ex) {
-		return ErrorResponse.toResponseEntity(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+	public ResponseEntity<ErrorResponse> handOCRFailException(OCRFailException ex, HttpServletRequest request) {
+		return ErrorResponse.toResponseEntity(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage(), request.getRequestURI());
 	}
 
 	@ExceptionHandler
-	public ResponseEntity<ErrorResponse> handOCRNoImageException(OCRNoImageException ex) {
-		return ErrorResponse.toResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage());
+	public ResponseEntity<ErrorResponse> handOCRNoImageException(OCRNoImageException ex, HttpServletRequest request) {
+		return ErrorResponse.toResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
 	}
 }
