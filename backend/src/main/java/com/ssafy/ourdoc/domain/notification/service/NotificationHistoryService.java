@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class NotificationHistoryService {
 
 	private final NotificationRepository notificationRepository;
@@ -28,10 +29,12 @@ public class NotificationHistoryService {
 	private final UserRepository userRepository;
 
 	// 알림 DB 저장
-	@Transactional
-	public void saveHistory(Long senderId, NotificationType type, String content) {
+	public Notification saveHistory(Long senderId, NotificationType type, String content) {
 		User sender = getUser(senderId);
-		User recipient = getUser(8L); // 로그인 한 사용자 ID, 임시 하드코딩
+		// 일단 학생 -> 교사 단방향 알림 보내기 (독서록 작성 시 알림)
+		// Long teacherId = userRepository.findTeacherIdByStudentId(senderId);  // 담당 교사 ID 조회
+		Long teacherId = 9L; // 임시 하드코딩, 학급이 없음
+		User recipient = getUser(teacherId); // 알림 수신자는 본인의 담당교사, class -> teacher_class한 userId
 
 		if (!isValidNotification(sender, recipient)) {
 			throw new ForbiddenException("허용되지 않은 알림 전송입니다.");
@@ -39,6 +42,8 @@ public class NotificationHistoryService {
 
 		Notification notification = saveSender(sender, type, content);
 		saveRecipient(recipient, notification);
+
+		return notification;
 	}
 
 	// 전송자 저장
@@ -60,11 +65,11 @@ public class NotificationHistoryService {
 		notificationRecipientRepository.save(recipientEntity);
 	}
 
-	// 알림 읽음 기록
-	public void markNotificationRead(Long recipientUserId) {
-		Long userId = 8L; // 현재 로그인 한 사용자 정보 토큰에서 가져오기.
+	// 알림 읽음 기록, 누른 알림의 PK ID필요
+	public void markNotificationRead(Long notificationId) {
+		Long userId = 9L; // 현재 로그인 한 사용자 정보 토큰에서 가져오기.
 
-		NotificationRecipient recipient = getRecipient(recipientUserId);
+		NotificationRecipient recipient = getRecipient(notificationId);
 
 		if (!recipient.getRecipient().getId().equals(userId)) {
 			throw new ForbiddenException("해당 알림을 읽을 권한이 없습니다.");
@@ -89,9 +94,9 @@ public class NotificationHistoryService {
 			.orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다. senderId: " + senderId));
 	}
 
-	private NotificationRecipient getRecipient(Long recipientUserId) {
-		return notificationRecipientRepository.findById(recipientUserId)
-			.orElseThrow(() -> new NoSuchElementException("사용자의 알림을 찾을 수 없습니다. 수신자: " + recipientUserId));
+	private NotificationRecipient getRecipient(Long notificationId) {
+		return notificationRecipientRepository.findById(notificationId)
+			.orElseThrow(() -> new NoSuchElementException("사용자의 알림을 찾을 수 없습니다."));
 	}
 
 }
