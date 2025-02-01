@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.global.common.enums.KDC;
 import com.ssafy.ourdoc.global.integration.nationallibrary.dto.NationalLibraryBookRequest;
 import com.ssafy.ourdoc.global.integration.nationallibrary.dto.NationalLibraryBookResponse;
@@ -35,7 +36,7 @@ public class NationalLibraryBookService {
 	 * @param nationalLibraryBookRequest title(제목), author(저자), publisher(출판사)로 구성된 JSON
 	 * @return bookList 국립중앙도서관에서 검색된 book 결과 정보
 	 */
-	public List<NationalLibraryBookResponse> parseBook(NationalLibraryBookRequest nationalLibraryBookRequest) throws
+	public List<NationalLibraryBookResponse> parseBook(BookRequest nationalLibraryBookRequest) throws
 		IOException {
 		Map<String, String> params = buildQueryParams(nationalLibraryBookRequest);
 		String response = getHttpResponse(params);
@@ -43,7 +44,7 @@ public class NationalLibraryBookService {
 		return bookList;
 	}
 
-	private Map<String, String> buildQueryParams(NationalLibraryBookRequest nationalLibraryBookRequest) {
+	private Map<String, String> buildQueryParams(BookRequest nationalLibraryBookRequest) {
 		String title = Optional.ofNullable(nationalLibraryBookRequest.title()).orElse("");
 		String author = Optional.ofNullable(nationalLibraryBookRequest.author()).orElse("");
 		String publisher = Optional.ofNullable(nationalLibraryBookRequest.publisher()).orElse("");
