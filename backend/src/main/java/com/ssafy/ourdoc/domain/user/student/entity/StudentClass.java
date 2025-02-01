@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
+import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 
 import jakarta.persistence.Column;
@@ -17,7 +18,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,40 +26,42 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "student")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Student extends BaseTimeEntity {
-
+@Table(name = "student_class")
+public class StudentClass extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "student_id", nullable = false)
+	@Column(name = "student_class_id")
 	private Long id;
 
-	@OneToOne
-	@JoinColumn(name = "user_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
-	@Column(name = "temp_password", nullable = true)
-	private String tempPassword;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "class_id", nullable = false)
+	private ClassRoom classRoom;
 
-	@Column(name = "auth_status", nullable = true)
+	@Column(name = "student_number")
+	private int studentNumber;
+
+	@Column(name = "active", nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Active active;
+
+	@Column(name = "auth_status")
 	@Enumerated(EnumType.STRING)
 	private AuthStatus authStatus;
 
-	@Column(name = "certificate_time", nullable = true)
+	@Column(name = "certificate_time")
 	private LocalDateTime certificateTime;
 
 	@Builder
-	public Student(User user, ClassRoom classRoom, String tempPassword, AuthStatus authStatus,
-		LocalDateTime certificateTime) {
+	public StudentClass(User user, ClassRoom classRoom, int studentNumber, Active active, AuthStatus authStatus) {
 		this.user = user;
 		this.classRoom = classRoom;
-		this.tempPassword = tempPassword;
+		this.studentNumber = studentNumber;
+		this.active = active;
 		this.authStatus = authStatus;
-		this.certificateTime = certificateTime;
 	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "class_id")
-	private ClassRoom classRoom;
 }
