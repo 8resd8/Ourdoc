@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.notification.service;
 
+import static com.ssafy.ourdoc.global.common.enums.UserType.*;
+
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
@@ -27,14 +29,20 @@ public class NotificationHistoryService {
 
 	// 알림 DB 저장
 	@Transactional
-	public void saveHistory(Long userId, NotificationType type, String content) {
-		Notification notification = saveSender(userId, type, content);
-		saveRecipient(userId, notification);
+	public void saveHistory(Long senderId, NotificationType type, String content) {
+		User sender = getUser(senderId);
+		User recipient = getUser(8L); // 로그인 한 사용자 ID, 임시 하드코딩
+
+		if (!isValidNotification(sender, recipient)) {
+			throw new ForbiddenException("허용되지 않은 알림 전송입니다.");
+		}
+
+		Notification notification = saveSender(sender, type, content);
+		saveRecipient(recipient, notification);
 	}
 
 	// 전송자 저장
-	private Notification saveSender(Long userId, NotificationType type, String content) {
-		User sender = getUser(userId);
+	private Notification saveSender(User sender, NotificationType type, String content) {
 		Notification notification = Notification.builder()
 			.notificationType(type)
 			.content(content)
@@ -44,8 +52,7 @@ public class NotificationHistoryService {
 	}
 
 	// 수신자 저장
-	private void saveRecipient(Long userId, Notification notification) {
-		User recipient = getUser(userId);
+	private void saveRecipient(User recipient, Notification notification) {
 		NotificationRecipient recipientEntity = NotificationRecipient.builder()
 			.notification(notification)
 			.recipient(recipient)
@@ -66,15 +73,25 @@ public class NotificationHistoryService {
 		recipient.markAsRead(LocalDateTime.now());
 	}
 
-	private User getUser(Long userId) {
-		return userRepository.findById(userId)
-			.orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다. userId: " + userId));
+	private boolean isValidNotification(User sender, User recipient) {
+		if (sender.getUserType().equals(교사) && recipient.getUserType().equals(학생)) {
+			return true;  // 교사 -> 학생 알림전송
+		}
+		if (sender.getUserType().equals(학생) && recipient.getUserType().equals(교사)) {
+			return true;  // 학생 -> 교사 알림전송
+		}
+
+		return false;  // 기타 경우는 허용하지 않음
+	}
+
+	private User getUser(Long senderId) {
+		return userRepository.findById(senderId)
+			.orElseThrow(() -> new NoSuchElementException("사용자를 찾을 수 없습니다. senderId: " + senderId));
 	}
 
 	private NotificationRecipient getRecipient(Long recipientUserId) {
 		return notificationRecipientRepository.findById(recipientUserId)
-			.orElseThrow(
-				() -> new NoSuchElementException("해당 사용자의 알림을 찾을 수 없습니다. recipientUserId: " + recipientUserId));
+			.orElseThrow(() -> new NoSuchElementException("사용자의 알림을 찾을 수 없습니다. 수신자: " + recipientUserId));
 	}
 
 }
