@@ -42,14 +42,14 @@ public class StudentService {
 		// 2) 비밀번호 해싱
 		String encodedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
 
-		// 3) 학교 조회
-		School school = schoolRepository.findBySchoolName(request.schoolName())
-			.orElseThrow(() -> new IllegalArgumentException("해당 학교를 찾을 수 없습니다: " + request.schoolName()));
-
-		// 4) 학년 및 반 정보 조회
-		ClassRoom classRoom = classRoomRepository.findBySchoolAndGradeAndClassNumber(
-			school, request.grade(), request.classNumber()
-		).orElseThrow(() -> new IllegalArgumentException("해당 학년 및 반 정보를 찾을 수 없습니다."));
+//		// 3) 학교 조회
+//		School school = schoolRepository.findBySchoolName(request.getSchoolName())
+//			.orElseThrow(() -> new IllegalArgumentException("해당 학교를 찾을 수 없습니다: " + request.getSchoolName()));
+//
+//		// 4) 학년 및 반 정보 조회
+//		ClassRoom classRoom = classRoomRepository.findBySchoolAndGradeAndClassNumber(
+//			school, request.getGrade(), request.getClassNumber()
+//		).orElseThrow(() -> new IllegalArgumentException("해당 학년 및 반 정보를 찾을 수 없습니다."));
 
 		// 5) User 엔티티 생성
 		User user = User.builder()
