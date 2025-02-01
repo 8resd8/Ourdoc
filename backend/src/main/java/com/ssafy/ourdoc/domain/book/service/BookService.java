@@ -37,4 +37,8 @@ public class BookService {
 		}
 		return books;
 	}
+
+	public Book getBookDetail(Long id) {
+		return bookRepository.findById(id).orElse(null);
+	}
 }
