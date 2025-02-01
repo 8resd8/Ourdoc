@@ -42,10 +42,9 @@ public class NotificationRecipient extends BaseTimeEntity {
 	private LocalDateTime readTime;
 
 	@Builder
-	public NotificationRecipient(Notification notification, User recipient, LocalDateTime readTime) {
+	public NotificationRecipient(Notification notification, User recipient) {
 		this.notification = notification;
 		this.recipient = recipient;
-		this.readTime = readTime;
 	}
 
 	public void markAsRead(LocalDateTime readTime) {
