@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -42,4 +43,16 @@ public class Book extends BaseTimeEntity {
 
 	@Column(name = "image_url")
 	private String imageUrl;
+
+	@Builder
+	public Book(String isbn, String title, String author, String genre, String publisher, LocalDate publishTime,
+		String imageUrl) {
+		this.isbn = isbn;
+		this.title = title;
+		this.author = author;
+		this.genre = genre;
+		this.publisher = publisher;
+		this.publishTime = publishTime;
+		this.imageUrl = imageUrl;
+	}
 }
