@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.ssafy.ourdoc.global.integration.nationallibrary.dto.NationalLibraryBookRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.global.integration.nationallibrary.dto.NationalLibraryBookResponse;
 import com.ssafy.ourdoc.global.integration.nationallibrary.service.NationalLibraryBookService;
 
@@ -30,10 +30,10 @@ class NationalLibraryServiceTest {
 		params.put("title", "어린왕자");
 
 		// 서비스 호출
-		List<NationalLibraryBookResponse> books = service.parseBook(NationalLibraryBookRequest.builder()
+		List<NationalLibraryBookResponse> books = service.parseBook(BookRequest.builder()
 			.title(params.get("title"))
 			.build());
-		
+
 		System.out.println("검색된 책: " + books.get(0));
 	}
 
@@ -45,7 +45,7 @@ class NationalLibraryServiceTest {
 		params.put("author", "생텍쥐페리");
 
 		// 서비스 호출
-		List<NationalLibraryBookResponse> books = service.parseBook(NationalLibraryBookRequest.builder()
+		List<NationalLibraryBookResponse> books = service.parseBook(BookRequest.builder()
 			.author(params.get("author"))
 			.build());
 
@@ -60,7 +60,7 @@ class NationalLibraryServiceTest {
 		params.put("publisher", "문예출판사");
 
 		// 서비스 호출
-		List<NationalLibraryBookResponse> books = service.parseBook(NationalLibraryBookRequest.builder()
+		List<NationalLibraryBookResponse> books = service.parseBook(BookRequest.builder()
 			.publisher(params.get("publisher"))
 			.build());
 
@@ -77,7 +77,7 @@ class NationalLibraryServiceTest {
 		params.put("publisher", "문예출판사");
 
 		// 서비스 호출
-		List<NationalLibraryBookResponse> books = service.parseBook(NationalLibraryBookRequest.builder()
+		List<NationalLibraryBookResponse> books = service.parseBook(BookRequest.builder()
 			.title(params.get("title"))
 			.author(params.get("author"))
 			.publisher(params.get("publisher"))
@@ -93,7 +93,7 @@ class NationalLibraryServiceTest {
 		Map<String, String> params = new HashMap<>();
 		params.put("title", "세상에서가장재미있는책이있다면너에게줄게");
 
-		NationalLibraryBookRequest request = NationalLibraryBookRequest.builder()
+		BookRequest request = BookRequest.builder()
 			.title(params.get("title"))
 			.build();
 
