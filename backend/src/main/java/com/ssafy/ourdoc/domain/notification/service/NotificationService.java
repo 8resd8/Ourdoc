@@ -39,7 +39,7 @@ public class NotificationService {
 			@Override
 			public void run() {
 				try {
-					emitter.send(SseEmitter.event().name("heartbeat").data("ping"));
+					emitter.send(SseEmitter.event().name("연결정보 갱신").data("ping"));
 				} catch (IOException e) {
 					timer.cancel();
 					removeEmitter(userId, emitter);
@@ -76,7 +76,7 @@ public class NotificationService {
 			throw new RuntimeException("알림 전송에 실패했습니다.");
 		}
 
-		return new NotificationResponse(notification.getId(), type, content, LocalDateTime.now());
+		return new NotificationResponse(notification.getId(), type, content, notification.getCreatedAt());
 	}
 
 	private boolean sendToEmitters(Long userId, Notification notification) {
@@ -88,12 +88,12 @@ public class NotificationService {
 				notification.getId(),  // 알림 ID 포함
 				notification.getNotificationType(),
 				notification.getContent(),
-				LocalDateTime.now()
+				notification.getCreatedAt()
 			);
 
 			for (SseEmitter emitter : userEmitters) {
 				try {
-					emitter.send(SseEmitter.event().name("notification").data(response));
+					emitter.send(SseEmitter.event().name("알림: ").data(response));
 					isSuccess = true;  // 전송 성공 여부 체크
 				} catch (IOException e) {
 					log.error("알림 전송 실패: userId = {}, content = {}", userId, notification.getContent(), e);
