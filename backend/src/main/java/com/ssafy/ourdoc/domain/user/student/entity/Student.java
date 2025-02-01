@@ -3,11 +3,22 @@ package com.ssafy.ourdoc.domain.user.student.entity;
 import java.time.LocalDateTime;
 
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
-import com.ssafy.ourdoc.domain.user.entity.User;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,20 +42,22 @@ public class Student extends BaseTimeEntity {
 	@Column(name = "temp_password", nullable = true)
 	private String tempPassword;
 
-    @Column(name = "auth_status", nullable = true)
-    @Enumerated(EnumType.STRING)
-    private AuthStatus authStatus;
+	@Column(name = "auth_status", nullable = true)
+	@Enumerated(EnumType.STRING)
+	private AuthStatus authStatus;
 
 	@Column(name = "certificate_time", nullable = true)
 	private LocalDateTime certificateTime;
 
-    @Builder
-    public Student(User user, String tempPassword, AuthStatus authStatus, LocalDateTime certificateTime) {
-        this.user = user;
-        this.tempPassword = tempPassword;
-        this.authStatus = authStatus;
-        this.certificateTime = certificateTime;
-    }
+	@Builder
+	public Student(User user, ClassRoom classRoom, String tempPassword, AuthStatus authStatus,
+		LocalDateTime certificateTime) {
+		this.user = user;
+		this.classRoom = classRoom;
+		this.tempPassword = tempPassword;
+		this.authStatus = authStatus;
+		this.certificateTime = certificateTime;
+	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "class_id")
