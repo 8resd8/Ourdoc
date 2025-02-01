@@ -1,7 +1,6 @@
 package com.ssafy.ourdoc.domain.notification.service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -13,6 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.ssafy.ourdoc.domain.notification.dto.NotificationResponse;
 import com.ssafy.ourdoc.domain.notification.entity.Notification;
+import com.ssafy.ourdoc.domain.notification.exception.SubscribeException;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
 import lombok.RequiredArgsConstructor;
@@ -72,37 +72,34 @@ public class NotificationService {
 		// 알림 전송 성공 시에만 DB 저장 및 ID 반환
 		Notification notification = notificationHistoryService.saveHistory(userId, type, content);
 
-		if (!sendToEmitters(userId, notification)) {
-			throw new RuntimeException("알림 전송에 실패했습니다.");
-		}
+		sendToEmitters(userId, notification);
 
 		return new NotificationResponse(notification.getId(), type, content, notification.getCreatedAt());
 	}
 
-	private boolean sendToEmitters(Long userId, Notification notification) {
+	private void sendToEmitters(Long userId, Notification notification) {
 		List<SseEmitter> userEmitters = emitters.get(userId);
-		boolean isSuccess = false;
 
-		if (userEmitters != null) {
-			NotificationResponse response = new NotificationResponse(
-				notification.getId(),  // 알림 ID 포함
-				notification.getNotificationType(),
-				notification.getContent(),
-				notification.getCreatedAt()
-			);
+		if (userEmitters == null || userEmitters.isEmpty()) {
+			throw new SubscribeException("구독을 먼저 해야 알림을 받을 수 있습니다.");
+		}
 
-			for (SseEmitter emitter : userEmitters) {
-				try {
-					emitter.send(SseEmitter.event().name("알림: ").data(response));
-					isSuccess = true;  // 전송 성공 여부 체크
-				} catch (IOException e) {
-					log.error("알림 전송 실패: userId = {}, content = {}", userId, notification.getContent(), e);
-					removeEmitter(userId, emitter);
-					emitter.complete();
-				}
+		NotificationResponse response = new NotificationResponse(
+			notification.getId(),
+			notification.getNotificationType(),
+			notification.getContent(),
+			notification.getCreatedAt()
+		);
+
+		for (SseEmitter emitter : userEmitters) {
+			try {
+				emitter.send(SseEmitter.event().name("알림: ").data(response));
+			} catch (IOException e) {
+				log.error("알림 전송 실패: userId = {}, content = {}", userId, notification.getContent(), e);
+				removeEmitter(userId, emitter);
+				emitter.complete();
 			}
 		}
-		return isSuccess;
 	}
 
 	private void removeEmitter(Long userId, SseEmitter emitter) {
