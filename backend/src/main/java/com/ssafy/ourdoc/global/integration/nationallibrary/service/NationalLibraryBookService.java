@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.global.common.enums.KDC;
-import com.ssafy.ourdoc.global.integration.nationallibrary.dto.NationalLibraryBookRequest;
 import com.ssafy.ourdoc.global.integration.nationallibrary.dto.NationalLibraryBookResponse;
+import com.ssafy.ourdoc.global.integration.nationallibrary.exception.NationalLibraryBookFailException;
 
 @Service
 public class NationalLibraryBookService {
@@ -36,12 +36,14 @@ public class NationalLibraryBookService {
 	 * @param nationalLibraryBookRequest title(제목), author(저자), publisher(출판사)로 구성된 JSON
 	 * @return bookList 국립중앙도서관에서 검색된 book 결과 정보
 	 */
-	public List<NationalLibraryBookResponse> parseBook(BookRequest nationalLibraryBookRequest) throws
-		IOException {
-		Map<String, String> params = buildQueryParams(nationalLibraryBookRequest);
-		String response = getHttpResponse(params);
-		List<NationalLibraryBookResponse> bookList = parseBooksFromResponse(response);
-		return bookList;
+	public List<NationalLibraryBookResponse> parseBook(BookRequest nationalLibraryBookRequest) {
+		try {
+			Map<String, String> params = buildQueryParams(nationalLibraryBookRequest);
+			String response = getHttpResponse(params);
+			return parseBooksFromResponse(response);
+		} catch (Exception e) {
+			throw new RuntimeException("국립중앙도서관 API 호출 중 오류 발생", e);
+		}
 	}
 
 	private Map<String, String> buildQueryParams(BookRequest nationalLibraryBookRequest) {
@@ -73,30 +75,38 @@ public class NationalLibraryBookService {
 		return response.toString();
 	}
 
-	private HttpURLConnection getConnection(Map<String, String> params) throws IOException {
-		String queryString = buildQueryString(params);
-		URL url = new URL(apiUrl + "?" + queryString);
+	private HttpURLConnection getConnection(Map<String, String> params) {
+		try {
+			String queryString = buildQueryString(params);
+			URL url = new URL(apiUrl + "?" + queryString);
 
-		HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-		conn.setRequestMethod("GET");
-		conn.setRequestProperty("Content-type", "application/json");
+			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty("Content-type", "application/json");
 
-		return conn;
+			return conn;
+		} catch (IOException e) {
+			throw new NationalLibraryBookFailException("국립중앙도서관 API 연결 중 오류 발생");
+		}
 	}
 
-	private String buildQueryString(Map<String, String> params) throws UnsupportedEncodingException {
-		StringBuilder sb = new StringBuilder();
-		sb.append("cert_key=").append(URLEncoder.encode(certKey, "UTF-8"))
-			.append("&result_style=").append(URLEncoder.encode("json", "UTF-8"))
-			.append("&page_no=").append(URLEncoder.encode("1", "UTF-8"))
-			.append("&page_size=").append(URLEncoder.encode("1000", "UTF-8"));
+	private String buildQueryString(Map<String, String> params) {
+		try {
+			StringBuilder sb = new StringBuilder();
+			sb.append("cert_key=").append(URLEncoder.encode(certKey, "UTF-8"))
+				.append("&result_style=").append(URLEncoder.encode("json", "UTF-8"))
+				.append("&page_no=").append(URLEncoder.encode("1", "UTF-8"))
+				.append("&page_size=").append(URLEncoder.encode("1000", "UTF-8"));
 
-		for (Map.Entry<String, String> entry : params.entrySet()) {
-			sb.append("&")
-				.append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=")
-				.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+			for (Map.Entry<String, String> entry : params.entrySet()) {
+				sb.append("&")
+					.append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=")
+					.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+			}
+			return sb.toString();
+		} catch (UnsupportedEncodingException e) {
+			throw new NationalLibraryBookFailException("쿼리 문자열 인코딩 중 오류 발생");
 		}
-		return sb.toString();
 	}
 
 	private List<NationalLibraryBookResponse> parseBooksFromResponse(String response) {
