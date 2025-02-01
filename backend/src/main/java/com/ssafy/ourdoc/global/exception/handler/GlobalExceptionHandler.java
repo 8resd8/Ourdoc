@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.ssafy.ourdoc.domain.notification.exception.SubscribeException;
 import com.ssafy.ourdoc.global.common.response.ErrorResponse;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
@@ -33,5 +34,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException ex, HttpServletRequest request) {
         return ErrorResponse.toResponseEntity(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleSubscribeExceptionException(SubscribeException ex, HttpServletRequest request) {
+        return ErrorResponse.toResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
     }
 }
