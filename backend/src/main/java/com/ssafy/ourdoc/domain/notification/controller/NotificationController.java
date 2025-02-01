@@ -31,7 +31,7 @@ public class NotificationController {
 	}
 
 	@PatchMapping("/{recipientId}/read")
-	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void markAsRead(@PathVariable("recipientId") Long recipientId) {
 		notificationHistoryService.markNotificationRead(recipientId);
 	}
