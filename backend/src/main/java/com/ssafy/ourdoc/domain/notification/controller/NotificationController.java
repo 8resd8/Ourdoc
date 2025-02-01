@@ -30,10 +30,10 @@ public class NotificationController {
 		return notificationService.subscribe();
 	}
 
-	@PatchMapping("/{recipientId}/read")
+	@PatchMapping("/{notificationId}/read")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void markAsRead(@PathVariable("recipientId") Long recipientId) {
-		notificationHistoryService.markNotificationRead(recipientId);
+	public void markAsRead(@PathVariable("notificationId") Long notificationId) {
+		notificationHistoryService.markNotificationRead(notificationId);
 	}
 
 	@PostMapping("/send")
