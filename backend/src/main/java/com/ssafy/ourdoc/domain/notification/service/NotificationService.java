@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.ssafy.ourdoc.domain.notification.dto.NotificationResponse;
+import com.ssafy.ourdoc.domain.notification.entity.Notification;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
 import lombok.RequiredArgsConstructor;
@@ -65,27 +66,37 @@ public class NotificationService {
 	}
 
 	// 알림 전송
-	public void sendNotification(NotificationType type, String content) {
-		Long userId = 8L;
+	public NotificationResponse sendNotification(NotificationType type, String content) {
+		Long userId = 8L;  // 로그인한 사용자 ID (임시 하드코딩)
 
-		// 알림 전송 성공 시에만 DB 저장
-		if (sendToEmitters(userId, type, content)) {
-			notificationHistoryService.saveHistory(userId, type, content);
+		// 알림 전송 성공 시에만 DB 저장 및 ID 반환
+		Notification notification = notificationHistoryService.saveHistory(userId, type, content);
+
+		if (!sendToEmitters(userId, notification)) {
+			throw new RuntimeException("알림 전송에 실패했습니다.");
 		}
+
+		return new NotificationResponse(notification.getId(), type, content, LocalDateTime.now());
 	}
 
-	private boolean sendToEmitters(Long userId, NotificationType type, String content) {
+	private boolean sendToEmitters(Long userId, Notification notification) {
 		List<SseEmitter> userEmitters = emitters.get(userId);
 		boolean isSuccess = false;
 
 		if (userEmitters != null) {
-			NotificationResponse response = new NotificationResponse(type, content, LocalDateTime.now());
+			NotificationResponse response = new NotificationResponse(
+				notification.getId(),  // 알림 ID 포함
+				notification.getNotificationType(),
+				notification.getContent(),
+				LocalDateTime.now()
+			);
+
 			for (SseEmitter emitter : userEmitters) {
 				try {
 					emitter.send(SseEmitter.event().name("notification").data(response));
 					isSuccess = true;  // 전송 성공 여부 체크
 				} catch (IOException e) {
-					log.error("알림 전송 실패: userId = {}, content = {}", userId, content, e);
+					log.error("알림 전송 실패: userId = {}, content = {}", userId, notification.getContent(), e);
 					removeEmitter(userId, emitter);
 					emitter.complete();
 				}
@@ -93,7 +104,6 @@ public class NotificationService {
 		}
 		return isSuccess;
 	}
-
 
 	private void removeEmitter(Long userId, SseEmitter emitter) {
 		List<SseEmitter> userEmitters = emitters.get(userId);
