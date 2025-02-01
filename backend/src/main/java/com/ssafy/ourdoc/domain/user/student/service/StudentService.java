@@ -13,8 +13,11 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentSignupRequest;
 import com.ssafy.ourdoc.domain.user.student.entity.Student;
+import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 
 import jakarta.transaction.Transactional;
@@ -29,6 +32,7 @@ public class StudentService {
 	private final StudentRepository studentRepository;
 	private final SchoolRepository schoolRepository;
 	private final ClassRoomRepository classRoomRepository;
+	private final StudentClassRepository studentClassRepository;
 
 	// 1. 학생 회원가입
 	public Long signup(StudentSignupRequest request) {
@@ -69,6 +73,15 @@ public class StudentService {
 			.classRoom(classRoom)
 			.build();
 		Student savedStudent = studentRepository.save(student);
+
+		StudentClass studentClass = StudentClass.builder()
+			.user(savedUser)
+			.classRoom(classRoom)
+			.studentNumber(request.studentNumber())
+			.active(request.active())
+			.authStatus(AuthStatus.대기)
+			.build();
+		studentClassRepository.save(studentClass);
 
 		return savedStudent.getId();
 	}
