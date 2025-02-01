@@ -34,31 +34,31 @@ public class StudentService {
 	public Long signup(StudentSignupRequest request) {
 
 		// 1) 아이디 중복 체크
-		Optional<User> existingUser = userRepository.findByLoginId(request.getLoginId());
+		Optional<User> existingUser = userRepository.findByLoginId(request.loginId());
 		if (existingUser.isPresent()) {
 			throw new IllegalArgumentException("이미 존재하는 로그인 ID입니다.");
 		}
 
 		// 2) 비밀번호 해싱
-		String encodedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
+		String encodedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
 
 		// 3) 학교 조회
-		School school = schoolRepository.findBySchoolName(request.getSchoolName())
-			.orElseThrow(() -> new IllegalArgumentException("해당 학교를 찾을 수 없습니다: " + request.getSchoolName()));
+		School school = schoolRepository.findBySchoolName(request.schoolName())
+			.orElseThrow(() -> new IllegalArgumentException("해당 학교를 찾을 수 없습니다: " + request.schoolName()));
 
 		// 4) 학년 및 반 정보 조회
 		ClassRoom classRoom = classRoomRepository.findBySchoolAndGradeAndClassNumber(
-			school, request.getGrade(), request.getClassNumber()
+			school, request.grade(), request.classNumber()
 		).orElseThrow(() -> new IllegalArgumentException("해당 학년 및 반 정보를 찾을 수 없습니다."));
 
 		// 5) User 엔티티 생성
 		User user = User.builder()
 			.userType(UserType.학생)
-			.name(request.getName())
-			.loginId(request.getLoginId())
+			.name(request.name())
+			.loginId(request.loginId())
 			.password(encodedPassword)
-			.birth(request.getBirth())
-			.gender(request.getGender())
+			.birth(request.birth())
+			.gender(request.gender())
 			.active(Active.활성)
 			.build();
 		User savedUser = userRepository.save(user);
@@ -66,7 +66,7 @@ public class StudentService {
 		// 4) Student 엔티티 생성
 		Student student = Student.builder()
 			.user(savedUser)
-			// .classRoom(classRoom)
+			.classRoom(classRoom)
 			.build();
 		Student savedStudent = studentRepository.save(student);
 
