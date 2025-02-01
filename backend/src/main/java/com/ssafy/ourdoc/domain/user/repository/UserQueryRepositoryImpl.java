@@ -5,12 +5,15 @@ import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.persistence.EntityManager;
 
-@RequiredArgsConstructor
 public class UserQueryRepositoryImpl implements UserQueryRepository {
 
 	private final JPAQueryFactory queryFactory;
+
+	public UserQueryRepositoryImpl(EntityManager em) {
+		this.queryFactory = new JPAQueryFactory(em);
+	}
 
 	@Override
 	public Long findTeacherIdByStudentId(Long studentId) {
