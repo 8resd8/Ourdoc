@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.domain.book;
+package com.ssafy.ourdoc.global.integation.nationallibrary.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,9 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.ssafy.ourdoc.domain.book.dto.NationalLibraryBookRequest;
-import com.ssafy.ourdoc.domain.book.dto.NationalLibraryBookResponse;
-import com.ssafy.ourdoc.domain.book.service.NationalLibraryBookService;
+import com.ssafy.ourdoc.global.integration.nationallibrary.dto.NationalLibraryBookRequest;
+import com.ssafy.ourdoc.global.integration.nationallibrary.dto.NationalLibraryBookResponse;
+import com.ssafy.ourdoc.global.integration.nationallibrary.service.NationalLibraryBookService;
 
 @SpringBootTest
 class NationalLibraryServiceTest {
@@ -33,7 +33,7 @@ class NationalLibraryServiceTest {
 		List<NationalLibraryBookResponse> books = service.parseBook(NationalLibraryBookRequest.builder()
 			.title(params.get("title"))
 			.build());
-
+		
 		System.out.println("검색된 책: " + books.get(0));
 	}
 
