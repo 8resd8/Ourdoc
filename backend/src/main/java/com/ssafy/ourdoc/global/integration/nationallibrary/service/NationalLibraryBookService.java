@@ -7,6 +7,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -120,13 +122,23 @@ public class NationalLibraryBookService {
 			String bookTitle = docObject.getString("TITLE");
 			String bookAuthor = docObject.getString("AUTHOR");
 			String genre = KDC.fromCode(docObject.getString("SUBJECT"));
+			String description = docObject.getString("BOOK_SUMMARY_URL");
 			String bookPublisher = docObject.getString("PUBLISHER");
-			String publishTime = docObject.getString("PUBLISH_PREDATE");
+			LocalDate publishTime = convertDate(docObject.getString("PUBLISH_PREDATE"));
 			String imageUrl = docObject.getString("TITLE_URL");
 
-			bookList.add(new NationalLibraryBookResponse(isbn, bookTitle, bookAuthor, genre, bookPublisher, publishTime,
-				imageUrl));
+			bookList.add(
+				new NationalLibraryBookResponse(isbn, bookTitle, bookAuthor, genre, description, bookPublisher,
+					publishTime, imageUrl));
 		}
 		return bookList;
+	}
+
+	private LocalDate convertDate(String date) {
+		if (date == null || date.isEmpty()) {
+			return null;
+		}
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		return LocalDate.parse(date, formatter);
 	}
 }

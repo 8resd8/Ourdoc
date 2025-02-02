@@ -9,8 +9,9 @@ public record NationalLibraryBookResponse(
 	String title,
 	String author,
 	String genre,
+	String description,
 	String publisher,
-	String publishTime,
+	LocalDate publishTime,
 	String imageUrl
 ) {
 	public static Book toBookEntity(NationalLibraryBookResponse response) {
@@ -19,8 +20,9 @@ public record NationalLibraryBookResponse(
 			.title(response.title())
 			.author(response.author())
 			.genre(response.genre())
+			.description(response.description())
 			.publisher(response.publisher())
-			.publishTime(response.publishTime() != null ? LocalDate.parse(response.publishTime()) : null)
+			.publishTime(response.publishTime() != null ? response.publishTime() : null)
 			.imageUrl(response.imageUrl() != null ? response.imageUrl() : null)
 			.build();
 	}
