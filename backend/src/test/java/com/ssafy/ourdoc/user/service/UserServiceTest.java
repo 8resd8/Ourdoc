@@ -24,6 +24,7 @@ import com.ssafy.ourdoc.domain.user.service.UserService;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.Gender;
 import com.ssafy.ourdoc.global.common.enums.UserType;
+import com.ssafy.ourdoc.global.exception.LoginFailedException;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -80,12 +81,11 @@ class UserServiceTest {
 		// Given: 존재하지 않는 사용자
 		given(userRepository.findByLoginId(loginRequest.loginId())).willReturn(Optional.empty());
 
-		// When: 로그인 실행
-		LoginResponse response = userService.login(loginRequest);
-
-		// Then: 로그인 실패 메시지와 401 응답 코드 확인
-		assertThat(response.resultCode()).isEqualTo("401");
-		assertThat(response.message()).isEqualTo("로그인 실패: 아이디가 존재하지 않습니다.");
+		// When & Then
+		LoginFailedException exception = assertThrows(LoginFailedException.class, () -> {
+			userService.login(loginRequest);
+		});
+		assertThat(exception.getMessage()).isEqualTo("로그인 실패: 아이디가 존재하지 않습니다.");
 	}
 
 	@Test
@@ -100,12 +100,11 @@ class UserServiceTest {
 			"wrongPassword"
 		);
 
-		// When: 로그인 실행
-		LoginResponse response = userService.login(wrongPasswordRequest);
-
-		// Then: 로그인 실패 메시지와 401 응답 코드 확인
-		assertThat(response.resultCode()).isEqualTo("401");
-		assertThat(response.message()).isEqualTo("로그인 실패: 비밀번호가 틀렸습니다.");
+		// When & Then
+		LoginFailedException exception = assertThrows(LoginFailedException.class, () -> {
+			userService.login(wrongPasswordRequest);
+		});
+		assertThat(exception.getMessage()).isEqualTo("로그인 실패: 비밀번호가 틀렸습니다.");
 	}
 
 	@Test
@@ -120,12 +119,11 @@ class UserServiceTest {
 			"password123"
 		);
 
-		// When: 로그인 실행
-		LoginResponse response = userService.login(wrongUserTypeRequest);
-
-		// Then: 로그인 실패 메시지와 401 응답 코드 확인
-		assertThat(response.resultCode()).isEqualTo("401");
-		assertThat(response.message()).isEqualTo("로그인 실패: 유저 타입이 일치하지 않습니다.");
+		// When & Then
+		LoginFailedException exception = assertThrows(LoginFailedException.class, () -> {
+			userService.login(wrongUserTypeRequest);
+		});
+		assertThat(exception.getMessage()).isEqualTo("로그인 실패: 유저 타입이 일치하지 않습니다.");
 	}
 
 	@Test
