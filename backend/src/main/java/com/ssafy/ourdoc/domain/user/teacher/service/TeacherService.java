@@ -39,23 +39,23 @@ public class TeacherService {
 	public Long signup(TeacherSignupRequest request) {
 
 		// 1) 중복 ID 체크
-		Optional<User> existingUser = userRepository.findByLoginId(request.getLoginId());
+		Optional<User> existingUser = userRepository.findByLoginId(request.loginId());
 		if (existingUser.isPresent()) {
-			throw new IllegalArgumentException("이미 존재하는 로그인ID입니다.");
+			throw new IllegalArgumentException("이미 존재하는 로그인 ID입니다.");
 		}
 
 		// 2) 비밀번호 해싱
-		String encodedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt());
+		String encodedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
 
 		// 3) User 엔티티 생성
 		User user = User.builder()
 			.userType(UserType.교사)
-			.name(request.getName())
-			.loginId(request.getLoginId())
+			.name(request.name())
+			.loginId(request.loginId())
 			.password(encodedPassword)
-			.birth(request.getBirth())
-			.gender(request.getGender())
-			.active(request.getActive())
+			.birth(request.birth())
+			.gender(request.gender())
+			.active(request.active())
 			.build();
 
 		User savedUser = userRepository.save(user);
@@ -63,8 +63,8 @@ public class TeacherService {
 		// 4) Teacher 엔티티 생성
 		Teacher teacher = Teacher.builder()
 			.user(savedUser)
-			.email(request.getEmail())
-			.phone(request.getPhone())
+			.email(request.email())
+			.phone(request.phone())
 			//                .employmentStatus(request.getEmploymentStatus())
 			//                .certificateTime(request.getCertificateTime())
 			.build();
