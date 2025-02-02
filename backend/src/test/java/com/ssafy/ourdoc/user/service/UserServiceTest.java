@@ -1,0 +1,156 @@
+package com.ssafy.ourdoc.user.service;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
+
+import java.sql.Date;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mindrot.jbcrypt.BCrypt;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
+import com.ssafy.ourdoc.domain.user.dto.LoginResponse;
+import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.repository.UserRepository;
+import com.ssafy.ourdoc.domain.user.service.UserService;
+import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.Gender;
+import com.ssafy.ourdoc.global.common.enums.UserType;
+
+@ExtendWith(MockitoExtension.class)
+class UserServiceTest {
+
+	@Mock
+	private UserRepository userRepository;
+
+	@InjectMocks
+	private UserService userService;
+
+	private User mockUser;
+	private LoginRequest loginRequest;
+
+	@BeforeEach
+	void setUp() {
+		String hashedPassword = BCrypt.hashpw("password123", BCrypt.gensalt());
+
+		mockUser = User.builder()
+			.userType(UserType.교사)
+			.name("김선생")
+			.loginId("teacher123")
+			.password(hashedPassword)
+			.birth(Date.valueOf("1985-06-15"))
+			.gender(Gender.남)
+			.active(Active.활성)
+			.build();
+
+		loginRequest = new LoginRequest(
+			UserType.교사, // userType
+			"teacher123", // loginId
+			"password123" // password
+		);
+	}
+
+	@Test
+	@DisplayName("로그인 성공")
+	void login_Success() {
+		// Given: 존재하는 사용자이며, 비밀번호가 일치하고, userType이 맞음
+		given(userRepository.findByLoginId(loginRequest.loginId())).willReturn(Optional.of(mockUser));
+
+		// When: 로그인 실행
+		LoginResponse response = userService.login(loginRequest);
+
+		// Then: 로그인 성공 메시지와 200 응답 코드 확인
+		assertThat(response.resultCode()).isEqualTo("200");
+		assertThat(response.message()).isEqualTo("로그인 성공");
+		assertThat(response.user().name()).isEqualTo(mockUser.getName());
+		assertThat(response.user().role()).isEqualTo(mockUser.getUserType().toString());
+	}
+
+	@Test
+	@DisplayName("로그인 실패 - 존재하지 않는 아이디")
+	void login_Fail_IdNotFound() {
+		// Given: 존재하지 않는 사용자
+		given(userRepository.findByLoginId(loginRequest.loginId())).willReturn(Optional.empty());
+
+		// When: 로그인 실행
+		LoginResponse response = userService.login(loginRequest);
+
+		// Then: 로그인 실패 메시지와 401 응답 코드 확인
+		assertThat(response.resultCode()).isEqualTo("401");
+		assertThat(response.message()).isEqualTo("로그인 실패: 아이디가 존재하지 않습니다.");
+	}
+
+	@Test
+	@DisplayName("로그인 실패 - 비밀번호 틀림")
+	void login_Fail_WrongPassword() {
+		// Given: 존재하는 사용자지만, 비밀번호가 다름
+		given(userRepository.findByLoginId(loginRequest.loginId())).willReturn(Optional.of(mockUser));
+
+		LoginRequest wrongPasswordRequest = new LoginRequest(
+			UserType.교사,
+			"teacher123",
+			"wrongPassword"
+		);
+
+		// When: 로그인 실행
+		LoginResponse response = userService.login(wrongPasswordRequest);
+
+		// Then: 로그인 실패 메시지와 401 응답 코드 확인
+		assertThat(response.resultCode()).isEqualTo("401");
+		assertThat(response.message()).isEqualTo("로그인 실패: 비밀번호가 틀렸습니다.");
+	}
+
+	@Test
+	@DisplayName("로그인 실패 - 유저 타입 불일치")
+	void login_Fail_WrongUserType() {
+		// Given: 존재하는 사용자지만, userType이 다름
+		given(userRepository.findByLoginId(loginRequest.loginId())).willReturn(Optional.of(mockUser));
+
+		LoginRequest wrongUserTypeRequest = new LoginRequest(
+			UserType.학생,
+			"teacher123",
+			"password123"
+		);
+
+		// When: 로그인 실행
+		LoginResponse response = userService.login(wrongUserTypeRequest);
+
+		// Then: 로그인 실패 메시지와 401 응답 코드 확인
+		assertThat(response.resultCode()).isEqualTo("401");
+		assertThat(response.message()).isEqualTo("로그인 실패: 유저 타입이 일치하지 않습니다.");
+	}
+
+	@Test
+	@DisplayName("ID 중복 체크 - 중복 존재")
+	void isLoginIdDuplicate_True() {
+		// Given: 중복되는 ID가 있음
+		given(userRepository.findByLoginId("teacher123")).willReturn(Optional.of(mockUser));
+
+		// When: 중복 체크 실행
+		boolean isDuplicate = userService.isLoginIdDuplicate("teacher123");
+
+		// Then: true 반환 확인
+		assertTrue(isDuplicate);
+	}
+
+	@Test
+	@DisplayName("ID 중복 체크 - 중복 없음")
+	void isLoginIdDuplicate_False() {
+		// Given: 중복되는 ID가 없음
+		given(userRepository.findByLoginId("newuser123")).willReturn(Optional.empty());
+
+		// When: 중복 체크 실행
+		boolean isDuplicate = userService.isLoginIdDuplicate("newuser123");
+
+		// Then: false 반환 확인
+		assertFalse(isDuplicate);
+	}
+}
