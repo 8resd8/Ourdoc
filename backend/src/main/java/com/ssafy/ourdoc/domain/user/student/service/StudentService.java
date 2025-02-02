@@ -67,13 +67,14 @@ public class StudentService {
 			.build();
 		User savedUser = userRepository.save(user);
 
-		// 4) Student 엔티티 생성
+		// 6) Student 엔티티 생성
 		Student student = Student.builder()
 			.user(savedUser)
 			.classRoom(classRoom)
 			.build();
 		Student savedStudent = studentRepository.save(student);
 
+		// 7) StudentClass 엔티티 생성
 		StudentClass studentClass = StudentClass.builder()
 			.user(savedUser)
 			.classRoom(classRoom)
