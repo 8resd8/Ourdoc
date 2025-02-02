@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.global.exception;
+package com.ssafy.ourdoc.global.common.response;
 
 import java.time.LocalDateTime;
 
