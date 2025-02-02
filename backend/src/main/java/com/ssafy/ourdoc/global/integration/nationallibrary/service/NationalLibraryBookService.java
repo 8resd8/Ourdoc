@@ -44,7 +44,7 @@ public class NationalLibraryBookService {
 			String response = getHttpResponse(params);
 			return parseBooksFromResponse(response);
 		} catch (Exception e) {
-			throw new RuntimeException("국립중앙도서관 API 호출 중 오류 발생", e);
+			throw new NationalLibraryBookFailException("국립중앙도서관 API 호출 중 오류 발생");
 		}
 	}
 
