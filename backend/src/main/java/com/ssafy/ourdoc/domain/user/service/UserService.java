@@ -9,6 +9,7 @@ import com.ssafy.ourdoc.domain.user.dto.LoginResponse.UserInfo;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.global.exception.LoginFailedException;
+import com.ssafy.ourdoc.global.util.jwt.JwtTokenProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final JwtTokenProvider jwtTokenProvider;
 
 	// 1. 사용자 로그인
 	public LoginResponse login(LoginRequest request) {
@@ -35,10 +37,14 @@ public class UserService {
 			throw new LoginFailedException("로그인 실패: 유저 타입이 일치하지 않습니다.");
 		}
 
-		// 4) 로그인 성공
+		// 4) JWT 토큰 생성
+		String token = jwtTokenProvider.createToken(user.getLoginId(), user.getUserType().toString());
+
+		// 5) 로그인 성공
 		return new LoginResponse(
 			"200",
 			"로그인 성공",
+			token,
 			new UserInfo(user.getLoginId(), user.getName(), user.getUserType().toString())
 		);
 	}
