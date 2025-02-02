@@ -25,12 +25,16 @@ import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.Gender;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.LoginFailedException;
+import com.ssafy.ourdoc.global.util.jwt.JwtTokenProvider;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
 	@Mock
 	private UserRepository userRepository;
+
+	@Mock
+	private JwtTokenProvider jwtTokenProvider;
 
 	@InjectMocks
 	private UserService userService;
@@ -64,6 +68,8 @@ class UserServiceTest {
 	void login_Success() {
 		// Given: 존재하는 사용자이며, 비밀번호가 일치하고, userType이 맞음
 		given(userRepository.findByLoginId(loginRequest.loginId())).willReturn(Optional.of(mockUser));
+		given(jwtTokenProvider.createToken(mockUser.getLoginId(), mockUser.getUserType().toString()))
+			.willReturn("mocked-jwt-token");
 
 		// When: 로그인 실행
 		LoginResponse response = userService.login(loginRequest);
