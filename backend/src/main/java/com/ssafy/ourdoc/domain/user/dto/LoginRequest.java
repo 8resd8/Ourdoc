@@ -1,10 +1,10 @@
 package com.ssafy.ourdoc.domain.user.dto;
 
-import lombok.Getter;
+import com.ssafy.ourdoc.global.common.enums.UserType;
 
-@Getter
-public class LoginRequest {
-    private String userType;  // "학생", "교사", "관리자"
-    private String loginId;   // 로그인 ID
-    private String password;  // 비밀번호
+public record LoginRequest(
+	UserType userType,  // "학생", "교사", "관리자"
+	String loginId,   // 로그인 ID
+	String password  // 비밀번호
+) {
 }
