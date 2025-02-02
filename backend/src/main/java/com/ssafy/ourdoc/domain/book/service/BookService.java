@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.book.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -60,7 +61,7 @@ public class BookService {
 
 	public BookDetailResponse getBookDetail(Long id) {
 		Book book = bookRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("해당하는 ID의 도서가 없습니다."));
+			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 		return BookDetailResponse.of(book, book.getDescription());
 	}
 
