@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 
@@ -51,10 +53,10 @@ class BookServiceTest {
 	@DisplayName("책 제목 조회 테스트")
 	void searchBookByTitle() {
 		BookRequest request = new BookRequest("홍길동전", "", "");
-		List<Book> result = bookService.searchBook(request);
+		List<BookResponse> result = bookService.searchBook(request);
 		assertThat(result.size()).isEqualTo(2);
 		result.forEach(book -> {
-			assertThat(book.getTitle()).contains("홍길동전");
+			assertThat(book.title()).contains("홍길동전");
 		});
 	}
 
@@ -62,25 +64,25 @@ class BookServiceTest {
 	@DisplayName("책 제목과 출판사 조회 테스트")
 	void searchBookByTitleAndPublisher() {
 		BookRequest request = new BookRequest("홍길동전", "", "고전문학사");
-		List<Book> result = bookService.searchBook(request);
+		List<BookResponse> result = bookService.searchBook(request);
 		assertThat(result.size()).isEqualTo(1);
-		Book book = result.get(0);
-		assertThat(book.getTitle()).isEqualTo("홍길동전");
-		assertThat(book.getPublisher()).isEqualTo("고전문학사");
+		BookResponse book = result.get(0);
+		assertThat(book.title()).isEqualTo("홍길동전");
+		assertThat(book.publisher()).isEqualTo("고전문학사");
 	}
 
 	@Test
 	@DisplayName("책 상세 조회 성공")
 	void getBookDetailSuccess() {
-		Book result = bookService.getBookDetail(books.get(0).getId());
+		BookDetailResponse result = bookService.getBookDetail(books.get(0).getId());
 		assertThat(result).isNotNull();
-		assertThat(result.getTitle()).isEqualTo("홍길동전");
+		assertThat(result.title()).isEqualTo("홍길동전");
 	}
 
 	@Test
 	@DisplayName("책 상세 조회 실패_책 없음")
 	void getBookDetailFail() {
-		Book result = bookService.getBookDetail(999L);
+		BookDetailResponse result = bookService.getBookDetail(999L);
 		assertThat(result).isNull();
 	}
 }

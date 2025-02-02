@@ -1,10 +1,17 @@
 package com.ssafy.ourdoc.domain.book.service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.global.integration.nationallibrary.dto.NationalLibraryBookResponse;
@@ -26,22 +33,41 @@ public class BookService {
 		bookRepository.save(book);
 	}
 
-	public List<Book> searchBook(BookRequest request) {
-		String title = request.title().isEmpty() ? null : request.title();
-		String author = request.author().isEmpty() ? null : request.author();
-		String publisher = request.publisher().isEmpty() ? null : request.publisher();
-
-		List<Book> books = bookRepository.findByTitleAndAuthorAndPublisher(title, author, publisher);
+	public List<BookResponse> searchBook(BookRequest request) {
+		List<Book> books = bookRepository.findByTitleContainingAndAuthorContainingAndPublisherContaining(
+			request.title(), request.author(), request.publisher());
 		if (books.isEmpty()) {
 			List<NationalLibraryBookResponse> externalBooks = nationalLibraryBookService.parseBook(request);
-			externalBooks.forEach(response -> registerBook(NationalLibraryBookResponse.toBookEntity(response)));
 
-			books = bookRepository.findByTitleAndAuthorAndPublisher(title, author, publisher);
+			List<NationalLibraryBookResponse> uniqueBooks = externalBooks.stream()
+				.filter(distinctByKey(NationalLibraryBookResponse::isbn))
+				.toList();
+			List<Book> newBooks = uniqueBooks.stream()
+				.filter(response -> bookRepository.findByIsbn(response.isbn()).isEmpty())
+				.map(NationalLibraryBookResponse::toBookEntity)
+				.collect(Collectors.toList());
+
+			if (!newBooks.isEmpty()) {
+				bookRepository.saveAll(newBooks);
+			}
+
+			books = bookRepository.findByTitleContainingAndAuthorContainingAndPublisherContaining(
+				request.title(), request.author(), request.publisher());
 		}
-		return books;
+
+		return books.stream()
+			.map(BookResponse::of)
+			.collect(Collectors.toList());
 	}
 
-	public Book getBookDetail(Long id) {
-		return bookRepository.findById(id).orElse(null);
+	public BookDetailResponse getBookDetail(Long id) {
+		Book book = bookRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("해당하는 ID의 도서가 없습니다."));
+		return BookDetailResponse.of(book, book.getDescription());
+	}
+
+	private static <T> Predicate<T> distinctByKey(Function<T, Object> keyExtractor) {
+		Set<Object> seen = ConcurrentHashMap.newKeySet();
+		return t -> seen.add(keyExtractor.apply(t));
 	}
 }
