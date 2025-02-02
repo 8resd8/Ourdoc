@@ -4,12 +4,14 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
@@ -20,6 +22,7 @@ import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import jakarta.transaction.Transactional;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @Transactional
 class BookServiceTest {
 
@@ -82,7 +85,7 @@ class BookServiceTest {
 	@Test
 	@DisplayName("책 상세 조회 실패_책 없음")
 	void getBookDetailFail() {
-		BookDetailResponse result = bookService.getBookDetail(999L);
-		assertThat(result).isNull();
+		assertThatThrownBy(() -> bookService.getBookDetail(999L)).isInstanceOf(NoSuchElementException.class)
+			.hasMessage("해당하는 ID의 도서가 없습니다.");
 	}
 }
