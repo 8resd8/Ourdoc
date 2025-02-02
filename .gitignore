@@ -172,3 +172,4 @@ src/main/generated
 .gradle/
 backend/gradle/
 backend/src/main/resources/secret.yml
+backend/*.pem
