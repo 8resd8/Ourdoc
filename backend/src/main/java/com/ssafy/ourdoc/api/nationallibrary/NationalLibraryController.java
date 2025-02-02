@@ -1,6 +1,5 @@
 package com.ssafy.ourdoc.api.nationallibrary;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ public class NationalLibraryController {
 
 	@GetMapping("/book")
 	public ResponseEntity<List<NationalLibraryBookResponse>> getNationalLibrary(
-		@RequestBody BookRequest nationalLibraryBookRequest) throws IOException {
+		@RequestBody BookRequest nationalLibraryBookRequest) {
 		List<NationalLibraryBookResponse> books = nationalLibraryService.parseBook(nationalLibraryBookRequest);
 		return ResponseEntity.ok(books);
 	}
