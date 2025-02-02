@@ -34,8 +34,7 @@ public class BookService {
 	}
 
 	public List<BookResponse> searchBook(BookRequest request) {
-		List<Book> books = bookRepository.findByTitleContainingAndAuthorContainingAndPublisherContaining(
-			request.title(), request.author(), request.publisher());
+		List<Book> books = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		if (books.isEmpty()) {
 			List<NationalLibraryBookResponse> externalBooks = nationalLibraryBookService.parseBook(request);
 
@@ -51,8 +50,7 @@ public class BookService {
 				bookRepository.saveAll(newBooks);
 			}
 
-			books = bookRepository.findByTitleContainingAndAuthorContainingAndPublisherContaining(
-				request.title(), request.author(), request.publisher());
+			books = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		}
 
 		return books.stream()
