@@ -1,12 +1,16 @@
 package com.ssafy.ourdoc.domain.debate.entity;
 
+import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -24,6 +28,10 @@ public class Room extends BaseTimeEntity {
 	@Column(name = "room_id", unique = true, nullable = false)
 	private Long id;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
+
 	@Column(name = "title", nullable = false)
 	private String title;
 
@@ -37,10 +45,12 @@ public class Room extends BaseTimeEntity {
 	private int current_people;
 
 	@Builder
-	public Room(String title, String password, int max_people, int current_people) {
+	public Room(User user, String title, String password, int max_people, int current_people) {
+		this.user = user;
 		this.title = title;
 		this.password = password;
 		this.max_people = max_people;
 		this.current_people = current_people;
 	}
+
 }
