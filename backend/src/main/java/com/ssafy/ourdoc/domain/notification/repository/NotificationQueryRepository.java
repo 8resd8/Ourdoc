@@ -12,4 +12,6 @@ public interface NotificationQueryRepository {
 	List<NotificationDto> findAllConditionByUserId(Long userId, NotificationConditionRequest request,
 		Pageable pageable);
 
+	NotificationDto findByNotificationId(Long loginUserId, Long notificationId);
+
 }
