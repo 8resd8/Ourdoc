@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.ssafy.ourdoc.global.filter.JwtAuthenticationFilter;
-import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import io.jsonwebtoken.Claims;
 
@@ -27,6 +26,9 @@ class JwtAuthenticationFilterTest {
 
 	@Mock
 	private JwtUtil jwtUtil;
+
+	@Mock
+	private JwtBlacklistService blacklistService;
 
 	@InjectMocks
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -44,6 +46,7 @@ class JwtAuthenticationFilterTest {
 		// Given: 유효한 JWT 토큰
 		String validToken = "Bearer valid.jwt.token";
 		given(jwtUtil.validateToken("valid.jwt.token")).willReturn(true);
+		given(blacklistService.isBlacklisted("valid.jwt.token")).willReturn(false);
 
 		// 📌 Claims Mocking 추가 (여기가 핵심)
 		Claims mockClaims = mock(Claims.class);
@@ -70,6 +73,7 @@ class JwtAuthenticationFilterTest {
 		// Given
 		String invalidToken = "Bearer invalid.jwt.token";
 		given(jwtUtil.validateToken("invalid.jwt.token")).willReturn(false);
+		given(blacklistService.isBlacklisted("invalid.jwt.token")).willReturn(false);
 
 		// When & Then
 		mockMvc.perform(get("/users/test")
@@ -82,6 +86,9 @@ class JwtAuthenticationFilterTest {
 	void malformedTokenRequest_Failure() throws Exception {
 		// Given
 		String malformedToken = "InvalidTokenFormat";
+
+		// ✅ lenient()로 블랙리스트 조회의 예상치 못한 호출을 무시
+		lenient().when(blacklistService.isBlacklisted(anyString())).thenReturn(false);
 
 		// When & Then
 		mockMvc.perform(get("/users/test")
