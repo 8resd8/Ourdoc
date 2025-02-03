@@ -66,7 +66,7 @@ public class NotificationQueryRepositoryImplTest {
 	}
 
 	@Test
-	void 안읽은독서록조회() {
+	void 안읽은독서록알림조회() {
 		notification = NotificationSample.notification(senderUser, 독서록, "독서록알림");
 		notificationRepository.save(notification);
 
@@ -88,7 +88,7 @@ public class NotificationQueryRepositoryImplTest {
 	}
 
 	@Test
-	void 안읽은가입조회() {
+	void 안읽은가입알림조회() {
 		notification = NotificationSample.notification(senderUser, 가입, "가입알림");
 		notificationRepository.save(notification);
 
