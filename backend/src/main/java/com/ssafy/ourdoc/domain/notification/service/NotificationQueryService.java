@@ -27,4 +27,8 @@ public class NotificationQueryService {
 
 		return new NotificationResponse(notificationDtoList);
 	}
+
+	public NotificationDto getNotification(long loginUserId, Long notificationId) {
+		return notificationQueryRepository.findByNotificationId(loginUserId, notificationId);
+	}
 }
