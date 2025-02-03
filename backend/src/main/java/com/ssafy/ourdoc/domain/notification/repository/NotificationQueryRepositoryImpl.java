@@ -47,6 +47,19 @@ public class NotificationQueryRepositoryImpl implements NotificationQueryReposit
 			.fetch();
 	}
 
+	@Override
+	public NotificationDto findByNotificationId(Long loginUserId, Long notificationId) {
+		return queryFactory
+			.select(Projections.constructor(NotificationDto.class,
+				notification.id,
+				notification.notificationType,
+				notification.content,
+				notification.createdAt))
+			.from(notification)
+			.where(notification.id.eq(notificationId), notification.id.eq(loginUserId))
+			.fetchOne();
+	}
+
 	private BooleanExpression typeFilter(NotificationType type) {
 		return type == null ? null : notification.notificationType.eq(type);
 	}
