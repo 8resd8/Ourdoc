@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.ssafy.ourdoc.domain.notification.dto.NotificationResponse;
+import com.ssafy.ourdoc.domain.notification.dto.NotificationDto;
 import com.ssafy.ourdoc.domain.notification.entity.Notification;
 import com.ssafy.ourdoc.domain.notification.exception.SubscribeException;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
@@ -29,8 +29,7 @@ public class NotificationService {
 	private final ConcurrentHashMap<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
 	// 알림 구독
-	public SseEmitter subscribe() {
-		Long userId = 8L; // 로그인 한 사용자 정보 토큰에서 가져오기. (임시 하드코딩)
+	public SseEmitter subscribe(Long userId) {
 		SseEmitter emitter = new SseEmitter(TIMEOUT);
 
 		// 하트비트 설정
@@ -66,15 +65,11 @@ public class NotificationService {
 	}
 
 	// 알림 전송
-	public NotificationResponse sendNotification(NotificationType type, String content) {
-		Long userId = 8L;  // 로그인한 사용자 ID (임시 하드코딩)
-
-		// 알림 전송 성공 시에만 DB 저장 및 ID 반환
+	public NotificationDto sendNotification(Long userId, NotificationType type, String content) {
 		Notification notification = notificationHistoryService.saveHistory(userId, type, content);
-
 		sendToEmitters(userId, notification);
 
-		return new NotificationResponse(notification.getId(), type, content, notification.getCreatedAt());
+		return new NotificationDto(notification.getId(), type, content, notification.getCreatedAt());
 	}
 
 	private void sendToEmitters(Long userId, Notification notification) {
@@ -84,7 +79,7 @@ public class NotificationService {
 			throw new SubscribeException("구독을 먼저 해야 알림을 받을 수 있습니다.");
 		}
 
-		NotificationResponse response = new NotificationResponse(
+		NotificationDto response = new NotificationDto(
 			notification.getId(),
 			notification.getNotificationType(),
 			notification.getContent(),

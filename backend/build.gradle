@@ -77,6 +77,9 @@ dependencies {
 
     // Redis
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '3.4.0'
+
+    // 테스트 객체 생성 라이브러리
+    testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:1.1.8")
 }
 
 
