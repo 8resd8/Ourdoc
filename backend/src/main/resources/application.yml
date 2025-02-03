@@ -11,6 +11,11 @@ spring:
     username: ${database.name}
     password: ${database.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: ${redis.host}
+      port: ${redis.port}
+      timeout: ${redis.timeout}
 
   jpa:
     hibernate:
