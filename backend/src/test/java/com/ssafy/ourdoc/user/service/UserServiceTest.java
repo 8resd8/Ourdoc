@@ -18,14 +18,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
 import com.ssafy.ourdoc.domain.user.dto.LoginResponse;
+import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.service.UserService;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.Gender;
 import com.ssafy.ourdoc.global.common.enums.UserType;
-import com.ssafy.ourdoc.global.exception.LoginFailedException;
-import com.ssafy.ourdoc.global.util.jwt.JwtTokenProvider;
+import com.ssafy.ourdoc.global.exception.UserFailedException;
+import com.ssafy.ourdoc.global.util.JwtUtil;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -34,7 +35,7 @@ class UserServiceTest {
 	private UserRepository userRepository;
 
 	@Mock
-	private JwtTokenProvider jwtTokenProvider;
+	private JwtUtil jwtUtil;
 
 	@InjectMocks
 	private UserService userService;
@@ -68,7 +69,7 @@ class UserServiceTest {
 	void login_Success() {
 		// Given: 존재하는 사용자이며, 비밀번호가 일치하고, userType이 맞음
 		given(userRepository.findByLoginId(loginRequest.loginId())).willReturn(Optional.of(mockUser));
-		given(jwtTokenProvider.createToken(mockUser.getLoginId(), mockUser.getUserType().toString()))
+		given(jwtUtil.createToken(mockUser.getLoginId(), mockUser.getUserType().toString()))
 			.willReturn("mocked-jwt-token");
 
 		// When: 로그인 실행
@@ -88,7 +89,7 @@ class UserServiceTest {
 		given(userRepository.findByLoginId(loginRequest.loginId())).willReturn(Optional.empty());
 
 		// When & Then
-		LoginFailedException exception = assertThrows(LoginFailedException.class, () -> {
+		UserFailedException exception = assertThrows(UserFailedException.class, () -> {
 			userService.login(loginRequest);
 		});
 		assertThat(exception.getMessage()).isEqualTo("로그인 실패: 아이디가 존재하지 않습니다.");
@@ -107,7 +108,7 @@ class UserServiceTest {
 		);
 
 		// When & Then
-		LoginFailedException exception = assertThrows(LoginFailedException.class, () -> {
+		UserFailedException exception = assertThrows(UserFailedException.class, () -> {
 			userService.login(wrongPasswordRequest);
 		});
 		assertThat(exception.getMessage()).isEqualTo("로그인 실패: 비밀번호가 틀렸습니다.");
@@ -126,7 +127,7 @@ class UserServiceTest {
 		);
 
 		// When & Then
-		LoginFailedException exception = assertThrows(LoginFailedException.class, () -> {
+		UserFailedException exception = assertThrows(UserFailedException.class, () -> {
 			userService.login(wrongUserTypeRequest);
 		});
 		assertThat(exception.getMessage()).isEqualTo("로그인 실패: 유저 타입이 일치하지 않습니다.");
@@ -157,4 +158,36 @@ class UserServiceTest {
 		// Then: false 반환 확인
 		assertFalse(isDuplicate);
 	}
+
+	@Test
+	@DisplayName("로그아웃 성공")
+	void logout_Success() {
+		// Given: 유효한 토큰
+		String validToken = jwtUtil.createToken(mockUser.getLoginId(), mockUser.getUserType().toString());
+		given(jwtUtil.validateToken(validToken)).willReturn(true);
+
+		// When: 로그아웃 실행
+		LogoutResponse response = userService.logout(validToken);
+
+		// Then: 로그아웃 성공 응답 확인
+		assertThat(response.resultCode()).isEqualTo("200");
+		assertThat(response.message()).isEqualTo("로그아웃 성공");
+	}
+
+	@Test
+	@DisplayName("로그아웃 실패 - 유효하지 않은 토큰")
+	void logout_Fail_InvalidToken() {
+		// Given: 유효하지 않은 토큰
+		String invalidToken = "invalid.token.value";
+		given(jwtUtil.validateToken(invalidToken)).willReturn(false);
+
+		// When & Then: 로그아웃 실패 예외 확인
+		UserFailedException exception = assertThrows(
+			UserFailedException.class,
+			() -> userService.logout(invalidToken)
+		);
+
+		assertThat(exception.getMessage()).isEqualTo("로그아웃 실패: 유효하지 않은 토큰입니다.");
+	}
+
 }
