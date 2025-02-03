@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
-public record NotificationResponse(
+public record NotificationDto(
 	Long notificationId,
 	NotificationType type,
 	String content,
