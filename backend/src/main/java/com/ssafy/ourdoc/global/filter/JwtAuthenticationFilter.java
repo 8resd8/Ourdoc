@@ -5,9 +5,10 @@ import java.io.IOException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.ssafy.ourdoc.global.util.jwt.JwtTokenProvider;
+import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +19,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-	private final JwtTokenProvider jwtTokenProvider;
+	private final JwtUtil jwtUtil;
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		String path = request.getRequestURI();
+		return path.startsWith("/users/signin") || path.startsWith("/teachers/signup") || path.startsWith("/students/signup");
+	}
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -26,17 +33,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		String token = extractToken(request);
 
-		if (token != null && jwtTokenProvider.validateToken(token)) {
-			Claims claims = jwtTokenProvider.getClaims(token);
+		// 토큰이 없거나, 유효하지 않다면 401 반환
+		if (token == null || !jwtUtil.validateToken(token)) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid or missing token");
+			return;
+		}
+
+		try {
+			Claims claims = jwtUtil.getClaims(token);
 			String userId = claims.getSubject();
 			String role = claims.get("role", String.class);
 
-			// JWT에서 추출한 정보를 활용하여 SecurityContext에 인증 정보를 저장하거나 처리 가능
+			// JWT에서 추출한 정보를 Request 속성으로 저장
 			request.setAttribute("userId", userId);
 			request.setAttribute("role", role);
-		}
 
-		filterChain.doFilter(request, response);
+			// 다음 필터로 요청을 전달
+			filterChain.doFilter(request, response);
+
+		} catch (JwtException e) {
+			// JWT 검증 실패 시 401 반환
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid token");
+		}
 	}
 
 	private String extractToken(HttpServletRequest request) {
