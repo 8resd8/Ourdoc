@@ -29,8 +29,7 @@ public class NotificationService {
 	private final ConcurrentHashMap<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
 	// 알림 구독
-	public SseEmitter subscribe() {
-		Long userId = 8L; // 로그인 한 사용자 정보 토큰에서 가져오기. (임시 하드코딩)
+	public SseEmitter subscribe(Long userId) {
 		SseEmitter emitter = new SseEmitter(TIMEOUT);
 
 		// 하트비트 설정
@@ -66,12 +65,8 @@ public class NotificationService {
 	}
 
 	// 알림 전송
-	public NotificationDto sendNotification(NotificationType type, String content) {
-		Long userId = 8L;  // 로그인한 사용자 ID (임시 하드코딩)
-
-		// 알림 전송 성공 시에만 DB 저장 및 ID 반환
+	public NotificationDto sendNotification(Long userId, NotificationType type, String content) {
 		Notification notification = notificationHistoryService.saveHistory(userId, type, content);
-
 		sendToEmitters(userId, notification);
 
 		return new NotificationDto(notification.getId(), type, content, notification.getCreatedAt());
