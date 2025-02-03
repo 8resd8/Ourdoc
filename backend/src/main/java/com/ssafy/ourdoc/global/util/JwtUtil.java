@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import com.ssafy.ourdoc.global.config.JwtConfig;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -41,18 +40,14 @@ public class JwtUtil {
 			.compact();
 	}
 
-	// JWT 토큰 검증
 	public boolean validateToken(String token) {
-		try {
-			Jwts.parserBuilder()
-				.setSigningKey(getSigningKey())
-				.build()
-				.parseClaimsJws(token);
-			return true; // 토큰이 유효한 경우
-		} catch (JwtException | IllegalArgumentException e) {
-			log.error("JWT 검증 실패: {}", e.getMessage());
-			return false; // 토큰이 유효하지 않은 경우
-		}
+		log.info("🔎 검증할 토큰: {}", token);
+		Jwts.parserBuilder()
+			.setSigningKey(getSigningKey())
+			.build()
+			.parseClaimsJws(token);  // ❌ 예외 발생 시 catch 하지 않음
+		log.info("✅ 토큰 검증 성공!");
+		return true;
 	}
 
 	// JWT 토큰에서 Claims 정보 추출
