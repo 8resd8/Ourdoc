@@ -135,4 +135,25 @@ public class NotificationQueryRepositoryImplTest {
 		assertThat(unreadNotifications2).hasSize(2);
 	}
 
+	@Test
+	@DisplayName("단일알림 상세 조회")
+	void findByNotificationIdTest() {
+		// 학생이 교사에게 알림 보내기
+		Notification notification = NotificationSample.notification(senderUser, 가입, "가입알림");
+		notificationRepository.save(notification);
+
+		NotificationRecipient recipient = NotificationRecipientSample.notificationRecipient(notification, recipientUser);
+		notificationRecipientRepository.save(recipient);
+
+
+		NotificationDto findNotification = notificationQueryRepository.
+			findByNotificationId(recipient.getRecipient().getId(), notification.getId());
+
+		assertThat(findNotification).isNotNull();
+		assertThat(findNotification.content()).isEqualTo("가입알림");
+		assertThat(findNotification.type()).isEqualTo(가입);
+		assertThat(notification.getSender()).isEqualTo(senderUser);
+	}
+
+
 }
