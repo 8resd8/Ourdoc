@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.ssafy.ourdoc.global.util.JwtBlacklistService;
 import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import io.jsonwebtoken.Claims;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
+	private final JwtBlacklistService blacklistService;
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -32,6 +34,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		throws ServletException, IOException {
 
 		String token = extractToken(request);
+
+		// 블랙리스트에 있는 토큰이면 401 응답
+		if (blacklistService.isBlacklisted(token)) {
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Token is blacklisted");
+			return;
+		}
 
 		// 토큰이 없거나, 유효하지 않다면 401 반환
 		if (token == null || !jwtUtil.validateToken(token)) {

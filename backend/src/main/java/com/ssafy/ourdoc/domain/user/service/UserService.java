@@ -10,6 +10,7 @@ import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.global.exception.UserFailedException;
+import com.ssafy.ourdoc.global.util.JwtBlacklistService;
 import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final JwtUtil jwtUtil;
+	private final JwtBlacklistService blacklistService;
 
 	// 1. 사용자 로그인
 	public LoginResponse login(LoginRequest request) {
@@ -63,8 +65,13 @@ public class UserService {
 			throw new UserFailedException("로그아웃 실패: 유효하지 않은 토큰입니다.");
 		}
 
-		// 2) 토큰이 유효하다면 로그아웃 처리 (서버에서는 상태를 저장하지 않으므로 클라이언트 측에서 토큰 삭제)
-		// 추가로, 필요하다면 DB나 Redis에서 이 토큰을 블랙리스트에 추가하거나 무효화 처리 가능
+		// 2) 토큰 만료 시간 계산
+		long expirationMillis = jwtUtil.getClaims(token).getExpiration().getTime() - System.currentTimeMillis();
+
+		// 3) 블랙리스트에 추가
+		blacklistService.addToBlacklist(token, expirationMillis);
+
+		// 4) 로그아웃 처리 완료
 		return new LogoutResponse("200", "로그아웃 성공");
 	}
 }

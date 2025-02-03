@@ -1,7 +1,5 @@
 package com.ssafy.ourdoc.domain.user.controller;
 
-import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,8 +56,8 @@ public class UserController {
 
 	// 3. 로그아웃
 	@PostMapping("/signout")
-	public ResponseEntity<LogoutResponse> logout(@RequestBody Map<String, String> request) {
-		String token = request.get("token");
+	public ResponseEntity<LogoutResponse> logout(HttpServletRequest request) {
+		String token = jwtUtil.resolveToken(request);
 		LogoutResponse response = userService.logout(token);
 
 		// resultCode = "401"이면 Unauthorized(401), 그 외는 200
