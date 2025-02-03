@@ -69,6 +69,9 @@ dependencies {
     // ZXing (for QR 코드 생성)
     implementation 'com.google.zxing:core:3.5.1'
     implementation 'com.google.zxing:javase:3.5.1'
+
+    // 테스트 객체 생성 라이브러리
+    testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:1.1.8")
 }
 
 
