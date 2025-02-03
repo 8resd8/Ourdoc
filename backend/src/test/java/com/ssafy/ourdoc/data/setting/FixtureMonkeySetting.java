@@ -3,7 +3,7 @@ package com.ssafy.ourdoc.data.setting;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.PriorityConstructorArbitraryIntrospector;
 
-public class FixtureMonkeyConfig {
+public class FixtureMonkeySetting {
 
 	private static final FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
 		.defaultNotNull(true)
