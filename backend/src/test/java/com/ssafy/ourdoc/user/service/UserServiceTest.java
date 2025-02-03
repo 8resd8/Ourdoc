@@ -26,7 +26,10 @@ import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.Gender;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.UserFailedException;
+import com.ssafy.ourdoc.global.util.JwtBlacklistService;
 import com.ssafy.ourdoc.global.util.JwtUtil;
+
+import io.jsonwebtoken.Claims;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -36,6 +39,9 @@ class UserServiceTest {
 
 	@Mock
 	private JwtUtil jwtUtil;
+
+	@Mock
+	private JwtBlacklistService blacklistService;
 
 	@InjectMocks
 	private UserService userService;
@@ -165,6 +171,14 @@ class UserServiceTest {
 		// Given: 유효한 토큰
 		String validToken = jwtUtil.createToken(mockUser.getLoginId(), mockUser.getUserType().toString());
 		given(jwtUtil.validateToken(validToken)).willReturn(true);
+
+		// ✅ Claims 객체 Mocking (여기가 핵심!)
+		Claims mockClaims = mock(Claims.class);
+		given(mockClaims.getExpiration()).willReturn(new Date(System.currentTimeMillis() + 60000)); // 1분 후 만료
+		given(jwtUtil.getClaims(validToken)).willReturn(mockClaims);
+
+		// ✅ JwtBlacklistService Mocking (여기가 핵심!)
+		doNothing().when(blacklistService).addToBlacklist(eq(validToken), anyLong());
 
 		// When: 로그아웃 실행
 		LogoutResponse response = userService.logout(validToken);
