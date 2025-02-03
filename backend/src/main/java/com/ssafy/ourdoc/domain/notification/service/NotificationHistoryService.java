@@ -75,7 +75,7 @@ public class NotificationHistoryService {
 			throw new ForbiddenException("해당 알림을 읽을 권한이 없습니다.");
 		}
 
-		recipient.markAsRead(LocalDateTime.now());
+		recipient.markAsRead();
 	}
 
 	private boolean isValidNotification(User sender, User recipient) {
