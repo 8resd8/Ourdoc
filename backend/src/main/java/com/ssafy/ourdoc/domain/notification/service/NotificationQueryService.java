@@ -6,8 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.notification.dto.NotificationConditionRequest;
+import com.ssafy.ourdoc.domain.notification.dto.NotificationDetailDto;
 import com.ssafy.ourdoc.domain.notification.dto.NotificationDto;
-import com.ssafy.ourdoc.domain.notification.dto.NotificationResponse;
+import com.ssafy.ourdoc.domain.notification.dto.NotificationListResponse;
 import com.ssafy.ourdoc.domain.notification.repository.NotificationQueryRepository;
 
 import jakarta.transaction.Transactional;
@@ -20,15 +21,15 @@ public class NotificationQueryService {
 
 	private final NotificationQueryRepository notificationQueryRepository;
 
-	public NotificationResponse getUnreadNotifications(Long userId, NotificationConditionRequest request,
+	public NotificationListResponse getUnreadNotifications(Long userId, NotificationConditionRequest request,
 		Pageable pageable) {
 		List<NotificationDto> notificationDtoList = notificationQueryRepository.
 			findAllConditionByUserId(userId, request, pageable);
 
-		return new NotificationResponse(notificationDtoList);
+		return new NotificationListResponse(notificationDtoList);
 	}
 
-	public NotificationDto getNotification(long loginUserId, Long notificationId) {
+	public NotificationDetailDto getNotification(long loginUserId, Long notificationId) {
 		return notificationQueryRepository.findByNotificationId(loginUserId, notificationId);
 	}
 }
