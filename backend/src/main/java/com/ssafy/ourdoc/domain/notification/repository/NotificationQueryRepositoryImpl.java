@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.notification.repository;
 
 import static com.ssafy.ourdoc.domain.notification.entity.QNotification.*;
+import static com.ssafy.ourdoc.domain.notification.entity.QNotificationRecipient.*;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class NotificationQueryRepositoryImpl implements NotificationQueryReposit
 	@Override
 	public List<NotificationDto> findAllConditionByUserId(Long userId, NotificationConditionRequest condition,
 		Pageable pageable) {
-		QNotificationRecipient recipient = QNotificationRecipient.notificationRecipient;
+		QNotificationRecipient recipient = notificationRecipient;
 
 		return queryFactory
 			.select(Projections.constructor(NotificationDto.class,
@@ -56,8 +57,19 @@ public class NotificationQueryRepositoryImpl implements NotificationQueryReposit
 				notification.content,
 				notification.createdAt))
 			.from(notification)
-			.where(notification.id.eq(notificationId), notification.id.eq(loginUserId))
+			.join(notificationRecipient).on(notification.id.eq(notificationRecipient.notification.id))
+			.where(
+				notificationIdEquals(notificationId), // 알림 id 일치여부
+				recipientEquals(loginUserId)) // 알림수신자: 로그인유저
 			.fetchOne();
+	}
+
+	private BooleanExpression notificationIdEquals(Long notificationId) {
+		return notificationRecipient.notification.id.eq(notificationId);
+	}
+
+	private BooleanExpression recipientEquals(Long loginUserId) {
+		return notificationRecipient.recipient.id.eq(loginUserId);
 	}
 
 	private BooleanExpression typeFilter(NotificationType type) {
