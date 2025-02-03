@@ -49,7 +49,7 @@ public class UserController {
 
 	// 2. ID 중복 체크
 	@GetMapping("/{loginId}")
-	public ResponseEntity<Boolean> checkDuplicateLoginId(@PathVariable String loginId) {
+	public ResponseEntity<Boolean> checkDuplicateLoginId(@PathVariable("loginId") String loginId) {
 		boolean isDuplicate = userService.isLoginIdDuplicate(loginId);
 		return ResponseEntity.ok(isDuplicate);
 	}
