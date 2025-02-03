@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.ssafy.ourdoc.domain.notification.dto.NotificationConditionRequest;
+import com.ssafy.ourdoc.domain.notification.dto.NotificationDto;
 import com.ssafy.ourdoc.domain.notification.dto.NotificationResponse;
 import com.ssafy.ourdoc.domain.notification.service.NotificationHistoryService;
 import com.ssafy.ourdoc.domain.notification.service.NotificationQueryService;
@@ -44,10 +45,16 @@ public class NotificationController {
 	}
 
 	@GetMapping
-	public NotificationResponse getNotification(@ModelAttribute NotificationConditionRequest request,
+	public NotificationResponse getNotifications(@ModelAttribute NotificationConditionRequest request,
 		Pageable pageable) {
 		long loginUserId = 8L; // 로그인 한 정보에서 추출
 		return notificationQueryService.getUnreadNotifications(loginUserId, request, pageable);
+	}
+
+	@GetMapping("{notificationId}")
+	public NotificationDto getNotification(@PathVariable("notificationId") Long notificationId) {
+		long loginUserId = 8L; // 로그인 한 정보에서 추출
+		return notificationQueryService.getNotification(loginUserId, notificationId);
 	}
 
 	@PostMapping("/send")
