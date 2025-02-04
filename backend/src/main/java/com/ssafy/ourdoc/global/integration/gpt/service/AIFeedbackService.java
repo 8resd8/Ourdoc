@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.global.integration.gpt.service;
 
+import java.util.Optional;
+
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.stereotype.Service;
 
@@ -35,11 +37,14 @@ public class AIFeedbackService {
 	}
 
 	private int getStudentGrade(User user) {
-		StudentClass studentClass = getStudentClass(user);
-		return studentClass.getClassRoom().getGrade();
+		Optional<StudentClass> studentClass = getStudentClass(user);
+		if (studentClass.isEmpty()) {
+			return 1;
+		}
+		return studentClass.get().getClassRoom().getGrade();
 	}
 
-	private StudentClass getStudentClass(User user) {
-		return studentClassRepository.findStudentClassByUserId(user.getId()).orElseThrow();
+	private Optional<StudentClass> getStudentClass(User user) {
+		return studentClassRepository.findStudentClassByUserId(user.getId());
 	}
 }
