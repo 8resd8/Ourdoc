@@ -16,6 +16,7 @@ spring:
       host: ${redis.host}
       port: ${redis.port}
       timeout: ${redis.timeout}
+      password: ${redis.password}
 
   jpa:
     hibernate:
