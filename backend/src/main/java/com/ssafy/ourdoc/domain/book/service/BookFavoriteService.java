@@ -11,7 +11,6 @@ import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
 import com.ssafy.ourdoc.domain.book.repository.BookFavoriteRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
-import com.ssafy.ourdoc.global.annotation.Login;
 
 import groovy.util.logging.Slf4j;
 import jakarta.transaction.Transactional;
@@ -25,7 +24,7 @@ public class BookFavoriteService {
 	private final BookRepository bookRepository;
 	private final BookFavoriteRepository bookFavoriteRepository;
 
-	public void addBookFavorite(BookFavoriteRequest request, @Login User user) {
+	public void addBookFavorite(BookFavoriteRequest request, User user) {
 		Book book = bookRepository.findById(request.bookId())
 			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 		if (bookFavoriteRepository.existsByBookAndUser(book, user)) {
@@ -35,7 +34,7 @@ public class BookFavoriteService {
 		bookFavoriteRepository.save(bookFavorite);
 	}
 
-	public void deleteBookFavorite(BookFavoriteRequest request, @Login User user) {
+	public void deleteBookFavorite(BookFavoriteRequest request, User user) {
 		Book book = bookRepository.findById(request.bookId())
 			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 		BookFavorite bookFavorite = bookFavoriteRepository.findByBookAndUser(book, user)
@@ -43,7 +42,7 @@ public class BookFavoriteService {
 		bookFavoriteRepository.delete(bookFavorite);
 	}
 
-	public List<BookFavorite> getBookFavorites(@Login User user) {
+	public List<BookFavorite> getBookFavorites(User user) {
 		return bookFavoriteRepository.findByUser(user);
 	}
 }
