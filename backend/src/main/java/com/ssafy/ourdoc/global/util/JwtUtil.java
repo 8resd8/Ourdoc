@@ -35,11 +35,12 @@ public class JwtUtil {
 			.setSubject(userId) // 사용자 ID 저장
 			.claim("role", role) // 사용자 권한 저장
 			.setIssuedAt(new Date()) // 토큰 발급 시간
-			.setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getExpiration())) // 만료 시간
+			.setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getAccessExpiration())) // 만료 시간
 			.signWith(getSigningKey(), SignatureAlgorithm.HS256) // 서명 알고리즘
 			.compact();
 	}
 
+	// JWT 토큰 검증
 	public boolean validateToken(String token) {
 		log.info("🔎 검증할 토큰: {}", token);
 		Jwts.parserBuilder()
@@ -71,6 +72,16 @@ public class JwtUtil {
 			return bearerToken.substring(7);
 		}
 		return null;
+	}
+
+	// JWT Refresh Token 생성
+	public String createRefreshToken(String userId) {
+		return Jwts.builder()
+			.setSubject(userId)
+			.setIssuedAt(new Date())
+			.setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getRefreshExpiration())) // Refresh 만료 시간
+			.signWith(getSigningKey(), SignatureAlgorithm.HS256)
+			.compact();
 	}
 
 }
