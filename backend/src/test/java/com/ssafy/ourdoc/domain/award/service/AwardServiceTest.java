@@ -9,11 +9,14 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import com.ssafy.ourdoc.data.entity.UserSample;
 import com.ssafy.ourdoc.domain.award.dto.AwardDto;
 import com.ssafy.ourdoc.domain.award.dto.AwardListResponse;
 import com.ssafy.ourdoc.domain.award.dto.CreateAwardRequest;
 import com.ssafy.ourdoc.domain.award.entity.Award;
 import com.ssafy.ourdoc.domain.award.repository.AwardRepository;
+import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,10 +25,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
-
-import jakarta.transaction.Transactional;
 
 @ExtendWith(MockitoExtension.class)
 class AwardServiceTest {
@@ -40,9 +42,12 @@ class AwardServiceTest {
 	private AwardService awardService;
 
 	private Award award;
+	private User user;
 
 	@BeforeEach
 	void setUp() {
+		user = UserSample.user(UserType.학생);
+
 		award = Award.builder()
 			.title("우수상")
 			.imagePath("s3://bucket/award.png")
@@ -58,7 +63,7 @@ class AwardServiceTest {
 		when(s3StorageService.uploadFile(mockFile)).thenReturn("s3://bucket/award.png");
 		when(awardRepository.save(any(Award.class))).thenReturn(award);
 
-		awardService.createAward(request, mockFile);
+		awardService.createAward(user, request, mockFile);
 
 		verify(s3StorageService, times(1)).uploadFile(mockFile);
 		verify(awardRepository, times(1)).save(any(Award.class));
@@ -66,37 +71,45 @@ class AwardServiceTest {
 
 	@Test
 	@DisplayName("전체 상장 조회 테스트")
-	void getAllAward() {
+	void getAllAwards() {
 		List<AwardDto> awardDtoList = List.of(new AwardDto(1L, "s3://bucket/award.png", "우수상", LocalDateTime.now()));
 
-		when(awardRepository.findAllAward()).thenReturn(awardDtoList);
+		when(awardRepository.findAllAwardByUserId(user.getId())).thenReturn(awardDtoList);
 
-		AwardListResponse response = awardService.getAllAward();
+		AwardListResponse response = awardService.getAllAwards(user);
 
 		assertThat(response.awards()).isNotEmpty();
 		assertThat(response.awards().get(0).title()).isEqualTo("우수상");
-		verify(awardRepository, times(1)).findAllAward();
+		verify(awardRepository, times(1)).findAllAwardByUserId(user.getId());
 	}
 
 	@Test
 	@DisplayName("상장 단건 조회 테스트")
-	void searchAward() {
-		when(awardRepository.findById(1L)).thenReturn(Optional.of(award));
+	void awardDetail() {
+		// given
+		AwardDto awardDto = new AwardDto(1L, "s3://bucket/award.png", "우수상", LocalDateTime.now());
 
-		AwardDto result = awardService.searchAward(1L);
+		// Mocking: awardRepository.findAwardByUserId 호출 시 awardDto 반환
+		when(awardRepository.findAwardByUserId(user.getId(), 1L)).thenReturn(Optional.of(awardDto));
 
+		// when
+		AwardDto result = awardService.awardDetail(user, 1L);
+
+		// then
 		assertThat(result).isNotNull();
 		assertThat(result.title()).isEqualTo("우수상");
-		verify(awardRepository, times(1)).findById(1L);
+		verify(awardRepository, times(1)).findAwardByUserId(user.getId(), 1L);
 	}
 
 	@Test
 	@DisplayName("존재하지 않는 상장 조회 시 예외 발생")
-	void searchAward_NotFound() {
-		when(awardRepository.findById(405L)).thenReturn(Optional.empty());
+	void awardDetail_NotFound() {
+		when(awardRepository.findAwardByUserId(user.getId(), 999L)).thenReturn(Optional.empty());
 
-		assertThatThrownBy(() -> awardService.searchAward(405L))
-			.isInstanceOf(NoSuchElementException.class)
-			.hasMessage("해당하는 상장이 없습니다.");
+		assertThatThrownBy(() -> awardService.awardDetail(user, 999L))
+			.isInstanceOf(NoSuchElementException.class);
+
+		verify(awardRepository, times(1)).findAwardByUserId(user.getId(), 999L);
 	}
+
 }
