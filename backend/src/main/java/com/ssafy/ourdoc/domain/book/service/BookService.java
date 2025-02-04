@@ -45,26 +45,28 @@ public class BookService {
 	public List<BookResponse> searchBook(BookRequest request) {
 		List<Book> books = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		if (books.isEmpty()) {
-			List<NationalLibraryBookResponse> externalBooks = nationalLibraryBookService.parseBook(request);
-
-			List<NationalLibraryBookResponse> uniqueBooks = externalBooks.stream()
-				.filter(distinctByKey(NationalLibraryBookResponse::isbn))
-				.toList();
-			List<Book> newBooks = uniqueBooks.stream()
-				.filter(response -> bookRepository.findByIsbn(response.isbn()).isEmpty())
-				.map(NationalLibraryBookResponse::toBookEntity)
-				.collect(Collectors.toList());
-
-			if (!newBooks.isEmpty()) {
-				bookRepository.saveAll(newBooks);
-			}
-
+			updateBookListFromNationalLibrary(request);
 			books = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		}
 
 		return books.stream()
 			.map(BookResponse::of)
 			.collect(Collectors.toList());
+	}
+
+	public void updateBookListFromNationalLibrary(BookRequest request) {
+		List<NationalLibraryBookResponse> externalBooks = nationalLibraryBookService.parseBook(request);
+		List<NationalLibraryBookResponse> uniqueBooks = externalBooks.stream()
+			.filter(distinctByKey(NationalLibraryBookResponse::isbn))
+			.toList();
+		List<Book> newBooks = uniqueBooks.stream()
+			.filter(response -> bookRepository.findByIsbn(response.isbn()).isEmpty())
+			.map(NationalLibraryBookResponse::toBookEntity)
+			.collect(Collectors.toList());
+
+		if (!newBooks.isEmpty()) {
+			bookRepository.saveAll(newBooks);
+		}
 	}
 
 	public BookDetailResponse getBookDetail(Long id) {
@@ -79,7 +81,7 @@ public class BookService {
 		}
 		Book book = bookRepository.findById(request.bookId())
 			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
-		if (bookFavoriteRepository.findBookFavoriteByBookAndUser(book, user) != null) {
+		if (bookFavoriteRepository.existsByBookAndUser(book, user)) {
 			throw new BookFavoriteFailException("이미 관심 도서로 등록했습니다.");
 		}
 		BookFavorite bookFavorite = BookFavorite.builder().book(book).user(user).build();
@@ -87,18 +89,15 @@ public class BookService {
 		return true;
 	}
 
-	public boolean deleteBookFavorite(BookFavoriteRequest request, @Login User user) {
+	public void deleteBookFavorite(BookFavoriteRequest request, @Login User user) {
 		if (user == null) {
 			throw new UserFailedException("로그인해야 합니다.");
 		}
 		Book book = bookRepository.findById(request.bookId())
 			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
-		BookFavorite bookFavorite = bookFavoriteRepository.findBookFavoriteByBookAndUser(book, user);
-		if (bookFavorite == null) {
-			throw new BookFavoriteFailException("관심 도서로 등록한 도서가 아닙니다.");
-		}
+		BookFavorite bookFavorite = bookFavoriteRepository.findByBookAndUser(book, user)
+			.orElseThrow(() -> new BookFavoriteFailException("관심 도서로 등록한 도서가 아닙니다."));
 		bookFavoriteRepository.delete(bookFavorite);
-		return true;
 	}
 
 	private static <T> Predicate<T> distinctByKey(Function<T, Object> keyExtractor) {
