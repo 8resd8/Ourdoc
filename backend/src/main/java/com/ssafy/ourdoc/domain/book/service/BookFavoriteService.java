@@ -2,10 +2,12 @@ package com.ssafy.ourdoc.domain.book.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookFavoriteRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
 import com.ssafy.ourdoc.domain.book.repository.BookFavoriteRepository;
@@ -42,7 +44,9 @@ public class BookFavoriteService {
 		bookFavoriteRepository.delete(bookFavorite);
 	}
 
-	public List<BookFavorite> getBookFavorites(User user) {
-		return bookFavoriteRepository.findByUser(user);
+	public List<BookResponse> getBookFavorites(User user) {
+		List<BookFavorite> bookFavorites = bookFavoriteRepository.findByUser(user);
+		List<Book> books = bookFavorites.stream().map(BookFavorite::getBook).toList();
+		return books.stream().map(BookResponse::of).collect(Collectors.toList());
 	}
 }

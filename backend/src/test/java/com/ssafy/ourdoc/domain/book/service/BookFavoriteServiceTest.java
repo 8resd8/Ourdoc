@@ -21,6 +21,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ssafy.ourdoc.domain.book.dto.BookFavoriteRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
 import com.ssafy.ourdoc.domain.book.repository.BookFavoriteRepository;
@@ -117,10 +118,10 @@ public class BookFavoriteServiceTest {
 
 		when(bookFavoriteRepository.findByUser(user)).thenReturn(mockBookFavorite);
 
-		List<BookFavorite> bookFavorites = bookFavoriteService.getBookFavorites(user);
+		List<BookResponse> bookFavorites = bookFavoriteService.getBookFavorites(user);
 
 		verify(bookFavoriteRepository, times(1)).findByUser(user);
-		assertThat(bookFavorites).isEqualTo(mockBookFavorite);
+		assertThat(bookFavorites).isEqualTo(List.of(BookResponse.of(book)));
 
 	}
 
@@ -133,7 +134,7 @@ public class BookFavoriteServiceTest {
 
 		when(bookFavoriteRepository.findByUser(user)).thenReturn(mockBookFavorite);
 
-		List<BookFavorite> bookFavorites = bookFavoriteService.getBookFavorites(user);
+		List<BookResponse> bookFavorites = bookFavoriteService.getBookFavorites(user);
 
 		verify(bookFavoriteRepository, times(1)).findByUser(user);
 		assertTrue(bookFavorites.isEmpty());
