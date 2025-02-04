@@ -13,6 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.ourdoc.domain.award.dto.AwardListResponse;
 import com.ssafy.ourdoc.domain.award.dto.CreateAwardRequest;
 import com.ssafy.ourdoc.domain.award.service.AwardService;
+import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.global.annotation.Login;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,20 +27,20 @@ public class AwardController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createAward(@RequestPart CreateAwardRequest request,
+	public void createAward(@Login User user, @RequestPart CreateAwardRequest request,
 		@RequestPart(name = "awardImage") MultipartFile file) {
-		awardService.createAward(request, file);
+		awardService.createAward(user, request, file);
 	}
 
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	public AwardListResponse allAward() {
-		return awardService.getAllAward();
+	public AwardListResponse allAward(@Login User user) {
+		return awardService.getAllAwards(user);
 	}
 
 	@GetMapping("/{awardId}")
 	@ResponseStatus(HttpStatus.OK)
-	public void createAward(@PathVariable(name = "awardId") Long awardId) {
-		awardService.searchAward(awardId);
+	public void createAward(@Login User user, @PathVariable(name = "awardId") Long awardId) {
+		awardService.awardDetail(user, awardId);
 	}
 }
