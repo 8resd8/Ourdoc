@@ -5,6 +5,8 @@ import static com.ssafy.ourdoc.domain.notification.entity.QNotificationRecipient
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -27,11 +29,11 @@ public class NotificationQueryRepositoryImpl implements NotificationQueryReposit
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<NotificationDto> findAllConditionByUserId(Long userId, NotificationConditionRequest condition,
+	public Page<NotificationDto> findAllConditionByUserId(Long userId, NotificationConditionRequest condition,
 		Pageable pageable) {
 		QNotificationRecipient recipient = notificationRecipient;
 
-		return queryFactory
+		List<NotificationDto> content = queryFactory
 			.select(Projections.constructor(NotificationDto.class,
 				notification.id,
 				notification.notificationType,
@@ -47,6 +49,19 @@ public class NotificationQueryRepositoryImpl implements NotificationQueryReposit
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
+
+		long total = queryFactory
+			.select(notification.count())
+			.from(notification)
+			.join(recipient).on(notification.id.eq(recipient.notification.id))
+			.where(
+				userEq(userId, recipient),
+				readFilter(recipient, condition.status()),
+				typeFilter(condition.type())
+			)
+			.fetchOne();
+
+		return new PageImpl<>(content, pageable, total);
 	}
 
 	@Override

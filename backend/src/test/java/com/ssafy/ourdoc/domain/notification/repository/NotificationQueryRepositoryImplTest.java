@@ -4,13 +4,12 @@ import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
 import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import com.ssafy.ourdoc.data.entity.NotificationRecipientSample;
@@ -80,12 +79,12 @@ public class NotificationQueryRepositoryImplTest {
 		recipient = NotificationRecipientSample.notificationRecipient(notification2, recipientUser);
 
 		NotificationConditionRequest request = new NotificationConditionRequest(NotificationStatus.안읽음, 독서록);
-		List<NotificationDto> unreadNotifications = notificationQueryRepository.findAllConditionByUserId(
+		Page<NotificationDto> unreadNotifications = notificationQueryRepository.findAllConditionByUserId(
 			recipientUser.getId(), request, PageRequest.of(0, 10));
 
-		assertThat(unreadNotifications).hasSize(1);
-		assertThat(unreadNotifications.get(0).content()).isEqualTo("독서록알림");
-		assertThat(unreadNotifications.get(0).type()).isEqualTo(독서록);
+		assertThat(unreadNotifications.getTotalElements()).isEqualTo(1);
+		assertThat(unreadNotifications.getContent()).extracting(NotificationDto::content).containsExactly("독서록알림");
+		assertThat(unreadNotifications.getContent()).extracting(NotificationDto::type).containsExactly(독서록);
 	}
 
 	@Test
@@ -97,12 +96,12 @@ public class NotificationQueryRepositoryImplTest {
 		notificationRecipientRepository.save(recipient);
 
 		NotificationConditionRequest request = new NotificationConditionRequest(NotificationStatus.안읽음, 가입);
-		List<NotificationDto> unreadNotifications = notificationQueryRepository.findAllConditionByUserId(
+		Page<NotificationDto> unreadNotifications = notificationQueryRepository.findAllConditionByUserId(
 			recipientUser.getId(), request, PageRequest.of(0, 10));
 
-		assertThat(unreadNotifications).hasSize(1);
-		assertThat(unreadNotifications.get(0).content()).isEqualTo("가입알림");
-		assertThat(unreadNotifications.get(0).type()).isEqualTo(가입);
+		assertThat(unreadNotifications.getTotalElements()).isEqualTo(1);
+		assertThat(unreadNotifications.getContent()).extracting(NotificationDto::content).containsExactly("가입알림");
+		assertThat(unreadNotifications.getContent()).extracting(NotificationDto::type).containsExactly(가입);
 	}
 
 	@Test
@@ -123,17 +122,17 @@ public class NotificationQueryRepositoryImplTest {
 		notificationRecipientRepository.save(recipient2);
 
 		NotificationConditionRequest request = new NotificationConditionRequest(NotificationStatus.안읽음, null);
-		List<NotificationDto> unreadNotifications = notificationQueryRepository.findAllConditionByUserId(
+		Page<NotificationDto> unreadNotifications = notificationQueryRepository.findAllConditionByUserId(
 			recipientUser.getId(), request, PageRequest.of(0, 10));
 
-		assertThat(unreadNotifications).hasSize(2);
+		assertThat(unreadNotifications.getContent().size()).isEqualTo(2);
 
 		// 조건이 없으면 읽지 않은알림 모두 조회
 		NotificationConditionRequest request2 = new NotificationConditionRequest(null, null);
-		List<NotificationDto> unreadNotifications2 = notificationQueryRepository.findAllConditionByUserId(
+		Page<NotificationDto> unreadNotifications2 = notificationQueryRepository.findAllConditionByUserId(
 			recipientUser.getId(), request2, PageRequest.of(0, 10));
 
-		assertThat(unreadNotifications2).hasSize(2);
+		assertThat(unreadNotifications2.getContent().size()).isEqualTo(2);
 	}
 
 	@Test
@@ -143,9 +142,9 @@ public class NotificationQueryRepositoryImplTest {
 		Notification notification = NotificationSample.notification(senderUser, 가입, "가입알림");
 		notificationRepository.save(notification);
 
-		NotificationRecipient recipient = NotificationRecipientSample.notificationRecipient(notification, recipientUser);
+		NotificationRecipient recipient = NotificationRecipientSample.notificationRecipient(notification,
+			recipientUser);
 		notificationRecipientRepository.save(recipient);
-
 
 		NotificationDetailDto findNotification = notificationQueryRepository.
 			findByNotificationId(recipient.getRecipient().getId(), notification.getId());
@@ -156,6 +155,5 @@ public class NotificationQueryRepositoryImplTest {
 		assertThat(notification.getSender()).isEqualTo(senderUser);
 		assertThat(notification.getSender().getName()).isEqualTo(findNotification.senderName());
 	}
-
 
 }
