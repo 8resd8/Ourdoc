@@ -38,4 +38,16 @@ public class UserSample {
 			.build();
 	}
 
+	public static User user(UserType type, String loginId, String password) {
+		return User.builder()
+			.active(Active.활성)
+			.birth(new Date(System.currentTimeMillis()))
+			.loginId(loginId)
+			.password(password)
+			.userType(type)
+			.name("테스트이름")
+			.gender(Gender.남)
+			.build();
+	}
+
 }
