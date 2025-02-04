@@ -2,6 +2,7 @@ package com.ssafy.ourdoc.domain.classroom.service;
 
 import java.time.Year;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +13,8 @@ import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
+import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
@@ -32,8 +35,8 @@ public class ClassService {
 	private final SchoolRepository schoolRepository;
 	private final SchoolService schoolService;
 
-	public void createClass(Long teacherId, CreateClassRequest request) {
-		Teacher findTeacher = getFindTeacher(teacherId);
+	public void createClass(User user, CreateClassRequest request) {
+		Teacher findTeacher = getFindTeacher(user.getId());
 		School findSchool = getFindSchool(request.schoolName());
 
 		validateDuplicateClass(request);
@@ -88,8 +91,8 @@ public class ClassService {
 			.orElseThrow(() -> new IllegalArgumentException("학교가 없습니다."));
 	}
 
-	private Teacher getFindTeacher(Long teacherId) {
-		return teacherRepository.findById(teacherId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 Teacher ID를 찾을 수 없습니다: " + teacherId));
+	private Teacher getFindTeacher(Long userId) {
+		return teacherRepository.findTeacherByUserId(userId)
+			.orElseThrow(() -> new NoSuchElementException("해당 User ID를 찾을 수 없습니다"));
 	}
 }
