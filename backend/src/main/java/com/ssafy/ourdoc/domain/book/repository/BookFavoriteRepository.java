@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.book.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,6 @@ public interface BookFavoriteRepository extends JpaRepository<BookFavorite, Long
 	Optional<BookFavorite> findByBookAndUser(Book book, User user);
 
 	boolean existsByBookAndUser(Book book, User user);
+
+	List<BookFavorite> findByUser(User user);
 }
