@@ -16,7 +16,6 @@ import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
-import com.ssafy.ourdoc.domain.book.exception.BookFavoriteFailException;
 import com.ssafy.ourdoc.domain.book.repository.BookFavoriteRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -39,6 +38,9 @@ public class BookService {
 	private final BookFavoriteRepository bookFavoriteRepository;
 
 	public void registerBook(Book book) {
+		if (bookRepository.findByIsbn(book.getIsbn()).isPresent()) {
+			throw new IllegalArgumentException("이미 존재하는 ISBN입니다.");
+		}
 		bookRepository.save(book);
 	}
 
@@ -75,18 +77,17 @@ public class BookService {
 		return BookDetailResponse.of(book, book.getDescription());
 	}
 
-	public boolean addBookFavorite(BookFavoriteRequest request, @Login User user) {
+	public void addBookFavorite(BookFavoriteRequest request, @Login User user) {
 		if (user == null) {
 			throw new UserFailedException("로그인해야 합니다.");
 		}
 		Book book = bookRepository.findById(request.bookId())
 			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 		if (bookFavoriteRepository.existsByBookAndUser(book, user)) {
-			throw new BookFavoriteFailException("이미 관심 도서로 등록했습니다.");
+			throw new IllegalArgumentException("이미 관심 도서로 등록했습니다.");
 		}
 		BookFavorite bookFavorite = BookFavorite.builder().book(book).user(user).build();
 		bookFavoriteRepository.save(bookFavorite);
-		return true;
 	}
 
 	public void deleteBookFavorite(BookFavoriteRequest request, @Login User user) {
@@ -96,7 +97,7 @@ public class BookService {
 		Book book = bookRepository.findById(request.bookId())
 			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 		BookFavorite bookFavorite = bookFavoriteRepository.findByBookAndUser(book, user)
-			.orElseThrow(() -> new BookFavoriteFailException("관심 도서로 등록한 도서가 아닙니다."));
+			.orElseThrow(() -> new IllegalArgumentException("관심 도서로 등록한 도서가 아닙니다."));
 		bookFavoriteRepository.delete(bookFavorite);
 	}
 
