@@ -47,13 +47,13 @@ public class NotificationController {
 	@GetMapping
 	public NotificationListResponse getNotifications(@ModelAttribute NotificationConditionRequest request,
 		Pageable pageable) {
-		long loginUserId = 8L; // 로그인 한 정보에서 추출
+		long loginUserId = 9L; // 로그인 한 정보에서 추출
 		return notificationQueryService.getUnreadNotifications(loginUserId, request, pageable);
 	}
 
 	@GetMapping("/{notificationId}")
 	public NotificationDetailDto getNotification(@PathVariable("notificationId") Long notificationId) {
-		long loginUserId = 8L; // 로그인 한 정보에서 추출
+		long loginUserId = 9L; // 로그인 한 정보에서 추출
 		return notificationQueryService.getNotification(loginUserId, notificationId);
 	}
 
