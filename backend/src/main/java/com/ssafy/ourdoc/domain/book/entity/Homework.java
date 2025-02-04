@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.domain.book.homework.entity;
+package com.ssafy.ourdoc.domain.book.entity;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
@@ -10,6 +10,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,15 +27,15 @@ public class Homework {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@Column(name = "book_id", nullable = false)
+	@JoinColumn(name = "book_id", nullable = false)
 	private Book book;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@Column(name = "user_id", nullable = false)
+	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@Column(name = "class_id", nullable = false)
+	@JoinColumn(name = "class_id", nullable = false)
 	private ClassRoom classRoom;
 
 	@Builder
