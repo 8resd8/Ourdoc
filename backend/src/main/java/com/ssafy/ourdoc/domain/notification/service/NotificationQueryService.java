@@ -1,7 +1,6 @@
 package com.ssafy.ourdoc.domain.notification.service;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,7 @@ public class NotificationQueryService {
 
 	public NotificationListResponse getUnreadNotifications(Long userId, NotificationConditionRequest request,
 		Pageable pageable) {
-		List<NotificationDto> notificationDtoList = notificationQueryRepository.
+		Page<NotificationDto> notificationDtoList = notificationQueryRepository.
 			findAllConditionByUserId(userId, request, pageable);
 
 		return new NotificationListResponse(notificationDtoList);
