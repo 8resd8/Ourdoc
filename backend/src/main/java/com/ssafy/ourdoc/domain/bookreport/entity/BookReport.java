@@ -12,6 +12,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,15 +31,15 @@ public class BookReport extends BaseTimeEntity {
 	@Column(name = "book_report_id", unique = true, nullable = false)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@Column(name = "student_class_id")
 	private StudentClass studentClass;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@Column(name = "book_id", nullable = false)
 	private Book book;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@Column(name = "homework_id")
 	private Homework homework;
 
@@ -60,7 +61,7 @@ public class BookReport extends BaseTimeEntity {
 
 	@Builder
 	public BookReport(StudentClass studentClass, Book book, Homework homework, String beforeContent,
-		String afterContent, OcrCheck ocrCheck, String imagePath, LocalDateTime approveTime) {
+		String afterContent, OcrCheck ocrCheck, String imagePath) {
 		this.studentClass = studentClass;
 		this.book = book;
 		this.homework = homework;
@@ -68,7 +69,6 @@ public class BookReport extends BaseTimeEntity {
 		this.afterContent = afterContent;
 		this.ocrCheck = ocrCheck;
 		this.imagePath = imagePath;
-		this.approveTime = approveTime;
 	}
 }
 

@@ -6,6 +6,7 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,15 +25,15 @@ public class Homework {
 	@Column(name = "homework_id", unique = true, nullable = false)
 	private Long id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@Column(name = "book_id", nullable = false)
 	private Book book;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@Column(name = "user_id", nullable = false)
 	private User user;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@Column(name = "class_id", nullable = false)
 	private ClassRoom classRoom;
 
