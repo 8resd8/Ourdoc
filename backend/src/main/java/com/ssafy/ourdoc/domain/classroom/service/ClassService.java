@@ -1,20 +1,16 @@
 package com.ssafy.ourdoc.domain.classroom.service;
 
 import java.time.Year;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.classroom.dto.CreateClassRequest;
-import com.ssafy.ourdoc.domain.classroom.dto.SchoolResponse;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
-import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
@@ -32,11 +28,11 @@ public class ClassService {
 	private final ClassRoomRepository classRoomRepository;
 	private final TeacherClassRepository teacherClassRepository;
 	private final TeacherRepository teacherRepository;
-	private final SchoolService schoolService;
+	private final SchoolRepository schoolRepository;
 
 	public void createClass(User user, CreateClassRequest request) {
 		Teacher findTeacher = getFindTeacher(user.getId());
-		School findSchool = schoolService.searchSchoolName(request.schoolName());
+		School findSchool = schoolRepository.findBySchoolNameAndAddress(request.schoolName(), request.schoolAddress());
 
 		validateDuplicateClass(request);
 
