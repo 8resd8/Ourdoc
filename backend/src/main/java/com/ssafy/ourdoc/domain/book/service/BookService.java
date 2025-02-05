@@ -31,32 +31,37 @@ public class BookService {
 	private final NationalLibraryBookService nationalLibraryBookService;
 
 	public void registerBook(Book book) {
+		if (bookRepository.findByIsbn(book.getIsbn()).isPresent()) {
+			throw new IllegalArgumentException("이미 존재하는 ISBN입니다.");
+		}
 		bookRepository.save(book);
 	}
 
 	public List<BookResponse> searchBook(BookRequest request) {
 		List<Book> books = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		if (books.isEmpty()) {
-			List<NationalLibraryBookResponse> externalBooks = nationalLibraryBookService.parseBook(request);
-
-			List<NationalLibraryBookResponse> uniqueBooks = externalBooks.stream()
-				.filter(distinctByKey(NationalLibraryBookResponse::isbn))
-				.toList();
-			List<Book> newBooks = uniqueBooks.stream()
-				.filter(response -> bookRepository.findByIsbn(response.isbn()).isEmpty())
-				.map(NationalLibraryBookResponse::toBookEntity)
-				.collect(Collectors.toList());
-
-			if (!newBooks.isEmpty()) {
-				bookRepository.saveAll(newBooks);
-			}
-
+			updateBookListFromNationalLibrary(request);
 			books = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		}
 
 		return books.stream()
 			.map(BookResponse::of)
 			.collect(Collectors.toList());
+	}
+
+	public void updateBookListFromNationalLibrary(BookRequest request) {
+		List<NationalLibraryBookResponse> externalBooks = nationalLibraryBookService.parseBook(request);
+		List<NationalLibraryBookResponse> uniqueBooks = externalBooks.stream()
+			.filter(distinctByKey(NationalLibraryBookResponse::isbn))
+			.toList();
+		List<Book> newBooks = uniqueBooks.stream()
+			.filter(response -> bookRepository.findByIsbn(response.isbn()).isEmpty())
+			.map(NationalLibraryBookResponse::toBookEntity)
+			.collect(Collectors.toList());
+
+		if (!newBooks.isEmpty()) {
+			bookRepository.saveAll(newBooks);
+		}
 	}
 
 	public BookDetailResponse getBookDetail(Long id) {
