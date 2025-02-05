@@ -10,8 +10,6 @@ public class ClassRoomSample {
 	private ClassRoomSample() {
 	}
 
-	private final static String defaultName = "테스트이름";
-	private final static String defaultAddress = "테스트주소";
 
 	public static ClassRoom classRoom(School school) {
 		return ClassRoom.builder()
