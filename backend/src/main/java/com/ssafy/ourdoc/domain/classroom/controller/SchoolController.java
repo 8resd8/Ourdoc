@@ -1,6 +1,5 @@
 package com.ssafy.ourdoc.domain.classroom.controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -16,14 +15,13 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/class")
-public class ClassRoomController {
+@RequestMapping("/schools")
+public class SchoolController {
+
 	private final SchoolService schoolService;
 
-	@GetMapping("/school")
-	public ResponseEntity<List<SchoolResponse>> getSchoolList(@RequestParam(required = false) String schoolName) throws
-		IOException {
-		List<SchoolResponse> schools = schoolService.parseSchool(schoolName);
-		return ResponseEntity.ok(schools);
+	@GetMapping
+	public ResponseEntity<List<SchoolResponse>> findSchools(@RequestParam("schoolName") String schoolName) {
+		return ResponseEntity.ok().body(schoolService.searchSchoolName(schoolName));
 	}
 }
