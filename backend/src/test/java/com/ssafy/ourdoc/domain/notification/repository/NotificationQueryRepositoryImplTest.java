@@ -61,7 +61,7 @@ public class NotificationQueryRepositoryImplTest {
 	@DisplayName("구독없이 알림전송")
 	void testFindAllUnreadNotificationsByUserId() {
 		assertThatThrownBy(
-			() -> notificationService.sendNotification(senderUser.getId(), 독서록, "독서록등록 테스트")).isInstanceOf(
+			() -> notificationService.sendNotification(senderUser, 독서록, "독서록등록 테스트")).isInstanceOf(
 			SubscribeException.class);
 	}
 
