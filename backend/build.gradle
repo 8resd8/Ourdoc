@@ -80,6 +80,9 @@ dependencies {
 
     // 테스트 객체 생성 라이브러리
     testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:1.1.8")
+
+    // Openvidu
+    implementation group: 'io.openvidu', name: 'openvidu-java-client', version: '2.31.0'
 }
 
 
