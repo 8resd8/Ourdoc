@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.debate.entity;
 
+import java.time.LocalDateTime;
+
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 
@@ -46,6 +48,9 @@ public class Room extends BaseTimeEntity {
 
 	@Column(name = "current_people", nullable = false)
 	private int current_people;
+
+	@Column(name = "end_at")
+	private LocalDateTime end_at;
 
 	@Builder
 	public Room(String session_id, User user, String title, String password, int max_people, int current_people) {
