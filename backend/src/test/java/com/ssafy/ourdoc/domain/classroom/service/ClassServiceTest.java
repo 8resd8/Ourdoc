@@ -59,7 +59,7 @@ class ClassServiceTest {
 	@BeforeEach
 	void setUp() {
 		// 1학년 1반, 2024년
-		request = new CreateClassRequest("테스트학교", 2024, 1, 1);
+		request = new CreateClassRequest("테스트학교", "테스트주소", 2024, 1, 1);
 
 		// 학교 저장
 		school = schoolRepository.save(new School("테스트학교", "테스트주소"));
@@ -120,7 +120,7 @@ class ClassServiceTest {
 		classRoomRepository.save(classRoom);
 
 		// 같은 요청으로 학급 생성 시도
-		CreateClassRequest request = new CreateClassRequest("테스트학교", 2024, grade, classNumber);
+		// CreateClassRequest request = new CreateClassRequest("테스트학교", "테스트주소", 2024, grade, classNumber);
 
 		assertThatThrownBy(() -> classService.createClass(user, request))
 			.isInstanceOf(IllegalArgumentException.class);
