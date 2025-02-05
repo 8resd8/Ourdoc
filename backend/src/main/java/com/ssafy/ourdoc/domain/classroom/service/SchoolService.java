@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,8 +17,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolResponse;
+import com.ssafy.ourdoc.domain.classroom.entity.School;
+import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class SchoolService {
 	@Value("${school.api-url}")
 	private String apiUrl;
@@ -25,6 +33,14 @@ public class SchoolService {
 	@Value("${school.api-key}")
 	private String apiKey;
 
+	private final SchoolRepository schoolRepository;
+
+	public School searchSchoolName(String schoolName) {
+		return schoolRepository.findBySchoolNameContaining(schoolName)
+			.orElseThrow(() -> new NoSuchElementException("학교가 존재하지 않습니다."));
+	}
+
+	// 학교 API 검색
 	public List<SchoolResponse> parseSchool(String schoolName) {
 		String response = null;
 		try {
