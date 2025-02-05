@@ -32,12 +32,11 @@ public class ClassService {
 	private final ClassRoomRepository classRoomRepository;
 	private final TeacherClassRepository teacherClassRepository;
 	private final TeacherRepository teacherRepository;
-	private final SchoolRepository schoolRepository;
 	private final SchoolService schoolService;
 
 	public void createClass(User user, CreateClassRequest request) {
 		Teacher findTeacher = getFindTeacher(user.getId());
-		School findSchool = getFindSchool(request.schoolName());
+		School findSchool = schoolService.searchSchoolName(request.schoolName());
 
 		validateDuplicateClass(request);
 
@@ -69,26 +68,6 @@ public class ClassService {
 			.isPresent()) {
 			throw new IllegalArgumentException("이미 등록된 학급이 있습니다.");
 		}
-	}
-
-	private School getFindSchool(String schoolName) {
-		// DB에 있으면 반환
-		Optional<School> dbSchool = schoolRepository.findBySchoolName(schoolName);
-		if (dbSchool.isPresent()) {
-			return dbSchool.get();
-		}
-
-		// DB에 없으면 API 검색
-		List<SchoolResponse> findSchools = schoolService.parseSchool(schoolName);
-
-		return findSchools.stream()
-			.filter(s -> s.schoolName().equals(schoolName))
-			.map(s -> School.builder()
-				.schoolName(s.schoolName())
-				.address(s.address())
-				.build())
-			.findFirst()
-			.orElseThrow(() -> new IllegalArgumentException("학교가 없습니다."));
 	}
 
 	private Teacher getFindTeacher(Long userId) {
