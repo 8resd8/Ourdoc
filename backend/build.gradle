@@ -80,6 +80,9 @@ dependencies {
 
     // 테스트 객체 생성 라이브러리
     testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:1.1.8")
+
+    // OpenCSV
+    implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
 }
 
 
