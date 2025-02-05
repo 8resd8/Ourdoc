@@ -3,7 +3,7 @@ package com.ssafy.ourdoc.domain.bookreport.entity;
 import java.time.LocalDateTime;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
-import com.ssafy.ourdoc.domain.book.homework.entity.Homework;
+import com.ssafy.ourdoc.domain.book.entity.Homework;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 import com.ssafy.ourdoc.global.common.enums.OcrCheck;
@@ -16,6 +16,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,15 +33,15 @@ public class BookReport extends BaseTimeEntity {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@Column(name = "student_class_id")
+	@JoinColumn(name = "student_class_id")
 	private StudentClass studentClass;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@Column(name = "book_id", nullable = false)
+	@JoinColumn(name = "book_id", nullable = false)
 	private Book book;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@Column(name = "homework_id")
+	@JoinColumn(name = "homework_id")
 	private Homework homework;
 
 	@Column(name = "before_content", columnDefinition = "TEXT")
