@@ -19,6 +19,8 @@ import com.ssafy.ourdoc.domain.notification.dto.NotificationListResponse;
 import com.ssafy.ourdoc.domain.notification.service.NotificationHistoryService;
 import com.ssafy.ourdoc.domain.notification.service.NotificationQueryService;
 import com.ssafy.ourdoc.domain.notification.service.NotificationService;
+import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.global.annotation.Login;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
 import lombok.RequiredArgsConstructor;
@@ -33,35 +35,33 @@ public class NotificationController {
 	private final NotificationQueryService notificationQueryService;
 
 	@GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-	public SseEmitter subscribe() {
-		Long userId = 8L;
-		return notificationService.subscribe(userId);
+	public SseEmitter subscribe(@Login User user) {
+		return notificationService.subscribe(user);
 	}
 
 	@PatchMapping("/{notificationId}/read")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void markAsRead(@PathVariable("notificationId") Long notificationId) {
-		notificationHistoryService.markNotificationRead(notificationId);
+	public void markAsRead(@Login User user, @PathVariable("notificationId") Long notificationId) {
+		notificationHistoryService.markNotificationRead(user, notificationId);
 	}
 
 	@GetMapping
-	public NotificationListResponse getNotifications(@ModelAttribute NotificationConditionRequest request,
+	public NotificationListResponse getNotifications(@Login User user,
+		@ModelAttribute NotificationConditionRequest request,
 		Pageable pageable) {
-		long loginUserId = 9L; // 로그인 한 정보에서 추출
-		return notificationQueryService.getUnreadNotifications(loginUserId, request, pageable);
+		return notificationQueryService.getUnreadNotifications(user, request, pageable);
 	}
 
 	@GetMapping("/{notificationId}")
-	public NotificationDetailDto getNotification(@PathVariable("notificationId") Long notificationId) {
-		long loginUserId = 9L; // 로그인 한 정보에서 추출
-		return notificationQueryService.getNotification(loginUserId, notificationId);
+	public NotificationDetailDto getNotification(@Login User user,
+		@PathVariable("notificationId") Long notificationId) {
+		return notificationQueryService.getNotification(user, notificationId);
 	}
 
 	@PostMapping("/send")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void sendNotificationTest() {
-		Long userId = 8L;
-		notificationService.sendNotification(userId, NotificationType.독서록, "독서록 저장했어.");
+	public void sendNotificationTest(@Login User user) {
+		notificationService.sendNotification(user, NotificationType.독서록, "독서록 저장했어.");
 	}
 
 }
