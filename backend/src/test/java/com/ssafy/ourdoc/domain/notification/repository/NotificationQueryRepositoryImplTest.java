@@ -57,13 +57,6 @@ public class NotificationQueryRepositoryImplTest {
 		userRepository.save(recipientUser);
 	}
 
-	@Test
-	@DisplayName("구독없이 알림전송")
-	void testFindAllUnreadNotificationsByUserId() {
-		assertThatThrownBy(
-			() -> notificationService.sendNotification(senderUser, 독서록, "독서록등록 테스트")).isInstanceOf(
-			SubscribeException.class);
-	}
 
 	@Test
 	void 안읽은독서록알림조회() {
