@@ -17,6 +17,7 @@ import com.ssafy.ourdoc.domain.notification.exception.SubscribeException;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +29,7 @@ public class NotificationService {
 	public static final long TIMEOUT = 30 * 60 * 1000L; // 연결 시간, 30분
 	public static final int PERIOD = 60000; // 1분 간격 연결 유지
 	private final NotificationHistoryService notificationHistoryService;
+	@Getter
 	private final ConcurrentHashMap<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
 	// 알림 구독
