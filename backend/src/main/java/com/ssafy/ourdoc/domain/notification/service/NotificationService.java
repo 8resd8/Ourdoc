@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.ssafy.ourdoc.domain.notification.dto.NotificationDto;
 import com.ssafy.ourdoc.domain.notification.entity.Notification;
+import com.ssafy.ourdoc.domain.notification.entity.NotificationRecipient;
 import com.ssafy.ourdoc.domain.notification.exception.SubscribeException;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
@@ -66,15 +67,14 @@ public class NotificationService {
 	}
 
 	// 알림 전송
-	public NotificationDto sendNotification(User sender, NotificationType type, String content) {
-		Notification notification = notificationHistoryService.saveHistory(sender, type, content);
-		sendToEmitters(sender.getId(), notification);
+	public void sendNotification(User sender, NotificationType type, String content) {
+		NotificationRecipient recipient = notificationHistoryService.saveHistory(sender, type, content);
 
-		return new NotificationDto(notification.getId(), type, content, notification.getCreatedAt());
+		sendToEmitters(recipient.getId(), recipient.getNotification());
 	}
 
-	private void sendToEmitters(Long userId, Notification notification) {
-		List<SseEmitter> userEmitters = emitters.get(userId);
+	private void sendToEmitters(Long recipientUserId, Notification notification) {
+		List<SseEmitter> userEmitters = emitters.get(recipientUserId);
 
 		if (userEmitters == null || userEmitters.isEmpty()) {
 			throw new SubscribeException("구독을 먼저 해야 알림을 받을 수 있습니다.");
@@ -91,8 +91,8 @@ public class NotificationService {
 			try {
 				emitter.send(SseEmitter.event().name("알림: ").data(response));
 			} catch (IOException e) {
-				log.error("알림 전송 실패: userId = {}, content = {}", userId, notification.getContent(), e);
-				removeEmitter(userId, emitter);
+				log.error("알림 전송 실패: recipientUserId = {}, content = {}", recipientUserId, notification.getContent(), e);
+				removeEmitter(recipientUserId, emitter);
 				emitter.complete();
 			}
 		}
