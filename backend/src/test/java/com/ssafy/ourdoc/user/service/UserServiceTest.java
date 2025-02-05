@@ -25,8 +25,10 @@ import com.ssafy.ourdoc.domain.user.service.UserService;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.Gender;
 import com.ssafy.ourdoc.global.common.enums.UserType;
+import com.ssafy.ourdoc.global.config.JwtConfig;
 import com.ssafy.ourdoc.global.exception.UserFailedException;
 import com.ssafy.ourdoc.global.util.JwtBlacklistService;
+import com.ssafy.ourdoc.global.util.JwtRefreshService;
 import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import io.jsonwebtoken.Claims;
@@ -39,6 +41,12 @@ class UserServiceTest {
 
 	@Mock
 	private JwtUtil jwtUtil;
+
+	@Mock
+	private 	JwtConfig jwtConfig;
+
+	@Mock
+	private JwtRefreshService refreshService;
 
 	@Mock
 	private JwtBlacklistService blacklistService;
@@ -73,20 +81,28 @@ class UserServiceTest {
 	@Test
 	@DisplayName("로그인 성공")
 	void login_Success() {
-		// Given: 존재하는 사용자이며, 비밀번호가 일치하고, userType이 맞음
+		// Given
 		given(userRepository.findByLoginId(loginRequest.loginId())).willReturn(Optional.of(mockUser));
 		given(jwtUtil.createToken(mockUser.getLoginId(), mockUser.getUserType().toString()))
 			.willReturn("mocked-jwt-token");
+		given(jwtUtil.createRefreshToken(mockUser.getLoginId()))
+			.willReturn("mocked-refresh-token");
+		given(jwtConfig.getRefreshExpiration())  // ✅ Mock 동작 추가
+			.willReturn(86400L); // 예를 들어 24시간 (초 단위)
 
-		// When: 로그인 실행
+		// ✅ JwtRefreshService Mock 동작 추가
+		doNothing().when(refreshService).storeRefreshToken(eq(mockUser.getLoginId()), eq("mocked-refresh-token"), anyLong());
+
+		// When
 		LoginResponse response = userService.login(loginRequest);
 
-		// Then: 로그인 성공 메시지와 200 응답 코드 확인
+		// Then
 		assertThat(response.resultCode()).isEqualTo("200");
 		assertThat(response.message()).isEqualTo("로그인 성공");
 		assertThat(response.user().name()).isEqualTo(mockUser.getName());
 		assertThat(response.user().role()).isEqualTo(mockUser.getUserType().toString());
 	}
+
 
 	@Test
 	@DisplayName("로그인 실패 - 존재하지 않는 아이디")

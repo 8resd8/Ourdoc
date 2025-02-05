@@ -38,8 +38,13 @@ class JwtUtilTest {
 			}
 
 			@Override
-			public long getExpiration() {
+			public long getAccessExpiration() {
 				return 1000 * 60 * 60; // 1시간
+			}
+
+			@Override
+			public long getRefreshExpiration() {
+				return 1000 * 60 * 60 * 24 * 7; // 7일
 			}
 		};
 
@@ -47,8 +52,8 @@ class JwtUtilTest {
 	}
 
 	@Test
-	@DisplayName("유효한 토큰 생성 및 검증 성공")
-	void createAndValidateToken_Success() {
+	@DisplayName("✅ 유효한 Access Token 생성 및 검증 성공")
+	void createAndValidateAccessToken_Success() {
 		// Given
 		String userId = "testUser";
 		String role = "ROLE_USER";
@@ -65,34 +70,50 @@ class JwtUtilTest {
 	}
 
 	@Test
-	@DisplayName("❌ 만료된 토큰 검증 실패")
-	void expiredToken_ThrowsException() throws InterruptedException {
+	@DisplayName("✅ 유효한 Refresh Token 생성 및 검증 성공")
+	void createAndValidateRefreshToken_Success() {
+		// Given
+		String userId = "testUser";
+
+		// When
+		String token = jwtUtil.createRefreshToken(userId);
+		boolean isValid = jwtUtil.validateToken(token);
+		Claims claims = jwtUtil.getClaims(token);
+
+		// Then
+		assertThat(isValid).isTrue();
+		assertThat(claims.getSubject()).isEqualTo(userId);
+	}
+
+	@Test
+	@DisplayName("❌ 만료된 Access Token 검증 실패")
+	void expiredAccessToken_ThrowsException() throws InterruptedException {
 		// Given: 만료 시간이 1초인 토큰 생성
 		String expiredToken = Jwts.builder()
 			.setSubject("testUser")
 			.claim("role", "ROLE_USER")
 			.setIssuedAt(new Date(System.currentTimeMillis()))
-			.setExpiration(new Date(System.currentTimeMillis() + 1000)) // 1초 뒤 만료
+			.setExpiration(new Date(System.currentTimeMillis() + 1000)) // 1초 후 만료
 			.signWith(Keys.hmacShaKeyFor(jwtConfig.getSecretKey().getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
 			.compact();
 
-		// 토큰이 만료되도록 대기
-		Thread.sleep(2000);
+		Thread.sleep(2000); // 토큰 만료 대기
 
-		// When & Then: validateToken()이 ExpiredJwtException을 던지는지 확인
+		// When & Then
 		assertThatThrownBy(() -> jwtUtil.validateToken(expiredToken))
 			.isInstanceOf(ExpiredJwtException.class);
 	}
 
 	@Test
-	@DisplayName("🚨 유효하지 않은 토큰 검증 시 예외 발생")
+	@DisplayName("🚨 잘못된 JWT 토큰 검증 시 예외 발생")
 	void invalidToken_ThrowsException() {
 		// Given
-		String invalidToken = "invalid.jwt.token";  // 잘못된 형식의 JWT
+		String invalidToken = "invalid.jwt.token";
 
-		// When & Then: 예외 발생 검증
+		// When & Then
 		assertThatThrownBy(() -> jwtUtil.validateToken(invalidToken))
 			.isInstanceOf(io.jsonwebtoken.MalformedJwtException.class);
 	}
 }
+
 
