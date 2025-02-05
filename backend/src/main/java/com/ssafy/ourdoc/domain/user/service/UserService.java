@@ -9,8 +9,10 @@ import com.ssafy.ourdoc.domain.user.dto.LoginResponse.UserInfo;
 import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
+import com.ssafy.ourdoc.global.config.JwtConfig;
 import com.ssafy.ourdoc.global.exception.UserFailedException;
 import com.ssafy.ourdoc.global.util.JwtBlacklistService;
+import com.ssafy.ourdoc.global.util.JwtRefreshService;
 import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +23,9 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final JwtUtil jwtUtil;
+	private final JwtConfig jwtConfig;
 	private final JwtBlacklistService blacklistService;
+	private final JwtRefreshService refreshService;
 
 	// 1. 사용자 로그인
 	public LoginResponse login(LoginRequest request) {
@@ -41,13 +45,18 @@ public class UserService {
 		}
 
 		// 4) JWT 토큰 생성
-		String token = jwtUtil.createToken(user.getLoginId(), user.getUserType().toString());
+		String accessToken = jwtUtil.createToken(user.getLoginId(), user.getUserType().toString());
 
-		// 5) 로그인 성공
+		// 5) refreshToken 생성 및 Redis에 저장
+		String refreshToken = jwtUtil.createRefreshToken(user.getLoginId());
+		refreshService.storeRefreshToken(user.getLoginId(), refreshToken, jwtConfig.getRefreshExpiration());
+
+
+		// 6) 로그인 성공
 		return new LoginResponse(
 			"200",
 			"로그인 성공",
-			token,
+			accessToken,
 			new UserInfo(user.getLoginId(), user.getName(), user.getUserType().toString())
 		);
 	}

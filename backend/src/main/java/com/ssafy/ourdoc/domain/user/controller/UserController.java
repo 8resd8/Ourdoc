@@ -13,9 +13,11 @@ import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
 import com.ssafy.ourdoc.domain.user.dto.LoginResponse;
 import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
 import com.ssafy.ourdoc.domain.user.service.UserService;
+import com.ssafy.ourdoc.global.util.JwtRefreshService;
 import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,6 +27,7 @@ public class UserController {
 
 	private final UserService userService;
 	private final JwtUtil jwtUtil;
+	private final JwtRefreshService jwtRefreshService;
 
 	/**
 	 * POST /users/signin
@@ -37,14 +40,21 @@ public class UserController {
 	 */
 	// 1. 사용자 로그인
 	@PostMapping("/signin")
-	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-		LoginResponse response = userService.login(request);
+	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+		LoginResponse loginResponse  = userService.login(request);
 
 		// resultCode = "401"이면 Unauthorized(401), 그 외는 200
-		if ("401".equals(response.resultCode())) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+		if ("401".equals(loginResponse.resultCode())) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
 		}
-		return ResponseEntity.ok(response);
+
+		// ✅ UserService에서 Refresh Token을 가져와서 쿠키로 저장
+		String refreshToken = jwtRefreshService.getRefreshToken(loginResponse.user().id());
+
+		// ✅ Refresh Token을 `HttpOnly` 쿠키로 설정 (자동 전송)
+		response.addHeader("Set-Cookie", "Refresh-Token=" + refreshToken + "; HttpOnly; Secure; Path=/");
+
+		return ResponseEntity.ok(loginResponse);
 	}
 
 	// 2. ID 중복 체크
@@ -56,14 +66,17 @@ public class UserController {
 
 	// 3. 로그아웃
 	@PostMapping("/signout")
-	public ResponseEntity<LogoutResponse> logout(HttpServletRequest request) {
+	public ResponseEntity<LogoutResponse> logout(HttpServletRequest request, HttpServletResponse response) {
 		String token = jwtUtil.resolveToken(request);
-		LogoutResponse response = userService.logout(token);
+		LogoutResponse logoutResponse = userService.logout(token);
 
-		// resultCode = "401"이면 Unauthorized(401), 그 외는 200
-		if ("401".equals(response.resultCode())) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+		if ("401".equals(logoutResponse.resultCode())) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(logoutResponse);
 		}
-		return ResponseEntity.ok(response);
+
+		// ✅ Refresh Token 삭제 (쿠키에서도 삭제)
+		response.addHeader("Set-Cookie", "Refresh-Token=; HttpOnly; Secure; Path=/; Max-Age=0");
+
+		return ResponseEntity.ok(logoutResponse);
 	}
 }
