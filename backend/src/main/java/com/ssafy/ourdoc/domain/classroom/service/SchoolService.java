@@ -36,7 +36,7 @@ public class SchoolService {
 	private final SchoolRepository schoolRepository;
 
 	public School searchSchoolName(String schoolName) {
-		return schoolRepository.findBySchoolNameContaining(schoolName)
+		return schoolRepository.findBySchoolName(schoolName)
 			.orElseThrow(() -> new NoSuchElementException("학교가 존재하지 않습니다."));
 	}
 
