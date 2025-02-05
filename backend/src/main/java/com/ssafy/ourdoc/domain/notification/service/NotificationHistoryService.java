@@ -2,7 +2,6 @@ package com.ssafy.ourdoc.domain.notification.service;
 
 import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 
-import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ import com.ssafy.ourdoc.domain.notification.repository.NotificationRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
-import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +28,7 @@ public class NotificationHistoryService {
 	private final UserRepository userRepository;
 
 	// 알림 DB 저장, 일단 학생 -> 담당교사만 보낼 수 있음.
-	public Notification saveHistory(User sender, NotificationType type, String content) {
+	public NotificationRecipient saveHistory(User sender, NotificationType type, String content) {
 		User recipientUser = null;
 
 		if (sender.getUserType().equals(학생)) {
@@ -42,9 +40,8 @@ public class NotificationHistoryService {
 		}
 
 		Notification notification = saveSender(sender, type, content);
-		saveRecipient(recipientUser, notification);
 
-		return notification;
+		return saveRecipient(recipientUser, notification);
 	}
 
 	// 전송자 저장
@@ -58,16 +55,16 @@ public class NotificationHistoryService {
 	}
 
 	// 수신자 저장
-	private void saveRecipient(User recipient, Notification notification) {
+	private NotificationRecipient saveRecipient(User recipient, Notification notification) {
 		NotificationRecipient recipientEntity = NotificationRecipient.builder()
 			.notification(notification)
 			.recipient(recipient)
 			.build();
-		notificationRecipientRepository.save(recipientEntity);
+		return notificationRecipientRepository.save(recipientEntity);
 	}
 
 	public void markNotificationRead(User user, Long notificationId) {
-		NotificationRecipient recipient = getRecipient(notificationId);
+		NotificationRecipient recipient = getRecipient(user.getId(), notificationId);
 
 		recipient.markAsRead();
 	}
@@ -83,8 +80,8 @@ public class NotificationHistoryService {
 		return false;  // 기타 경우는 허용하지 않음
 	}
 
-	private NotificationRecipient getRecipient(Long notificationId) {
-		return notificationRecipientRepository.findById(notificationId)
+	private NotificationRecipient getRecipient(Long userId, Long notificationId) {
+		return notificationRecipientRepository.findByNotificationRecipient(userId, notificationId)
 			.orElseThrow(() -> new NoSuchElementException("사용자의 알림을 찾을 수 없습니다."));
 	}
 
