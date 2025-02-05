@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.ssafy.ourdoc.domain.notification.dto.NotificationDto;
 import com.ssafy.ourdoc.domain.notification.entity.Notification;
 import com.ssafy.ourdoc.domain.notification.exception.SubscribeException;
+import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,7 @@ public class NotificationService {
 	private final ConcurrentHashMap<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
 	// 알림 구독
-	public SseEmitter subscribe(Long userId) {
+	public SseEmitter subscribe(User user) {
 		SseEmitter emitter = new SseEmitter(TIMEOUT);
 
 		// 하트비트 설정
@@ -41,7 +42,7 @@ public class NotificationService {
 					emitter.send(SseEmitter.event().name("연결정보 갱신").data("ping"));
 				} catch (IOException e) {
 					timer.cancel();
-					removeEmitter(userId, emitter);
+					removeEmitter(user.getId(), emitter);
 					emitter.complete();
 				}
 			}
@@ -49,25 +50,25 @@ public class NotificationService {
 
 		emitter.onCompletion(() -> {
 			timer.cancel();
-			removeEmitter(userId, emitter);
+			removeEmitter(user.getId(), emitter);
 		});
 		emitter.onTimeout(() -> {
 			timer.cancel();
-			removeEmitter(userId, emitter);
+			removeEmitter(user.getId(), emitter);
 		});
 		emitter.onError((e) -> {
 			timer.cancel();
-			removeEmitter(userId, emitter);
+			removeEmitter(user.getId(), emitter);
 		});
 
-		emitters.computeIfAbsent(userId, key -> new CopyOnWriteArrayList<>()).add(emitter);
+		emitters.computeIfAbsent(user.getId(), key -> new CopyOnWriteArrayList<>()).add(emitter);
 		return emitter;
 	}
 
 	// 알림 전송
-	public NotificationDto sendNotification(Long userId, NotificationType type, String content) {
-		Notification notification = notificationHistoryService.saveHistory(userId, type, content);
-		sendToEmitters(userId, notification);
+	public NotificationDto sendNotification(User sender, NotificationType type, String content) {
+		Notification notification = notificationHistoryService.saveHistory(sender, type, content);
+		sendToEmitters(sender.getId(), notification);
 
 		return new NotificationDto(notification.getId(), type, content, notification.getCreatedAt());
 	}
