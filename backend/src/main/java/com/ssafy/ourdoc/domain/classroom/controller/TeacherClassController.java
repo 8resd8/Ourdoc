@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.classroom.dto.CreateClassRequest;
 import com.ssafy.ourdoc.domain.classroom.service.ClassService;
+import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.global.annotation.Login;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,10 +22,9 @@ public class TeacherClassController {
 
 	private final ClassService classService;
 
-	@PostMapping("/{teacherId}/class")
+	@PostMapping("/class")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createClassRoom(@PathVariable("teacherId") Long teacherId,
-		@RequestBody CreateClassRequest request) {
-		classService.createClass(teacherId, request);
+	public void createClassRoom(@Login User user, @RequestBody CreateClassRequest request) {
+		classService.createClass(user, request);
 	}
 }

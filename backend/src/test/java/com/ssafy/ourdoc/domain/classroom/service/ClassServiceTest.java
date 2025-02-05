@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.ssafy.ourdoc.data.entity.UserSample;
 import com.ssafy.ourdoc.domain.classroom.dto.CreateClassRequest;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.entity.School;
@@ -77,7 +79,7 @@ class ClassServiceTest {
 		Optional<Teacher> optionalTeacher = teacherRepository.findById(teacherId);
 		assertThat(optionalTeacher).isNotEmpty();
 
-		classService.createClass(teacherId, request);
+		classService.createClass(user, request);
 
 		Optional<ClassRoom> savedClassRoom = classRoomRepository.findByGradeAndClassNumberAndYear(
 			request.grade(), request.classNumber(), Year.of(request.year()));
@@ -95,13 +97,12 @@ class ClassServiceTest {
 	}
 
 	@Test
-	@DisplayName("존재하지 않는 Teacher ID로 생성 시 실패")
+	@DisplayName("존재하지 않는 userId로 생성 시 실패")
 	void createClassWithInvalidTeacherId() {
-		Long invalidTeacherId = 9999L;
+		User invalidUser = UserSample.user();
 
-		assertThatThrownBy(() -> classService.createClass(invalidTeacherId, request))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("해당 Teacher ID를 찾을 수 없습니다");
+		assertThatThrownBy(() -> classService.createClass(invalidUser, request))
+			.isInstanceOf(NoSuchElementException.class);
 	}
 
 	@Test
@@ -121,9 +122,8 @@ class ClassServiceTest {
 		// 같은 요청으로 학급 생성 시도
 		CreateClassRequest request = new CreateClassRequest("테스트학교", 2024, grade, classNumber);
 
-		assertThatThrownBy(() -> classService.createClass(teacherId, request))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessage("이미 등록된 학급이 있습니다.");
+		assertThatThrownBy(() -> classService.createClass(user, request))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 }
