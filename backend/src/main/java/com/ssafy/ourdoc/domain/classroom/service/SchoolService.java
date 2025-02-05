@@ -9,7 +9,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,9 +35,12 @@ public class SchoolService {
 
 	private final SchoolRepository schoolRepository;
 
-	public School searchSchoolName(String schoolName) {
-		return schoolRepository.findBySchoolName(schoolName)
-			.orElseThrow(() -> new NoSuchElementException("학교가 존재하지 않습니다."));
+	public List<SchoolResponse> searchSchoolName(String schoolName) {
+		List<School> schoolList = schoolRepository.findAllBySchoolNameContaining(schoolName);
+
+		return schoolList.stream()
+			.map(school -> new SchoolResponse(school.getSchoolName(), school.getAddress()))
+			.collect(Collectors.toList());
 	}
 
 	// 학교 API 검색
@@ -85,12 +88,18 @@ public class SchoolService {
 			schoolName = "";
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append("KEY=").append(URLEncoder.encode(apiKey, "UTF-8"))
-			.append("&Type=").append(URLEncoder.encode("json", "UTF-8"))
-			.append("&pIndex=").append(URLEncoder.encode("1", "UTF-8"))
-			.append("&pSize=").append(URLEncoder.encode("1000", "UTF-8"))
-			.append("&SCHUL_KND_SC_NM=").append(URLEncoder.encode("초등학교", "UTF-8"))
-			.append("&SCHUL_NM=").append(URLEncoder.encode(schoolName, "UTF-8"));
+		sb.append("KEY=")
+			.append(URLEncoder.encode(apiKey, "UTF-8"))
+			.append("&Type=")
+			.append(URLEncoder.encode("json", "UTF-8"))
+			.append("&pIndex=")
+			.append(URLEncoder.encode("1", "UTF-8"))
+			.append("&pSize=")
+			.append(URLEncoder.encode("1000", "UTF-8"))
+			.append("&SCHUL_KND_SC_NM=")
+			.append(URLEncoder.encode("초등학교", "UTF-8"))
+			.append("&SCHUL_NM=")
+			.append(URLEncoder.encode(schoolName, "UTF-8"));
 
 		return sb.toString();
 	}
