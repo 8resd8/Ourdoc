@@ -11,6 +11,7 @@ import com.ssafy.ourdoc.domain.award.dto.AwardListResponse;
 import com.ssafy.ourdoc.domain.award.dto.CreateAwardRequest;
 import com.ssafy.ourdoc.domain.award.entity.Award;
 import com.ssafy.ourdoc.domain.award.repository.AwardRepository;
+import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
 import jakarta.transaction.Transactional;
@@ -24,26 +25,34 @@ public class AwardService {
 	private final AwardRepository awardRepository;
 	private final S3StorageService s3StorageService;
 
-	public void createAward(CreateAwardRequest request, MultipartFile file) {
+	// 상장 생성
+	public void createAward(User user, CreateAwardRequest request, MultipartFile file) {
 		String imagePath = s3StorageService.uploadFile(file);
 
-		Award award = Award.builder().title(request.title()).user(null) // user정보 필요함.
-			.imagePath(imagePath).build();
+		Award award = Award.builder()
+			.title(request.title())
+			.user(user)
+			.imagePath(imagePath)
+			.build();
 
 		awardRepository.save(award);
 	}
 
-	public AwardListResponse getAllAward() {
-		List<AwardDto> allAward = awardRepository.findAllAward();
-		return new AwardListResponse(allAward);
+	// 학생 - 상장 전체조회
+	public AwardListResponse getAllAwards(User user) {
+
+		List<AwardDto> allAwards = awardRepository.findAllAwardByUserId(user.getId());
+		return new AwardListResponse(allAwards);
 	}
 
-	public AwardDto searchAward(Long awardId) {
-		Award award = getFindAward(awardId);
-		return new AwardDto(award.getId(), award.getImagePath(), award.getTitle(), award.getCreatedAt());
+	// 학생 - 상장 상세조회
+	public AwardDto awardDetail(User user, Long awardId) {
+		return getFindAward(user.getId(), awardId);
 	}
 
-	private Award getFindAward(Long id) {
-		return awardRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당하는 상장이 없습니다."));
+	private AwardDto getFindAward(Long userId, Long awardId) {
+		return awardRepository.findAwardByUserId(userId, awardId)
+			.orElseThrow(() -> new NoSuchElementException("상장이 없습니다."));
 	}
+
 }
