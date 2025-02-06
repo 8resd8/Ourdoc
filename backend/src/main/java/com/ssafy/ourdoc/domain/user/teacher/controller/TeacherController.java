@@ -25,8 +25,8 @@ public class TeacherController {
 	// 1. 교사 회원가입
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody TeacherSignupRequest request) {
-		Long teacherId = teacherService.signup(request);
-		return ResponseEntity.ok("교사 회원가입 완료. teacher_id = " + teacherId);
+		teacherService.signup(request);
+		return ResponseEntity.ok("교사 회원가입 완료.");
 	}
 
 	// 2. QR 생성
