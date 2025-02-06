@@ -2,13 +2,12 @@ package com.ssafy.ourdoc.global.config;
 
 import java.util.List;
 
-import com.ssafy.ourdoc.global.interceptor.JwtInterceptor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.ssafy.ourdoc.global.interceptor.JwtInterceptor;
 import com.ssafy.ourdoc.global.resolver.LoginArgumentResolver;
 
 import lombok.RequiredArgsConstructor;
@@ -30,4 +29,5 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addInterceptor(jwtInterceptor)
 			.addPathPatterns("/**")
 			.excludePathPatterns("/teachers/signup", "/students/signup", "/users/signin", "/users/signout");
+	}
 }
