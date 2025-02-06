@@ -14,7 +14,10 @@ import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
 import com.ssafy.ourdoc.domain.user.dto.LoginResponse;
 import com.ssafy.ourdoc.domain.user.dto.LoginResult;
 import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
+import com.ssafy.ourdoc.domain.user.dto.request.CheckPasswordRequest;
+import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.service.UserService;
+import com.ssafy.ourdoc.global.annotation.Login;
 import com.ssafy.ourdoc.global.util.JwtRefreshService;
 import com.ssafy.ourdoc.global.util.JwtUtil;
 
@@ -58,5 +61,12 @@ public class UserController {
 		response.addHeader("Set-Cookie", "Refresh-Token=; HttpOnly; Secure; Path=/; Max-Age=0");
 
 		return ResponseEntity.ok(logoutResponse);
+	}
+
+	// 4. 비밀번호 일치 확인
+	@PostMapping("/password/verification")
+	public ResponseEntity<Boolean> verifyPassword(@Login User user, @RequestBody CheckPasswordRequest request) {
+		boolean isDuplicate = userService.verifyPassword(user, request);
+		return ResponseEntity.ok(isDuplicate);
 	}
 }
