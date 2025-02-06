@@ -2,8 +2,6 @@ package com.ssafy.ourdoc.domain.user.service;
 
 import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 
-import javax.security.auth.login.LoginException;
-
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +11,15 @@ import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
 import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
 import com.ssafy.ourdoc.domain.user.dto.StudentLoginDto;
 import com.ssafy.ourdoc.domain.user.dto.StudentQueryDto;
+import com.ssafy.ourdoc.domain.user.dto.TeacherLoginDto;
+import com.ssafy.ourdoc.domain.user.dto.TeacherQueryDto;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.entity.Student;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
+import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherQueryRepository;
+import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
 import com.ssafy.ourdoc.global.config.JwtConfig;
 import com.ssafy.ourdoc.global.exception.UserFailedException;
 import com.ssafy.ourdoc.global.util.JwtBlacklistService;
@@ -36,37 +38,51 @@ public class UserService {
 	private final JwtBlacklistService blacklistService;
 	private final JwtRefreshService refreshService;
 	private final StudentRepository studentRepository;
+	private final TeacherRepository teacherRepository;
 	private final StudentQueryRepository studentQueryRepository;
+	private final TeacherQueryRepository teacherQueryRepository;
 
 	// 1. 사용자 로그인
 	public ResponseEntity<?> login(LoginRequest request) {
 		// 유저 검증 (로그인 중복, 비밀번호)
 		User user = validation(request);
 
-		saveRefreshToken(user);
-
 		if (request.userType().equals(학생)) {
 			return loginStudent(request, user);
 		} else if (request.userType().equals(교사)) {
-			// return loginTeacher(request, user);
+			return loginTeacher(request, user);
 		} else {
 
 		}
-		// if 관리자일때
-
-		// 그 외 예외던져
 
 		throw new UserFailedException("알수없는 이유로 로그인 실패");
 	}
 
-	// private ResponseEntity<?> loginTeacher(LoginRequest request, User user) {
-	// }
+	private ResponseEntity<?> loginTeacher(LoginRequest request, User user) {
+		TeacherQueryDto search = teacherQueryRepository.getTeacherLoginDto(user.getId());
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Bearer " + getAccessToken(request));
+
+		saveRefreshTokenAndSetCookie(user, headers);
+
+		TeacherLoginDto response = new TeacherLoginDto(
+			user.getLoginId(),
+			user.getName(),
+			user.getUserType(),
+			search.schoolName(),
+			search.grade(),
+			search.classNumber());
+
+		return ResponseEntity.ok().headers(headers).body(response);
+	}
 
 	private ResponseEntity<StudentLoginDto> loginStudent(LoginRequest request, User user) {
 		Student student = studentRepository.findByUser(user);
 		StudentQueryDto search = studentQueryRepository.getStudentLoginDto(user.getId());
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer " + getAccessToken(request));
+
+		saveRefreshTokenAndSetCookie(user, headers);
 
 		StudentLoginDto response = new StudentLoginDto(
 			user.getLoginId(),
@@ -81,9 +97,10 @@ public class UserService {
 		return ResponseEntity.ok().headers(headers).body(response);
 	}
 
-	private void saveRefreshToken(User user) {
+	private void saveRefreshTokenAndSetCookie(User user, HttpHeaders headers) {
 		String refreshToken = jwtUtil.createRefreshToken(user.getLoginId());
 		refreshService.storeRefreshToken(user.getLoginId(), refreshToken, jwtConfig.getRefreshExpiration());
+		headers.add(HttpHeaders.SET_COOKIE, "Refresh-Token=" + refreshToken + "; HttpOnly; Secure; Path=/");
 	}
 
 	private User validation(LoginRequest request) {
