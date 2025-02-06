@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +20,6 @@ import com.ssafy.ourdoc.domain.notification.service.NotificationQueryService;
 import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
-import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -56,12 +54,6 @@ public class NotificationController {
 	public NotificationDetailDto getNotification(@Login User user,
 		@PathVariable("notificationId") Long notificationId) {
 		return notificationQueryService.getNotification(user, notificationId);
-	}
-
-	@PostMapping("/send")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void sendNotificationTest(@Login User user) {
-		notificationService.sendNotification(user, NotificationType.독서록, "독서록 저장했어.");
 	}
 
 }
