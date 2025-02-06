@@ -33,28 +33,8 @@ public class UserController {
 
 	// 1. 사용자 로그인
 	@PostMapping("/signin")
-	public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletResponse response) {
-		// LoginResult loginResult  = userService.login(request);
-
-		// LoginResponse loginResponse = loginResult.loginResponse();
-		// String accessToken = loginResult.accessToken();
-
-		// resultCode = "401"이면 Unauthorized(401), 그 외는 200
-		// if ("401".equals(loginResponse.resultCode())) {
-		// 	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
-		// }
-
-		// Access Token을 헤더로
-		// response.setHeader("Authorization", "Bearer " + accessToken);
-
-		// ✅ UserService에서 Refresh Token을 가져와서 쿠키로 저장
-		// String refreshToken = jwtRefreshService.getRefreshToken(loginResponse.user().id());
-
-		// ✅ Refresh Token을 `HttpOnly` 쿠키로 설정 (자동 전송)
-		// response.addHeader("Set-Cookie", "Refresh-Token=" + refreshToken + "; HttpOnly; Secure; Path=/");
-
-		// return ResponseEntity.ok(loginResponse);
-		return null;
+	public ResponseEntity<?> myLogin(@RequestBody LoginRequest request) {
+		return userService.login(request);
 	}
 
 	// 2. ID 중복 체크
@@ -78,12 +58,5 @@ public class UserController {
 		response.addHeader("Set-Cookie", "Refresh-Token=; HttpOnly; Secure; Path=/; Max-Age=0");
 
 		return ResponseEntity.ok(logoutResponse);
-	}
-
-
-
-	@PostMapping("/test")
-	public ResponseEntity<?> myLogin(@RequestBody LoginRequest request) {
-		return userService.login(request);
 	}
 }
