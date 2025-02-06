@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.user.service;
 
+import java.util.Optional;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +11,10 @@ import com.ssafy.ourdoc.domain.user.dto.LoginResponse.UserInfo;
 import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
+import com.ssafy.ourdoc.domain.user.student.entity.Student;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
+import com.ssafy.ourdoc.global.common.enums.TempPassword;
+import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.config.JwtConfig;
 import com.ssafy.ourdoc.global.exception.UserFailedException;
 import com.ssafy.ourdoc.global.util.JwtBlacklistService;
@@ -26,6 +32,7 @@ public class UserService {
 	private final JwtConfig jwtConfig;
 	private final JwtBlacklistService blacklistService;
 	private final JwtRefreshService refreshService;
+	private final StudentRepository studentRepository;
 
 	// 1. 사용자 로그인
 	public LoginResponse login(LoginRequest request) {
@@ -51,13 +58,18 @@ public class UserService {
 		String refreshToken = jwtUtil.createRefreshToken(user.getLoginId());
 		refreshService.storeRefreshToken(user.getLoginId(), refreshToken, jwtConfig.getRefreshExpiration());
 
+		// 6) 학생의 경우 tempPassword 추가
+		TempPassword tempPassword = TempPassword.N;
+		if (user.getUserType() == UserType.학생) {
+			tempPassword = studentRepository.findByUser(user).getTempPassword();
+		}
 
-		// 6) 로그인 성공
+		// 7) 로그인 성공
 		return new LoginResponse(
 			"200",
 			"로그인 성공",
 			accessToken,
-			new UserInfo(user.getLoginId(), user.getName(), user.getUserType().toString())
+			new UserInfo(user.getLoginId(), user.getName(), user.getUserType().toString(), tempPassword.toString())
 		);
 	}
 
