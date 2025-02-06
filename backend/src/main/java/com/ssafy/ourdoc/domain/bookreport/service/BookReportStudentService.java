@@ -64,7 +64,6 @@ public class BookReportStudentService {
 	}
 
 	public BookReportListResponse getBookReports(User user, int grade) {
-		StudentClass studentClass = studentClassRepository.findStudentClassByUserId(user.getId()).orElseThrow();
 		List<BookReport> bookReports = bookReportRepository.findByUserIdAndGrade(user.getId(), grade);
 
 		List<BookReportDto> bookReportDtos = bookReports.stream()
