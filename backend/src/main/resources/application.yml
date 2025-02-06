@@ -48,3 +48,7 @@ logging:
 school:
   api-url: ${school.elesch-api-url}
   api-key: ${school.elesch-api-key}
+
+openvidu:
+  url: ${openvidu.url}
+  secret: ${openvidu.secret}
