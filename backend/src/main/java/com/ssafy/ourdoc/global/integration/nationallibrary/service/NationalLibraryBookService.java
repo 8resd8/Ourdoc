@@ -53,20 +53,36 @@ public class NationalLibraryBookService {
 	@Scheduled(cron = "0 0 3 * * *")
 	public void updateBookListFromNationalLibrary() {
 		List<NationalLibraryBookResponse> externalBooks = parseBook();
+		log.info("국립중앙도서관 도서 {} 개 수집 완료", externalBooks.size());
+
 		List<NationalLibraryBookResponse> uniqueBooks = externalBooks.stream()
 			.filter(distinctByKey(NationalLibraryBookResponse::isbn))
 			.toList();
+		log.info("국립중앙도서관 내 ISBN 중복 제외 도서 {} 개 확인", uniqueBooks.size());
+
+		List<String> isbns = uniqueBooks.stream()
+			.map(NationalLibraryBookResponse::isbn)
+			.collect(Collectors.toList());
+
+		List<String> existingIsbns = bookRepository.findByIsbnIn(isbns)
+			.stream()
+			.map(Book::getIsbn)
+			.toList();
+
 		List<Book> newBooks = uniqueBooks.stream()
-			.filter(response -> bookRepository.findByIsbn(response.isbn()).isEmpty())
+			.filter(response -> !existingIsbns.contains(response.isbn()))
 			.map(NationalLibraryBookResponse::toBookEntity)
 			.collect(Collectors.toList());
 
+		log.info("신규 도서 {} 개 확인", newBooks.size());
+
 		if (!newBooks.isEmpty()) {
 			bookService.registerBookList(newBooks);
+			log.info("국립중앙도서관 도서 {} 개 저장 완료", newBooks.size());
 		}
 	}
 
-	public List<NationalLibraryBookResponse> parseBook() {
+	private List<NationalLibraryBookResponse> parseBook() {
 		List<NationalLibraryBookResponse> allBooks = new ArrayList<>();
 
 		try {
