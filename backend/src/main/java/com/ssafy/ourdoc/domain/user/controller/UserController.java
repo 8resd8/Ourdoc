@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
 import com.ssafy.ourdoc.domain.user.dto.LoginResponse;
+import com.ssafy.ourdoc.domain.user.dto.LoginResult;
 import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
 import com.ssafy.ourdoc.domain.user.service.UserService;
 import com.ssafy.ourdoc.global.util.JwtRefreshService;
@@ -41,12 +42,18 @@ public class UserController {
 	// 1. 사용자 로그인
 	@PostMapping("/signin")
 	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpServletResponse response) {
-		LoginResponse loginResponse  = userService.login(request);
+		LoginResult loginResult  = userService.login(request);
+
+		LoginResponse loginResponse = loginResult.loginResponse();
+		String accessToken = loginResult.accessToken();
 
 		// resultCode = "401"이면 Unauthorized(401), 그 외는 200
 		if ("401".equals(loginResponse.resultCode())) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
 		}
+
+		// Access Token을 헤더로
+		response.setHeader("Authorization", "Bearer " + accessToken);
 
 		// ✅ UserService에서 Refresh Token을 가져와서 쿠키로 저장
 		String refreshToken = jwtRefreshService.getRefreshToken(loginResponse.user().id());
