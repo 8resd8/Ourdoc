@@ -30,10 +30,9 @@ import com.ssafy.ourdoc.global.integration.nationallibrary.dto.NationalLibraryBo
 import com.ssafy.ourdoc.global.integration.nationallibrary.exception.NationalLibraryBookFailException;
 import com.ssafy.ourdoc.global.util.DateConvertor;
 
-import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-@lombok.extern.slf4j.Slf4j
 @Service
 @Slf4j
 @RequiredArgsConstructor
