@@ -5,7 +5,7 @@ interface PropsType {
   onClick?: () => void;
 }
 
-const Button = ({ title, onClick }: PropsType) => {
+const ButtonHalf = ({ title, onClick }: PropsType) => {
   return (
     <button
       className={`${classes.btn} text-gray-0 bg-primary-500`}
@@ -16,4 +16,4 @@ const Button = ({ title, onClick }: PropsType) => {
   );
 };
 
-export default Button;
+export default ButtonHalf;

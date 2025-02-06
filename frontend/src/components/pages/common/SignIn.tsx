@@ -1,29 +1,89 @@
+import { useState } from 'react';
 import Button from '../../atoms/Button';
-import Input from '../../atoms/Input';
-import Label from '../../atoms/Label';
 import InputField from '../../molecules/InputField';
 import classes from './SignIn.module.css';
+import { signInApi } from '../../../api/auth/AuthApi';
+
 const SignIn = () => {
+  const [userType, setUserType] = useState('학생');
+  const [loginInfo, setLoginInfo] = useState({ loginId: '', password: '' });
+
+  const handleInputChange = (id: string, value: string) => {
+    setLoginInfo((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleLogin = async () => {
+    try {
+      const response = await signInApi({
+        userType,
+        loginId: loginInfo.loginId,
+        password: loginInfo.password,
+      });
+      console.log('로그인 성공:', response);
+    } catch (error) {
+      console.error('로그인 실패:', error);
+    }
+  };
+
   return (
-    <div className={`${classes.base}`}>
-      <div>
-        <img
-          className={`${classes.logo_img}`}
-          alt="logoImage"
-          src="/assets/images/logo.png"
-        />
+    <div className={classes.root}>
+      <div className={`${classes.base} shadow-medium`}>
+        <div>
+          <img
+            className={`${classes.logo_img}`}
+            alt="logoImage"
+            src="/assets/images/logo1.png"
+          />
+        </div>
+        <div className={classes.toggle}>
+          <span
+            onClick={() => setUserType('학생')}
+            className={`${classes.toggle_student} headline-medium ${
+              userType === '학생'
+                ? 'text-primary-500 border-b-2 border-b-primary-500'
+                : 'text-gray-300'
+            }`}
+          >
+            학생
+          </span>
+          <span className={`${classes.line} bg-gray-200`}></span>
+          <span
+            onClick={() => setUserType('교사')}
+            className={`${classes.toggle_teacher} headline-medium ${
+              userType === '교사'
+                ? 'text-primary-500 border-b-2 border-b-primary-500'
+                : 'text-gray-300'
+            }`}
+          >
+            교사
+          </span>
+        </div>
+        <div className={classes.input}>
+          <InputField
+            id="loginId"
+            label="아이디"
+            placeholder="아이디를 입력해주세요"
+            onChange={(value) => handleInputChange('loginId', value)}
+          />
+        </div>
+        <div className={classes.input}>
+          <InputField
+            id="password"
+            label="비밀번호"
+            placeholder="비밀번호를 입력해주세요"
+            onChange={(value) => handleInputChange('password', value)}
+          />
+        </div>
+        <div className={classes.btn}>
+          <Button title="로그인" onClick={handleLogin} />
+        </div>
+        <div
+          onKeyDown={handleLogin}
+          className={`${classes.btn_admin} ml-80 text-gray-500 body-small`}
+        >
+          관리자로 로그인
+        </div>
       </div>
-      <div>
-        <span>학생</span>
-        <span>교사</span>
-      </div>
-      <div>
-        <InputField label="아이디" placeholder="아이디를 입력해주세요" />
-      </div>
-      <div>
-        <InputField label="비밀번호" placeholder="비밀번호를 입력해주세요" />
-      </div>
-      <Button title="로그인" />
     </div>
   );
 };

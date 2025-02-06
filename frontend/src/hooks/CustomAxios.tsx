@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 const baseURL = import.meta.env.VITE_APP_API_URL;
 
@@ -6,32 +6,22 @@ export const createAxiosInstance = (): AxiosInstance => {
   const instance = axios.create({
     baseURL,
     timeout: 10000,
+    withCredentials: true, // 모든 요청에 쿠키 포함
     headers: {
       'Content-Type': 'application/json',
     },
   });
 
-  // 요청 인터셉터
   instance.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error: AxiosError) => {
-      return Promise.reject(error);
-    }
+    (config) => config,
+    (error) => Promise.reject(error)
   );
 
-  // 응답 인터셉터
   instance.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
+    (error) => {
       if (error.response?.status === 401) {
-        // 토큰 만료 등 인증 에러 처리
-        localStorage.removeItem('token');
+        // 에러 핸들링 어떻게 할것인가
       }
       return Promise.reject(error);
     }

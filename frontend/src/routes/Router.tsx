@@ -35,13 +35,19 @@ import TeacherReportList from '../components/pages/teacher/TeacherReportList';
 import TeacherSignUp from '../components/pages/teacher/TeacherSignUp';
 import TeacherStatistics from '../components/pages/teacher/TeacherStatistics';
 import TeacherStudentInfo from '../components/pages/teacher/TeacherStudentInfo';
+import AuthLayout from '../layouts/AuthLayout';
 
 const Router = () => {
   return (
     <Routes>
-      <Route element={<Layout />}>
-        {/* 공통 라우트 */}
+      {/* 로그인 및 회원가입 페이지 (헤더 & 푸터 X) */}
+      <Route element={<AuthLayout />}>
         <Route path="/" element={<SignIn />} />
+        <Route path="/student/signup" element={<StudentSignUp />} />
+        <Route path="/teacher/signup" element={<TeacherSignUp />} />
+      </Route>
+      <Route element={<Layout />}>
+        {/* 선생 학생 공통 라우트 */}
         <Route path="/debate/board" element={<DebateBoard />} />
         <Route path="/debate/room" element={<DebateRoom />} />
 
