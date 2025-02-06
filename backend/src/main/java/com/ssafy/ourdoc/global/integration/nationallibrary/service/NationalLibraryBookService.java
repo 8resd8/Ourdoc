@@ -75,7 +75,7 @@ public class NationalLibraryBookService {
 			int totalPageCount = (int)Math.ceil((double)totalCount / PAGE_SIZE);
 
 			for (int pageNo = 1; pageNo <= totalPageCount; pageNo++) {
-				log.info("국립중앙도서관 도서 가져오는 중: {} / {}", pageNo, totalCount);
+				log.info("국립중앙도서관 도서 가져오는 중: {} / {}", pageNo, totalPageCount);
 				String response = getHttpResponse(pageNo);
 				allBooks.addAll(parseBooksFromResponse(response));
 				Thread.sleep(5000);
