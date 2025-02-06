@@ -16,10 +16,11 @@ public record LoginResponse(
 	public record UserInfo(
 		String id,    // User.loginId
 		String name,  // User.name
-		String role   // User.userType (학생, 교사, 관리자)
+		String role,   // User.userType (학생, 교사, 관리자)
+		String tempPassword		// 학생일 경우에만 존재
 	) {
-		public static UserInfo of(String id, String name, String role) {
-			return new UserInfo(id, name, role);
+		public static UserInfo of(String id, String name, String role, String tempPassword) {
+			return new UserInfo(id, name, role, tempPassword);
 		}
 	}
 }
