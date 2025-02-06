@@ -17,4 +17,12 @@ public class TeacherClassSample {
 			.active(Active.활성)
 			.build();
 	}
+
+	public static TeacherClass teacherClass(User user, ClassRoom classRoom, Active active) {
+		return TeacherClass.builder()
+			.user(user)
+			.classRoom(classRoom)
+			.active(active)
+			.build();
+	}
 }
