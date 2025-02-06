@@ -10,7 +10,6 @@ public class SchoolSample {
 	private final static String defaultName = "테스트이름";
 	private final static String defaultAddress = "테스트주소";
 
-
 	public static School school(String name, String address) {
 		return School.builder()
 			.schoolName(name)
@@ -31,6 +30,4 @@ public class SchoolSample {
 			.address(defaultAddress)
 			.build();
 	}
-
-
 }
