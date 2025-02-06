@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.user.teacher.service;
 
+import static com.ssafy.ourdoc.global.common.enums.Active.*;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -62,7 +64,7 @@ public class TeacherService {
 			.password(encodedPassword)
 			.birth(request.birth())
 			.gender(request.gender())
-			.active(request.active())
+			.active(활성)
 			.build();
 
 		User savedUser = userRepository.save(user);
@@ -84,7 +86,7 @@ public class TeacherService {
 
 		// 2) 소속 반 정보
 		Long userId = teacher.getUser().getId();
-		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(userId, Active.활성).getClassRoom();
+		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(userId, 활성).getClassRoom();
 		if (classRoom == null) {
 			throw new IllegalStateException("교사에 연결된 ClassRoom 정보가 없습니다.");
 		}
