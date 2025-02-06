@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.ourdoc.domain.user.dto.CheckIdRequest;
 import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
 import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
 import com.ssafy.ourdoc.domain.user.dto.StudentLoginDto;
@@ -112,8 +113,8 @@ public class UserService {
 	}
 
 	// 2. ID 중복 체크
-	public boolean isLoginIdDuplicate(String loginId) {
-		return userRepository.findByLoginId(loginId).isPresent();
+	public boolean isLoginIdDuplicate(CheckIdRequest request) {
+		return userRepository.findByLoginId(request.loginId()).isPresent();
 	}
 
 	// 3. 로그아웃 서비스

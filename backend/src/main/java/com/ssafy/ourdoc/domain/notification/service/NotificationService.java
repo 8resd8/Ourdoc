@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.notification.service;
 
+import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Timer;
@@ -68,11 +70,31 @@ public class NotificationService {
 		return emitter;
 	}
 
-	// 알림 전송
-	public void sendNotification(User sender, NotificationType type, String content) {
-		NotificationRecipient recipient = notificationHistoryService.saveHistory(sender, type, content);
+	// 학생이 알림전송
+	public void sendNotifyStudentFromTeacher(User sender, NotificationType type) {
+		String content = getStudentContent(sender, type);
+		NotificationRecipient recipient = notificationHistoryService.saveNotifyStudent(sender, type, content);
 
 		sendToEmitters(recipient.getId(), recipient.getNotification());
+	}
+
+	// 교사가 알림전송
+	public void sendNotifyTeacherFromStudent(User sender, Long studentClassId) {
+		NotificationRecipient recipient = notificationHistoryService.saveNotifyTeacher(sender, studentClassId,
+			"선생님이 칭찬 도장을 주셨어요!");
+
+		sendToEmitters(recipient.getId(), recipient.getNotification());
+	}
+
+	private String getStudentContent(User sender, NotificationType type) {
+		StringBuilder sb = new StringBuilder();
+		String name = sender.getName();
+		if (type.equals(가입)) {
+			sb.append(name).append(" 학생 회원가입요청입니다.");
+		} else if (type.equals(독서록)) {
+			sb.append(name).append(" 학생이 독서록을 제출했습니다.");
+		}
+		return sb.toString();
 	}
 
 	private void sendToEmitters(Long recipientUserId, Notification notification) {
@@ -93,7 +115,8 @@ public class NotificationService {
 			try {
 				emitter.send(SseEmitter.event().name("알림: ").data(response));
 			} catch (IOException e) {
-				log.error("알림 전송 실패: recipientUserId = {}, content = {}", recipientUserId, notification.getContent(), e);
+				log.error("알림 전송 실패: recipientUserId = {}, content = {}", recipientUserId, notification.getContent(),
+					e);
 				removeEmitter(recipientUserId, emitter);
 				emitter.complete();
 			}

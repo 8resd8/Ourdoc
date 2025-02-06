@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.notification.service;
 
+import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
 import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 
 import java.util.NoSuchElementException;
@@ -13,6 +14,8 @@ import com.ssafy.ourdoc.domain.notification.repository.NotificationRecipientRepo
 import com.ssafy.ourdoc.domain.notification.repository.NotificationRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
+import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
@@ -26,22 +29,42 @@ public class NotificationHistoryService {
 	private final NotificationRepository notificationRepository;
 	private final NotificationRecipientRepository notificationRecipientRepository;
 	private final UserRepository userRepository;
+	private final StudentClassRepository studentClassRepository;
 
-	// 알림 DB 저장, 일단 학생 -> 담당교사만 보낼 수 있음.
-	public NotificationRecipient saveHistory(User sender, NotificationType type, String content) {
-		User recipientUser = null;
-
-		if (sender.getUserType().equals(학생)) {
-			recipientUser = userRepository.findTeachersByStudentClassId(sender.getId());
+	// 학생 -> 담당교사
+	public NotificationRecipient saveNotifyStudent(User studentUser, NotificationType type, String content) {
+		if (!studentUser.getUserType().equals(학생)) {
+			throw new ForbiddenException("학생만 알림을 보낼 수 있습니다.");
 		}
 
+		User recipientUser = userRepository.findTeachersByStudentClassId(studentUser.getId());
+
+		validateUser(studentUser, recipientUser);
+
+		Notification notification = saveSender(studentUser, type, content);
+		return saveRecipient(recipientUser, notification);
+	}
+
+	// 교사 -> 학생
+	public NotificationRecipient saveNotifyTeacher(User teacherUser, Long studentClassId, String content) {
+		if (!teacherUser.getUserType().equals(교사)) {
+			throw new IllegalArgumentException("교사만 알림을 보낼 수 있습니다.");
+		}
+
+		StudentClass studentClass = studentClassRepository.findById(studentClassId).get();
+		User recipientUser = studentClass.getUser();
+
+		validateUser(teacherUser, recipientUser); // 학생 -> 교사 검증
+
+		Notification notification = saveSender(teacherUser, 독서록, content);
+
+		return saveRecipient(recipientUser, notification);
+	}
+
+	private void validateUser(User sender, User recipientUser) {
 		if (!isValidNotification(sender, recipientUser)) {
 			throw new ForbiddenException("허용되지 않은 알림 전송입니다.");
 		}
-
-		Notification notification = saveSender(sender, type, content);
-
-		return saveRecipient(recipientUser, notification);
 	}
 
 	// 전송자 저장

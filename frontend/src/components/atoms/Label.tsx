@@ -1,12 +1,14 @@
+import classes from './Label.module.css';
 interface propsType {
   label: string;
+  htmlFor: string;
 }
 
-const Label = (props: propsType) => {
+const Label = ({ label, htmlFor }: propsType) => {
   return (
-    <div>
-      <label htmlFor="input" className="body-small">
-        {props.label}
+    <div className={classes.label}>
+      <label htmlFor={htmlFor} className={` body-small text-gray-800`}>
+        {label}
       </label>
     </div>
   );

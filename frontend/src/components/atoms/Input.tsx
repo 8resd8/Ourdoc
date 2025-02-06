@@ -1,17 +1,20 @@
 import classes from './Input.module.css';
 
-interface propsType {
+interface PropsType {
+  id: string;
   placeholder: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
-const Input = (props: propsType) => {
+
+const Input = ({ id, placeholder, onChange }: PropsType) => {
   return (
-    <div>
-      <input
-        type="text"
-        placeholder={props.placeholder}
-        className={`${classes.input} body-medium border-b-gray-200`}
-      />
-    </div>
+    <input
+      type="text"
+      id={id}
+      placeholder={placeholder}
+      onChange={onChange}
+      className={`${classes.input} body-medium border-b-gray-200`}
+    />
   );
 };
 
