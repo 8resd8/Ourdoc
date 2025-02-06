@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@Slf4j
 @RequestMapping("/teachers")
 @RequiredArgsConstructor
 public class TeacherController {
@@ -26,9 +25,8 @@ public class TeacherController {
 	// 1. 교사 회원가입
 	@PostMapping("/signup")
 	public ResponseEntity<String> signup(@RequestBody TeacherSignupRequest request) {
-		log.info("교사 회원가입 진입");
-		Long teacherId = teacherService.signup(request);
-		return ResponseEntity.ok("교사 회원가입 완료. teacher_id = " + teacherId);
+		teacherService.signup(request);
+		return ResponseEntity.ok("교사 회원가입 완료.");
 	}
 
 	// 2. QR 생성

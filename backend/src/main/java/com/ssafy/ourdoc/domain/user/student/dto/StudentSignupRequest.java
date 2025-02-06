@@ -18,7 +18,6 @@ public record StudentSignupRequest(
 	int classNumber,
 	int studentNumber,
 	Date birth,
-	Gender gender,
-	Active active // 활성/비활성
+	Gender gender
 ) {
 }
