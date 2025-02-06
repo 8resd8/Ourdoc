@@ -12,9 +12,12 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.ssafy.ourdoc.domain.notification.dto.NotificationDto;
 import com.ssafy.ourdoc.domain.notification.entity.Notification;
+import com.ssafy.ourdoc.domain.notification.entity.NotificationRecipient;
 import com.ssafy.ourdoc.domain.notification.exception.SubscribeException;
+import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,10 +29,11 @@ public class NotificationService {
 	public static final long TIMEOUT = 30 * 60 * 1000L; // 연결 시간, 30분
 	public static final int PERIOD = 60000; // 1분 간격 연결 유지
 	private final NotificationHistoryService notificationHistoryService;
+	@Getter
 	private final ConcurrentHashMap<Long, List<SseEmitter>> emitters = new ConcurrentHashMap<>();
 
 	// 알림 구독
-	public SseEmitter subscribe(Long userId) {
+	public SseEmitter subscribe(User user) {
 		SseEmitter emitter = new SseEmitter(TIMEOUT);
 
 		// 하트비트 설정
@@ -41,7 +45,7 @@ public class NotificationService {
 					emitter.send(SseEmitter.event().name("연결정보 갱신").data("ping"));
 				} catch (IOException e) {
 					timer.cancel();
-					removeEmitter(userId, emitter);
+					removeEmitter(user.getId(), emitter);
 					emitter.complete();
 				}
 			}
@@ -49,31 +53,30 @@ public class NotificationService {
 
 		emitter.onCompletion(() -> {
 			timer.cancel();
-			removeEmitter(userId, emitter);
+			removeEmitter(user.getId(), emitter);
 		});
 		emitter.onTimeout(() -> {
 			timer.cancel();
-			removeEmitter(userId, emitter);
+			removeEmitter(user.getId(), emitter);
 		});
 		emitter.onError((e) -> {
 			timer.cancel();
-			removeEmitter(userId, emitter);
+			removeEmitter(user.getId(), emitter);
 		});
 
-		emitters.computeIfAbsent(userId, key -> new CopyOnWriteArrayList<>()).add(emitter);
+		emitters.computeIfAbsent(user.getId(), key -> new CopyOnWriteArrayList<>()).add(emitter);
 		return emitter;
 	}
 
 	// 알림 전송
-	public NotificationDto sendNotification(Long userId, NotificationType type, String content) {
-		Notification notification = notificationHistoryService.saveHistory(userId, type, content);
-		sendToEmitters(userId, notification);
+	public void sendNotification(User sender, NotificationType type, String content) {
+		NotificationRecipient recipient = notificationHistoryService.saveHistory(sender, type, content);
 
-		return new NotificationDto(notification.getId(), type, content, notification.getCreatedAt());
+		sendToEmitters(recipient.getId(), recipient.getNotification());
 	}
 
-	private void sendToEmitters(Long userId, Notification notification) {
-		List<SseEmitter> userEmitters = emitters.get(userId);
+	private void sendToEmitters(Long recipientUserId, Notification notification) {
+		List<SseEmitter> userEmitters = emitters.get(recipientUserId);
 
 		if (userEmitters == null || userEmitters.isEmpty()) {
 			throw new SubscribeException("구독을 먼저 해야 알림을 받을 수 있습니다.");
@@ -90,8 +93,8 @@ public class NotificationService {
 			try {
 				emitter.send(SseEmitter.event().name("알림: ").data(response));
 			} catch (IOException e) {
-				log.error("알림 전송 실패: userId = {}, content = {}", userId, notification.getContent(), e);
-				removeEmitter(userId, emitter);
+				log.error("알림 전송 실패: recipientUserId = {}, content = {}", recipientUserId, notification.getContent(), e);
+				removeEmitter(recipientUserId, emitter);
 				emitter.complete();
 			}
 		}
