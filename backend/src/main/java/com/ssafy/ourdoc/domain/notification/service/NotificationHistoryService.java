@@ -34,7 +34,7 @@ public class NotificationHistoryService {
 	// 학생 -> 담당교사
 	public NotificationRecipient saveNotifyStudent(User studentUser, NotificationType type, String content) {
 		if (!studentUser.getUserType().equals(학생)) {
-			throw new IllegalArgumentException("학생만 알림을 보낼 수 있습니다.");
+			throw new ForbiddenException("학생만 알림을 보낼 수 있습니다.");
 		}
 
 		User recipientUser = userRepository.findTeachersByStudentClassId(studentUser.getId());
