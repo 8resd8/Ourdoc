@@ -1,12 +1,18 @@
 package com.ssafy.ourdoc.domain.bookreport.service;
 
+import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
+import static com.ssafy.ourdoc.global.common.enums.HomeworkStatus.*;
+
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.FeedbackRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
@@ -51,13 +57,26 @@ public class BookReportStudentService {
 		// 교정 내용 반영
 		bookReport.saveAfterContent(request.afterContent());
 
-		BookReportFeedBack bookReportFeedBack = BookReportFeedBack.builder()
-			.bookReport(bookReport)
-			.type(인공지능)
-			.build();
+		BookReportFeedBack bookReportFeedBack = BookReportFeedBack.builder().bookReport(bookReport).type(인공지능).build();
 
 		// 피드백 내용 저장
 		feedbackRepository.save(bookReportFeedBack);
+	}
+
+	public BookReportListResponse getBookReports(User user) {
+		StudentClass studentClass = studentClassRepository.findStudentClassByUserId(user.getId()).orElseThrow();
+		List<BookReport> bookReports = bookReportRepository.findByStudentClassId(studentClass.getId());
+
+		List<BookReportDto> bookReportDtos = bookReports.stream()
+			.map(report -> new BookReportDto(
+				report.getAfterContent(),
+				report.getCreatedAt(),
+				report.getApproveTime() == null ? 없음 : 있음,
+				report.getHomework() == null ? 미제출 : 제출
+			))
+			.toList();
+
+		return new BookReportListResponse(bookReportDtos);
 	}
 
 }
