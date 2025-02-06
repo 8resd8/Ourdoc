@@ -63,9 +63,9 @@ public class BookReportStudentService {
 		feedbackRepository.save(bookReportFeedBack);
 	}
 
-	public BookReportListResponse getBookReports(User user) {
+	public BookReportListResponse getBookReports(User user, int grade) {
 		StudentClass studentClass = studentClassRepository.findStudentClassByUserId(user.getId()).orElseThrow();
-		List<BookReport> bookReports = bookReportRepository.findByStudentClassId(studentClass.getId());
+		List<BookReport> bookReports = bookReportRepository.findByUserIdAndGrade(user.getId(), grade);
 
 		List<BookReportDto> bookReportDtos = bookReports.stream()
 			.map(report -> new BookReportDto(

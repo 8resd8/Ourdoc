@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,9 +37,9 @@ public class BookReportStudentController {
 		bookReportStudentService.saveBookReportFeedback(request);
 	}
 
-	@GetMapping
-	public BookReportListResponse getBookReportList(@Login User user) {
-		return bookReportStudentService.getBookReports(user);
+	@GetMapping("/student")
+	public BookReportListResponse getBookReportList(@Login User user, @RequestParam("grade") int grade) {
+		return bookReportStudentService.getBookReports(user, grade);
 	}
 
 }
