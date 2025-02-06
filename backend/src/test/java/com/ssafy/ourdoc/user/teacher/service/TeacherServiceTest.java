@@ -18,10 +18,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.zxing.WriterException;
+import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
+import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
+import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.Gender;
@@ -35,6 +39,9 @@ class TeacherServiceTest {
 
 	@Mock
 	private TeacherRepository teacherRepository;
+
+	@Mock
+	private TeacherClassRepository teacherClassRepository;
 
 	@InjectMocks
 	private TeacherService teacherService;
@@ -115,18 +122,45 @@ class TeacherServiceTest {
 	@Test
 	@DisplayName("QR 코드 생성 성공 - 정상적인 교사 ID 제공")
 	void generateTeacherClassQr_Success() throws WriterException, IOException {
-		// Given: Mock Teacher 객체가 존재하는 경우
-		given(teacherRepository.findById(1L)).willReturn(Optional.of(mockTeacher));
+		// 0) 우선 mockTeacher의 user 필드에 id를 설정해 준다.
+		//    (테스트할 때 teacher.getUser().getId()가 null이면 인자 불일치 발생)
+		ReflectionTestUtils.setField(mockTeacher.getUser(), "id", 777L);
+
+		// 1) teacherRepository 스텁
+		given(teacherRepository.findById(1L))
+			.willReturn(Optional.of(mockTeacher));
+
+		// 2) TeacherClass / ClassRoom / School 모두 Mock 생성
+		TeacherClass mockTeacherClass = mock(TeacherClass.class);
+		ClassRoom mockClassRoom = mock(ClassRoom.class);
+		School mockSchool = mock(School.class);
+
+		// 3) teacherClassRepository 스텁
+		//    - 실제 코드에서 findByUserIdAndActive( 777L, Active.활성 ) 로 불릴 것
+		given(teacherClassRepository.findByUserIdAndActive(eq(777L), eq(Active.활성)))
+			.willReturn(mockTeacherClass);
+
+		// 4) mockTeacherClass → mockClassRoom
+		given(mockTeacherClass.getClassRoom()).willReturn(mockClassRoom);
+
+		// 5) mockClassRoom → mockSchool, grade, classNumber
+		given(mockClassRoom.getSchool()).willReturn(mockSchool);
+		given(mockSchool.getId()).willReturn(1L);
+		given(mockSchool.getSchoolName()).willReturn("테스트초등학교");
+		given(mockClassRoom.getGrade()).willReturn(3);
+		given(mockClassRoom.getClassNumber()).willReturn(4);
 
 		// When: QR 코드 생성
 		byte[] qrBytes = teacherService.generateTeacherClassQr(1L);
 
-		// Then: 반환된 바이트 배열이 비어 있지 않아야 함
+		// Then: QR 코드 byte[]가 비어 있지 않아야 함
 		assertNotNull(qrBytes);
 		assertTrue(qrBytes.length > 0);
 
-		// Verify: findById가 한 번 호출되었는지 확인
+		// Verify
 		verify(teacherRepository, times(1)).findById(1L);
+		verify(teacherClassRepository, times(1))
+			.findByUserIdAndActive(777L, Active.활성);
 	}
 
 	@Test
