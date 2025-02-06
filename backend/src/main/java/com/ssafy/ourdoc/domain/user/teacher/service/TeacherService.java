@@ -17,11 +17,16 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
+import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
+import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
+import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 
 import jakarta.transaction.Transactional;
@@ -34,6 +39,8 @@ public class TeacherService {
 
 	private final UserRepository userRepository;
 	private final TeacherRepository teacherRepository;
+	private final TeacherClassRepository teacherClassRepository;
+	private final SchoolRepository schoolRepository;
 
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request) {
@@ -61,12 +68,7 @@ public class TeacherService {
 		User savedUser = userRepository.save(user);
 
 		// 4) Teacher 엔티티 생성
-		Teacher teacher = Teacher.builder()
-			.user(savedUser)
-			.email(request.email())
-			.phone(request.phone())
-			//                .employmentStatus(request.getEmploymentStatus())
-			//                .certificateTime(request.getCertificateTime())
+		Teacher teacher = Teacher.builder().user(savedUser).email(request.email()).phone(request.phone())
 			.build();
 
 		Teacher savedTeacher = teacherRepository.save(teacher);
@@ -80,22 +82,25 @@ public class TeacherService {
 		Teacher teacher = teacherRepository.findById(teacherId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 ID의 교사가 없습니다: " + teacherId));
 
-		//        // 2) 소속 반 정보
-		//        if (teacher.getClassRoom() == null) {
-		//            throw new IllegalStateException("교사에 연결된 ClassRoom 정보가 없습니다.");
-		//        }
-		//
-		//        Long schoolId = teacher.getClassRoom().getSchoolId();
-		//        int grade = teacher.getClassRoom().getGrade();
-		//        int classNumber = teacher.getClassRoom().getClassNumber();
+		// 2) 소속 반 정보
+		Long userId = teacher.getUser().getId();
+		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(userId, Active.활성).getClassRoom();
+		if (classRoom == null) {
+			throw new IllegalStateException("교사에 연결된 ClassRoom 정보가 없습니다.");
+		}
+
+		Long schoolId = classRoom.getSchool().getId();
+		String schoolName = classRoom.getSchool().getSchoolName();
+		int grade = classRoom.getGrade();
+		int classNumber = classRoom.getClassNumber();
 
 		// 3) QR에 담을 json 데이터
-		// 학교, 학년, 반은 추후 jpa 사용하도록 수정 필요(현재는 예시로 넣어본 것)
+		// schoolName, 학년, 반 (url은 추후 수정 필요)
 		String googleFormLink = String.format(
 			"https://docs.google.com/forms/d/e/1FAIpQLSfxNCzcxL07Kzo27rCINXu4PHxco7Y4aT8iyi3ys-3PU5j5fg/viewform?usp=pp_url&entry.93879875=%s&entry.631690045=%d&entry.581945071=%d",
-			"ㅇㅇ초등학교", // 학교
-			1,             // 학년
-			2              // 반
+			schoolName,		// 학교
+			grade,			// 학년
+			classNumber		// 반
 		);
 
 		// json 데이터의 한글이 깨지지 않도록 설정
@@ -105,13 +110,10 @@ public class TeacherService {
 
 		try {
 			// 4) QR BitMatrix 생성
-			BitMatrix bitMatrix = new MultiFormatWriter()
-				.encode(googleFormLink, // 여기 데이터를 넣음
-					BarcodeFormat.QR_CODE,
-					300, // width
-					300, // height
-					hints
-				);
+			BitMatrix bitMatrix = new MultiFormatWriter().encode(googleFormLink, // 여기 데이터를 넣음
+				BarcodeFormat.QR_CODE, 300, // width
+				300, // height
+				hints);
 
 			// 5) BitMatrix -> BufferedImage 변환
 			BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
