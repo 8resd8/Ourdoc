@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.user.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,40 +29,12 @@ public class UserController {
 
 	private final UserService userService;
 	private final JwtUtil jwtUtil;
-	private final JwtRefreshService jwtRefreshService;
 
-	/**
-	 * POST /users/signin
-	 * Body:
-	 * {
-	 *   "userType": "학생",
-	 *   "loginId": "test1234",
-	 *   "password": "test1234!"
-	 * }
-	 */
+
 	// 1. 사용자 로그인
 	@PostMapping("/signin")
-	public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request, HttpServletResponse response) {
-		LoginResult loginResult  = userService.login(request);
-
-		LoginResponse loginResponse = loginResult.loginResponse();
-		String accessToken = loginResult.accessToken();
-
-		// resultCode = "401"이면 Unauthorized(401), 그 외는 200
-		if ("401".equals(loginResponse.resultCode())) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(loginResponse);
-		}
-
-		// Access Token을 헤더로
-		response.setHeader("Authorization", "Bearer " + accessToken);
-
-		// ✅ UserService에서 Refresh Token을 가져와서 쿠키로 저장
-		String refreshToken = jwtRefreshService.getRefreshToken(loginResponse.user().id());
-
-		// ✅ Refresh Token을 `HttpOnly` 쿠키로 설정 (자동 전송)
-		response.addHeader("Set-Cookie", "Refresh-Token=" + refreshToken + "; HttpOnly; Secure; Path=/");
-
-		return ResponseEntity.ok(loginResponse);
+	public ResponseEntity<?> myLogin(@RequestBody LoginRequest request) {
+		return userService.login(request);
 	}
 
 	// 2. ID 중복 체크
