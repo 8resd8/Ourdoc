@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
 import com.ssafy.ourdoc.domain.user.dto.LoginResponse;
+import com.ssafy.ourdoc.domain.user.dto.LoginResult;
 import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
@@ -82,26 +83,46 @@ class UserServiceTest {
 	@DisplayName("로그인 성공")
 	void login_Success() {
 		// Given
-		given(userRepository.findByLoginId(loginRequest.loginId())).willReturn(Optional.of(mockUser));
+		given(userRepository.findByLoginId(loginRequest.loginId()))
+			.willReturn(Optional.of(mockUser));
+
 		given(jwtUtil.createToken(mockUser.getLoginId(), mockUser.getUserType().toString()))
 			.willReturn("mocked-jwt-token");
+
 		given(jwtUtil.createRefreshToken(mockUser.getLoginId()))
 			.willReturn("mocked-refresh-token");
-		given(jwtConfig.getRefreshExpiration())  // ✅ Mock 동작 추가
-			.willReturn(86400L); // 예를 들어 24시간 (초 단위)
 
-		// ✅ JwtRefreshService Mock 동작 추가
-		doNothing().when(refreshService).storeRefreshToken(eq(mockUser.getLoginId()), eq("mocked-refresh-token"), anyLong());
+		given(jwtConfig.getRefreshExpiration())
+			.willReturn(86400L);  // 예: 86400초 -> 24시간
+
+		doNothing().when(refreshService)
+			.storeRefreshToken(eq(mockUser.getLoginId()), eq("mocked-refresh-token"), anyLong());
 
 		// When
-		LoginResponse response = userService.login(loginRequest);
+		// 이제 userService.login()은 LoginResult를 반환
+		LoginResult loginResult = userService.login(loginRequest);
+
+		// LoginResult 안에 있는 LoginResponse 추출
+		LoginResponse response = loginResult.loginResponse();
 
 		// Then
+		// 1) LoginResponse 확인
 		assertThat(response.resultCode()).isEqualTo("200");
 		assertThat(response.message()).isEqualTo("로그인 성공");
 		assertThat(response.user().name()).isEqualTo(mockUser.getName());
 		assertThat(response.user().role()).isEqualTo(mockUser.getUserType().toString());
+
+		// 2) LoginResult에 포함된 accessToken도 확인 가능
+		assertThat(loginResult.accessToken()).isEqualTo("mocked-jwt-token");
+
+		// 필요에 따라 refreshToken 저장 로직이 정상 호출됐는지도 검증
+		verify(refreshService).storeRefreshToken(
+			eq(mockUser.getLoginId()),
+			eq("mocked-refresh-token"),
+			anyLong()
+		);
 	}
+
 
 
 	@Test
