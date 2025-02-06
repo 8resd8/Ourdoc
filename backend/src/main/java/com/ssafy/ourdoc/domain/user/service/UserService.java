@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
 import com.ssafy.ourdoc.domain.user.dto.LoginResponse;
 import com.ssafy.ourdoc.domain.user.dto.LoginResponse.UserInfo;
+import com.ssafy.ourdoc.domain.user.dto.LoginResult;
 import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
@@ -35,7 +36,7 @@ public class UserService {
 	private final StudentRepository studentRepository;
 
 	// 1. 사용자 로그인
-	public LoginResponse login(LoginRequest request) {
+	public LoginResult login(LoginRequest request) {
 
 		// 1) 아이디로 User 조회
 		User user = userRepository.findByLoginId(request.loginId())
@@ -65,12 +66,13 @@ public class UserService {
 		}
 
 		// 7) 로그인 성공
-		return new LoginResponse(
+		LoginResponse loginResponse = new LoginResponse(
 			"200",
 			"로그인 성공",
-			accessToken,
 			new UserInfo(user.getLoginId(), user.getName(), user.getUserType().toString(), tempPassword.toString())
 		);
+
+		return new LoginResult(loginResponse, accessToken);
 	}
 
 	// 2. ID 중복 체크
