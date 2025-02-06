@@ -6,6 +6,7 @@ import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
+import com.ssafy.ourdoc.global.common.enums.TempPassword;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,7 +41,8 @@ public class Student extends BaseTimeEntity {
 	private User user;
 
 	@Column(name = "temp_password", nullable = true)
-	private String tempPassword;
+	@Enumerated(EnumType.STRING)
+	private TempPassword tempPassword;
 
 	@Column(name = "auth_status", nullable = true)
 	@Enumerated(EnumType.STRING)
@@ -50,7 +52,7 @@ public class Student extends BaseTimeEntity {
 	private LocalDateTime certificateTime;
 
 	@Builder
-	public Student(User user, ClassRoom classRoom, String tempPassword, AuthStatus authStatus,
+	public Student(User user, ClassRoom classRoom, TempPassword tempPassword, AuthStatus authStatus,
 		LocalDateTime certificateTime) {
 		this.user = user;
 		this.classRoom = classRoom;
