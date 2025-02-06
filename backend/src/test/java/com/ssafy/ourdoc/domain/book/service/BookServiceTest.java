@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
@@ -22,7 +21,6 @@ import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
-import com.ssafy.ourdoc.global.integration.nationallibrary.service.NationalLibraryBookService;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
@@ -32,9 +30,6 @@ class BookServiceTest {
 
 	@InjectMocks
 	private BookService bookService;
-
-	@Spy
-	private NationalLibraryBookService nationalLibraryBookService;
 
 	private Book book;
 
