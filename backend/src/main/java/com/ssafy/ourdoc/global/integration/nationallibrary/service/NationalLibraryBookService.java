@@ -8,23 +8,34 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.domain.book.dto.BookRequest;
+import com.ssafy.ourdoc.domain.book.entity.Book;
+import com.ssafy.ourdoc.domain.book.repository.BookRepository;
+import com.ssafy.ourdoc.domain.book.service.BookService;
 import com.ssafy.ourdoc.global.common.enums.KDC;
 import com.ssafy.ourdoc.global.integration.nationallibrary.dto.NationalLibraryBookResponse;
 import com.ssafy.ourdoc.global.integration.nationallibrary.exception.NationalLibraryBookFailException;
+import com.ssafy.ourdoc.global.util.DateConvertor;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class NationalLibraryBookService {
 	@Value("${book.api-url}")
 	private String apiUrl;
@@ -32,36 +43,67 @@ public class NationalLibraryBookService {
 	@Value("${book.cert-key}")
 	private String certKey;
 
-	/**
-	 * Parse book list.
-	 *
-	 * @param nationalLibraryBookRequest title(제목), author(저자), publisher(출판사)로 구성된 JSON
-	 * @return bookList 국립중앙도서관에서 검색된 book 결과 정보
-	 */
-	public List<NationalLibraryBookResponse> parseBook(BookRequest nationalLibraryBookRequest) {
+	private final int PAGE_SIZE = 1000;
+
+	private final BookService bookService;
+
+	private final BookRepository bookRepository;
+
+	@Scheduled(cron = "0 0 3 * * *")
+	public void updateBookListFromNationalLibrary() {
+		List<NationalLibraryBookResponse> externalBooks = parseBook();
+		log.info("국립중앙도서관 도서 {} 개 수집 완료", externalBooks.size());
+
+		List<NationalLibraryBookResponse> uniqueBooks = externalBooks.stream()
+			.filter(distinctByKey(NationalLibraryBookResponse::isbn))
+			.toList();
+		log.info("국립중앙도서관 내 ISBN 중복 제외 도서 {} 개 확인", uniqueBooks.size());
+
+		List<String> isbns = uniqueBooks.stream()
+			.map(NationalLibraryBookResponse::isbn)
+			.collect(Collectors.toList());
+
+		List<String> existingIsbns = bookRepository.findByIsbnIn(isbns)
+			.stream()
+			.map(Book::getIsbn)
+			.toList();
+
+		List<Book> newBooks = uniqueBooks.stream()
+			.filter(response -> !existingIsbns.contains(response.isbn()))
+			.map(NationalLibraryBookResponse::toBookEntity)
+			.collect(Collectors.toList());
+
+		log.info("신규 도서 {} 개 확인", newBooks.size());
+
+		if (!newBooks.isEmpty()) {
+			bookService.registerBookList(newBooks);
+			log.info("국립중앙도서관 도서 {} 개 저장 완료", newBooks.size());
+		}
+	}
+
+	private List<NationalLibraryBookResponse> parseBook() {
+		List<NationalLibraryBookResponse> allBooks = new ArrayList<>();
+
 		try {
-			Map<String, String> params = buildQueryParams(nationalLibraryBookRequest);
-			String response = getHttpResponse(params);
-			return parseBooksFromResponse(response);
+			int totalCount = getBookCount();
+			log.info("국립중앙도서관 도서 totalCount: {}", totalCount);
+			int totalPageCount = (int)Math.ceil((double)totalCount / PAGE_SIZE);
+
+			for (int pageNo = 1; pageNo <= totalPageCount; pageNo++) {
+				log.info("국립중앙도서관 도서 가져오는 중: {} / {}", pageNo, totalPageCount);
+				String response = getHttpResponse(pageNo);
+				allBooks.addAll(parseBooksFromResponse(response));
+				Thread.sleep(5000);
+			}
+
+			return allBooks;
 		} catch (Exception e) {
 			throw new NationalLibraryBookFailException("국립중앙도서관 API 호출 중 오류 발생");
 		}
 	}
 
-	private Map<String, String> buildQueryParams(BookRequest nationalLibraryBookRequest) {
-		String title = Optional.ofNullable(nationalLibraryBookRequest.title()).orElse("");
-		String author = Optional.ofNullable(nationalLibraryBookRequest.author()).orElse("");
-		String publisher = Optional.ofNullable(nationalLibraryBookRequest.publisher()).orElse("");
-
-		return Map.of(
-			"title", title,
-			"author", author,
-			"publisher", publisher
-		);
-	}
-
-	private String getHttpResponse(Map<String, String> params) throws IOException {
-		HttpURLConnection conn = getConnection(params);
+	private String getHttpResponse(int pageNo) {
+		HttpURLConnection conn = getConnection(pageNo);
 		StringBuilder response = new StringBuilder();
 
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -71,15 +113,17 @@ public class NationalLibraryBookService {
 			while ((line = br.readLine()) != null) {
 				response.append(line);
 			}
+		} catch (IOException e) {
+			throw new NationalLibraryBookFailException("국립중앙도서관 API 호출 중 오류 발생");
 		}
 
 		conn.disconnect();
 		return response.toString();
 	}
 
-	private HttpURLConnection getConnection(Map<String, String> params) {
+	private HttpURLConnection getConnection(int pageNo) {
 		try {
-			String queryString = buildQueryString(params);
+			String queryString = buildQueryString(pageNo);
 			URL url = new URL(apiUrl + "?" + queryString);
 
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -92,23 +136,24 @@ public class NationalLibraryBookService {
 		}
 	}
 
-	private String buildQueryString(Map<String, String> params) {
+	private String buildQueryString(int pageNo) {
 		try {
 			StringBuilder sb = new StringBuilder();
 			sb.append("cert_key=").append(URLEncoder.encode(certKey, "UTF-8"))
 				.append("&result_style=").append(URLEncoder.encode("json", "UTF-8"))
-				.append("&page_no=").append(URLEncoder.encode("1", "UTF-8"))
-				.append("&page_size=").append(URLEncoder.encode("1000", "UTF-8"));
+				.append("&page_no=").append(URLEncoder.encode(String.valueOf(pageNo), "UTF-8"))
+				.append("&page_size=").append(URLEncoder.encode(String.valueOf(PAGE_SIZE), "UTF-8"));
 
-			for (Map.Entry<String, String> entry : params.entrySet()) {
-				sb.append("&")
-					.append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=")
-					.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-			}
 			return sb.toString();
 		} catch (UnsupportedEncodingException e) {
 			throw new NationalLibraryBookFailException("쿼리 문자열 인코딩 중 오류 발생");
 		}
+	}
+
+	public int getBookCount() {
+		String response = getHttpResponse(1);
+		JSONObject respJson = new JSONObject(response);
+		return respJson.getInt("TOTAL_COUNT");
 	}
 
 	private List<NationalLibraryBookResponse> parseBooksFromResponse(String response) {
@@ -124,7 +169,7 @@ public class NationalLibraryBookService {
 			String genre = KDC.fromCode(docObject.getString("SUBJECT"));
 			String description = docObject.getString("BOOK_SUMMARY_URL");
 			String bookPublisher = docObject.getString("PUBLISHER");
-			LocalDate publishTime = convertDate(docObject.getString("PUBLISH_PREDATE"));
+			LocalDate publishTime = DateConvertor.convertDate(docObject.getString("PUBLISH_PREDATE"));
 			String imageUrl = docObject.getString("TITLE_URL");
 
 			bookList.add(
@@ -134,11 +179,8 @@ public class NationalLibraryBookService {
 		return bookList;
 	}
 
-	private LocalDate convertDate(String date) {
-		if (date == null || date.isEmpty()) {
-			return null;
-		}
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-		return LocalDate.parse(date, formatter);
+	private static <T> Predicate<T> distinctByKey(Function<T, Object> keyExtractor) {
+		Set<Object> seen = ConcurrentHashMap.newKeySet();
+		return t -> seen.add(keyExtractor.apply(t));
 	}
 }
