@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios';
 
-const baseURL = import.meta.env.VITE_APP_API_URL || 'https://example.com';
+const baseURL = import.meta.env.VITE_APP_API_URL;
 
 export const createAxiosInstance = (): AxiosInstance => {
   const instance = axios.create({

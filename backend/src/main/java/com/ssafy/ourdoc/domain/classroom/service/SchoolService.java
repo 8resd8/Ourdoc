@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,8 +17,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolResponse;
+import com.ssafy.ourdoc.domain.classroom.entity.School;
+import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 public class SchoolService {
 	@Value("${school.api-url}")
 	private String apiUrl;
@@ -25,6 +33,17 @@ public class SchoolService {
 	@Value("${school.api-key}")
 	private String apiKey;
 
+	private final SchoolRepository schoolRepository;
+
+	public List<SchoolResponse> searchSchoolName(String schoolName) {
+		List<School> schoolList = schoolRepository.findAllBySchoolNameContaining(schoolName);
+
+		return schoolList.stream()
+			.map(school -> new SchoolResponse(school.getSchoolName(), school.getAddress()))
+			.collect(Collectors.toList());
+	}
+
+	// 학교 API 검색
 	public List<SchoolResponse> parseSchool(String schoolName) {
 		String response = null;
 		try {
@@ -69,12 +88,18 @@ public class SchoolService {
 			schoolName = "";
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append("KEY=").append(URLEncoder.encode(apiKey, "UTF-8"))
-			.append("&Type=").append(URLEncoder.encode("json", "UTF-8"))
-			.append("&pIndex=").append(URLEncoder.encode("1", "UTF-8"))
-			.append("&pSize=").append(URLEncoder.encode("1000", "UTF-8"))
-			.append("&SCHUL_KND_SC_NM=").append(URLEncoder.encode("초등학교", "UTF-8"))
-			.append("&SCHUL_NM=").append(URLEncoder.encode(schoolName, "UTF-8"));
+		sb.append("KEY=")
+			.append(URLEncoder.encode(apiKey, "UTF-8"))
+			.append("&Type=")
+			.append(URLEncoder.encode("json", "UTF-8"))
+			.append("&pIndex=")
+			.append(URLEncoder.encode("1", "UTF-8"))
+			.append("&pSize=")
+			.append(URLEncoder.encode("1000", "UTF-8"))
+			.append("&SCHUL_KND_SC_NM=")
+			.append(URLEncoder.encode("초등학교", "UTF-8"))
+			.append("&SCHUL_NM=")
+			.append(URLEncoder.encode(schoolName, "UTF-8"));
 
 		return sb.toString();
 	}

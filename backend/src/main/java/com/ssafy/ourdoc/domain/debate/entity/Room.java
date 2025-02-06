@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.debate.entity;
 
+import java.time.LocalDateTime;
+
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 
@@ -28,6 +30,9 @@ public class Room extends BaseTimeEntity {
 	@Column(name = "room_id", unique = true, nullable = false)
 	private Long id;
 
+	@Column(name = "session_id")
+	private String session_id;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
@@ -44,8 +49,12 @@ public class Room extends BaseTimeEntity {
 	@Column(name = "current_people", nullable = false)
 	private int current_people;
 
+	@Column(name = "end_at")
+	private LocalDateTime end_at;
+
 	@Builder
-	public Room(User user, String title, String password, int max_people, int current_people) {
+	public Room(String session_id, User user, String title, String password, int max_people, int current_people) {
+		this.session_id = session_id;
 		this.user = user;
 		this.title = title;
 		this.password = password;

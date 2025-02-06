@@ -9,6 +9,7 @@ import com.ssafy.ourdoc.domain.notification.dto.NotificationDetailDto;
 import com.ssafy.ourdoc.domain.notification.dto.NotificationDto;
 import com.ssafy.ourdoc.domain.notification.dto.NotificationListResponse;
 import com.ssafy.ourdoc.domain.notification.repository.NotificationQueryRepository;
+import com.ssafy.ourdoc.domain.user.entity.User;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,15 +21,15 @@ public class NotificationQueryService {
 
 	private final NotificationQueryRepository notificationQueryRepository;
 
-	public NotificationListResponse getUnreadNotifications(Long userId, NotificationConditionRequest request,
+	public NotificationListResponse getUnreadNotifications(User user, NotificationConditionRequest request,
 		Pageable pageable) {
 		Page<NotificationDto> notificationDtoList = notificationQueryRepository.
-			findAllConditionByUserId(userId, request, pageable);
+			findAllConditionByUserId(user.getId(), request, pageable);
 
 		return new NotificationListResponse(notificationDtoList);
 	}
 
-	public NotificationDetailDto getNotification(long loginUserId, Long notificationId) {
-		return notificationQueryRepository.findByNotificationId(loginUserId, notificationId);
+	public NotificationDetailDto getNotification(User user, Long notificationId) {
+		return notificationQueryRepository.findByNotificationId(user.getId(), notificationId);
 	}
 }

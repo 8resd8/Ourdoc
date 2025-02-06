@@ -32,13 +32,17 @@ public class RoomOnline extends BaseTimeEntity {
 	@JoinColumn(name = "room_id", nullable = false)
 	private Room room;
 
+	@Column(name = "token", nullable = false)
+	private String token;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 
 	@Builder
-	public RoomOnline(Room room, User user) {
+	public RoomOnline(Room room, String token, User user) {
 		this.room = room;
+		this.token = token;
 		this.user = user;
 	}
 }
