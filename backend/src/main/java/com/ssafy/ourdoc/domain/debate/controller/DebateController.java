@@ -2,6 +2,8 @@ package com.ssafy.ourdoc.domain.debate.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +31,8 @@ public class DebateController {
 	private final DebateService debateService;
 
 	@GetMapping
-	public ResponseEntity<List<RoomDto>> getDebateRooms() {
-		List<RoomDto> rooms = debateService.getDebateRooms();
+	public ResponseEntity<Page<RoomDto>> getDebateRooms(Pageable pageable) {
+		Page<RoomDto> rooms = debateService.getDebateRooms(pageable);
 		return ResponseEntity.ok(rooms);
 	}
 
