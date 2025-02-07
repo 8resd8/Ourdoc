@@ -31,7 +31,7 @@ public class Room extends BaseTimeEntity {
 	private Long id;
 
 	@Column(name = "session_id")
-	private String session_id;
+	private String sessionId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
@@ -44,22 +44,18 @@ public class Room extends BaseTimeEntity {
 	private String password;
 
 	@Column(name = "max_people", nullable = false)
-	private int max_people;
-
-	@Column(name = "current_people", nullable = false)
-	private int current_people;
+	private int maxPeople;
 
 	@Column(name = "end_at")
-	private LocalDateTime end_at;
+	private LocalDateTime endAt;
 
 	@Builder
-	public Room(String session_id, User user, String title, String password, int max_people, int current_people) {
-		this.session_id = session_id;
+	public Room(String sessionId, User user, String title, String password, int maxPeople) {
+		this.sessionId = sessionId;
 		this.user = user;
 		this.title = title;
 		this.password = password;
-		this.max_people = max_people;
-		this.current_people = current_people;
+		this.maxPeople = maxPeople;
 	}
 
 }
