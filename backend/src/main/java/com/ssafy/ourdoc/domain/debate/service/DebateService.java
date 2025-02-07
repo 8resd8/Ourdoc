@@ -1,8 +1,7 @@
 package com.ssafy.ourdoc.domain.debate.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
@@ -28,20 +27,18 @@ public class DebateService {
 	private final DebateRoomOnlineRepository debateRoomOnlineRepository;
 	private final OpenviduService openviduService;
 
-	public List<RoomDto> getDebateRooms() {
-		List<Room> rooms = debateRoomRepository.findAll();
-		return rooms.stream()
-			.map(room -> {
-				Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(room.getId());
-				return new RoomDto(
-					room.getId(),
-					room.getTitle(),
-					room.getUser().getName(),
-					room.getMaxPeople(),
-					currentPeople
-				);
-			})
-			.collect(Collectors.toList());
+	public Page<RoomDto> getDebateRooms(Pageable pageable) {
+		Page<Room> roomPage = debateRoomRepository.findAll(pageable);
+		return roomPage.map(room -> {
+			Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(room.getId());
+			return new RoomDto(
+				room.getId(),
+				room.getTitle(),
+				room.getUser().getName(),
+				room.getMaxPeople(),
+				currentPeople
+			);
+		});
 	}
 
 	public void createDebateRoom(User user, CreateRoomRequest request) {
