@@ -2,11 +2,11 @@ package com.ssafy.ourdoc.domain.bookreport.repository;
 
 import static com.ssafy.ourdoc.domain.book.entity.QBook.*;
 import static com.ssafy.ourdoc.domain.bookreport.entity.QBookReport.*;
-import static com.ssafy.ourdoc.domain.bookreport.entity.QBookReportFeedBack.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
 import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
+import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 
 import java.time.Year;
@@ -30,6 +30,13 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 
 	@Override
 	public List<ReportTeacherDto> bookReports(Long userId, ReportTeacherRequest request) {
+		// 교사가 지금까지 했던 반 정보
+		List<Long> teacherContainClass = queryFactory
+			.select(teacherClass.classRoom.id)
+			.from(teacherClass)
+			.where(teacherClass.user.id.eq(userId))
+			.fetch();
+
 		return queryFactory
 			.select(new QReportTeacherDto(
 				book.title,
@@ -41,15 +48,16 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.from(bookReport)
 			.join(bookReport.studentClass, studentClass)
 			.join(studentClass.user, user)
+			.join(studentClass.classRoom, classRoom)
 			.join(classRoom.school, school)
 			.join(bookReport.book, book)
 			.where(
+				classRoom.id.in(teacherContainClass),
 				eqYear(request.year()),
 				eqStudentNumber(request.studentNumber()),
 				containsStudentName(request.studentName()),
 				eqSchoolName(request.schoolName())
-			)
-			.fetch();
+			).fetch();
 	}
 
 	@Override
