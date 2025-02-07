@@ -13,7 +13,9 @@ import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.UserType;
@@ -27,6 +29,8 @@ public class BookRecommendService {
 	private final BookRepository bookRepository;
 	private final BookRecommendRepository bookRecommendRepository;
 	private final TeacherClassRepository teacherClassRepository;
+	private final StudentClassRepository studentClassRepository;
+	private final ClassRoomRepository classRoomRepository;
 
 	public void addBookRecommend(BookRecommendRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
@@ -55,8 +59,29 @@ public class BookRecommendService {
 	}
 
 	public List<BookResponse> getBookRecommends(User user) {
-		List<BookRecommend> bookRecommends = bookRecommendRepository.findRecommendBookList(user);
+		ClassRoom userClassRoom = getUserClassRoom(user);
+		if (userClassRoom == null) {
+			throw new ForbiddenException("현재 학급 정보가 없습니다.");
+		}
+
+		Long schoolId = userClassRoom.getSchool().getId();
+		int grade = userClassRoom.getGrade();
+		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
+
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomIn(sameGradeClass);
 		List<Book> books = bookRecommends.stream().map(BookRecommend::getBook).toList();
+
 		return books.stream().map(BookResponse::of).collect(Collectors.toList());
 	}
+
+	private ClassRoom getUserClassRoom(User user) {
+		if (user.getUserType().equals(UserType.학생)) {
+			return studentClassRepository.findByUserIdAndActive(user.getId(), Active.활성).getClassRoom();
+		}
+		if (user.getUserType().equals(UserType.교사)) {
+			return teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성).getClassRoom();
+		}
+		return null;
+	}
+
 }
