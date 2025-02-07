@@ -15,8 +15,10 @@ import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookFavoriteRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
+import com.ssafy.ourdoc.domain.book.dto.HomeworkRequest;
 import com.ssafy.ourdoc.domain.book.service.BookFavoriteService;
 import com.ssafy.ourdoc.domain.book.service.BookService;
+import com.ssafy.ourdoc.domain.book.service.HomeworkService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
 
@@ -29,6 +31,7 @@ public class BookController {
 
 	private final BookService bookService;
 	private final BookFavoriteService bookFavoriteService;
+	private final HomeworkService homeworkService;
 
 	@GetMapping
 	public ResponseEntity<List<BookResponse>> getBooks(@RequestBody BookRequest request) {
@@ -56,5 +59,15 @@ public class BookController {
 	@DeleteMapping("/favorite")
 	public void deleteFavorite(@RequestBody BookFavoriteRequest request, @Login User user) {
 		bookFavoriteService.deleteBookFavorite(request, user);
+	}
+
+	@PostMapping("/teachers/homework")
+	public void addHomework(@RequestBody HomeworkRequest request, @Login User user) {
+		homeworkService.addHomework(request, user);
+	}
+
+	@DeleteMapping("/teachers/homework")
+	public void deleteHomework(@RequestBody HomeworkRequest request, @Login User user) {
+		homeworkService.deleteHomework(request, user);
 	}
 }
