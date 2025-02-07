@@ -1,9 +1,13 @@
 package com.ssafy.ourdoc.domain.debate.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
+import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 import com.ssafy.ourdoc.domain.debate.repository.RoomOnlineRepository;
@@ -23,6 +27,22 @@ public class DebateService {
 	private final RoomRepository roomRepository;
 	private final RoomOnlineRepository roomOnlineRepository;
 	private final OpenviduService openviduService;
+
+	public List<RoomDto> getDebateRooms() {
+		List<Room> rooms = roomRepository.findAll();
+		return rooms.stream()
+			.map(room -> {
+				Long currentPeople = roomOnlineRepository.countCurrentPeople(room.getId());
+				return new RoomDto(
+					room.getId(),
+					room.getTitle(),
+					room.getUser().getName(),
+					room.getMaxPeople(),
+					currentPeople
+				);
+			})
+			.collect(Collectors.toList());
+	}
 
 	public void createDebateRoom(User user, CreateRoomRequest request) {
 		if (user.getUserType() == UserType.학생) {
@@ -54,7 +74,7 @@ public class DebateService {
 			throw new ForbiddenException("비밀번호가 일치하지 않습니다.");
 		}
 
-		if (roomOnlineRepository.countByRoomIdAndUpdatedAtNull(room.getId()) >= room.getMaxPeople()) {
+		if (roomOnlineRepository.countCurrentPeople(room.getId()) >= room.getMaxPeople()) {
 			throw new ForbiddenException("방에 빈자리가 없습니다.");
 		}
 
