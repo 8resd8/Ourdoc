@@ -111,7 +111,7 @@ class DebateServiceTest {
 	void joinDebateRoom_success() {
 		Long roomId = 1L;
 		when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
-		when(roomOnlineRepository.countByRoomIdAndUpdatedAtNull(room.getId())).thenReturn(3);
+		when(roomOnlineRepository.countCurrentPeople(room.getId())).thenReturn(3L);
 		when(openviduService.generateToken(room.getSessionId())).thenReturn("token123");
 
 		String token = debateService.joinDebateRoom(teacher, roomId, joinRoomRequest);
@@ -158,7 +158,7 @@ class DebateServiceTest {
 	void joinDebateRoom_failure_maxPeople() {
 		Long roomId = 1L;
 		when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
-		when(roomOnlineRepository.countByRoomIdAndUpdatedAtNull(room.getId())).thenReturn(room.getMaxPeople());
+		when(roomOnlineRepository.countCurrentPeople(room.getId())).thenReturn(Long.valueOf(room.getMaxPeople()));
 
 		assertThatThrownBy(() -> debateService.joinDebateRoom(student, roomId, joinRoomRequest))
 			.isInstanceOf(ForbiddenException.class)
