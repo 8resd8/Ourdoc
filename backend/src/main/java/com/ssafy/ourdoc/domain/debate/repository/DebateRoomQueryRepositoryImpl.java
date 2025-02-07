@@ -7,7 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class RoomOnlineQueryRepositoryImpl implements RoomOnlineQueryRepository {
+public class DebateRoomQueryRepositoryImpl implements DebateRoomQueryRepository {
 	private final JPAQueryFactory queryFactory;
 
 	public Long countCurrentPeople(Long roomId) {

@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 
-public interface RoomOnlineRepository extends JpaRepository<RoomOnline, Long>, RoomOnlineQueryRepository {
+public interface DebateRoomOnlineRepository extends JpaRepository<RoomOnline, Long>, DebateRoomQueryRepository {
 }

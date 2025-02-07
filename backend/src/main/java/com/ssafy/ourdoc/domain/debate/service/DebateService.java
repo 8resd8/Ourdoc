@@ -10,8 +10,8 @@ import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
-import com.ssafy.ourdoc.domain.debate.repository.RoomOnlineRepository;
-import com.ssafy.ourdoc.domain.debate.repository.RoomRepository;
+import com.ssafy.ourdoc.domain.debate.repository.DebateRoomOnlineRepository;
+import com.ssafy.ourdoc.domain.debate.repository.DebateRoomRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
@@ -24,15 +24,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Transactional
 public class DebateService {
-	private final RoomRepository roomRepository;
-	private final RoomOnlineRepository roomOnlineRepository;
+	private final DebateRoomRepository debateRoomRepository;
+	private final DebateRoomOnlineRepository debateRoomOnlineRepository;
 	private final OpenviduService openviduService;
 
 	public List<RoomDto> getDebateRooms() {
-		List<Room> rooms = roomRepository.findAll();
+		List<Room> rooms = debateRoomRepository.findAll();
 		return rooms.stream()
 			.map(room -> {
-				Long currentPeople = roomOnlineRepository.countCurrentPeople(room.getId());
+				Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(room.getId());
 				return new RoomDto(
 					room.getId(),
 					room.getTitle(),
@@ -59,11 +59,11 @@ public class DebateService {
 			.maxPeople(request.maxPeople())
 			.build();
 
-		roomRepository.save(room);
+		debateRoomRepository.save(room);
 	}
 
 	public String joinDebateRoom(User user, Long roomId, JoinRoomRequest request) {
-		Room room = roomRepository.findById(roomId)
+		Room room = debateRoomRepository.findById(roomId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 방은 존재하지 않습니다."));
 
 		if (room.getEndAt() != null) {
@@ -74,7 +74,7 @@ public class DebateService {
 			throw new ForbiddenException("비밀번호가 일치하지 않습니다.");
 		}
 
-		if (roomOnlineRepository.countCurrentPeople(room.getId()) >= room.getMaxPeople()) {
+		if (debateRoomOnlineRepository.countCurrentPeople(room.getId()) >= room.getMaxPeople()) {
 			throw new ForbiddenException("방에 빈자리가 없습니다.");
 		}
 
@@ -90,7 +90,7 @@ public class DebateService {
 			.token(token)
 			.user(user)
 			.build();
-		roomOnlineRepository.save(roomOnline);
+		debateRoomOnlineRepository.save(roomOnline);
 
 		return token;
 	}
