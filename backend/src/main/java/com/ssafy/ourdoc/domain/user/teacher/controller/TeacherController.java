@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
@@ -24,8 +26,8 @@ public class TeacherController {
 
 	// 1. 교사 회원가입
 	@PostMapping("/signup")
-	public ResponseEntity<String> signup(@RequestBody TeacherSignupRequest request) {
-		teacherService.signup(request);
+	public ResponseEntity<String> signup(@RequestPart TeacherSignupRequest request, @RequestPart MultipartFile certificateFile) {
+		teacherService.signup(request, certificateFile);
 		return ResponseEntity.ok("교사 회원가입 완료.");
 	}
 
