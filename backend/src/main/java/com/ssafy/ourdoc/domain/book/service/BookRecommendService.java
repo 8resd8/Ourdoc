@@ -6,8 +6,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.ssafy.ourdoc.domain.book.dto.BookRecommendDetailStudent;
+import com.ssafy.ourdoc.domain.book.dto.BookRecommendDetailTeacher;
 import com.ssafy.ourdoc.domain.book.dto.BookRecommendRequest;
-import com.ssafy.ourdoc.domain.book.dto.BookResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseStudent;
+import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
@@ -58,7 +61,7 @@ public class BookRecommendService {
 		bookRecommendRepository.delete(bookRecommend);
 	}
 
-	public List<BookResponse> getBookRecommends(User user) {
+	public BookRecommendResponseTeacher getBookRecommendsTeacher(User user) {
 		ClassRoom userClassRoom = getUserClassRoom(user);
 		if (userClassRoom == null) {
 			throw new ForbiddenException("현재 학급 정보가 없습니다.");
@@ -66,12 +69,39 @@ public class BookRecommendService {
 
 		Long schoolId = userClassRoom.getSchool().getId();
 		int grade = userClassRoom.getGrade();
+		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
+
 		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
 
 		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomIn(sameGradeClass);
-		List<Book> books = bookRecommends.stream().map(BookRecommend::getBook).toList();
 
-		return books.stream().map(BookResponse::of).collect(Collectors.toList());
+		int submitCount = 0; // 독서록 제출 개수
+		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
+			.map(bookRecommend -> BookRecommendDetailTeacher.of(bookRecommend.getBook(), bookRecommend, submitCount))
+			.collect(Collectors.toList());
+
+		return new BookRecommendResponseTeacher(studentCount, details);
+	}
+
+	public BookRecommendResponseStudent getBookRecommendsStudent(User user) {
+		ClassRoom userClassRoom = getUserClassRoom(user);
+		if (userClassRoom == null) {
+			throw new ForbiddenException("현재 학급 정보가 없습니다.");
+		}
+
+		Long schoolId = userClassRoom.getSchool().getId();
+		int grade = userClassRoom.getGrade();
+
+		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
+
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomIn(sameGradeClass);
+
+		boolean submitStatus = true; // 독서록 제출 여부
+		List<BookRecommendDetailStudent> details = bookRecommends.stream()
+			.map(bookRecommend -> BookRecommendDetailStudent.of(bookRecommend.getBook(), bookRecommend, submitStatus))
+			.collect(Collectors.toList());
+
+		return new BookRecommendResponseStudent(details);
 	}
 
 	private ClassRoom getUserClassRoom(User user) {
