@@ -9,6 +9,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportTeacherService;
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.global.annotation.Login;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +21,7 @@ public class BookReportTeacherController {
 	private final BookReportTeacherService bookReportTeacherService;
 
 	@GetMapping("/teacher")
-	public ReportTeacherListResponse getBookReportList(User user, @RequestBody ReportTeacherRequest request) {
+	public ReportTeacherListResponse getBookReportList(@Login User user, @RequestBody ReportTeacherRequest request) {
 		return bookReportTeacherService.getBookReports(user, request);
 	}
 }
