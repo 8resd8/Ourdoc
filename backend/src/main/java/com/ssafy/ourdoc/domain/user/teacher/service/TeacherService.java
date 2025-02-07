@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -25,11 +26,10 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
-import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
-import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.UserType;
+import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -43,9 +43,10 @@ public class TeacherService {
 	private final TeacherRepository teacherRepository;
 	private final TeacherClassRepository teacherClassRepository;
 	private final SchoolRepository schoolRepository;
+	private final S3StorageService s3StorageService;
 
 	// 1. 교사 회원가입
-	public Long signup(TeacherSignupRequest request) {
+	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {
 
 		// 1) 중복 ID 체크
 		Optional<User> existingUser = userRepository.findByLoginId(request.loginId());
@@ -56,7 +57,10 @@ public class TeacherService {
 		// 2) 비밀번호 해싱
 		String encodedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
 
-		// 3) User 엔티티 생성
+		// 3) 재직증명서 S3에 업로드
+		String certificateImageUrl = validateAndUploadFile(certifiateFile);
+
+		// 4) User 엔티티 생성
 		User user = User.builder()
 			.userType(UserType.교사)
 			.name(request.name())
@@ -69,9 +73,8 @@ public class TeacherService {
 
 		User savedUser = userRepository.save(user);
 
-		// 4) Teacher 엔티티 생성
-		Teacher teacher = Teacher.builder().user(savedUser).email(request.email()).phone(request.phone())
-			.build();
+		// 5) Teacher 엔티티 생성
+		Teacher teacher = Teacher.builder().user(savedUser).email(request.email()).phone(request.phone()).certificateImageUrl(certificateImageUrl).build();
 
 		Teacher savedTeacher = teacherRepository.save(teacher);
 
@@ -82,7 +85,7 @@ public class TeacherService {
 	public byte[] generateTeacherClassQr(Long teacherId) {
 		// 1) 교사 조회
 		Teacher teacher = teacherRepository.findById(teacherId)
-			.orElseThrow(() -> new IllegalArgumentException("해당 ID의 교사가 없습니다: " + teacherId));
+			.orElseThrow(() -> new IllegalArgumentException("해당 ID의 교사가 없습니다."));
 
 		// 2) 소속 반 정보
 		Long userId = teacher.getUser().getId();
@@ -128,6 +131,19 @@ public class TeacherService {
 		} catch (Exception e) {
 			throw new RuntimeException("QR 코드 생성 중 오류가 발생했습니다.", e);
 		}
+	}
+
+	public String validateAndUploadFile(MultipartFile file) {
+		if (file == null || file.isEmpty()) {
+			throw new IllegalArgumentException("재직 증명서를 첨부해야 합니다.");
+		}
+
+		String fileType = file.getContentType();
+		if (fileType == null || (!fileType.equals("application/pdf") && !fileType.startsWith("image/"))) {
+			throw new IllegalArgumentException("재직 증명서는 PDF 또는 JPG 형식이어야 합니다.");
+		}
+
+		return s3StorageService.uploadFile(file);
 	}
 
 }
