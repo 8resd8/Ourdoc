@@ -25,6 +25,12 @@ const SignIn = () => {
     }
   };
 
+  const handleKeyPress: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
   return (
     <div className={classes.root}>
       <div className={`${classes.base} shadow-medium`}>
@@ -60,14 +66,16 @@ const SignIn = () => {
         </div>
         <div className={classes.input}>
           <InputField
+            validate=""
             id="loginId"
             label="아이디"
             placeholder="아이디를 입력해주세요"
             onChange={(value) => handleInputChange('loginId', value)}
           />
         </div>
-        <div className={classes.input}>
+        <div className={classes.input} onKeyDown={handleKeyPress}>
           <InputField
+            validate="warning"
             id="password"
             label="비밀번호"
             placeholder="비밀번호를 입력해주세요"
@@ -75,12 +83,9 @@ const SignIn = () => {
           />
         </div>
         <div className={classes.btn}>
-          <Button title="로그인" onClick={handleLogin} />
+          <Button type="" title="로그인" onClick={handleLogin} />
         </div>
-        <div
-          onKeyDown={handleLogin}
-          className={`${classes.btn_admin} ml-80 text-gray-500 body-small`}
-        >
+        <div className={`${classes.btn_admin} ml-80 text-gray-500 body-small`}>
           관리자로 로그인
         </div>
       </div>
