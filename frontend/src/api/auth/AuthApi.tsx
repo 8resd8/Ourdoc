@@ -1,6 +1,6 @@
 import { api } from '../../hooks/CustomAxios';
 
-interface LoginRequest {
+interface signInRequest {
   userType: string;
   loginId: string;
   password: string;
@@ -11,7 +11,7 @@ interface signUpRequest {
   password: string;
 }
 
-interface LoginResponse {
+interface sighInResponse {
   user: {
     id: number;
     name: string;
@@ -30,10 +30,10 @@ interface signUpResponse {
 
 // 로그인
 export const signInApi = async (
-  credentials: LoginRequest
-): Promise<LoginResponse> => {
+  credentials: signInRequest
+): Promise<sighInResponse> => {
   try {
-    const response = await api.post<LoginResponse>(
+    const response = await api.post<sighInResponse>(
       '/users/signin',
       credentials,
       {
