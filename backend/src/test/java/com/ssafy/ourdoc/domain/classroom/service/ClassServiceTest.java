@@ -69,7 +69,7 @@ class ClassServiceTest {
 			new User(UserType.교사, "테스트이름", "test-id", "test-pwd", new Date(1L), Gender.남, Active.활성));
 
 		teacher = teacherRepository.save(
-			new Teacher(user, "teacher@example.com", "010-1234-5678", EmploymentStatus.재직, LocalDateTime.now()));
+			new Teacher(user, "teacher@example.com", "010-1234-5678", EmploymentStatus.재직, LocalDateTime.now(), "12345"));
 		teacherId = teacher.getId();
 	}
 

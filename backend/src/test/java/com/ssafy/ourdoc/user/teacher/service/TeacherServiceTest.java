@@ -16,7 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.google.zxing.WriterException;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
@@ -31,6 +33,7 @@ import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.Gender;
 import com.ssafy.ourdoc.global.common.enums.UserType;
+import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
 @ExtendWith(MockitoExtension.class)
 class TeacherServiceTest {
@@ -44,15 +47,25 @@ class TeacherServiceTest {
 	@Mock
 	private TeacherClassRepository teacherClassRepository;
 
+	@Mock
+	private S3StorageService s3StorageService;
+
 	@InjectMocks
 	private TeacherService teacherService;
-
+	private MultipartFile certificateFile;
 	private TeacherSignupRequest signupRequest;
 	private User mockUser;
 	private Teacher mockTeacher;
 
 	@BeforeEach
 	void setUp() {
+		certificateFile = new MockMultipartFile(
+			"certificateImage", // 필드명 (TeacherSignupRequest에서 정의한 이름과 동일해야 함)
+			"certificate.pdf", // 파일명
+			"application/pdf", // MIME 타입
+			"fake pdf content".getBytes() // 가짜 파일 내용
+		);
+
 		signupRequest = new TeacherSignupRequest(
 			"김선생", // name
 			"teacher123", // loginId
@@ -77,6 +90,7 @@ class TeacherServiceTest {
 			.user(mockUser)
 			.email(signupRequest.email())
 			.phone(signupRequest.phone())
+			.certificateImageUrl(certificateFile.getOriginalFilename())
 			.build();
 
 		// ✅ Mock Teacher 엔티티에 id 값을 수동으로 설정
@@ -92,7 +106,7 @@ class TeacherServiceTest {
 		given(teacherRepository.save(any(Teacher.class))).willReturn(mockTeacher);
 
 		// When: 회원가입 실행
-		Long teacherId = teacherService.signup(signupRequest);
+		Long teacherId = teacherService.signup(signupRequest, certificateFile);
 
 		// Then: 생성된 ID가 null이 아니어야 함
 		assertNotNull(teacherId);
@@ -110,7 +124,7 @@ class TeacherServiceTest {
 		// When & Then: 예외 발생 검증
 		IllegalArgumentException exception = assertThrows(
 			IllegalArgumentException.class,
-			() -> teacherService.signup(signupRequest)
+			() -> teacherService.signup(signupRequest, certificateFile)
 		);
 
 		assertThat(exception.getMessage()).isEqualTo("이미 존재하는 로그인 ID입니다.");
@@ -175,9 +189,97 @@ class TeacherServiceTest {
 		});
 
 		// Then: 예외 메시지 검증
-		assertThat(exception.getMessage()).isEqualTo("해당 ID의 교사가 없습니다: 99");
+		assertThat(exception.getMessage()).isEqualTo("해당 ID의 교사가 없습니다.");
 
 		// Verify: findById가 한 번 호출되었는지 확인
 		verify(teacherRepository, times(1)).findById(99L);
 	}
+
+	@Test
+	@DisplayName("재직증명서 업로드 성공 - PDF 파일")
+	void uploadCertificateFile_Success_PDF() {
+		// Given: 정상적인 PDF 파일
+		given(s3StorageService.uploadFile(certificateFile)).willReturn("https://s3.amazonaws.com/bucket/certificate.pdf");
+
+		// When: 파일 검증 및 업로드 실행
+		String uploadedUrl = teacherService.validateAndUploadFile(certificateFile);
+
+		// Then: 업로드 URL이 반환되어야 함
+		assertNotNull(uploadedUrl);
+		assertThat(uploadedUrl).isEqualTo("https://s3.amazonaws.com/bucket/certificate.pdf");
+
+		// Verify: S3 업로드가 호출되었는지 검증
+		verify(s3StorageService, times(1)).uploadFile(certificateFile);
+	}
+
+	@Test
+	@DisplayName("재직증명서 업로드 실패 - 빈 파일")
+	void uploadCertificateFile_Fail_EmptyFile() {
+		// Given: 빈 파일
+		MultipartFile emptyFile = new MockMultipartFile(
+			"certificateImage",
+			"empty.pdf",
+			"application/pdf",
+			new byte[0] // 빈 내용
+		);
+
+		// When & Then: 예외 발생 검증
+		IllegalArgumentException exception = assertThrows(
+			IllegalArgumentException.class,
+			() -> teacherService.validateAndUploadFile(emptyFile)
+		);
+
+		assertThat(exception.getMessage()).isEqualTo("재직 증명서를 첨부해야 합니다.");
+
+		// Verify: S3 업로드가 호출되지 않아야 함
+		verify(s3StorageService, never()).uploadFile(any(MultipartFile.class));
+	}
+
+	@Test
+	@DisplayName("재직증명서 업로드 실패 - 지원하지 않는 파일 형식")
+	void uploadCertificateFile_Fail_UnsupportedFileType() {
+		// Given: 지원하지 않는 파일 형식
+		MultipartFile unsupportedFile = new MockMultipartFile(
+			"certificateImage",
+			"unsupported.txt",
+			"text/plain", // 지원되지 않는 MIME 타입
+			"unsupported content".getBytes()
+		);
+
+		// When & Then: 예외 발생 검증
+		IllegalArgumentException exception = assertThrows(
+			IllegalArgumentException.class,
+			() -> teacherService.validateAndUploadFile(unsupportedFile)
+		);
+
+		assertThat(exception.getMessage()).isEqualTo("재직 증명서는 PDF 또는 JPG 형식이어야 합니다.");
+
+		// Verify: S3 업로드가 호출되지 않아야 함
+		verify(s3StorageService, never()).uploadFile(any(MultipartFile.class));
+	}
+
+	@Test
+	@DisplayName("재직증명서 업로드 성공 - JPG 파일")
+	void uploadCertificateFile_Success_JPG() {
+		// Given: 정상적인 JPG 파일
+		MultipartFile jpgFile = new MockMultipartFile(
+			"certificateImage",
+			"certificate.jpg",
+			"image/jpeg",
+			"fake jpg content".getBytes()
+		);
+
+		given(s3StorageService.uploadFile(jpgFile)).willReturn("https://s3.amazonaws.com/bucket/certificate.jpg");
+
+		// When: 파일 검증 및 업로드 실행
+		String uploadedUrl = teacherService.validateAndUploadFile(jpgFile);
+
+		// Then: 업로드 URL이 반환되어야 함
+		assertNotNull(uploadedUrl);
+		assertThat(uploadedUrl).isEqualTo("https://s3.amazonaws.com/bucket/certificate.jpg");
+
+		// Verify: S3 업로드가 호출되었는지 검증
+		verify(s3StorageService, times(1)).uploadFile(jpgFile);
+	}
+
 }
