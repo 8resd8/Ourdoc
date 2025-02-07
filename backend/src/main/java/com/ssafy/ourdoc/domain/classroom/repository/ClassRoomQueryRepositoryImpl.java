@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.classroom.repository;
 
-import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
+import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
+import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
 import java.util.List;
 
@@ -16,11 +17,13 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 
 	@Override
 	public List<ClassRoom> findActiveClassBySchoolAndGrade(Long schoolId, int grade) {
-		return queryFactory.selectFrom(studentClass.classRoom)
+		return queryFactory.selectFrom(classRoom)
+			.join(teacherClass)
+			.on(teacherClass.classRoom.id.eq(classRoom.id))
 			.where(
-				studentClass.classRoom.school.id.eq(schoolId),
-				studentClass.classRoom.grade.eq(grade),
-				studentClass.active.eq(Active.활성)
+				classRoom.school.id.eq(schoolId),
+				classRoom.grade.eq(grade),
+				teacherClass.active.eq(Active.활성)
 			)
 			.fetch();
 	}
