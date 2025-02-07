@@ -64,9 +64,10 @@ public class StudentServiceTest {
 			"ssafy",
 			"1234",
 			"싸피초등학교",
-			1,
+			"멀티캠퍼스",
 			2,
 			10,
+			1,
 			Date.valueOf("2025-02-01"),
 			Gender.남);
 
@@ -85,7 +86,7 @@ public class StudentServiceTest {
 	@DisplayName("학생 회원 가입 성공")
 	void studentSignUpSuccess() {
 		given(userRepository.findByLoginId(signupRequest.loginId())).willReturn(Optional.empty());
-		given(schoolRepository.findBySchoolName(signupRequest.schoolName())).willReturn(Optional.of(mockSchool));
+		given(schoolRepository.findBySchoolNameAndAddress(signupRequest.schoolName(), signupRequest.address())).willReturn(mockSchool);
 		given(classRoomRepository.findBySchoolAndGradeAndClassNumber(
 			mockSchool, signupRequest.grade(), signupRequest.classNumber()
 		)).willReturn(Optional.of(mockClassRoom));
@@ -144,8 +145,8 @@ public class StudentServiceTest {
 	void studentSignupFailNoExistSchool() {
 		// Given
 		given(userRepository.findByLoginId(signupRequest.loginId())).willReturn(Optional.empty());
-		given(schoolRepository.findBySchoolName(signupRequest.schoolName()))
-			.willReturn(Optional.empty());
+		given(schoolRepository.findBySchoolNameAndAddress(signupRequest.schoolName(), signupRequest.address()))
+			.willReturn(null);
 
 		// When & Then
 		IllegalArgumentException exception = assertThrows(
@@ -164,7 +165,7 @@ public class StudentServiceTest {
 		School school = School.builder().schoolName("싸피초등학교").build();
 
 		when(userRepository.findByLoginId(signupRequest.loginId())).thenReturn(Optional.empty());
-		when(schoolRepository.findBySchoolName(signupRequest.schoolName())).thenReturn(Optional.of(school));
+		when(schoolRepository.findBySchoolNameAndAddress(signupRequest.schoolName(), signupRequest.address())).thenReturn(school);
 		when(classRoomRepository.findBySchoolAndGradeAndClassNumber(any(), anyInt(), anyInt()))
 			.thenReturn(Optional.empty());
 
