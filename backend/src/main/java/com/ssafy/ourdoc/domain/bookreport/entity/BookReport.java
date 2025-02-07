@@ -71,5 +71,13 @@ public class BookReport extends BaseTimeEntity {
 		this.ocrCheck = ocrCheck;
 		this.imagePath = imagePath;
 	}
+
+	public void approveStamp() {
+		this.approveTime = LocalDateTime.now();
+	}
+
+	public void saveAfterContent(String afterContent) {
+		this.afterContent = afterContent;
+	}
 }
 

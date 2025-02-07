@@ -22,12 +22,10 @@ public class OCRController {
 
 	private final OCRService ocrService;
 
-	@PostMapping("/{studentId}/hand")
+	@PostMapping("/hand")
 	@ResponseStatus(OK)
-	public HandOCRResponse handOCR(@PathVariable("studentId") Long studentId,
-		@RequestPart(value = "hand_image", required = false) MultipartFile handImageRequest) {
-		HandOCRResponse handOCRResponse = ocrService.handOCRConvert(handImageRequest);
-		return null;
+	public HandOCRResponse imageOcr(@RequestPart(value = "hand_image") MultipartFile handImageRequest) {
+		return ocrService.handOCRConvert(handImageRequest);
 	}
 
 	@PostMapping
