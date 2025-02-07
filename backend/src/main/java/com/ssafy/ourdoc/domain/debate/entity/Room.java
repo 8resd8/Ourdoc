@@ -46,20 +46,16 @@ public class Room extends BaseTimeEntity {
 	@Column(name = "max_people", nullable = false)
 	private int maxPeople;
 
-	@Column(name = "current_people", nullable = false)
-	private int currentPeople;
-
 	@Column(name = "end_at")
 	private LocalDateTime endAt;
 
 	@Builder
-	public Room(String sessionId, User user, String title, String password, int maxPeople, int currentPeople) {
+	public Room(String sessionId, User user, String title, String password, int maxPeople) {
 		this.sessionId = sessionId;
 		this.user = user;
 		this.title = title;
 		this.password = password;
 		this.maxPeople = maxPeople;
-		this.currentPeople = currentPeople;
 	}
 
 }
