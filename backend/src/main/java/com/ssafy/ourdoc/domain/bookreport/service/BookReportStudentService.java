@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.bookreport.service;
 import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 import static com.ssafy.ourdoc.global.common.enums.HomeworkStatus.*;
+import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportFeedbackRepository;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
+import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
@@ -34,6 +36,7 @@ public class BookReportStudentService {
 	private final BookReportFeedbackRepository feedbackRepository;
 	private final StudentClassRepository studentClassRepository;
 	private final BookRepository bookRepository;
+	private final NotificationService notificationService;
 
 	// 독서록 작성
 	public void saveBookReport(User user, BookReadLogRequest request) {
@@ -49,6 +52,7 @@ public class BookReportStudentService {
 			.build();
 
 		bookReportRepository.save(bookReport);
+		notificationService.sendNotifyStudentFromTeacher(user, 독서록); // 알림전송
 	}
 
 	// 작성한 독서록 기반 피드백 받은것 처리
