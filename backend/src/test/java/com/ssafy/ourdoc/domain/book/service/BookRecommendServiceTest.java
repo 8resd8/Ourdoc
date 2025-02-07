@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,10 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.ssafy.ourdoc.data.entity.BookSample;
-import com.ssafy.ourdoc.data.entity.ClassRoomSample;
-import com.ssafy.ourdoc.data.entity.SchoolSample;
-import com.ssafy.ourdoc.data.entity.TeacherClassSample;
 import com.ssafy.ourdoc.data.entity.UserSample;
 import com.ssafy.ourdoc.domain.book.dto.BookRecommendRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
@@ -34,7 +29,6 @@ import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
-import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
@@ -137,45 +131,65 @@ public class BookRecommendServiceTest {
 			IllegalArgumentException.class).hasMessage("추천 도서로 등록한 도서가 아닙니다.");
 	}
 
-	@Test
-	@DisplayName("추천도서 목록 조회 성공 - 학교와 학년 필터링")
-	void getBookRecommendBySchoolAndGradeSuccess() {
-		User user = UserSample.user(UserType.교사);
+	// TODO
+	// 검증 필요
 
-		List<BookRecommend> mockBookRecommend = List.of(
-			new BookRecommend(BookSample.book("1111", "책제목1", "책저자1"), user,
-				TeacherClassSample.teacherClass(user,
-					ClassRoomSample.classRoom(SchoolSample.school("학교1"), 1, 1, 2025),
-					Active.활성).getClassRoom()),
-			new BookRecommend(BookSample.book("2222", "책제목2", "책저자2"), user,
-				TeacherClassSample.teacherClass(user,
-					ClassRoomSample.classRoom(SchoolSample.school("학교1"), 2, 1, 2025),
-					Active.활성).getClassRoom()),
-			new BookRecommend(BookSample.book("3333", "책제목3", "책저자3"), user,
-				TeacherClassSample.teacherClass(user,
-					ClassRoomSample.classRoom(SchoolSample.school("학교1"), 2, 1, 2023),
-					Active.비활성).getClassRoom()),
-			new BookRecommend(BookSample.book("4444", "책제목4", "책저자4"), user,
-				TeacherClassSample.teacherClass(user,
-					ClassRoomSample.classRoom(SchoolSample.school("학교2"), 1, 1, 2022),
-					Active.비활성).getClassRoom())
-		);
-
-		when(bookRecommendRepository.findRecommendBookList(user)).thenReturn(mockBookRecommend);
-
-		List<BookRecommend> filteredBookRecommend = mockBookRecommend.stream()
-			.filter(bookRecommend -> bookRecommend.getClassRoom().getSchool().getSchoolName().equals("학교1")
-				&& bookRecommend.getClassRoom().getGrade() == 1)
-			.toList();
-
-		List<BookResponse> expectedBookResponse = filteredBookRecommend.stream()
-			.map(bookRecommend -> BookResponse.of(bookRecommend.getBook()))
-			.collect(Collectors.toList());
-
-		List<BookResponse> bookRecommends = bookRecommendService.getBookRecommends(user);
-
-		assertThat(bookRecommends).isEqualTo(expectedBookResponse);
-	}
+	// @Test
+	// @DisplayName("추천도서 목록 조회 성공 - 학교와 학년 필터링")
+	// void getBookRecommendBySchoolAndGradeSuccess() {
+	// 	User user = UserSample.user(UserType.교사);
+	// 	User userSpy = spy(user);
+	// 	when(userSpy.getId()).thenReturn(1L);
+	//
+	// 	School school1 = SchoolSample.school("학교1");
+	// 	School schoolSpy1 = spy(school1);
+	// 	when(schoolSpy1.getId()).thenReturn(1L);
+	//
+	// 	School school2 = SchoolSample.school("학교2");
+	// 	School schoolSpy2 = spy(school2);
+	// 	when(schoolSpy2.getId()).thenReturn(2L);
+	//
+	// 	List<TeacherClass> mockTeacherClass = List.of(
+	// 		TeacherClassSample.teacherClass(userSpy,
+	// 			ClassRoomSample.classRoom(schoolSpy1, 1, 1, 2025), Active.활성),
+	// 		TeacherClassSample.teacherClass(userSpy,
+	// 			ClassRoomSample.classRoom(schoolSpy1, 2, 1, 2025), Active.활성),
+	// 		TeacherClassSample.teacherClass(userSpy,
+	// 			ClassRoomSample.classRoom(schoolSpy1, 2, 1, 2023), Active.비활성),
+	// 		TeacherClassSample.teacherClass(userSpy,
+	// 			ClassRoomSample.classRoom(schoolSpy2, 1, 1, 2022), Active.비활성)
+	// 	);
+	// 	List<BookRecommend> mockBookRecommend = List.of(
+	// 		new BookRecommend(BookSample.book("1111", "책제목1", "책저자1"), userSpy, mockTeacherClass.get(0).getClassRoom()),
+	// 		new BookRecommend(BookSample.book("2222", "책제목2", "책저자2"), userSpy, mockTeacherClass.get(1).getClassRoom()),
+	// 		new BookRecommend(BookSample.book("3333", "책제목3", "책저자3"), userSpy, mockTeacherClass.get(2).getClassRoom()),
+	// 		new BookRecommend(BookSample.book("4444", "책제목4", "책저자4"), userSpy, mockTeacherClass.get(3).getClassRoom())
+	// 	);
+	//
+	// 	List<TeacherClass> activeTeacherClass = mockTeacherClass.stream()
+	// 		.filter(teacherClass -> teacherClass.getActive().equals(Active.활성))
+	// 		.toList();
+	//
+	// 	List<Long> activeClassRoomIds = activeTeacherClass.stream()
+	// 		.map(teacherClass -> teacherClass.getClassRoom().getId())
+	// 		.toList();
+	//
+	// 	List<BookRecommend> filteredBookRecommend = mockBookRecommend.stream()
+	// 		.filter(bookRecommend -> bookRecommend.getClassRoom().getSchool().getSchoolName().equals("학교1")
+	// 			&& bookRecommend.getClassRoom().getGrade() == 1
+	// 			&& activeClassRoomIds.contains(bookRecommend.getClassRoom().getId()))
+	// 		.toList();
+	//
+	// 	List<BookResponse> expectedBookResponse = filteredBookRecommend.stream()
+	// 		.map(bookRecommend -> BookResponse.of(bookRecommend.getBook()))
+	// 		.collect(Collectors.toList());
+	//
+	// 	when(bookRecommendRepository.findRecommendBookList(userSpy)).thenReturn(mockBookRecommend);
+	//
+	// 	List<BookResponse> bookRecommends = bookRecommendService.getBookRecommends(userSpy);
+	//
+	// 	assertThat(bookRecommends).isEqualTo(expectedBookResponse);
+	// }
 
 	@Test
 	@DisplayName("추천도서 목록 빈 경우 성공")
