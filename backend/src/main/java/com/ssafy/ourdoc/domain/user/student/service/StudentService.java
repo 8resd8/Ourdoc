@@ -91,8 +91,10 @@ public class StudentService {
 		String encodedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
 
 		// 3) 학교 조회
-		School school = schoolRepository.findBySchoolName(request.schoolName())
-			.orElseThrow(() -> new IllegalArgumentException("해당 학교를 찾을 수 없습니다: " + request.schoolName()));
+		School school = schoolRepository.findBySchoolNameAndAddress(request.schoolName(), request.address());
+		if (school == null) {
+			throw new IllegalArgumentException("해당 학교를 찾을 수 없습니다.");
+		}
 
 		// 4) 학년 및 반 정보 조회
 		ClassRoom classRoom = classRoomRepository.findBySchoolAndGradeAndClassNumber(
