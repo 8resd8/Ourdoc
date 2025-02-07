@@ -38,7 +38,8 @@ public class NotificationQueryRepositoryImpl implements NotificationQueryReposit
 				notification.id,
 				notification.notificationType,
 				notification.content,
-				notification.createdAt))
+				notification.createdAt,
+				notification.sender.name))
 			.from(notification)
 			.join(recipient).on(notification.id.eq(recipient.notification.id))
 			.where(

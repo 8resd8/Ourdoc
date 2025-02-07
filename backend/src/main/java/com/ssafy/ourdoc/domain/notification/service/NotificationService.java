@@ -108,7 +108,8 @@ public class NotificationService {
 			notification.getId(),
 			notification.getNotificationType(),
 			notification.getContent(),
-			notification.getCreatedAt()
+			notification.getCreatedAt(),
+			notification.getSender().getName()
 		);
 
 		for (SseEmitter emitter : userEmitters) {
