@@ -65,9 +65,9 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 		int grade = userClassRoom.getGrade();
 
 		List<ClassRoom> classRooms = queryFactory.selectFrom(studentClass.classRoom)
-			.where(studentClass.classRoom.school.id.eq(schoolId), studentClass.classRoom.grade.eq(grade))
+			.where(studentClass.classRoom.school.id.eq(schoolId), studentClass.classRoom.grade.eq(grade),
+				studentClass.active.eq(Active.활성))
 			.fetch();
-
 		return queryFactory.selectFrom(bookRecommend)
 			.join(bookRecommend.classRoom, classRoom)
 			.where(classRoom.in(classRooms))
@@ -85,7 +85,8 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 		int grade = userClassRoom.getGrade();
 
 		List<ClassRoom> classRooms = queryFactory.selectFrom(teacherClass.classRoom)
-			.where(teacherClass.classRoom.school.id.eq(schoolId), teacherClass.classRoom.grade.eq(grade))
+			.where(teacherClass.classRoom.school.id.eq(schoolId), teacherClass.classRoom.grade.eq(grade),
+				teacherClass.active.eq(Active.활성))
 			.fetch();
 
 		return queryFactory.selectFrom(bookRecommend)
