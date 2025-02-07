@@ -4,6 +4,7 @@ import static com.ssafy.ourdoc.global.common.enums.Active.*;
 import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.TempPassword.*;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -15,6 +16,7 @@ import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
+import com.ssafy.ourdoc.domain.user.student.dto.StudentAffiliationChangeRequest;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentSignupRequest;
 import com.ssafy.ourdoc.domain.user.student.dto.ValidatedEntities;
 import com.ssafy.ourdoc.domain.user.student.entity.Student;
@@ -89,8 +91,8 @@ public class StudentService {
 		String encodedPassword = BCrypt.hashpw(request.password(), BCrypt.gensalt());
 
 		// 3) 학교 조회
-		School school = schoolRepository.findBySchoolName(request.schoolName())
-			.orElseThrow(() -> new IllegalArgumentException("해당 학교를 찾을 수 없습니다: " + request.schoolName()));
+		School school = schoolRepository.findById(request.schoolId())
+			.orElseThrow(() -> new NoSuchElementException("해당 학교를 찾을 수 없습니다."));
 
 		// 4) 학년 및 반 정보 조회
 		ClassRoom classRoom = classRoomRepository.findBySchoolAndGradeAndClassNumber(
@@ -98,5 +100,50 @@ public class StudentService {
 		).orElseThrow(() -> new IllegalArgumentException("해당 학년 및 반 정보를 찾을 수 없습니다."));
 
 		return new ValidatedEntities(encodedPassword, school, classRoom);
+	}
+
+	public void requestStudentAffiliationChange(User user, StudentAffiliationChangeRequest request) {
+		ClassRoom classRoom = validateAffiliation(user, request);
+
+		// 새로운 student_class 엔티티 생성
+		StudentClass newStudentClass = StudentClass.builder()
+			.user(user)
+			.classRoom(classRoom)
+			.studentNumber(request.studentNumber())
+			.authStatus(AuthStatus.대기)
+			.active(Active.활성) // 활성 상태로 추가
+			.build();
+
+		// student_class 테이블에 새로운 row 추가
+		studentClassRepository.save(newStudentClass);
+	}
+
+	private ClassRoom validateAffiliation(User user, StudentAffiliationChangeRequest request) {
+		// 학교 조회
+		School school = schoolRepository.findBySchoolNameAndAddress(request.schoolName(), request.address());
+		if (school == null) {
+			throw new NoSuchElementException("해당 학교를 찾을 수 없습니다.");
+		}
+
+		// 학년 및 반 조회
+		ClassRoom classRoom = classRoomRepository.findBySchoolAndGradeAndClassNumber(
+				school, request.grade(), request.classNumber())
+			.orElseThrow(() -> new IllegalArgumentException("해당 학년 및 반 정보를 찾을 수 없습니다."));
+
+		// 기존 학생 엔티티 조회
+		Student student = studentRepository.findByUser(user);
+		if (student == null) {
+			throw new NoSuchElementException("해당 학생 정보를 찾을 수 없습니다.");
+		}
+
+		// 이미 승인 요청이 되어 있는 경우 조회
+		StudentClass studentClass = studentClassRepository.findByUserAndClassRoom(user, classRoom);
+		if (studentClass != null && studentClass.getAuthStatus() == 대기) {
+			throw new IllegalArgumentException("이미 승인 요청 중입니다.");
+		} else if (studentClass != null && studentClass.getAuthStatus() == 승인) {
+			throw new IllegalArgumentException("이미 소속된 학급입니다.");
+		}
+
+		return classRoom;
 	}
 }
