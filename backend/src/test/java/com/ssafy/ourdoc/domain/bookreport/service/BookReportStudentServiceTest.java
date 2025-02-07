@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.bookreport.service;
 
+import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -26,6 +27,7 @@ import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportFeedbackRepository;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
+import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
@@ -48,7 +50,8 @@ class BookReportStudentServiceTest {
 
 	@Mock
 	private StudentClassRepository studentClassRepository;
-
+	@Mock
+	private NotificationService notificationService;
 	@Mock
 	private BookRepository bookRepository;
 
@@ -95,10 +98,14 @@ class BookReportStudentServiceTest {
 		when(bookRepository.findById(request.bookId())).thenReturn(Optional.of(mockBook));
 
 		// when
+		doNothing().when(notificationService).sendNotifyStudentFromTeacher(any(User.class), any());
+
+		// when
 		bookReportStudentService.saveBookReport(mockUser, request);
 
 		// then
 		verify(bookReportRepository, times(1)).save(any(BookReport.class));
+		verify(notificationService, times(1)).sendNotifyStudentFromTeacher(mockUser, 독서록);
 	}
 
 	@Test
