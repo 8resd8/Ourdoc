@@ -4,3 +4,12 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop  # 테스트용 테이블 자동 생성 후 종료 시 삭제 (권장)
+    show-sql: true  # SQL 로그 출력
+    properties:
+      hibernate:
+        format_sql: true  # SQL 보기 쉽게 정렬
