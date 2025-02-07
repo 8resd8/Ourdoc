@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.book.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,4 +14,6 @@ public interface BookRecommendRepository extends JpaRepository<BookRecommend, Lo
 	Optional<BookRecommend> findByBookAndUserAndClassRoom(Book book, User user, ClassRoom classRoom);
 
 	boolean existsByBookAndUserAndClassRoom(Book book, User user, ClassRoom classRoom);
+
+	List<BookRecommend> findByClassRoomIn(List<ClassRoom> classRooms);
 }
