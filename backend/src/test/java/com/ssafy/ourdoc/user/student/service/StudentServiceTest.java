@@ -1,5 +1,8 @@
 package com.ssafy.ourdoc.user.student.service;
 
+import static com.ssafy.ourdoc.global.common.enums.Active.*;
+import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
+import static com.ssafy.ourdoc.global.common.enums.TempPassword.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -28,7 +31,9 @@ import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.domain.user.student.service.StudentService;
 import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.global.common.enums.Gender;
+import com.ssafy.ourdoc.global.common.enums.TempPassword;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,8 +68,7 @@ public class StudentServiceTest {
 			2,
 			10,
 			Date.valueOf("2025-02-01"),
-			Gender.남,
-			Active.활성);
+			Gender.남);
 
 		mockSchool = School.builder()
 			.schoolName("싸피초등학교")
@@ -93,13 +97,15 @@ public class StudentServiceTest {
 			.password(signupRequest.password())
 			.birth(signupRequest.birth())
 			.gender(signupRequest.gender())
-			.active(signupRequest.active())
+			.active(활성)
 			.build();
 		given(userRepository.save(any(User.class))).willReturn(mockUser);
 
 		Student mockStudent = Student.builder()
 			.user(mockUser)
 			.classRoom(mockClassRoom)
+			.tempPassword(N)
+			.authStatus(대기)
 			.build();
 		given(studentRepository.save(any(Student.class))).willReturn(mockStudent);
 

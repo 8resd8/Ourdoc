@@ -20,6 +20,9 @@ spring:
 
   jpa:
     hibernate:
+      properties:
+        hibernate:
+          dialect: org.hibernate.dialect.MySQLDialect
       ddl-auto: update
     show-sql: true
   config:

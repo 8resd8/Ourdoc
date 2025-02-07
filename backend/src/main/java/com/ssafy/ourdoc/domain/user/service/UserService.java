@@ -7,12 +7,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.ourdoc.domain.user.dto.CheckIdRequest;
 import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
 import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
 import com.ssafy.ourdoc.domain.user.dto.StudentLoginDto;
 import com.ssafy.ourdoc.domain.user.dto.StudentQueryDto;
 import com.ssafy.ourdoc.domain.user.dto.TeacherLoginDto;
 import com.ssafy.ourdoc.domain.user.dto.TeacherQueryDto;
+import com.ssafy.ourdoc.domain.user.dto.request.CheckPasswordRequest;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.entity.Student;
@@ -65,13 +67,8 @@ public class UserService {
 
 		saveRefreshTokenAndSetCookie(user, headers);
 
-		TeacherLoginDto response = new TeacherLoginDto(
-			user.getLoginId(),
-			user.getName(),
-			user.getUserType(),
-			search.schoolName(),
-			search.grade(),
-			search.classNumber());
+		TeacherLoginDto response = new TeacherLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
+			search.schoolName(), search.grade(), search.classNumber());
 
 		return ResponseEntity.ok().headers(headers).body(response);
 	}
@@ -84,14 +81,8 @@ public class UserService {
 
 		saveRefreshTokenAndSetCookie(user, headers);
 
-		StudentLoginDto response = new StudentLoginDto(
-			user.getLoginId(),
-			user.getName(),
-			user.getUserType(),
-			search.schoolName(),
-			search.grade(),
-			search.classNumber(),
-			search.studentNumber(),
+		StudentLoginDto response = new StudentLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
+			search.schoolName(), search.grade(), search.classNumber(), search.studentNumber(),
 			student.getTempPassword());
 
 		return ResponseEntity.ok().headers(headers).body(response);
@@ -122,8 +113,8 @@ public class UserService {
 	}
 
 	// 2. ID 중복 체크
-	public boolean isLoginIdDuplicate(String loginId) {
-		return userRepository.findByLoginId(loginId).isPresent();
+	public boolean isLoginIdDuplicate(CheckIdRequest request) {
+		return userRepository.findByLoginId(request.loginId()).isPresent();
 	}
 
 	// 3. 로그아웃 서비스
@@ -142,5 +133,11 @@ public class UserService {
 
 		// 4) 로그아웃 처리 완료
 		return new LogoutResponse("200", "로그아웃 성공");
+	}
+
+	// 비밀번호 일치 여부 확인
+	public boolean verifyPassword(User user, CheckPasswordRequest request) {
+		String encryptedPasswordFromDB = userRepository.findPasswordById(user.getId());
+		return BCrypt.checkpw(request.password(), encryptedPasswordFromDB);
 	}
 }

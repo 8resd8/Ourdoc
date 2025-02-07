@@ -30,4 +30,14 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
 			.where(teacherClass.classRoom.id.eq(classId))
 			.fetchOne();
 	}
+
+	// 비밀번호 일치 여부 확인
+	@Override
+	public String findPasswordById(Long userId) {
+		return queryFactory
+			.select(user.password)
+			.from(user)
+			.where(user.id.eq(userId))
+			.fetchOne();
+	}
 }

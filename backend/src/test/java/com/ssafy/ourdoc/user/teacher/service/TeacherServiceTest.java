@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.user.teacher.service;
 
+import static com.ssafy.ourdoc.global.common.enums.Active.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -58,7 +59,6 @@ class TeacherServiceTest {
 			"password123", // password
 			Date.valueOf("1985-06-15"), // birth
 			Gender.남, // gender
-			Active.활성, // active 상태
 			"teacher@example.com", // email
 			"010-1234-5678" // phone
 		);
@@ -70,7 +70,7 @@ class TeacherServiceTest {
 			.password(signupRequest.password())
 			.birth(signupRequest.birth())
 			.gender(signupRequest.gender())
-			.active(signupRequest.active())
+			.active(활성)
 			.build();
 
 		mockTeacher = Teacher.builder()
@@ -137,7 +137,7 @@ class TeacherServiceTest {
 
 		// 3) teacherClassRepository 스텁
 		//    - 실제 코드에서 findByUserIdAndActive( 777L, Active.활성 ) 로 불릴 것
-		given(teacherClassRepository.findByUserIdAndActive(eq(777L), eq(Active.활성)))
+		given(teacherClassRepository.findByUserIdAndActive(eq(777L), eq(활성)))
 			.willReturn(mockTeacherClass);
 
 		// 4) mockTeacherClass → mockClassRoom
@@ -160,7 +160,7 @@ class TeacherServiceTest {
 		// Verify
 		verify(teacherRepository, times(1)).findById(1L);
 		verify(teacherClassRepository, times(1))
-			.findByUserIdAndActive(777L, Active.활성);
+			.findByUserIdAndActive(777L, 활성);
 	}
 
 	@Test
