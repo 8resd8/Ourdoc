@@ -45,4 +45,8 @@ public class RoomOnline extends BaseTimeEntity {
 		this.token = token;
 		this.user = user;
 	}
+
+	public void markAsLeft() {
+		this.token = this.token;
+	}
 }
