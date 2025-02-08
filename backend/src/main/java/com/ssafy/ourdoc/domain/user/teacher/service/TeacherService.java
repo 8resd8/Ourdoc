@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
@@ -26,6 +27,7 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
+import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
 import com.ssafy.ourdoc.global.common.enums.UserType;
@@ -74,7 +76,12 @@ public class TeacherService {
 		User savedUser = userRepository.save(user);
 
 		// 5) Teacher 엔티티 생성
-		Teacher teacher = Teacher.builder().user(savedUser).email(request.email()).phone(request.phone()).certificateImageUrl(certificateImageUrl).build();
+		Teacher teacher = Teacher.builder()
+			.user(savedUser)
+			.email(request.email())
+			.phone(request.phone())
+			.certificateImageUrl(certificateImageUrl)
+			.build();
 
 		Teacher savedTeacher = teacherRepository.save(teacher);
 
@@ -89,10 +96,9 @@ public class TeacherService {
 
 		// 2) 소속 반 정보
 		Long userId = teacher.getUser().getId();
-		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(userId, 활성).getClassRoom();
-		if (classRoom == null) {
-			throw new IllegalStateException("교사에 연결된 ClassRoom 정보가 없습니다.");
-		}
+		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(userId, 활성)
+			.map(TeacherClass::getClassRoom)
+			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
 
 		String schoolName = classRoom.getSchool().getSchoolName();
 		Long schoolId = classRoom.getSchool().getId();
@@ -103,10 +109,10 @@ public class TeacherService {
 		// schoolName, 학년, 반 (url은 추후 수정 필요)
 		String googleFormLink = String.format(
 			"https://docs.google.com/forms/d/e/1FAIpQLSfxNCzcxL07Kzo27rCINXu4PHxco7Y4aT8iyi3ys-3PU5j5fg/viewform?usp=pp_url&entry.93879875=%s&entry.640235071=%d&entry.631690045=%d&entry.581945071=%d",
-			schoolName,		// 학교
-			schoolId,	// 주소
-			grade,			// 학년
-			classNumber		// 반
+			schoolName,        // 학교
+			schoolId,    // 주소
+			grade,            // 학년
+			classNumber        // 반
 		);
 
 		// json 데이터의 한글이 깨지지 않도록 설정
