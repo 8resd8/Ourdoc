@@ -4,7 +4,6 @@ import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,7 +73,7 @@ public class NotificationService {
 	public void sendNotifyStudentFromTeacher(User sender, NotificationType type) {
 		String content = getStudentContent(sender, type);
 		NotificationRecipient recipient = notificationHistoryService.saveNotifyStudent(sender, type, content);
-		sendToEmitters(recipient.getRecipient().getId(), recipient.getNotification());
+		sendNotification(recipient);
 	}
 
 	// 교사가 알림전송
@@ -82,7 +81,11 @@ public class NotificationService {
 		NotificationRecipient recipient = notificationHistoryService.saveNotifyTeacher(sender, studentClassId,
 			"선생님이 칭찬 도장을 주셨어요!");
 
-		sendToEmitters(recipient.getId(), recipient.getNotification());
+		sendNotification(recipient);
+	}
+
+	private void sendNotification(NotificationRecipient recipient) {
+		sendToEmitters(recipient.getRecipient().getId(), recipient.getNotification());
 	}
 
 	private String getStudentContent(User sender, NotificationType type) {
