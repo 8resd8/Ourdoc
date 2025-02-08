@@ -8,6 +8,7 @@ public record NotificationDto(
 	Long notificationId,
 	NotificationType type,
 	String content,
-	LocalDateTime createdAt
+	LocalDateTime createdAt,
+	String senderName
 ) {
 }
