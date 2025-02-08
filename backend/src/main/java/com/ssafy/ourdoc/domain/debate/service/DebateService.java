@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
+import com.ssafy.ourdoc.domain.debate.dto.UpdateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 import com.ssafy.ourdoc.domain.debate.repository.DebateRoomOnlineRepository;
@@ -90,5 +91,32 @@ public class DebateService {
 		debateRoomOnlineRepository.save(roomOnline);
 
 		return token;
+	}
+
+	public void updateDebateRoom(User user, Long roomId, UpdateRoomRequest request) {
+		Room room = debateRoomRepository.findById(roomId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 방이 존재하지 않습니다."));
+
+		if (room.getEndAt() != null) {
+			throw new ForbiddenException("종료된 방입니다.");
+		}
+
+		if (!room.getUser().getId().equals(user.getId())) {
+			throw new ForbiddenException("방 수정 권한이 없습니다.");
+		}
+
+		if (request.title() != null && !request.title().isEmpty()) {
+			room.updateTitle(request.title());
+		}
+
+		if (request.password() != null && !request.password().isEmpty()) {
+			room.updatePassword(request.password());
+		}
+
+		if (request.maxPeople() != null) {
+			room.updateMaxPeople(request.maxPeople());
+		}
+
+		debateRoomRepository.save(room);
 	}
 }
