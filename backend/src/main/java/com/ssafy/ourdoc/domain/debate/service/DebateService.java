@@ -91,4 +91,12 @@ public class DebateService {
 
 		return token;
 	}
+
+	public void leaveDebateRoom(User user, Long roomId) {
+		RoomOnline roomOnline = debateRoomOnlineRepository
+			.findByRoom_IdAndUser_IdAndAndUpdatedAtIsNull(roomId, user.getId())
+			.orElseThrow(() -> new IllegalArgumentException("해당 방에 접속 중인 유저가 아닙니다."));
+		roomOnline.markAsLeft();
+		debateRoomOnlineRepository.save(roomOnline);
+	}
 }
