@@ -1,7 +1,5 @@
 package com.ssafy.ourdoc.domain.debate.controller;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -31,6 +29,7 @@ public class DebateController {
 	private final DebateService debateService;
 
 	@GetMapping
+	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Page<RoomDto>> getDebateRooms(Pageable pageable) {
 		Page<RoomDto> rooms = debateService.getDebateRooms(pageable);
 		return ResponseEntity.ok(rooms);
@@ -44,8 +43,15 @@ public class DebateController {
 
 	@PostMapping("/{roomId}/connection")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<String> joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId, @RequestBody JoinRoomRequest request) {
+	public ResponseEntity<String> joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId,
+		@RequestBody JoinRoomRequest request) {
 		String token = debateService.joinDebateRoom(user, roomId, request);
 		return ResponseEntity.ok(token);
+	}
+
+	@PostMapping("/{roomId}/exit")
+	@ResponseStatus(HttpStatus.OK)
+	public void leaveDebateRoom(@Login User user, @PathVariable("roomId") Long roomId) {
+		debateService.leaveDebateRoom(user, roomId);
 	}
 }
