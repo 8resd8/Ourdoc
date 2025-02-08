@@ -4,5 +4,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 
-public interface RoomRepository extends JpaRepository<Room, Long> {
+public interface DebateRoomRepository extends JpaRepository<Room, Long> {
 }

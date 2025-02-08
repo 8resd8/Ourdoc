@@ -6,7 +6,6 @@ import com.ssafy.ourdoc.domain.book.entity.Book;
 
 public class BookSample {
 	private BookSample() {
-
 	}
 
 	private static final String defaultIsbn = "9788925414874";
@@ -24,6 +23,20 @@ public class BookSample {
 			.title(defaultTitle)
 			.author(defaultAuthor)
 			.genre(defaultGenre)
+			.description(defaultDescription)
+			.publisher(defaultPublisher)
+			.publishTime(defaultPublishTime)
+			.imageUrl(defaultImageUrl)
+			.build();
+	}
+
+	public static Book book(String title) {
+		return Book.builder()
+			.isbn(defaultIsbn)
+			.title(title)
+			.author(defaultAuthor)
+			.genre(defaultGenre)
+			.description(defaultDescription)
 			.publisher(defaultPublisher)
 			.publishTime(defaultPublishTime)
 			.imageUrl(defaultImageUrl)

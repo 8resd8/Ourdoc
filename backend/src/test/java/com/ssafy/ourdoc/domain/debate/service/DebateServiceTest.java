@@ -20,8 +20,8 @@ import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
-import com.ssafy.ourdoc.domain.debate.repository.RoomOnlineRepository;
-import com.ssafy.ourdoc.domain.debate.repository.RoomRepository;
+import com.ssafy.ourdoc.domain.debate.repository.DebateRoomOnlineRepository;
+import com.ssafy.ourdoc.domain.debate.repository.DebateRoomRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.Gender;
@@ -33,10 +33,10 @@ import com.ssafy.ourdoc.global.integration.openvidu.service.OpenviduService;
 class DebateServiceTest {
 
 	@Mock
-	private RoomRepository roomRepository;
+	private DebateRoomRepository debateRoomRepository;
 
 	@Mock
-	private RoomOnlineRepository roomOnlineRepository;
+	private DebateRoomOnlineRepository debateRoomOnlineRepository;
 
 	@Mock
 	private OpenviduService openviduService;
@@ -91,11 +91,11 @@ class DebateServiceTest {
 	@DisplayName("독서토론방 생성 성공")
 	void createDebateRoom_success() {
 		when(openviduService.createSession()).thenReturn("sessionId123");
-		when(roomRepository.save(any(Room.class))).thenAnswer(invocation -> invocation.getArgument(0));
+		when(debateRoomRepository.save(any(Room.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
 		debateService.createDebateRoom(teacher, createRoomRequest);
 
-		verify(roomRepository, times(1)).save(any(Room.class));
+		verify(debateRoomRepository, times(1)).save(any(Room.class));
 	}
 
 	@Test
@@ -110,23 +110,23 @@ class DebateServiceTest {
 	@DisplayName("독서토론방 참가 성공")
 	void joinDebateRoom_success() {
 		Long roomId = 1L;
-		when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
-		when(roomOnlineRepository.countByRoomIdAndUpdatedAtNull(room.getId())).thenReturn(3);
+		when(debateRoomRepository.findById(roomId)).thenReturn(Optional.of(room));
+		when(debateRoomOnlineRepository.countCurrentPeople(room.getId())).thenReturn(3L);
 		when(openviduService.generateToken(room.getSessionId())).thenReturn("token123");
 
 		String token = debateService.joinDebateRoom(teacher, roomId, joinRoomRequest);
 
 		assertThat(token).isEqualTo("token123");
-		verify(roomRepository).findById(roomId);
+		verify(debateRoomRepository).findById(roomId);
 		verify(openviduService).generateToken(room.getSessionId());
-		verify(roomOnlineRepository).save(any(RoomOnline.class));
+		verify(debateRoomOnlineRepository).save(any(RoomOnline.class));
 	}
 
 	@Test
 	@DisplayName("존재하지 않는 독서토론방 입장 실패")
 	void joinDebateRoom_failure_roomNotFound() {
 		Long roomId = 1L;
-		when(roomRepository.findById(roomId)).thenReturn(Optional.empty());
+		when(debateRoomRepository.findById(roomId)).thenReturn(Optional.empty());
 
 		assertThatThrownBy(() -> debateService.joinDebateRoom(teacher, roomId, joinRoomRequest))
 			.isInstanceOf(IllegalArgumentException.class)
@@ -146,7 +146,7 @@ class DebateServiceTest {
 			.build();
 		endedRoom = spy(endedRoom);
 		when(endedRoom.getEndAt()).thenReturn(LocalDateTime.now());
-		when(roomRepository.findById(roomId)).thenReturn(Optional.of(endedRoom));
+		when(debateRoomRepository.findById(roomId)).thenReturn(Optional.of(endedRoom));
 
 		assertThatThrownBy(() -> debateService.joinDebateRoom(teacher, roomId, joinRoomRequest))
 			.isInstanceOf(ForbiddenException.class)
@@ -157,8 +157,8 @@ class DebateServiceTest {
 	@DisplayName("최대 인원을 가진 방 입장 실패")
 	void joinDebateRoom_failure_maxPeople() {
 		Long roomId = 1L;
-		when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
-		when(roomOnlineRepository.countByRoomIdAndUpdatedAtNull(room.getId())).thenReturn(room.getMaxPeople());
+		when(debateRoomRepository.findById(roomId)).thenReturn(Optional.of(room));
+		when(debateRoomOnlineRepository.countCurrentPeople(room.getId())).thenReturn(Long.valueOf(room.getMaxPeople()));
 
 		assertThatThrownBy(() -> debateService.joinDebateRoom(student, roomId, joinRoomRequest))
 			.isInstanceOf(ForbiddenException.class)
@@ -176,7 +176,7 @@ class DebateServiceTest {
 			.password("password1234")
 			.maxPeople(5)
 			.build();
-		when(roomRepository.findById(roomId)).thenReturn(Optional.of(noSessionIdRoom));
+		when(debateRoomRepository.findById(roomId)).thenReturn(Optional.of(noSessionIdRoom));
 
 		assertThatThrownBy(() -> debateService.joinDebateRoom(teacher, roomId, joinRoomRequest))
 			.isInstanceOf(IllegalArgumentException.class)

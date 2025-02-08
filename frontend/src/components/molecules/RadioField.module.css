@@ -1,0 +1,6 @@
+/* Radio.module.css 추가 */
+.radioContainer {
+  display: flex;
+  gap: 20px; /* 간격 조절 */
+  margin-top: 8px;
+}

@@ -14,6 +14,7 @@ public record StudentSignupRequest(
 	String loginId,
 	String password,
 	String schoolName,
+	Long schoolId,
 	int grade,
 	int classNumber,
 	int studentNumber,
