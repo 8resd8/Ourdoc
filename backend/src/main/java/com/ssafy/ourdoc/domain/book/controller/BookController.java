@@ -12,13 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendRequest;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseStudent;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseTeacher;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.HomeworkRequest;
-import com.ssafy.ourdoc.domain.book.service.BookRecommendService;
 import com.ssafy.ourdoc.domain.book.service.BookService;
 import com.ssafy.ourdoc.domain.book.service.HomeworkService;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -32,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 public class BookController {
 
 	private final BookService bookService;
-	private final BookRecommendService bookRecommendService;
 	private final HomeworkService homeworkService;
 
 	@GetMapping
@@ -45,23 +40,6 @@ public class BookController {
 	public ResponseEntity<BookDetailResponse> getBook(@PathVariable("bookId") Long bookId) {
 		BookDetailResponse book = bookService.getBookDetail(bookId);
 		return ResponseEntity.ok(book);
-	}
-
-	@PostMapping("/teachers/recommend")
-	public void addRecommend(@RequestBody BookRecommendRequest request, @Login User user) {
-		bookRecommendService.addBookRecommend(request, user);
-	}
-
-	@GetMapping("/teachers/recommend")
-	public ResponseEntity<BookRecommendResponseTeacher> getRecommendTeacher(@Login User user) {
-		BookRecommendResponseTeacher response = bookRecommendService.getBookRecommendsTeacher(user);
-		return ResponseEntity.ok(response);
-	}
-
-	@GetMapping("/students/recommend")
-	public ResponseEntity<BookRecommendResponseStudent> getRecommendStudent(@Login User user) {
-		BookRecommendResponseStudent response = bookRecommendService.getBookRecommendsStudent(user);
-		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("/teachers/homework")
