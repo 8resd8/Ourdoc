@@ -43,6 +43,7 @@ const Router = () => {
       {/* 로그인 및 회원가입 페이지 (헤더 & 푸터 X) */}
       <Route element={<AuthLayout />}>
         <Route path="/" element={<SignIn />} />
+        <Route path="/student/setup" element={<StudentSetUp />} />
         <Route path="/student/signup" element={<StudentSignUp />} />
         <Route path="/teacher/signup" element={<TeacherSignUp />} />
       </Route>
@@ -53,9 +54,8 @@ const Router = () => {
 
         {/* 학생 전용 라우트 */}
         <Route path="/student/*">
-          <Route path="signup" element={<StudentSignUp />} />
-          <Route path="setup" element={<StudentSetUp />} />
           <Route path="main" element={<StudentMain />} />
+          <Route path="signup" element={<StudentSignUp />} />
           <Route path="mypage" element={<StudentMyPage />} />
           <Route path="statistics" element={<StudentStatistics />} />
           <Route path="report/write" element={<StudentReportWrite />} />
@@ -70,8 +70,8 @@ const Router = () => {
 
         {/* 교사 전용 라우트 */}
         <Route path="/teacher/*">
-          <Route path="signup" element={<TeacherSignUp />} />
           <Route path="main" element={<TeacherMain />} />
+          <Route path="signup" element={<TeacherSignUp />} />
           <Route path="mypage" element={<TeacherMyPage />} />
           <Route path="profile-update" element={<TeacherProfileUpdate />} />
           <Route path="statistics" element={<TeacherStatistics />} />

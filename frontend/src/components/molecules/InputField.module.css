@@ -1,0 +1,8 @@
+.validate {
+  display: flex;
+  align-items: center;
+}
+
+.validate img {
+  margin-right: 4px;
+}

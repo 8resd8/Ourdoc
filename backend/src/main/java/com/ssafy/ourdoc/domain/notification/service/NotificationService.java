@@ -65,7 +65,6 @@ public class NotificationService {
 			timer.cancel();
 			removeEmitter(user.getId(), emitter);
 		});
-
 		emitters.computeIfAbsent(user.getId(), key -> new CopyOnWriteArrayList<>()).add(emitter);
 		return emitter;
 	}
@@ -74,8 +73,7 @@ public class NotificationService {
 	public void sendNotifyStudentFromTeacher(User sender, NotificationType type) {
 		String content = getStudentContent(sender, type);
 		NotificationRecipient recipient = notificationHistoryService.saveNotifyStudent(sender, type, content);
-
-		sendToEmitters(recipient.getId(), recipient.getNotification());
+		sendNotification(recipient);
 	}
 
 	// 교사가 알림전송
@@ -83,7 +81,11 @@ public class NotificationService {
 		NotificationRecipient recipient = notificationHistoryService.saveNotifyTeacher(sender, studentClassId,
 			"선생님이 칭찬 도장을 주셨어요!");
 
-		sendToEmitters(recipient.getId(), recipient.getNotification());
+		sendNotification(recipient);
+	}
+
+	private void sendNotification(NotificationRecipient recipient) {
+		sendToEmitters(recipient.getRecipient().getId(), recipient.getNotification());
 	}
 
 	private String getStudentContent(User sender, NotificationType type) {
@@ -108,7 +110,8 @@ public class NotificationService {
 			notification.getId(),
 			notification.getNotificationType(),
 			notification.getContent(),
-			notification.getCreatedAt()
+			notification.getCreatedAt(),
+			notification.getSender().getName()
 		);
 
 		for (SseEmitter emitter : userEmitters) {
