@@ -5,6 +5,7 @@ import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailResponse;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookReportService {
 
 	private final BookReportRepository bookReportRepository;
