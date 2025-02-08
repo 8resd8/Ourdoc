@@ -10,13 +10,13 @@ import lombok.Builder;
 @Builder
 public record BookRecommendDetailStudent(
 	BookResponse book,
-	LocalDateTime creatAt,
+	LocalDateTime createdAt,
 	boolean submitStatus
 ) {
 	public static BookRecommendDetailStudent of(Book book, BookRecommend bookRecommend, boolean submitStatus) {
 		return BookRecommendDetailStudent.builder()
 			.book(BookResponse.of(book))
-			.creatAt(bookRecommend.getCreatedAt())
+			.createdAt(bookRecommend.getCreatedAt())
 			.submitStatus(submitStatus)
 			.build();
 	}
