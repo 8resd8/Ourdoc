@@ -103,7 +103,8 @@ public class NotificationService {
 		List<SseEmitter> userEmitters = emitters.get(recipientUserId);
 
 		if (userEmitters == null || userEmitters.isEmpty()) {
-			throw new SubscribeException("구독을 먼저 해야 알림을 받을 수 있습니다.");
+			log.warn("구독이 되어있지 않아 알림 전송에 실패했습니다. 이후 미확인 알림에서 확인 가능합니다.");
+			return;
 		}
 
 		NotificationDto response = new NotificationDto(

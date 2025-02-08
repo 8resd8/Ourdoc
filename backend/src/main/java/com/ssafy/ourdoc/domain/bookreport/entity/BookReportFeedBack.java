@@ -47,4 +47,11 @@ public class BookReportFeedBack extends BaseTimeEntity {
 		this.comment = comment;
 	}
 
+	public void updateComment(String comment) {
+		if (bookReport.getApproveTime() != null) {
+			throw new IllegalArgumentException("칭찬도장이 있으면 더이상 수정 및 삭제할 수 없습니다.");
+		}
+		this.evaluatorType = EvaluatorType.교사;
+		this.comment = comment;
+	}
 }
