@@ -14,7 +14,7 @@ public interface StudentClassRepository extends JpaRepository<StudentClass, Long
 
 	StudentClass findByUserAndClassRoom(User user, ClassRoom classRoom);
 
-	StudentClass findByUserIdAndActive(Long userId, Active active);
+	Optional<StudentClass> findByUserIdAndActive(Long userId, Active active);
 
 	int countByClassRoom(ClassRoom userClassRoom);
 }
