@@ -8,6 +8,7 @@ import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 import com.ssafy.ourdoc.global.common.enums.OcrCheck;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -59,6 +61,9 @@ public class BookReport extends BaseTimeEntity {
 
 	@Column(name = "approve_time")
 	private LocalDateTime approveTime;
+
+	@OneToOne(mappedBy = "bookReport", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private BookReportFeedBack bookReportFeedBack;
 
 	@Builder
 	public BookReport(StudentClass studentClass, Book book, Homework homework, String beforeContent,
