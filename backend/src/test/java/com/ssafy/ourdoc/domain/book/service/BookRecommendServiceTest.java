@@ -16,11 +16,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.ssafy.ourdoc.data.entity.ClassRoomSample;
+import com.ssafy.ourdoc.data.entity.SchoolSample;
+import com.ssafy.ourdoc.data.entity.TeacherClassSample;
 import com.ssafy.ourdoc.data.entity.UserSample;
 import com.ssafy.ourdoc.domain.book.dto.BookRecommendRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
+import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
@@ -54,10 +59,13 @@ public class BookRecommendServiceTest {
 	@DisplayName("책 추천 도서 등록 성공")
 	void addBookRecommendSuccess() {
 		User user = UserSample.user(UserType.교사);
+		School school = SchoolSample.school();
+		ClassRoom classRoom = ClassRoomSample.classRoom(school);
+		TeacherClass teacherClass = TeacherClassSample.teacherClass(user, classRoom);
 
 		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
 
-		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(TeacherClass.builder().build());
+		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(Optional.of(teacherClass));
 
 		when(bookRecommendRepository.existsByBookAndUserAndClassRoom(any(), any(), any())).thenReturn(false);
 
@@ -90,9 +98,13 @@ public class BookRecommendServiceTest {
 	@DisplayName("책 추천 도서 등록 실패-중복 관심 등록")
 	void addBookRecommendFailSinceDuplicate() {
 		User user = UserSample.user(UserType.교사);
+		School school = SchoolSample.school();
+		ClassRoom classRoom = ClassRoomSample.classRoom(school);
+		TeacherClass teacherClass = TeacherClassSample.teacherClass(user, classRoom);
 
 		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(TeacherClass.builder().build());
+
+		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(Optional.of(teacherClass));
 		when(bookRecommendRepository.existsByBookAndUserAndClassRoom(any(), any(), any())).thenReturn(true);
 
 		assertThatThrownBy(
@@ -116,9 +128,12 @@ public class BookRecommendServiceTest {
 	@DisplayName("책 추천 도서 삭제 실패-추천 도서 아님")
 	void deleteBookRecommendFailSinceDuplicate() {
 		User user = UserSample.user(UserType.교사);
+		School school = SchoolSample.school();
+		ClassRoom classRoom = ClassRoomSample.classRoom(school);
+		TeacherClass teacherClass = TeacherClassSample.teacherClass(user, classRoom);
 
 		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(TeacherClass.builder().build());
+		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(Optional.of(teacherClass));
 		when(bookRecommendRepository.findByBookAndUserAndClassRoom(any(), any(), any())).thenReturn(Optional.empty());
 
 		assertThatThrownBy(
