@@ -28,7 +28,7 @@ public class DebateService {
 	private final OpenviduService openviduService;
 
 	public Page<RoomDto> getDebateRooms(Pageable pageable) {
-		Page<Room> roomPage = debateRoomRepository.findAll(pageable);
+		Page<Room> roomPage = debateRoomRepository.findByEndAtIsNull(pageable);
 		return roomPage.map(room -> {
 			Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(room.getId());
 			return new RoomDto(
