@@ -1,16 +1,23 @@
 package com.ssafy.ourdoc.domain.bookreport.service;
 
 import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
+import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponse;
+import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
+import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
+import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class BookReportTeacherService {
 
 	private final BookReportRepository bookReportRepository;
+	private final NotificationService notificationService;
 
 	public ReportTeacherListResponse getBookReports(User user, ReportTeacherRequest request) {
 		List<ReportTeacherResponse> convertDto = getReportTeacherResponses(
@@ -38,5 +46,15 @@ public class BookReportTeacherService {
 			))
 			.toList();
 		return convertDto;
+	}
+
+	public void approveStamp(User user, Long bookReportId) {
+		BookReport bookReport = bookReportRepository.findById(bookReportId)
+			.orElseThrow(() -> new NoSuchElementException("도장찍을 독서록이 없습니다."));
+
+		bookReport.approveStamp();
+
+		StudentClass studentClass = bookReport.getStudentClass();
+		notificationService.sendNotifyTeacherFromStudent(user, studentClass.getId());
 	}
 }
