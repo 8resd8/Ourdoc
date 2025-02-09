@@ -23,6 +23,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
@@ -161,7 +162,7 @@ public class TeacherService {
 		return classRoomRepository.findByTeacher(userId);
 	}
 
-	public List<ClassRoom> getClassRoomsTeacherAndYear(Long userId, Year year) {
+	public List<SchoolClassDto> getClassRoomsTeacherAndYear(Long userId, Year year) {
 		return classRoomRepository.findByTeacherAndYear(userId, year);
 	}
 }
