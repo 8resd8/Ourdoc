@@ -6,6 +6,9 @@ import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.querydsl.core.types.Projections;
@@ -23,9 +26,9 @@ public class StudentClassQueryRepositoryImpl implements StudentClassQueryReposit
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<StudentProfileDto> findStudentsByClassRoomIdAndActiveAndAuthStatus(Long classId, Active active,
-		AuthStatus authStatus) {
-		return queryFactory
+	public Page<StudentProfileDto> findStudentsByClassRoomIdAndActiveAndAuthStatus(Long classId, Active active,
+		AuthStatus authStatus, Pageable pageable) {
+		List<StudentProfileDto> content =  queryFactory
 			.select(Projections.constructor(StudentProfileDto.class,
 				user.name,
 				user.loginId,
@@ -43,6 +46,20 @@ public class StudentClassQueryRepositoryImpl implements StudentClassQueryReposit
 				studentClass.authStatus.eq(authStatus)
 			)
 			.orderBy(studentClass.studentNumber.asc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
 			.fetch();
+
+		long totalCount = queryFactory
+				.select(studentClass.count())
+				.from(studentClass)
+				.where(
+					studentClass.classRoom.id.eq(classId),
+					studentClass.active.eq(active),
+					studentClass.authStatus.eq(authStatus)
+				)
+				.fetchOne();
+
+		return new PageImpl<>(content, pageable, totalCount);
 	}
 }
