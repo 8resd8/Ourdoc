@@ -4,6 +4,7 @@ import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
+import java.time.Year;
 import java.util.List;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -35,6 +36,18 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 			.join(classRoom, teacherClass.classRoom)
 			.join(classRoom.school, school)
 			.where(teacherClass.user.id.eq(userId))
+			.fetch();
+	}
+
+	@Override
+	public List<ClassRoom> findByTeacherAndYear(Long userId, Year year) {
+		return queryFactory.selectFrom(classRoom)
+			.join(classRoom, teacherClass.classRoom)
+			.join(classRoom.school, school)
+			.where(
+				teacherClass.user.id.eq(userId),
+				classRoom.year.eq(year)
+			)
 			.fetch();
 	}
 }
