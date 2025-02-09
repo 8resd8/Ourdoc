@@ -1,11 +1,16 @@
 package com.ssafy.ourdoc.domain.debate.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
+import com.ssafy.ourdoc.domain.debate.dto.OnlineUserDto;
+import com.ssafy.ourdoc.domain.debate.dto.RoomDetailDto;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
@@ -90,5 +95,35 @@ public class DebateService {
 		debateRoomOnlineRepository.save(roomOnline);
 
 		return token;
+	}
+
+	public RoomDetailDto getDebateRoomDetail(Long roomId) {
+		Room room = debateRoomRepository.findById(roomId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 방은 존재하지 않습니다."));
+
+		if (room.getEndAt() != null) {
+			throw new IllegalArgumentException("종료된 방입니다.");
+		}
+
+		Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(roomId);
+		List<RoomOnline> roomOnlines = debateRoomOnlineRepository.findAllActiveByRoomId(roomId);
+
+		List<OnlineUserDto> onlineUserList = roomOnlines.stream()
+			.map(roomOnline -> new OnlineUserDto(
+				roomOnline.getUser().getId(),
+				roomOnline.getUser().getName(),
+				roomOnline.getUser().getUserType(),
+				roomOnline.getUser().getProfileImagePath()
+			)).collect(Collectors.toList());
+
+		return new RoomDetailDto(
+			room.getId(),
+			room.getTitle(),
+			room.getUser().getName(),
+			room.getMaxPeople(),
+			currentPeople,
+			room.getCreatedAt(),
+			onlineUserList
+		);
 	}
 }
