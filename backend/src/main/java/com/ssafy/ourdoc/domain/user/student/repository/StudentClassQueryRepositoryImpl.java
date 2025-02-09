@@ -1,6 +1,5 @@
 package com.ssafy.ourdoc.domain.user.student.repository;
 
-<<<<<<< backend/src/main/java/com/ssafy/ourdoc/domain/user/student/repository/StudentClassQueryRepositoryImpl.java
 import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudent.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
@@ -19,6 +18,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
 import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 
 import lombok.RequiredArgsConstructor;
 
