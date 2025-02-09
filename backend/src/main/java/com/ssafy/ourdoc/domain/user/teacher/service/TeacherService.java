@@ -4,6 +4,7 @@ import static com.ssafy.ourdoc.global.common.enums.Active.*;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,5 +159,9 @@ public class TeacherService {
 
 	public List<ClassRoom> getClassRoomsTeacher(Long userId) {
 		return classRoomRepository.findByTeacher(userId);
+	}
+
+	public List<ClassRoom> getClassRoomsTeacherAndYear(Long userId, Year year) {
+		return classRoomRepository.findByTeacherAndYear(userId, year);
 	}
 }
