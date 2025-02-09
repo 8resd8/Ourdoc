@@ -45,7 +45,8 @@ public class HomeworkController {
 	}
 
 	@GetMapping("/teachers/homework/{homeworkId}")
-	public ResponseEntity<HomeworkDetailTeacher> getHomework(@PathVariable long homeworkId, @Login User user) {
+	public ResponseEntity<HomeworkDetailTeacher> getHomework(@PathVariable("homeworkId") long homeworkId,
+		@Login User user) {
 		return ResponseEntity.ok(homeworkService.getHomeworkDetailTeacher(homeworkId, user));
 	}
 }
