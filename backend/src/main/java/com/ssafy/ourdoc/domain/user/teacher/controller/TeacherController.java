@@ -42,7 +42,7 @@ public class TeacherController {
 
 	// 본인 학급 학생 목록 조회
 	@GetMapping("/students/profile")
-	public StudentListResponse getStudentList(@Login User user) {
-		return teacherService.getMyClassStudentList(user);
+	public StudentListResponse getStudentList(@Login User user, Pageable pageable) {
+		return teacherService.getMyClassStudentList(user, pageable);
 	}
 }
