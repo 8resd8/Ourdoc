@@ -8,5 +8,9 @@ import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 
 public interface StudentClassQueryRepository {
+	long updateAuthStatusOfStudentClass(Long userId, Long classId, AuthStatus newStatus);
+
+	long updateAuthStatusOfStudent(Long id, AuthStatus authStatus);
+
 	Page<StudentProfileDto> findStudentsByClassRoomIdAndActiveAndAuthStatus(Long classId, Active active, AuthStatus authStatus, Pageable pageable);
 }

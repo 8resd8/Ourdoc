@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
+import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeRequest;
 import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
 import com.ssafy.ourdoc.global.annotation.Login;
 
@@ -40,7 +42,14 @@ public class TeacherController {
 		return ResponseEntity.ok(qrImage);
 	}
 
-	// 본인 학급 학생 목록 조회
+	// 3. 학생 소속 변경 승인/거부
+	@PatchMapping("/verification")
+	public ResponseEntity<String> verificateAffiliationChange(@Login User user, @RequestBody VerificateAffiliationChangeRequest request) {
+		String response = teacherService.verificateAffiliationChange(user, request);
+		return ResponseEntity.ok(response);
+	}
+
+	// 4. 본인 학급 학생 목록 조회
 	@GetMapping("/students/profile")
 	public StudentListResponse getStudentList(@Login User user, Pageable pageable) {
 		return teacherService.getMyClassStudentList(user, pageable);

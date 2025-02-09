@@ -210,6 +210,7 @@ const StudentSignUp = () => {
           <Button type="" title="회원가입" onClick={handleSignUpClick} />
         </div>
         <Modal
+          type="signup"
           isOpen={isModalOpen}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
