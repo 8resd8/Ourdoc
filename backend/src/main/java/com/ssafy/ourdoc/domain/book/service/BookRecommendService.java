@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRecommendDetailStudent;
 import com.ssafy.ourdoc.domain.book.dto.BookRecommendDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseStudent;
 import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseTeacher;
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
@@ -37,7 +37,7 @@ public class BookRecommendService {
 	private final StudentClassRepository studentClassRepository;
 	private final ClassRoomRepository classRoomRepository;
 
-	public void addBookRecommend(BookRecommendRequest request, User user) {
+	public void addBookRecommend(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("추천도서를 생성할 권한이 없습니다.");
 		}
@@ -54,7 +54,7 @@ public class BookRecommendService {
 		bookRecommendRepository.save(bookRecommend);
 	}
 
-	public void deleteBookRecommend(BookRecommendRequest request, User user) {
+	public void deleteBookRecommend(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("추천도서를 삭제할 권한이 없습니다.");
 		}
