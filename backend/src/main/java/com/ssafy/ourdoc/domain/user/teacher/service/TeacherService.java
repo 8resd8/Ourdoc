@@ -6,6 +6,7 @@ import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -28,8 +29,10 @@ import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
-import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
+import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
@@ -38,6 +41,7 @@ import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeReque
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
+import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherQueryRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
@@ -57,8 +61,9 @@ public class TeacherService {
 	private final TeacherClassRepository teacherClassRepository;
 	private final SchoolRepository schoolRepository;
 	private final S3StorageService s3StorageService;
-	private final StudentClassRepository studentClassRepository;
+	private final TeacherQueryRepository teacherQueryRepository;
 	private final StudentClassQueryRepository studentClassQueryRepository;
+	private final StudentClassRepository studentClassRepository;
 	private final StudentRepository studentRepository;
 
 	// 1. 교사 회원가입
@@ -165,6 +170,15 @@ public class TeacherService {
 		}
 
 		return s3StorageService.uploadFile(file);
+	}
+
+	// 본인 학급 학생 목록 조회
+	public StudentListResponse getMyClassStudentList(User user, Pageable pageable) {
+		Long classId = teacherClassRepository.findByUserIdAndActive(user.getId(), 활성)
+			.orElseThrow(() -> new IllegalArgumentException("조회할 학급이 없습니다."))
+			.getClassRoom().getId();
+		Page<StudentProfileDto> studentProfileDtoList = studentClassQueryRepository.findStudentsByClassRoomIdAndActiveAndAuthStatus(classId, 활성, 승인, pageable);
+		return new StudentListResponse(studentProfileDtoList);
 	}
 
 	// 학생 소속 변경 승인/거부

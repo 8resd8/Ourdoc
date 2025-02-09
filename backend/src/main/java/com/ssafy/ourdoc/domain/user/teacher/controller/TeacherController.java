@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeRequest;
 import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
@@ -51,7 +52,13 @@ public class TeacherController {
 		return ResponseEntity.ok(response);
 	}
 
-	// 소속 변경 승인 대기 학생 목록 조회
+	// 4. 본인 학급 학생 목록 조회
+		@GetMapping("/students/profile")
+		public StudentListResponse getStudentList(@Login User user, Pageable pageable) {
+			return teacherService.getMyClassStudentList(user, pageable);
+		}
+
+	// 5. 소속 변경 승인 대기 학생 목록 조회
 	@GetMapping("/students/pending")
 	public Page<StudentPendingProfileDto> getPendingStudentList(@Login User user, Pageable pageable) {
 		return teacherService.getPendingStudentList(user, pageable);
