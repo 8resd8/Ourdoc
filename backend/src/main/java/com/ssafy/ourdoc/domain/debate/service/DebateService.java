@@ -1,5 +1,8 @@
 package com.ssafy.ourdoc.domain.debate.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -90,5 +93,23 @@ public class DebateService {
 		debateRoomOnlineRepository.save(roomOnline);
 
 		return token;
+	}
+
+	public void deleteDebateRoom(User user, Long roomId) {
+		Room room = debateRoomRepository.findById(roomId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 방은 존재하지 않습니다."));
+
+		if (!room.getUser().getId().equals(user.getId())) {
+			throw new ForbiddenException("방 삭제 권한이 없습니다.");
+		}
+
+		List<RoomOnline> currentPeople = debateRoomOnlineRepository.findAllActiveByRoomId(roomId);
+		for (RoomOnline currentPerson : currentPeople) {
+			currentPerson.markAsLeft();
+			debateRoomOnlineRepository.save(currentPerson);
+		}
+
+		room.updateEndAt(LocalDateTime.now());
+		debateRoomRepository.save(room);
 	}
 }
