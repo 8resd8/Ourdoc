@@ -4,7 +4,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.domain.book.dto.HomeworkRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
@@ -27,7 +27,7 @@ public class HomeworkService {
 	private final BookRepository bookRepository;
 	private final TeacherClassRepository teacherClassRepository;
 
-	public void addHomework(HomeworkRequest request, User user) {
+	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("숙제도서를 생성할 권한이 없습니다.");
 		}
@@ -43,7 +43,7 @@ public class HomeworkService {
 		homeworkRepository.save(homework);
 	}
 
-	public void deleteHomework(HomeworkRequest request, User user) {
+	public void deleteHomework(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("숙제도서를 삭제할 권한이 없습니다.");
 		}
