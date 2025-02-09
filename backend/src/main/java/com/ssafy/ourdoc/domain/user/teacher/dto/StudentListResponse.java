@@ -1,6 +1,6 @@
 package com.ssafy.ourdoc.domain.user.teacher.dto;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
-public record StudentListResponse(List<StudentProfileDto> studentProfiles) {
+public record StudentListResponse(Page<StudentProfileDto> studentProfiles) {
 }
