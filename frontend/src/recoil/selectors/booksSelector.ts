@@ -22,7 +22,7 @@ import {
   getStudentHomeworkBooksApi,
   getTeacherHomeworkBookDetailApi,
   getStudentHomeworkBookDetailApi,
-} from '../../services/bookService';
+} from '../../services/booksService';
 
 // 도서 목록 가져오기 (비동기)
 export const booksSelector = selector({

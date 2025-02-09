@@ -3,7 +3,7 @@ import {
   Book,
   FavoriteBook,
   RecommendedBook,
-} from '../../services/bookService';
+} from '../../services/booksService';
 
 // 도서 목록 상태
 export const booksState = atom<Book[]>({
