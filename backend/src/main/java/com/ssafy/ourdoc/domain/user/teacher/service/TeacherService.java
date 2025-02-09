@@ -5,6 +5,7 @@ import static com.ssafy.ourdoc.global.common.enums.Active.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
@@ -46,6 +48,7 @@ public class TeacherService {
 	private final TeacherClassRepository teacherClassRepository;
 	private final SchoolRepository schoolRepository;
 	private final S3StorageService s3StorageService;
+	private final ClassRoomRepository classRoomRepository;
 
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {
@@ -153,4 +156,7 @@ public class TeacherService {
 		return s3StorageService.uploadFile(file);
 	}
 
+	public List<ClassRoom> getClassRoomsTeacher(Long userId) {
+		return classRoomRepository.findByTeacher(userId);
+	}
 }
