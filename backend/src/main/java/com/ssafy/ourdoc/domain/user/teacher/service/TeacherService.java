@@ -29,6 +29,7 @@ import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
@@ -55,6 +56,7 @@ public class TeacherService {
 	private final S3StorageService s3StorageService;
 	private final StudentClassRepository studentClassRepository;
 	private final StudentClassQueryRepository studentClassQueryRepository;
+	private final StudentRepository studentRepository;
 
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {
@@ -169,16 +171,35 @@ public class TeacherService {
 		User studentUser = userRepository.findByLoginId(request.studentLoginId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 학생을 찾을 수 없습니다."));
 
-		StudentClass studentClass = studentClassRepository.findByUserIdAndClassRoomIdAndAuthStatus(studentUser.getId(),
+		studentClassRepository.findByUserIdAndClassRoomIdAndAuthStatus(studentUser.getId(),
 				classId, 대기)
 			.orElseThrow(() -> new IllegalArgumentException("해당 학생의 소속 반 신청 정보를 찾을 수 없습니다."));
 
-		if (request.isApproved()) {
-			studentClassQueryRepository.updateAuthStatus(studentUser.getId(), classId, 승인);
+		if (studentRepository.findByUser(studentUser).getAuthStatus() == 거절) {
+			throw new IllegalArgumentException("학생 인증이 되지 않은 회원입니다.");
+		} else if (studentRepository.findByUser(studentUser).getAuthStatus() == 대기) {
+			changeAuthStatusOfStudent(request, studentUser);
+			changeAuthStatusOfStudentClass(request, studentUser, classId);
 		} else {
-			studentClassQueryRepository.updateAuthStatus(studentUser.getId(), classId, 거절);
+			changeAuthStatusOfStudentClass(request, studentUser, classId);
 		}
 
 		return "학생 소속 변경이 " + (request.isApproved() ? "승인" : "거절") + "되었습니다.";
+	}
+
+	private void changeAuthStatusOfStudentClass(VerificateAffiliationChangeRequest request, User studentUser, Long classId) {
+		if (request.isApproved()) {
+			studentClassQueryRepository.updateAuthStatusOfStudentClass(studentUser.getId(), classId, 승인);
+		} else {
+			studentClassQueryRepository.updateAuthStatusOfStudentClass(studentUser.getId(), classId, 거절);
+		}
+	}
+
+	private void changeAuthStatusOfStudent(VerificateAffiliationChangeRequest request, User studentUser) {
+		if (request.isApproved()) {
+			studentClassQueryRepository.updateAuthStatusOfStudent(studentUser.getId(), 승인);
+		} else {
+			studentClassQueryRepository.updateAuthStatusOfStudent(studentUser.getId(), 거절);
+		}
 	}
 }
