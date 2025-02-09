@@ -1,2 +1,2 @@
 export * from './booksSelector';
-export * from './userSelector';
+export * from './usersSelector';

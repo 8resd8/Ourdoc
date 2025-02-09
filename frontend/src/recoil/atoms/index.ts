@@ -1,2 +1,2 @@
-export * from './booksAtom';
-export * from './userAtom';
+export * from './booksAtoms';
+export * from './usersAtoms';
