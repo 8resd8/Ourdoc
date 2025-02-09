@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.user.teacher.service;
 
 import static com.ssafy.ourdoc.global.common.enums.Active.*;
+import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -25,11 +26,17 @@ import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
+import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
+import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
+import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
@@ -46,6 +53,8 @@ public class TeacherService {
 	private final TeacherClassRepository teacherClassRepository;
 	private final SchoolRepository schoolRepository;
 	private final S3StorageService s3StorageService;
+	private final StudentClassRepository studentClassRepository;
+	private final StudentClassQueryRepository studentClassQueryRepository;
 
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {
@@ -153,4 +162,23 @@ public class TeacherService {
 		return s3StorageService.uploadFile(file);
 	}
 
+	// 학생 소속 변경 승인/거부
+	public String verificateAffiliationChange(User user, VerificateAffiliationChangeRequest request) {
+		Long classId = teacherClassRepository.findClassRoomByUserAndActive(user, 활성).getClassRoom().getId();
+
+		User studentUser = userRepository.findByLoginId(request.studentLoginId())
+			.orElseThrow(() -> new IllegalArgumentException("해당 학생을 찾을 수 없습니다."));
+
+		StudentClass studentClass = studentClassRepository.findByUserIdAndClassRoomIdAndAuthStatus(studentUser.getId(),
+				classId, 대기)
+			.orElseThrow(() -> new IllegalArgumentException("해당 학생의 소속 반 신청 정보를 찾을 수 없습니다."));
+
+		if (request.isApproved()) {
+			studentClassQueryRepository.updateAuthStatus(studentUser.getId(), classId, 승인);
+		} else {
+			studentClassQueryRepository.updateAuthStatus(studentUser.getId(), classId, 거절);
+		}
+
+		return "학생 소속 변경이 " + (request.isApproved() ? "승인" : "거절") + "되었습니다.";
+	}
 }
