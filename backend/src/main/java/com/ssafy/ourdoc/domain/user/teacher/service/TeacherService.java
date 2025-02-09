@@ -164,9 +164,11 @@ public class TeacherService {
 	}
 
 	// 본인 학급 학생 목록 조회
-	public StudentListResponse getMyClassStudentList(User user) {
-		Long classId = teacherClassRepository.findClassRoomByUserAndActive(user, 활성).getClassRoom().getId();
-		List<StudentProfileDto> studentProfileDtoList = studentClassQueryRepository.findStudentsByClassRoomIdAndActiveAndAuthStatus(classId, 활성, 승인);
+	public StudentListResponse getMyClassStudentList(User user, Pageable pageable) {
+		Long classId = teacherClassRepository.findByUserIdAndActive(user.getId(), 활성)
+			.orElseThrow(() -> new IllegalArgumentException("조회할 학급이 없습니다."))
+			.getClassRoom().getId();
+		Page<StudentProfileDto> studentProfileDtoList = studentClassQueryRepository.findStudentsByClassRoomIdAndActiveAndAuthStatus(classId, 활성, 승인, pageable);
 		return new StudentListResponse(studentProfileDtoList);
 	}
 }
