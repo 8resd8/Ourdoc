@@ -30,7 +30,6 @@ import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
-import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
@@ -40,8 +39,6 @@ import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
-import com.ssafy.ourdoc.global.common.enums.Active;
-import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
@@ -192,7 +189,8 @@ public class TeacherService {
 		return "학생 소속 변경이 " + (request.isApproved() ? "승인" : "거절") + "되었습니다.";
 	}
 
-	private void changeAuthStatusOfStudentClass(VerificateAffiliationChangeRequest request, User studentUser, Long classId) {
+	private void changeAuthStatusOfStudentClass(VerificateAffiliationChangeRequest request, User studentUser,
+		Long classId) {
 		if (request.isApproved()) {
 			studentClassQueryRepository.updateAuthStatusOfStudentClass(studentUser.getId(), classId, 승인);
 		} else {
@@ -207,11 +205,16 @@ public class TeacherService {
 			studentClassQueryRepository.updateAuthStatusOfStudent(studentUser.getId(), 거절);
 		}
 	}
+
 	public List<ClassRoom> getClassRoomsTeacher(Long userId) {
 		return classRoomRepository.findByTeacher(userId);
 	}
 
 	public List<SchoolClassDto> getClassRoomsTeacherAndYear(Long userId, Year year) {
-		return classRoomRepository.findByTeacherAndYear(userId, year);
+		List<SchoolClassDto> schoolClassDtos = classRoomRepository.findByTeacherAndYear(userId, year);
+		if (schoolClassDtos.isEmpty()) {
+			throw new NoSuchElementException("해당하는 연도와 사용자에 해당하는 학급 정보가 없습니다.");
+		}
+		return schoolClassDtos;
 	}
 }
