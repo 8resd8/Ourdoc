@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendDetailStudent;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseStudent;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseTeacher;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailStudent;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailTeacher;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseStudent;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;

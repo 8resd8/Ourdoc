@@ -1,7 +1,8 @@
-package com.ssafy.ourdoc.domain.book.dto;
+package com.ssafy.ourdoc.domain.book.dto.recommend;
 
 import java.time.LocalDateTime;
 
+import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 
