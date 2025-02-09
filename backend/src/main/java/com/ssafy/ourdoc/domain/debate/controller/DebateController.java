@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -49,7 +50,7 @@ public class DebateController {
 		return ResponseEntity.ok(token);
 	}
 
-	@PostMapping("/{roomId}/exit")
+	@DeleteMapping("/{roomId}/exit")
 	@ResponseStatus(HttpStatus.OK)
 	public void leaveDebateRoom(@Login User user, @PathVariable("roomId") Long roomId) {
 		debateService.leaveDebateRoom(user, roomId);
