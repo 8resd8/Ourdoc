@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkRequest;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
@@ -15,10 +17,14 @@ import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponseWithId;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportService;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportTeacherService;
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
+import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
@@ -34,6 +40,9 @@ public class HomeworkService {
 	private final TeacherClassRepository teacherClassRepository;
 	private final BookReportService bookReportService;
 	private final BookReportTeacherService bookReportTeacherService;
+	private final TeacherService teacherService;
+	private final StudentClassRepository studentClassRepository;
+	private final SchoolRepository schoolRepository;
 
 	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
@@ -63,6 +72,29 @@ public class HomeworkService {
 		Homework homework = homeworkRepository.findByBookAndUserAndClassRoom(book, user, classRoom)
 			.orElseThrow(() -> new IllegalArgumentException("숙제 도서로 등록한 도서가 아닙니다."));
 		homeworkRepository.delete(homework);
+	}
+
+	public List<HomeworkResponseTeacher> getHomeworkTeachers(HomeworkRequest request, User user) {
+		List<SchoolClassDto> schoolClasses = teacherService.getClassRoomsTeacherAndYear(user.getId(), request.year());
+		List<HomeworkResponseTeacher> responses = schoolClasses.stream()
+			.map(schoolClass -> {
+				List<Homework> homeworks = homeworkRepository.findByClassRoomId(schoolClass.id());
+				List<HomeworkDetailTeacher> homeworkDetails = homeworks.stream()
+					.map(homework -> getHomeworkDetailTeacher(homework.getId(), user))
+					.toList();
+
+				return new HomeworkResponseTeacher(
+					schoolClass.schoolName(),
+					schoolClass.grade(),
+					schoolClass.classNumber(),
+					schoolClass.year(),
+					schoolClass.studentCount(),
+					homeworkDetails
+				);
+			})
+			.toList();
+
+		return responses;
 	}
 
 	public HomeworkDetailTeacher getHomeworkDetailTeacher(Long homeworkId, User user) {
