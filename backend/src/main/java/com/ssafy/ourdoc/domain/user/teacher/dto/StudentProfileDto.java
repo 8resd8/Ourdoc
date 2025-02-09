@@ -11,6 +11,7 @@ public record StudentProfileDto(
 	Date birth,
 	Gender gender,
 	int studentNumber,
-	LocalDateTime certificateTime
+	LocalDateTime certificateTime,
+	String profileImagePath
 ) {
 }
