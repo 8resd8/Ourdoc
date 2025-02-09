@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
-import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 
@@ -34,7 +34,7 @@ public class BookService {
 		bookRepository.saveAll(books);
 	}
 
-	public List<BookResponse> searchBook(BookRequest request) {
+	public List<BookResponse> searchBook(BookSearchRequest request) {
 		List<Book> books = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		return books.stream()
 			.map(BookResponse::of)
