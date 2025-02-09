@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.user.teacher.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeRequest;
 import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
@@ -46,5 +49,11 @@ public class TeacherController {
 	public ResponseEntity<String> verificateAffiliationChange(@Login User user, @RequestBody VerificateAffiliationChangeRequest request) {
 		String response = teacherService.verificateAffiliationChange(user, request);
 		return ResponseEntity.ok(response);
+	}
+
+	// 소속 변경 승인 대기 학생 목록 조회
+	@GetMapping("/students/pending")
+	public Page<StudentPendingProfileDto> getPendingStudentList(@Login User user, Pageable pageable) {
+		return teacherService.getPendingStudentList(user, pageable);
 	}
 }
