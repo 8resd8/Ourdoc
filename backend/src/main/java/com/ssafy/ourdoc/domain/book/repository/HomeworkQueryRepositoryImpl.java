@@ -27,4 +27,12 @@ public class HomeworkQueryRepositoryImpl implements HomeworkQueryRepository {
 			)
 			.fetch();
 	}
+
+	@Override
+	public List<Homework> findByClassIn(List<Long> classIds) {
+		return queryFactory.selectFrom(homework)
+			.join(homework.classRoom, classRoom)
+			.where(classRoom.id.in(classIds))
+			.fetch();
+	}
 }

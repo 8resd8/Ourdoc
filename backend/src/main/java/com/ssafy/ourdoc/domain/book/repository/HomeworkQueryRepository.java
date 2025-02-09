@@ -7,4 +7,6 @@ import com.ssafy.ourdoc.domain.book.entity.Homework;
 
 public interface HomeworkQueryRepository {
 	List<Homework> findByUserIdAndYear(Long userId, Year year);
+
+	List<Homework> findByClassIn(List<Long> classIds);
 }
