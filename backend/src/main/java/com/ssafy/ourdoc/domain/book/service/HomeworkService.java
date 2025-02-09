@@ -1,14 +1,20 @@
 package com.ssafy.ourdoc.domain.book.service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookResponse;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
+import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponseWithId;
+import com.ssafy.ourdoc.domain.bookreport.service.BookReportService;
+import com.ssafy.ourdoc.domain.bookreport.service.BookReportTeacherService;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
@@ -26,6 +32,8 @@ public class HomeworkService {
 	private final HomeworkRepository homeworkRepository;
 	private final BookRepository bookRepository;
 	private final TeacherClassRepository teacherClassRepository;
+	private final BookReportService bookReportService;
+	private final BookReportTeacherService bookReportTeacherService;
 
 	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
@@ -55,5 +63,23 @@ public class HomeworkService {
 		Homework homework = homeworkRepository.findByBookAndUserAndClassRoom(book, user, classRoom)
 			.orElseThrow(() -> new IllegalArgumentException("숙제 도서로 등록한 도서가 아닙니다."));
 		homeworkRepository.delete(homework);
+	}
+
+	public HomeworkDetailTeacher getHomeworkDetailTeacher(Long homeworkId, User user) {
+		Homework homework = homeworkRepository.findById(homeworkId)
+			.orElseThrow(() -> new NoSuchElementException("해당하는 숙제가 없습니다."));
+		if (!homework.getUser().equals(user)) {
+			throw new IllegalArgumentException("숙제를 생성한 교사가 아닙니다.");
+		}
+		List<ReportTeacherResponseWithId> bookreports = bookReportTeacherService.getReportTeacherHomeworkResponses(
+			homeworkId);
+
+		return HomeworkDetailTeacher.builder()
+			.id(homeworkId)
+			.book(BookResponse.of(homework.getBook()))
+			.createAt(homework.getCreatedAt())
+			.submitCount(bookreports.size())
+			.bookreports(bookreports)
+			.build();
 	}
 }
