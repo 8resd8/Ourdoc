@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.domain.book.dto.BookFavoriteRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
@@ -26,7 +26,7 @@ public class BookFavoriteService {
 	private final BookRepository bookRepository;
 	private final BookFavoriteRepository bookFavoriteRepository;
 
-	public void addBookFavorite(BookFavoriteRequest request, User user) {
+	public void addBookFavorite(BookRequest request, User user) {
 		Book book = bookRepository.findById(request.bookId())
 			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 		if (bookFavoriteRepository.existsByBookAndUser(book, user)) {
@@ -36,7 +36,7 @@ public class BookFavoriteService {
 		bookFavoriteRepository.save(bookFavorite);
 	}
 
-	public void deleteBookFavorite(BookFavoriteRequest request, User user) {
+	public void deleteBookFavorite(BookRequest request, User user) {
 		Book book = bookRepository.findById(request.bookId())
 			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 		BookFavorite bookFavorite = bookFavoriteRepository.findByBookAndUser(book, user)
