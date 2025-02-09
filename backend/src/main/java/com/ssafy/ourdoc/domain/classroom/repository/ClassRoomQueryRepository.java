@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.classroom.repository;
 import java.time.Year;
 import java.util.List;
 
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 
 public interface ClassRoomQueryRepository {
@@ -10,5 +11,5 @@ public interface ClassRoomQueryRepository {
 
 	List<ClassRoom> findByTeacher(Long userId);
 
-	List<ClassRoom> findByTeacherAndYear(Long userId, Year year);
+	List<SchoolClassDto> findByTeacherAndYear(Long userId, Year year);
 }
