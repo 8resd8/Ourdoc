@@ -1,15 +1,23 @@
 package com.ssafy.ourdoc.domain.user.student.repository;
 
+import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudent.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
+import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 
 import lombok.RequiredArgsConstructor;
@@ -47,5 +55,42 @@ public class StudentClassQueryRepositoryImpl implements StudentClassQueryReposit
 				student.authStatus.eq(대기)
 			)
 			.execute();
+	}
+
+	@Override
+	public Page<StudentPendingProfileDto> findStudentsByClassIdAndActiveAndAuthStatus(Long classId, Active active,
+		AuthStatus authStatus, Pageable pageable) {
+		List<StudentPendingProfileDto> content = queryFactory
+			.select(Projections.constructor(StudentPendingProfileDto.class,
+				studentClass.studentNumber,
+				user.name,
+				user.loginId,
+				user.birth,
+				user.gender,
+				studentClass.createdAt
+			))
+			.from(studentClass)
+			.join(studentClass.user, user)
+			.where(
+				studentClass.classRoom.id.eq(classId),
+				studentClass.active.eq(active),
+				studentClass.authStatus.eq(authStatus)
+			)
+			.orderBy(user.name.asc()) // 이름순 정렬
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		long totalCount = queryFactory
+				.select(studentClass.count())
+				.from(studentClass)
+				.where(
+					studentClass.classRoom.id.eq(classId),
+					studentClass.active.eq(active),
+					studentClass.authStatus.eq(authStatus)
+				)
+				.fetchOne();
+
+		return new PageImpl<>(content, pageable, totalCount);
 	}
 }
