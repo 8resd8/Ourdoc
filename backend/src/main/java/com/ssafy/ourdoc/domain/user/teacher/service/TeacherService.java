@@ -1,10 +1,12 @@
 package com.ssafy.ourdoc.domain.user.teacher.service;
 
 import static com.ssafy.ourdoc.global.common.enums.Active.*;
+import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -12,6 +14,8 @@ import java.util.Optional;
 import javax.imageio.ImageIO;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,10 +29,14 @@ import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
+import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherQueryRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
@@ -46,6 +54,8 @@ public class TeacherService {
 	private final TeacherClassRepository teacherClassRepository;
 	private final SchoolRepository schoolRepository;
 	private final S3StorageService s3StorageService;
+	private final TeacherQueryRepository teacherQueryRepository;
+	private final StudentClassQueryRepository studentClassQueryRepository;
 
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {
@@ -153,4 +163,10 @@ public class TeacherService {
 		return s3StorageService.uploadFile(file);
 	}
 
+	// 본인 학급 학생 목록 조회
+	public StudentListResponse getMyClassStudentList(User user) {
+		Long classId = teacherClassRepository.findClassRoomByUserAndActive(user, 활성).getClassRoom().getId();
+		List<StudentProfileDto> studentProfileDtoList = studentClassQueryRepository.findStudentsByClassRoomIdAndActiveAndAuthStatus(classId, 활성, 승인);
+		return new StudentListResponse(studentProfileDtoList);
+	}
 }
