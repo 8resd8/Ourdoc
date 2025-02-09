@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.book.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkRequest;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.service.HomeworkService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
@@ -32,6 +36,12 @@ public class HomeworkController {
 	@DeleteMapping("/teachers/homework")
 	public void deleteHomework(@RequestBody BookRequest request, @Login User user) {
 		homeworkService.deleteHomework(request, user);
+	}
+
+	@GetMapping("/teachers/homework")
+	public ResponseEntity<List<HomeworkResponseTeacher>> getHomeworks(@RequestBody HomeworkRequest request,
+		@Login User user) {
+		return ResponseEntity.ok(homeworkService.getHomeworkTeachers(request, user));
 	}
 
 	@GetMapping("/teachers/homework/{homeworkId}")
