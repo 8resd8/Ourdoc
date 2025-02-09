@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 
 public interface DebateRoomOnlineRepository extends JpaRepository<RoomOnline, Long>, DebateRoomQueryRepository {
-	Optional<RoomOnline> findByRoomIdAndUserIdAndUpdatedAtIsNull(Long roomId, Long userId);
+	Optional<RoomOnline> findByRoomIdAndUserIdAndCreatedAtEqualsUpdatedAt(Long roomId, Long userId);
 }
