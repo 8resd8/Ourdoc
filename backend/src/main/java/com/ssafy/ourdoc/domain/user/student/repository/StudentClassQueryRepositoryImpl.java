@@ -35,7 +35,8 @@ public class StudentClassQueryRepositoryImpl implements StudentClassQueryReposit
 				user.birth,
 				user.gender,
 				studentClass.studentNumber,
-				student.certificateTime
+				student.certificateTime,
+				user.profileImagePath
 			))
 			.from(studentClass)
 			.join(studentClass.user, user)
