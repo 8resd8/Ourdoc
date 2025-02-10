@@ -1,8 +1,5 @@
 package com.ssafy.ourdoc.domain.debate.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,7 +7,6 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
-import com.ssafy.ourdoc.domain.debate.dto.UpdateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 import com.ssafy.ourdoc.domain.debate.repository.DebateRoomOnlineRepository;
@@ -147,5 +143,26 @@ public class DebateService {
 
 		room.updateEndAt(LocalDateTime.now());
 		debateRoomRepository.save(room);
+	}
+
+	public RoomDetailDto getDebateRoomDetail(Long roomId) {
+		Room room = debateRoomRepository.findById(roomId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 방은 존재하지 않습니다."));
+
+		if (room.getEndAt() != null) {
+			throw new IllegalArgumentException("종료된 방입니다.");
+		}
+
+		Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(roomId);
+		List<OnlineUserDto> onlineUserList = debateRoomOnlineRepository.findOnlineUsersByRoomId(roomId);
+		return new RoomDetailDto(
+			room.getId(),
+			room.getTitle(),
+			room.getUser().getName(),
+			room.getMaxPeople(),
+			currentPeople,
+			room.getCreatedAt(),
+			onlineUserList
+		);
 	}
 }
