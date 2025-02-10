@@ -49,6 +49,9 @@ class BookReportStudentServiceTest {
 	private BookReportFeedbackRepository feedbackRepository;
 
 	@Mock
+	private BookReportService bookReportService;
+
+	@Mock
 	private StudentClassRepository studentClassRepository;
 	@Mock
 	private NotificationService notificationService;
@@ -117,7 +120,7 @@ class BookReportStudentServiceTest {
 		when(bookReportRepository.findById(request.bookReportId())).thenReturn(Optional.of(mockBookReport));
 
 		// when
-		bookReportStudentService.saveBookReportFeedback(request);
+		bookReportService.saveBookReportFeedback(request);
 
 		// then
 		verify(bookReportRepository, times(1)).findById(request.bookReportId());
@@ -142,4 +145,34 @@ class BookReportStudentServiceTest {
 		assertThat(response.bookReports().get(0).approveStatus()).isEqualTo(ApproveStatus.없음);
 		assertThat(response.bookReports().get(0).homework()).isEqualTo(HomeworkStatus.미제출);
 	}
+
+	@Test
+	@DisplayName("독서록 삭제 시 관련 피드백도 함께 삭제된다.")
+	void testDeleteBookReport() {
+		// given
+		Long bookReportId = 1L;
+
+		BookReportFeedBack feedback1 = BookReportFeedBack.builder()
+			.bookReport(mockBookReport)
+			.comment("피드백 1")
+			.build();
+
+		BookReportFeedBack feedback2 = BookReportFeedBack.builder()
+			.bookReport(mockBookReport)
+			.comment("피드백 2")
+			.build();
+
+		mockBookReport.getBookReportFeedBack().add(feedback1);
+		mockBookReport.getBookReportFeedBack().add(feedback2);
+
+		when(bookReportRepository.findById(bookReportId)).thenReturn(Optional.of(mockBookReport));
+
+		// when
+		bookReportStudentService.deleteBookReport(bookReportId);
+
+		// then
+		verify(bookReportRepository, times(1)).findById(bookReportId); // BookReport 조회 확인
+		verify(bookReportRepository, times(1)).delete(mockBookReport); // BookReport 삭제 확인
+	}
+
 }
