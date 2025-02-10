@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.user.student.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.ssafy.ourdoc.domain.user.student.dto.InactiveStudentProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
 import com.ssafy.ourdoc.global.common.enums.Active;
@@ -16,4 +17,6 @@ public interface StudentClassQueryRepository {
 	Page<StudentProfileDto> findStudentsByClassRoomIdAndActiveAndAuthStatus(Long classId, Active active, AuthStatus authStatus, Pageable pageable);
 
 	StudentProfileResponseDto findStudentProfileByUserId(Long userId);
+
+	InactiveStudentProfileResponseDto findInactiveStudentProfileByUserId(Long userid);
 }
