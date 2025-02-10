@@ -44,6 +44,9 @@ public class BookRecommendServiceTest {
 	@Mock
 	private TeacherClassRepository teacherClassRepository;
 
+	@Mock
+	private BookService bookService;
+
 	@InjectMocks
 	private BookRecommendService bookRecommendService;
 
@@ -63,7 +66,7 @@ public class BookRecommendServiceTest {
 		ClassRoom classRoom = ClassRoomSample.classRoom(school);
 		TeacherClass teacherClass = TeacherClassSample.teacherClass(user, classRoom);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 
 		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(Optional.of(teacherClass));
 
@@ -88,6 +91,8 @@ public class BookRecommendServiceTest {
 	@DisplayName("책 추천 도서 등록 실패-도서 없음")
 	void addBookRecommendFailSinceNoBook() {
 		User user = UserSample.user(UserType.교사);
+		when(bookService.findBookById(anyLong()))
+			.thenThrow(new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 
 		assertThatThrownBy(
 			() -> bookRecommendService.addBookRecommend(new BookRequest(999L), user)).isInstanceOf(
@@ -102,7 +107,7 @@ public class BookRecommendServiceTest {
 		ClassRoom classRoom = ClassRoomSample.classRoom(school);
 		TeacherClass teacherClass = TeacherClassSample.teacherClass(user, classRoom);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 
 		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(Optional.of(teacherClass));
 		when(bookRecommendRepository.existsByBookAndUserAndClassRoom(any(), any(), any())).thenReturn(true);
@@ -116,8 +121,8 @@ public class BookRecommendServiceTest {
 	@DisplayName("책 추천 도서 삭제 실패-도서 없음")
 	void deleteBookRecommendFailSinceNoBook() {
 		User user = UserSample.user(UserType.교사);
-
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
+		when(bookService.findBookById(anyLong()))
+			.thenThrow(new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 
 		assertThatThrownBy(
 			() -> bookRecommendService.deleteBookRecommend(new BookRequest(999L), user)).isInstanceOf(
@@ -132,7 +137,7 @@ public class BookRecommendServiceTest {
 		ClassRoom classRoom = ClassRoomSample.classRoom(school);
 		TeacherClass teacherClass = TeacherClassSample.teacherClass(user, classRoom);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(Optional.of(teacherClass));
 		when(bookRecommendRepository.findByBookAndUserAndClassRoom(any(), any(), any())).thenReturn(Optional.empty());
 

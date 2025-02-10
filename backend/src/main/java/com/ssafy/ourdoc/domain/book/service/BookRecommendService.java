@@ -36,13 +36,13 @@ public class BookRecommendService {
 	private final TeacherClassRepository teacherClassRepository;
 	private final StudentClassRepository studentClassRepository;
 	private final ClassRoomRepository classRoomRepository;
+	private final BookService bookService;
 
 	public void addBookRecommend(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("추천도서를 생성할 권한이 없습니다.");
 		}
-		Book book = bookRepository.findById(request.bookId())
-			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		Book book = bookService.findBookById(request.bookId());
 		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 			.map(TeacherClass::getClassRoom)
 			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
@@ -58,8 +58,7 @@ public class BookRecommendService {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("추천도서를 삭제할 권한이 없습니다.");
 		}
-		Book book = bookRepository.findById(request.bookId())
-			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		Book book = bookService.findBookById(request.bookId());
 		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 			.map(TeacherClass::getClassRoom)
 			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
