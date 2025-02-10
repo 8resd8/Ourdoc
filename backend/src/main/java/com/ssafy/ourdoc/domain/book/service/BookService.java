@@ -42,8 +42,12 @@ public class BookService {
 	}
 
 	public BookDetailResponse getBookDetail(Long id) {
-		Book book = bookRepository.findById(id)
-			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		Book book = findBookById(id);
 		return BookDetailResponse.of(book, book.getDescription());
+	}
+
+	public Book findBookById(Long id) {
+		return bookRepository.findById(id)
+			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 	}
 }
