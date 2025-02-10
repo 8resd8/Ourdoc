@@ -12,7 +12,7 @@ import lombok.Builder;
 public record HomeworkDetailTeacher(
 	Long id,
 	BookResponse book,
-	LocalDateTime createAt,
+	LocalDateTime createdAt,
 	int submitCount,
 	List<ReportTeacherResponseWithId> bookreports
 ) {

@@ -109,7 +109,7 @@ public class HomeworkService {
 		return HomeworkDetailTeacher.builder()
 			.id(homeworkId)
 			.book(BookResponse.of(homework.getBook()))
-			.createAt(homework.getCreatedAt())
+			.createdAt(homework.getCreatedAt())
 			.submitCount(bookreports.size())
 			.bookreports(bookreports)
 			.build();
