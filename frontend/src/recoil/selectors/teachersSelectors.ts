@@ -1,14 +1,17 @@
-import { selector } from 'recoil';
+import { selector, selectorFamily } from 'recoil';
 import {
   teacherVerificationState,
   teacherProfileState,
   classStudentListState,
   temporaryPasswordState,
   studentInviteCodeState,
+  schoolSearchResultsState,
 } from '../atoms/teachersAtoms';
 import {
+  searchSchoolsApi,
   TeacherProfileResponse,
   StudentProfile,
+  School,
 } from '../../services/teachersService';
 
 // 교사 인증 상태 반환
@@ -39,4 +42,23 @@ export const temporaryPasswordSelector = selector<string | null>({
 export const studentInviteCodeSelector = selector<string | null>({
   key: 'studentInviteCodeSelector',
   get: ({ get }) => get(studentInviteCodeState),
+});
+
+// 학교 검색 선택자 (동적 schoolName 사용)
+export const schoolSearchSelector = selectorFamily<School[] | null, string>({
+  key: 'schoolSearchSelector',
+  get:
+    (schoolName) =>
+    async ({ get }) => {
+      const cachedResults = get(schoolSearchResultsState);
+      if (cachedResults) return cachedResults;
+
+      try {
+        const schools = await searchSchoolsApi(schoolName);
+        return schools;
+      } catch (error) {
+        console.error(`학교 검색 실패 (schoolName: ${schoolName}):`, error);
+        return null;
+      }
+    },
 });

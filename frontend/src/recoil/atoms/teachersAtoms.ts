@@ -2,6 +2,7 @@ import { atom } from 'recoil';
 import {
   TeacherProfileResponse,
   StudentProfile,
+  School,
 } from '../../services/teachersService';
 
 // 교사 인증 상태
@@ -31,5 +32,11 @@ export const classStudentListState = atom<StudentProfile[]>({
 // 학생 임시 비밀번호 상태
 export const temporaryPasswordState = atom<string | null>({
   key: 'temporaryPasswordState',
+  default: null,
+});
+
+// 검색된 학교 목록 상태
+export const schoolSearchResultsState = atom<School[] | null>({
+  key: 'schoolSearchResultsState',
   default: null,
 });

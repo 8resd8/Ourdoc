@@ -42,6 +42,11 @@ export interface StudentAcademicInfo {
   academicRecords: Record<string, any>;
 }
 
+export interface School {
+  schoolName: string;
+  address: string;
+}
+
 // 교사 인증 요청
 export const requestTeacherVerificationApi = async (data: {
   name: string;
@@ -121,4 +126,14 @@ export const updateTeacherProfileApi = async (
   data: TeacherProfileUpdateRequest
 ): Promise<void> => {
   await api.patch(`/teachers/${teacherId}/profile`, data);
+};
+
+// 학교 검색 API
+export const searchSchoolsApi = async (
+  schoolName: string
+): Promise<School[]> => {
+  const response = await api.get<School[]>('/teachers/class', {
+    params: { schoolName },
+  });
+  return response.data;
 };
