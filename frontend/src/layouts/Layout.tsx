@@ -5,9 +5,8 @@ import Footer from '../components/commons/Footer';
 const Layout = () => {
   return (
     <div>
-      <Header />
+      <Header userName="zz" />
       <Outlet />
-      <Footer />
     </div>
   );
 };

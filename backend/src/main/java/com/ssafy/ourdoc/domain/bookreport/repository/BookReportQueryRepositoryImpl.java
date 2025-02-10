@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.bookreport.repository;
 
 import static com.ssafy.ourdoc.domain.book.entity.QBook.*;
+import static com.ssafy.ourdoc.domain.book.entity.QHomework.*;
 import static com.ssafy.ourdoc.domain.bookreport.entity.QBookReport.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
@@ -22,7 +23,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.QBookReportFeedBack;
 
@@ -112,6 +115,27 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				.and(teacherFeedBack.evaluatorType.eq(교사)))
 			.where(bookReport.id.eq(bookReportId))
 			.fetchOne();
+	}
+
+	@Override
+	public List<ReportTeacherDtoWithId> bookReportsHomework(Long homeworkId) {
+		return queryFactory.select(new QReportTeacherDtoWithId(
+				bookReport.id,
+				studentClass.studentNumber,
+				user.name.as("studentName"),
+				bookReport.createdAt,
+				bookReport.approveTime
+			))
+			.from(bookReport)
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.user, user)
+			.join(studentClass.classRoom, classRoom)
+			.join(classRoom.school, school)
+			.join(bookReport.book, book)
+			.join(bookReport.homework, homework)
+			.where(
+				bookReport.homework.id.eq(homeworkId)
+			).fetch();
 	}
 
 	private BooleanExpression eqYear(Integer year) {

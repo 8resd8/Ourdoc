@@ -248,6 +248,7 @@ const TeacherSignUp = () => {
           <Button type="signup" title="회원가입" onClick={handleSignUpClick} />
         </div>
         <Modal
+          type="signup"
           isOpen={isModalOpen}
           onConfirm={handleSignUpConfirm}
           onCancel={handleCancel}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { signUpApi } from '../../../api/auth/AuthApi';
+import { signupStudentApi } from '../../../services/usersService';
 import classes from './StudentSignup.module.css';
 import InputField from '../../molecules/InputField';
 import Button from '../../atoms/Button';

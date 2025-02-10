@@ -5,6 +5,7 @@ import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.time.Year;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,17 +26,19 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
-import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
-import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
-import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
+import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
@@ -43,8 +46,6 @@ import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherQueryRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
-import com.ssafy.ourdoc.global.common.enums.Active;
-import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
@@ -65,6 +66,7 @@ public class TeacherService {
 	private final StudentClassQueryRepository studentClassQueryRepository;
 	private final StudentClassRepository studentClassRepository;
 	private final StudentRepository studentRepository;
+	private final ClassRoomRepository classRoomRepository;
 
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {
@@ -177,7 +179,8 @@ public class TeacherService {
 		Long classId = teacherClassRepository.findByUserIdAndActive(user.getId(), 활성)
 			.orElseThrow(() -> new IllegalArgumentException("조회할 학급이 없습니다."))
 			.getClassRoom().getId();
-		Page<StudentProfileDto> studentProfileDtoList = studentClassQueryRepository.findStudentsByClassRoomIdAndActiveAndAuthStatus(classId, 활성, 승인, pageable);
+		Page<StudentProfileDto> studentProfileDtoList = studentClassQueryRepository.findStudentsByClassRoomIdAndActiveAndAuthStatus(
+			classId, 활성, 승인, pageable);
 		return new StudentListResponse(studentProfileDtoList);
 	}
 
@@ -192,9 +195,9 @@ public class TeacherService {
 				classId, 대기)
 			.orElseThrow(() -> new IllegalArgumentException("해당 학생의 소속 반 신청 정보를 찾을 수 없습니다."));
 
-		if (studentRepository.findByUser(studentUser).getAuthStatus() == 거절) {
+		if (studentRepository.findByUser(studentUser).getAuthStatus().equals(거절)) {
 			throw new IllegalArgumentException("학생 인증이 되지 않은 회원입니다.");
-		} else if (studentRepository.findByUser(studentUser).getAuthStatus() == 대기) {
+		} else if (studentRepository.findByUser(studentUser).getAuthStatus().equals(대기)) {
 			changeAuthStatusOfStudent(request, studentUser);
 			changeAuthStatusOfStudentClass(request, studentUser, classId);
 		} else {
@@ -204,7 +207,8 @@ public class TeacherService {
 		return "학생 소속 변경이 " + (request.isApproved() ? "승인" : "거절") + "되었습니다.";
 	}
 
-	private void changeAuthStatusOfStudentClass(VerificateAffiliationChangeRequest request, User studentUser, Long classId) {
+	private void changeAuthStatusOfStudentClass(VerificateAffiliationChangeRequest request, User studentUser,
+		Long classId) {
 		if (request.isApproved()) {
 			studentClassQueryRepository.updateAuthStatusOfStudentClass(studentUser.getId(), classId, 승인);
 		} else {
@@ -225,6 +229,27 @@ public class TeacherService {
 			.orElseThrow(() -> new IllegalArgumentException("활성화된 학급이 없습니다."))
 			.getClassRoom().getId();
 
-		return studentClassQueryRepository.findStudentsByClassIdAndActiveAndAuthStatus(classId, 활성, AuthStatus.대기, pageable);
+		return studentClassQueryRepository.findStudentsByClassIdAndActiveAndAuthStatus(classId, 활성, 대기, pageable);
+	}
+
+	public TeacherProfileResponseDto getTeacherProfile(User user) {
+		if (user.getActive().equals(활성)) {
+			return teacherQueryRepository.findTeacherProfileByUserId(user.getId());
+		} else if (user.getActive().equals(비활성)) {
+			throw new IllegalArgumentException("재직중인 교사가 아닙니다.");
+		}
+		throw new IllegalArgumentException("알 수 없는 이유로 조회 실패");
+	}
+
+	public List<ClassRoom> getClassRoomsTeacher(Long userId) {
+		return classRoomRepository.findByTeacher(userId);
+	}
+
+	public List<SchoolClassDto> getClassRoomsTeacherAndYear(Long userId, Year year) {
+		List<SchoolClassDto> schoolClassDtos = classRoomRepository.findByTeacherAndYear(userId, year);
+		if (schoolClassDtos.isEmpty()) {
+			throw new NoSuchElementException("해당하는 연도와 사용자에 해당하는 학급 정보가 없습니다.");
+		}
+		return schoolClassDtos;
 	}
 }

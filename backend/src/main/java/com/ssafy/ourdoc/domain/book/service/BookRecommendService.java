@@ -2,19 +2,20 @@ package com.ssafy.ourdoc.domain.book.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendDetailStudent;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendRequest;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseStudent;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseTeacher;
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailStudent;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailTeacher;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseStudent;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
+import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -36,13 +37,14 @@ public class BookRecommendService {
 	private final TeacherClassRepository teacherClassRepository;
 	private final StudentClassRepository studentClassRepository;
 	private final ClassRoomRepository classRoomRepository;
+	private final BookService bookService;
+	private final BookReportRepository bookReportRepository;
 
-	public void addBookRecommend(BookRecommendRequest request, User user) {
+	public void addBookRecommend(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("추천도서를 생성할 권한이 없습니다.");
 		}
-		Book book = bookRepository.findById(request.bookId())
-			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		Book book = bookService.findBookById(request.bookId());
 		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 			.map(TeacherClass::getClassRoom)
 			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
@@ -54,12 +56,11 @@ public class BookRecommendService {
 		bookRecommendRepository.save(bookRecommend);
 	}
 
-	public void deleteBookRecommend(BookRecommendRequest request, User user) {
+	public void deleteBookRecommend(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("추천도서를 삭제할 권한이 없습니다.");
 		}
-		Book book = bookRepository.findById(request.bookId())
-			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		Book book = bookService.findBookById(request.bookId());
 		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 			.map(TeacherClass::getClassRoom)
 			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
@@ -68,37 +69,66 @@ public class BookRecommendService {
 		bookRecommendRepository.delete(bookRecommend);
 	}
 
-	public BookRecommendResponseTeacher getBookRecommendsTeacher(User user) {
+	public BookRecommendResponseTeacher getBookRecommendsTeacher(BookSearchRequest request, User user) {
 		ClassRoom userClassRoom = getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
 		int grade = userClassRoom.getGrade();
 		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
 
 		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
+			searchedBooks);
 
-		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomIn(sameGradeClass);
-
-		int submitCount = 0; // 독서록 제출 개수
 		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
-			.map(bookRecommend -> BookRecommendDetailTeacher.of(bookRecommend.getBook(), bookRecommend, submitCount))
-			.collect(Collectors.toList());
+			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
+			.toList();
 
 		return new BookRecommendResponseTeacher(studentCount, details);
 	}
 
-	public BookRecommendResponseStudent getBookRecommendsStudent(User user) {
+	public BookRecommendResponseTeacher getBookRecommendsTeacherClass(BookSearchRequest request, User user) {
+		ClassRoom userClassRoom = getUserClassRoom(user);
+		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
+
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomAndBookIn(userClassRoom,
+			searchedBooks);
+
+		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
+			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
+			.toList();
+
+		return new BookRecommendResponseTeacher(studentCount, details);
+	}
+
+	public BookRecommendResponseStudent getBookRecommendsStudent(BookSearchRequest request, User user) {
 		ClassRoom userClassRoom = getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
 		int grade = userClassRoom.getGrade();
 
 		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
+			searchedBooks);
 
-		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomIn(sameGradeClass);
-
-		boolean submitStatus = true; // 독서록 제출 여부
 		List<BookRecommendDetailStudent> details = bookRecommends.stream()
-			.map(bookRecommend -> BookRecommendDetailStudent.of(bookRecommend.getBook(), bookRecommend, submitStatus))
-			.collect(Collectors.toList());
+			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
+			.toList();
+
+		return new BookRecommendResponseStudent(details);
+	}
+
+	public BookRecommendResponseStudent getBookRecommendsStudentClass(BookSearchRequest request, User user) {
+		ClassRoom userClassRoom = getUserClassRoom(user);
+
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomAndBookIn(userClassRoom,
+			searchedBooks);
+
+		List<BookRecommendDetailStudent> details = bookRecommends.stream()
+			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
+			.toList();
 
 		return new BookRecommendResponseStudent(details);
 	}
@@ -115,5 +145,17 @@ public class BookRecommendService {
 				.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
 		}
 		throw new NoSuchElementException("현재 유효한 상태의 학급 정보가 없습니다.");
+	}
+
+	private BookRecommendDetailTeacher toBookRecommendDetailTeacher(BookRecommend bookRecommend, Long userId) {
+		Long bookId = bookRecommend.getBook().getId();
+		int submitCount = bookReportRepository.countByUserIdAndBookId(userId, bookId);
+		return BookRecommendDetailTeacher.of(bookRecommend, submitCount);
+	}
+
+	private BookRecommendDetailStudent toBookRecommendDetailStudent(BookRecommend bookRecommend, Long userId) {
+		Long bookId = bookRecommend.getBook().getId();
+		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(userId, bookId) > 0;
+		return BookRecommendDetailStudent.of(bookRecommend, submitStatus);
 	}
 }
