@@ -16,4 +16,6 @@ public interface BookReportQueryRepository {
 	List<ReportTeacherDtoWithId> bookReportsHomework(Long homeworkId);
 
 	long myBookReportsCount(Long userId, int grade);
+
+	double classAverageBookReportsCount(Long userId, int grade);
 }
