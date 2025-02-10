@@ -63,6 +63,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				containsStudentName(request.studentName()),
 				eqSchoolName(request.schoolName())
 			)
+			.orderBy(bookReport.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
