@@ -37,6 +37,9 @@ public class BookFavoriteServiceTest {
 	@Mock
 	private BookFavoriteRepository bookFavoriteRepository;
 
+	@Mock
+	private BookService bookService;
+
 	@InjectMocks
 	private BookFavoriteService bookFavoriteService;
 
@@ -53,7 +56,7 @@ public class BookFavoriteServiceTest {
 	void addBookFavoriteSuccess() {
 		User user = Mockito.mock(User.class);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 		when(bookFavoriteRepository.existsByBookAndUser(any(), any())).thenReturn(false);
 
 		bookFavoriteService.addBookFavorite(new BookRequest(1L), user);
@@ -65,7 +68,8 @@ public class BookFavoriteServiceTest {
 	@DisplayName("책 관심 도서 등록 실패-도서 없음")
 	void addBookFavoriteFailSinceNoBook() {
 		User user = Mockito.mock(User.class);
-
+		when(bookService.findBookById(anyLong()))
+			.thenThrow(new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 		assertThatThrownBy(() -> bookFavoriteService.addBookFavorite(new BookRequest(999L), user)).isInstanceOf(
 			NoSuchElementException.class).hasMessage("해당하는 ID의 도서가 없습니다.");
 	}
@@ -75,7 +79,7 @@ public class BookFavoriteServiceTest {
 	void addBookFavoriteFailSinceDuplicate() {
 		User user = Mockito.mock(User.class);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 		when(bookFavoriteRepository.existsByBookAndUser(any(), any())).thenReturn(true);
 
 		assertThatThrownBy(() -> bookFavoriteService.addBookFavorite(new BookRequest(1L), user)).isInstanceOf(
@@ -86,8 +90,8 @@ public class BookFavoriteServiceTest {
 	@DisplayName("책 관심 도서 삭제 실패-도서 없음")
 	void deleteBookFavoriteFailSinceNoBook() {
 		User user = Mockito.mock(User.class);
-
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
+		when(bookService.findBookById(anyLong()))
+			.thenThrow(new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 
 		assertThatThrownBy(
 			() -> bookFavoriteService.deleteBookFavorite(new BookRequest(999L), user)).isInstanceOf(
@@ -99,7 +103,7 @@ public class BookFavoriteServiceTest {
 	void deleteBookFavoriteFailSinceDuplicate() {
 		User user = Mockito.mock(User.class);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 		when(bookFavoriteRepository.findByBookAndUser(any(), any())).thenReturn(Optional.empty());
 
 		assertThatThrownBy(

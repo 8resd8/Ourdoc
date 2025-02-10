@@ -1,7 +1,6 @@
 package com.ssafy.ourdoc.domain.book.service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -25,10 +24,10 @@ import lombok.RequiredArgsConstructor;
 public class BookFavoriteService {
 	private final BookRepository bookRepository;
 	private final BookFavoriteRepository bookFavoriteRepository;
+	private final BookService bookService;
 
 	public void addBookFavorite(BookRequest request, User user) {
-		Book book = bookRepository.findById(request.bookId())
-			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		Book book = bookService.findBookById(request.bookId());
 		if (bookFavoriteRepository.existsByBookAndUser(book, user)) {
 			throw new IllegalArgumentException("이미 관심 도서로 등록했습니다.");
 		}
@@ -37,8 +36,7 @@ public class BookFavoriteService {
 	}
 
 	public void deleteBookFavorite(BookRequest request, User user) {
-		Book book = bookRepository.findById(request.bookId())
-			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		Book book = bookService.findBookById(request.bookId());
 		BookFavorite bookFavorite = bookFavoriteRepository.findByBookAndUser(book, user)
 			.orElseThrow(() -> new IllegalArgumentException("관심 도서로 등록한 도서가 아닙니다."));
 		bookFavoriteRepository.delete(bookFavorite);
