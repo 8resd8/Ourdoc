@@ -8,15 +8,19 @@ import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
 import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
+import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 
 import java.time.Year;
 import java.util.List;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportHomeworkStudent;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
@@ -107,6 +111,27 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.where(
 				bookReport.homework.id.eq(homeworkId)
 			).fetch();
+	}
+
+	@Override
+	public List<BookReportHomeworkStudent> bookReportsHomeworkStudents(Long homeworkId) {
+		return queryFactory.select(new QBookReportHomeworkStudent(
+					bookReport.id,
+					bookReport.createdAt,
+					new CaseBuilder()
+						.when(bookReport.homework.id.isNotNull())
+						.then(true)
+						.otherwise(false),
+					new CaseBuilder()
+						.when(bookReport.approveTime.isNotNull())
+						.then(있음)
+						.otherwise(없음)
+				)
+			)
+			.from(bookReport)
+			.join(homework).on(bookReport.homework.id.eq(homework.id))
+			.where(homework.id.eq(homeworkId))
+			.fetch();
 	}
 
 	private BooleanExpression eqYear(Integer year) {
