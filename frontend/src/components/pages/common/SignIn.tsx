@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Button from '../../atoms/Button';
 import InputField from '../../molecules/InputField';
 import classes from './SignIn.module.css';
-import { signinApi } from '../../../services/usersService';
+import { signInApi } from '../../../api/auth/AuthApi';
 
 const SignIn = () => {
   const [userType, setUserType] = useState('학생');
@@ -14,7 +14,7 @@ const SignIn = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await signinApi({
+      const response = await signInApi({
         userType,
         loginId: loginInfo.loginId,
         password: loginInfo.password,

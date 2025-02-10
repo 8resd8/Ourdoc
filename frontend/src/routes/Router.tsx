@@ -36,8 +36,6 @@ import TeacherSignUp from '../components/pages/teacher/TeacherSignUp';
 import TeacherStatistics from '../components/pages/teacher/TeacherStatistics';
 import TeacherStudentInfo from '../components/pages/teacher/TeacherStudentInfo';
 import AuthLayout from '../layouts/AuthLayout';
-import Pending from '../components/molecules/Pending';
-import WebRtcBoard from '../components/pages/common/WebRtcBoard';
 
 const Router = () => {
   return (
@@ -48,12 +46,10 @@ const Router = () => {
         <Route path="/student/setup" element={<StudentSetUp />} />
         <Route path="/student/signup" element={<StudentSignUp />} />
         <Route path="/teacher/signup" element={<TeacherSignUp />} />
-        <Route path="/pending" element={<Pending />} />
       </Route>
       <Route element={<Layout />}>
         {/* 선생 학생 공통 라우트 */}
-        {/* <Route path="/debate/board" element={<DebateBoard />} /> */}
-        <Route path="/debate/board" element={<WebRtcBoard />} />
+        <Route path="/debate/board" element={<DebateBoard />} />
         <Route path="/debate/room" element={<DebateRoom />} />
 
         {/* 학생 전용 라우트 */}

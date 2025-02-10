@@ -7,7 +7,6 @@ interface PropsType {
 }
 
 const Button = ({ type, title, onClick }: PropsType) => {
-  console.log(onClick);
   const buttonStyle =
     type === 'upload'
       ? `${classes.btn} border border-secondary-500 bg-gray-0 text-secondary-500 rounded-[10px]`

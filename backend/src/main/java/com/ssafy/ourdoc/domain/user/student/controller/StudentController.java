@@ -1,7 +1,6 @@
 package com.ssafy.ourdoc.domain.user.student.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentAffiliationChangeRequest;
-import com.ssafy.ourdoc.domain.user.student.dto.StudentProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentSignupRequest;
 import com.ssafy.ourdoc.domain.user.student.service.StudentService;
 import com.ssafy.ourdoc.global.annotation.Login;
@@ -35,12 +33,6 @@ public class StudentController {
 	public ResponseEntity<String> studentAffiliationChange(@Login User user, @RequestBody StudentAffiliationChangeRequest request) {
 		studentService.requestStudentAffiliationChange(user, request);
 		return ResponseEntity.ok("학생 소속 변경 신청 완료");
-	}
-
-	// 3. 학생 본인 정보 조회
-	@GetMapping("/profile")
-	public ResponseEntity<?> getStudentProfile(@Login User user) {
-		return studentService.getStudentProfile(user);
 	}
 
 }

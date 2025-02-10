@@ -1,8 +1,6 @@
 package com.ssafy.ourdoc.domain.bookreport.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
@@ -21,7 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -64,8 +62,8 @@ public class BookReport extends BaseTimeEntity {
 	@Column(name = "approve_time")
 	private LocalDateTime approveTime;
 
-	@OneToMany(mappedBy = "bookReport", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<BookReportFeedBack> bookReportFeedBack = new ArrayList<>();
+	@OneToOne(mappedBy = "bookReport", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private BookReportFeedBack bookReportFeedBack;
 
 	@Builder
 	public BookReport(StudentClass studentClass, Book book, Homework homework, String beforeContent,

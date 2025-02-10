@@ -1,7 +1,6 @@
 package com.ssafy.ourdoc.domain.bookreport.service;
 
 import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
-import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -15,7 +14,6 @@ import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponse;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
-import com.ssafy.ourdoc.domain.bookreport.repository.BookReportFeedbackRepository;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -30,7 +28,6 @@ public class BookReportTeacherService {
 
 	private final BookReportRepository bookReportRepository;
 	private final NotificationService notificationService;
-	private final BookReportFeedbackRepository bookReportFeedbackRepository;
 
 	public ReportTeacherListResponse getBookReports(User user, ReportTeacherRequest request) {
 		List<ReportTeacherResponse> convertDto = getReportTeacherResponses(
@@ -62,34 +59,25 @@ public class BookReportTeacherService {
 	}
 
 	public void createComment(User user, Long bookReportId, ReportCommentRequest request) {
-		BookReportFeedBack bookReportFeedBack = BookReportFeedBack.builder()
-			.bookReport(getBookReport(bookReportId))
-			.comment(request.comment())
-			.type(교사)
-			.build();
-		bookReportFeedbackRepository.save(bookReportFeedBack);
+		BookReportFeedBack bookReportFeedBack = getBookReport(bookReportId).getBookReportFeedBack();
+		bookReportFeedBack.updateComment(request.comment());
 
 		StudentClass studentClass = getBookReport(bookReportId).getStudentClass();
 		notificationService.sendNotifyTeacherFromStudent(user, studentClass.getId());
 	}
 
 	public void updateComment(Long bookReportId, ReportCommentRequest request) {
-		BookReportFeedBack bookReportFeedBack = getTeacherReportFeedBack(bookReportId);
-		bookReportFeedBack.updateTeacherComment(request.comment());
+		BookReportFeedBack bookReportFeedBack = getBookReport(bookReportId).getBookReportFeedBack();
+		bookReportFeedBack.updateComment(request.comment());
 	}
 
 	public void deleteComment(Long bookReportId) {
-		BookReportFeedBack bookReportFeedBack = getTeacherReportFeedBack(bookReportId);
-		bookReportFeedBack.updateTeacherComment(null);
+		BookReportFeedBack bookReportFeedBack = getBookReport(bookReportId).getBookReportFeedBack();
+		bookReportFeedBack.updateComment(null);
 	}
 
 	private BookReport getBookReport(Long bookReportId) {
 		return bookReportRepository.findById(bookReportId)
 			.orElseThrow(() -> new NoSuchElementException("도장찍을 독서록이 없습니다."));
-	}
-
-	private BookReportFeedBack getTeacherReportFeedBack(Long bookReportId) {
-		return bookReportFeedbackRepository.findByBookReportIdAndEvaluatorType(bookReportId, 교사)
-			.orElseThrow(() -> new NoSuchElementException("피드백 독서록이 없습니다."));
 	}
 }
