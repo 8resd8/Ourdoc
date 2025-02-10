@@ -15,5 +15,7 @@ public interface BookRecommendRepository extends JpaRepository<BookRecommend, Lo
 
 	boolean existsByBookAndUserAndClassRoom(Book book, User user, ClassRoom classRoom);
 
+	List<BookRecommend> findByClassRoom(ClassRoom classRoom);
+
 	List<BookRecommend> findByClassRoomIn(List<ClassRoom> classRooms);
 }
