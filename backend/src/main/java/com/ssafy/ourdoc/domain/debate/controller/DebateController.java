@@ -61,4 +61,10 @@ public class DebateController {
 	public void updateDebateRoom(@Login User user, @PathVariable("roomId") Long roomId, UpdateRoomRequest request) {
 		debateService.updateDebateRoom(user, roomId, request);
 	}
+
+	@DeleteMapping("/{roomId}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteDebateRoom(@Login User user, @PathVariable("roomId") Long roomId) {
+		debateService.deleteDebateRoom(user, roomId);
+	}
 }
