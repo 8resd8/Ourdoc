@@ -18,4 +18,6 @@ public interface BookReportQueryRepository {
 	long myBookReportsCount(Long userId, int grade);
 
 	double classAverageBookReportsCount(Long userId, int grade);
+
+	long classHighestBookReportCount(Long userId, int grade);
 }
