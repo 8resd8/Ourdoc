@@ -1,4 +1,4 @@
-import { api } from '../services/api';
+import { api, multipartApi } from '../services/api';
 
 // OCR 변환 API 요청 인터페이스
 export interface HandOCRResponse {
@@ -12,8 +12,9 @@ export const convertHandToTextApi = async (
   const formData = new FormData();
   formData.append('hand_image', handImage);
 
-  const response = await api.post<HandOCRResponse>('/ocr/hand', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  const response = await multipartApi.post<HandOCRResponse>(
+    '/ocr/hand',
+    formData
+  );
   return response.data;
 };
