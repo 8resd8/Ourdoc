@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.debate.repository;
 import static com.ssafy.ourdoc.domain.debate.entity.QRoomOnline.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -38,5 +39,13 @@ public class DebateRoomQueryRepositoryImpl implements DebateRoomQueryRepository 
 			.set(roomOnline.updatedAt, LocalDateTime.now())
 			.where(roomOnline.id.eq(roomOnlineId))
 			.execute();
+	}
+
+	public List<RoomOnline> findAllActiveByRoomId(Long roomId) {
+		return queryFactory.selectFrom(roomOnline)
+			.where(
+				roomOnline.room.id.eq(roomId)
+					.and(roomOnline.createdAt.eq(roomOnline.updatedAt))
+			).fetch();
 	}
 }
