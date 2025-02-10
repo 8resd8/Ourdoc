@@ -102,14 +102,15 @@ public class BookRecommendService {
 		return new BookRecommendResponseTeacher(studentCount, details);
 	}
 
-	public BookRecommendResponseStudent getBookRecommendsStudent(User user) {
+	public BookRecommendResponseStudent getBookRecommendsStudent(BookSearchRequest request, User user) {
 		ClassRoom userClassRoom = getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
 		int grade = userClassRoom.getGrade();
 
 		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
-
-		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomIn(sameGradeClass);
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
+			searchedBooks);
 
 		List<BookRecommendDetailStudent> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
@@ -118,10 +119,12 @@ public class BookRecommendService {
 		return new BookRecommendResponseStudent(details);
 	}
 
-	public BookRecommendResponseStudent getBookRecommendsStudentClass(User user) {
+	public BookRecommendResponseStudent getBookRecommendsStudentClass(BookSearchRequest request, User user) {
 		ClassRoom userClassRoom = getUserClassRoom(user);
 
-		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoom(userClassRoom);
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomAndBookIn(userClassRoom,
+			searchedBooks);
 
 		List<BookRecommendDetailStudent> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
