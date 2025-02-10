@@ -53,6 +53,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			String userId = claims.getSubject();
 			String role = claims.get("role", String.class);
 
+			if (!isAuthorized(request.getRequestURI(), role)) {
+				response.sendError(HttpServletResponse.SC_FORBIDDEN, "인가되지 않은 사용자입니다.");
+				return;
+			}
+
 			// JWT에서 추출한 정보를 Request 속성으로 저장
 			request.setAttribute("userId", userId);
 			request.setAttribute("role", role);
@@ -64,6 +69,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			// JWT 검증 실패 시 401 반환
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid token");
 		}
+	}
+
+	private boolean isAuthorized(String path, String role) {
+		boolean authorized = true;
+
+		if (path.startsWith("/admin") && !"관리자".equals(role)) {
+			authorized = false;
+		} else if (path.startsWith("/teachers") && !"교사".equals(role)) {
+			authorized = false;
+		} else if (path.startsWith("/students") && !"학생".equals(role)) {
+			authorized = false;
+		}
+
+		return authorized;
 	}
 
 	private String extractToken(HttpServletRequest request) {
