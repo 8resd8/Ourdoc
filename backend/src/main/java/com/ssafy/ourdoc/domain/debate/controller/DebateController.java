@@ -49,7 +49,7 @@ public class DebateController {
 	}
 
 	@DeleteMapping("/{roomId}")
-	@ResponseStatus(HttpStatus.OK)
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteDebateRoom(@Login User user, @PathVariable("roomId") Long roomId) {
 		debateService.deleteDebateRoom(user, roomId);
 	}
