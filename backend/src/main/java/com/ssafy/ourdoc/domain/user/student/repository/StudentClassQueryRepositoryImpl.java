@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.user.student.repository;
 
+import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
 import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudent.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.ourdoc.domain.user.student.dto.StudentProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
@@ -94,5 +96,24 @@ public class StudentClassQueryRepositoryImpl implements StudentClassQueryReposit
 				student.authStatus.eq(대기)
 			)
 			.execute();
+	}
+
+	@Override
+	public StudentProfileResponseDto findStudentProfileByUserId(Long userId) {
+		return queryFactory
+			.select(Projections.constructor(StudentProfileResponseDto.class,
+				user.profileImagePath,
+				user.name,
+				user.loginId,
+				classRoom.school.schoolName,
+				classRoom.grade,
+				classRoom.classNumber,
+				studentClass.studentNumber
+			))
+			.from(user)
+			.join(studentClass).on(user.id.eq(studentClass.user.id))
+			.join(studentClass.classRoom, classRoom)
+			.where(user.id.eq(userId))
+			.fetchOne();
 	}
 }
