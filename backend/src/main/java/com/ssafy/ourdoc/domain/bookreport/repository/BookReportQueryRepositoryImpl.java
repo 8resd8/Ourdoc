@@ -136,6 +136,10 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				classRoom.grade.eq(grade)
 			).fetchOne();
 
+		if (classRoomId == null) {
+			return 0L;
+		}
+
 		long count = Optional.ofNullable(
 				queryFactory
 					.select(bookReport.count())
@@ -158,6 +162,37 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 		).orElse(0L);
 
 		return (studentCount == 0) ? 0.0 : (double)count / studentCount;
+	}
+
+	@Override
+	public long classHighestBookReportCount(Long userId, int grade) {
+		Long classRoomId = queryFactory
+			.select(studentClass.classRoom.id)
+			.from(studentClass)
+			.join(studentClass.classRoom, classRoom)
+			.where(
+				studentClass.user.id.eq(userId),
+				classRoom.grade.eq(grade)
+			).fetchOne();
+
+		if (classRoomId == null) {
+			return 0L;
+		}
+
+		return Optional.ofNullable(
+				queryFactory
+					.select(bookReport.count())
+					.from(bookReport)
+					.join(bookReport.studentClass, studentClass)
+					.join(studentClass.classRoom, classRoom)
+					.where(
+						classRoom.id.eq(classRoomId),
+						bookReport.approveTime.isNotNull()
+					).groupBy(studentClass.id)
+					.orderBy(bookReport.count().desc())
+					.limit(1)
+					.fetchOne())
+			.orElse(0L);
 	}
 
 	private BooleanExpression eqYear(Integer year) {
