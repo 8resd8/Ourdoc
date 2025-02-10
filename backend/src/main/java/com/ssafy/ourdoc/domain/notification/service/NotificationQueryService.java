@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.notification.dto.NotificationConditionRequest;
 import com.ssafy.ourdoc.domain.notification.dto.NotificationDetailDto;
+import com.ssafy.ourdoc.domain.notification.dto.NotificationDetailResponse;
 import com.ssafy.ourdoc.domain.notification.dto.NotificationDto;
 import com.ssafy.ourdoc.domain.notification.dto.NotificationListResponse;
 import com.ssafy.ourdoc.domain.notification.repository.NotificationQueryRepository;
@@ -29,7 +30,7 @@ public class NotificationQueryService {
 		return new NotificationListResponse(notificationDtoList);
 	}
 
-	public NotificationDetailDto getNotification(User user, Long notificationId) {
-		return notificationQueryRepository.findByNotificationId(user.getId(), notificationId);
+	public NotificationDetailResponse getNotification(User user, Long notificationId) {
+		return new NotificationDetailResponse(notificationQueryRepository.findByNotificationId(user.getId(), notificationId));
 	}
 }

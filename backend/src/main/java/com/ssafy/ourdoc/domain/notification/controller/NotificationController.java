@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.ssafy.ourdoc.domain.notification.dto.NotificationConditionRequest;
-import com.ssafy.ourdoc.domain.notification.dto.NotificationDetailDto;
+import com.ssafy.ourdoc.domain.notification.dto.NotificationDetailResponse;
 import com.ssafy.ourdoc.domain.notification.dto.NotificationListResponse;
 import com.ssafy.ourdoc.domain.notification.service.NotificationHistoryService;
 import com.ssafy.ourdoc.domain.notification.service.NotificationQueryService;
@@ -51,7 +51,7 @@ public class NotificationController {
 	}
 
 	@GetMapping("/{notificationId}")
-	public NotificationDetailDto getNotification(@Login User user,
+	public NotificationDetailResponse getNotification(@Login User user,
 		@PathVariable("notificationId") Long notificationId) {
 		return notificationQueryService.getNotification(user, notificationId);
 	}
