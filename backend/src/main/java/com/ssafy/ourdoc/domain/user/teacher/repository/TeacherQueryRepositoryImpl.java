@@ -8,12 +8,15 @@ import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 import static com.ssafy.ourdoc.global.common.enums.Active.*;
 import static com.ssafy.ourdoc.global.common.enums.EmploymentStatus.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.user.dto.TeacherQueryDto;
@@ -28,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
+@Transactional
 public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 
 	private final JPAQueryFactory queryFactory;
@@ -96,5 +100,15 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 			.fetchOne();
 
 		return new PageImpl<>(content, pageable, totalCount);
+	}
+
+	@Override
+	public void approveTeacher(Long teacherId) {
+		queryFactory.update(teacher)
+			.set(teacher.employmentStatus, 재직)
+			.set(teacher.certificateTime, LocalDateTime.now())
+			.set(teacher.updatedAt, LocalDateTime.now())
+			.where(teacher.id.eq(teacherId).and(teacher.employmentStatus.eq(비재직)))
+			.execute();
 	}
 }
