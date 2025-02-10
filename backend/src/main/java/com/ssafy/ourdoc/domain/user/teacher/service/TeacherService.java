@@ -35,6 +35,7 @@ import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
@@ -217,5 +218,13 @@ public class TeacherService {
 		} else {
 			studentClassQueryRepository.updateAuthStatusOfStudent(studentUser.getId(), 거절);
 		}
+	}
+
+	public Page<StudentPendingProfileDto> getPendingStudentList(User user, Pageable pageable) {
+		Long classId = teacherClassRepository.findByUserIdAndActive(user.getId(), 활성)
+			.orElseThrow(() -> new IllegalArgumentException("활성화된 학급이 없습니다."))
+			.getClassRoom().getId();
+
+		return studentClassQueryRepository.findStudentsByClassIdAndActiveAndAuthStatus(classId, 활성, AuthStatus.대기, pageable);
 	}
 }
