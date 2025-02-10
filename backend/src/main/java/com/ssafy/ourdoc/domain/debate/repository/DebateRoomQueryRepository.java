@@ -1,11 +1,12 @@
 package com.ssafy.ourdoc.domain.debate.repository;
 
-public interface DebateRoomQueryRepository {
 import java.util.List;
 import java.util.Optional;
 
+import com.ssafy.ourdoc.domain.debate.dto.OnlineUserDto;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 
+public interface DebateRoomQueryRepository {
 	Long countCurrentPeople(Long roomId);
 
 	Optional<RoomOnline> findActiveByRoomIdAndUserId(Long roomId, Long userId);
