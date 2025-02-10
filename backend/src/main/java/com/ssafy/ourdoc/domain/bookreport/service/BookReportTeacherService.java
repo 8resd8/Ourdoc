@@ -3,9 +3,10 @@ package com.ssafy.ourdoc.domain.bookreport.service;
 import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,24 +33,23 @@ public class BookReportTeacherService {
 	private final NotificationService notificationService;
 	private final BookReportFeedbackRepository bookReportFeedbackRepository;
 
-	public ReportTeacherListResponse getBookReports(User user, ReportTeacherRequest request) {
-		List<ReportTeacherResponse> convertDto = getReportTeacherResponses(
-			user, request);
-
-		return new ReportTeacherListResponse(convertDto);
+	public ReportTeacherListResponse getBookReports(User user, ReportTeacherRequest request, Pageable pageable) {
+		Page<ReportTeacherResponse> pageDto = getReportTeacherResponses(user, request, pageable);
+		return new ReportTeacherListResponse(pageDto);
 	}
 
-	private List<ReportTeacherResponse> getReportTeacherResponses(User user, ReportTeacherRequest request) {
-		List<ReportTeacherResponse> convertDto = bookReportRepository.bookReports(user.getId(), request).stream()
+	private Page<ReportTeacherResponse> getReportTeacherResponses(User user, ReportTeacherRequest request,
+		Pageable pageable) {
+		Page<ReportTeacherResponse> pageDto = bookReportRepository.bookReports(user.getId(), request, pageable)
 			.map(dto -> new ReportTeacherResponse(
 				dto.bookTitle(),
 				dto.studentNumber(),
 				dto.studentName(),
 				dto.createdAt(),
 				(dto.approveTime() == null) ? 있음 : 없음
-			))
-			.toList();
-		return convertDto;
+			));
+
+		return pageDto;
 	}
 
 	public void approveStamp(User user, Long bookReportId) {
