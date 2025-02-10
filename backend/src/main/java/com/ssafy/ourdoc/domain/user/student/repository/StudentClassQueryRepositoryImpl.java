@@ -4,6 +4,7 @@ import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
 import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudent.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
+import static com.ssafy.ourdoc.global.common.enums.Active.*;
 import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.ourdoc.domain.user.student.dto.InactiveStudentProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
 import com.ssafy.ourdoc.global.common.enums.Active;
@@ -108,12 +110,29 @@ public class StudentClassQueryRepositoryImpl implements StudentClassQueryReposit
 				classRoom.school.schoolName,
 				classRoom.grade,
 				classRoom.classNumber,
-				studentClass.studentNumber
+				studentClass.studentNumber,
+				user.active
 			))
 			.from(user)
 			.join(studentClass).on(user.id.eq(studentClass.user.id))
 			.join(studentClass.classRoom, classRoom)
 			.where(user.id.eq(userId))
+			.fetchOne();
+	}
+
+	@Override
+	public InactiveStudentProfileResponseDto findInactiveStudentProfileByUserId(Long userid) {
+		return queryFactory
+			.select(Projections.constructor(InactiveStudentProfileResponseDto.class,
+				user.profileImagePath,
+				user.name,
+				user.loginId,
+				user.active
+			))
+			.from(user)
+			.join(studentClass).on(user.id.eq(studentClass.user.id))
+			.join(studentClass.classRoom, classRoom)
+			.where(user.id.eq(userid))
 			.fetchOne();
 	}
 }
