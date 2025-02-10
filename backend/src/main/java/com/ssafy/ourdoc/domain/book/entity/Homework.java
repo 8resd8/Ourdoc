@@ -1,8 +1,8 @@
 package com.ssafy.ourdoc.domain.book.entity;
 
-import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Homework {
+public class Homework extends BaseTimeEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "homework_id", unique = true, nullable = false)

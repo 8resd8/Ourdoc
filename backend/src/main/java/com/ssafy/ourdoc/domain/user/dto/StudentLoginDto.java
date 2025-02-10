@@ -11,5 +11,6 @@ public record StudentLoginDto(
 	int grade,
 	int classNumber,
 	int studentNumber,
-	TempPassword tempPassword
+	TempPassword tempPassword,
+	String ProfileImagePath
 ) {}

@@ -29,7 +29,6 @@ public class UserController {
 	private final UserService userService;
 	private final JwtUtil jwtUtil;
 
-
 	// 1. 사용자 로그인
 	@PostMapping("/signin")
 	public ResponseEntity<?> Login(@RequestBody LoginRequest request) {

@@ -69,4 +69,9 @@ public class Room extends BaseTimeEntity {
 	public void updateMaxPeople(int maxPeople) {
 		this.maxPeople = maxPeople;
 	}
+
+	public void updateEndAt(LocalDateTime endAt) {
+		this.endAt = endAt;
+	}
+
 }

@@ -7,11 +7,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,7 +30,7 @@ public class BookReportFeedBack extends BaseTimeEntity {
 	@Column(name = "book_report_feedback_id")
 	private Long id;
 
-	@OneToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "book_report_id")
 	private BookReport bookReport;
 
@@ -47,7 +48,7 @@ public class BookReportFeedBack extends BaseTimeEntity {
 		this.comment = comment;
 	}
 
-	public void updateComment(String comment) {
+	public void updateTeacherComment(String comment) {
 		if (bookReport.getApproveTime() != null) {
 			throw new IllegalArgumentException("칭찬도장이 있으면 더이상 수정 및 삭제할 수 없습니다.");
 		}

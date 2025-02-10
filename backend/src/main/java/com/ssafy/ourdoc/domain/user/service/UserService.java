@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.user.service;
 
+import static com.ssafy.ourdoc.global.common.enums.EmploymentStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -15,6 +16,7 @@ import com.ssafy.ourdoc.domain.user.dto.StudentQueryDto;
 import com.ssafy.ourdoc.domain.user.dto.TeacherLoginDto;
 import com.ssafy.ourdoc.domain.user.dto.TeacherQueryDto;
 import com.ssafy.ourdoc.domain.user.dto.request.CheckPasswordRequest;
+import com.ssafy.ourdoc.domain.user.dto.response.AdminLoginDto;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.entity.Student;
@@ -22,6 +24,7 @@ import com.ssafy.ourdoc.domain.user.student.repository.StudentQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherQueryRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
+import com.ssafy.ourdoc.global.common.enums.EmploymentStatus;
 import com.ssafy.ourdoc.global.config.JwtConfig;
 import com.ssafy.ourdoc.global.exception.UserFailedException;
 import com.ssafy.ourdoc.global.util.JwtBlacklistService;
@@ -44,23 +47,23 @@ public class UserService {
 	private final StudentQueryRepository studentQueryRepository;
 	private final TeacherQueryRepository teacherQueryRepository;
 
-	// 1. 사용자 로그인
 	public ResponseEntity<?> login(LoginRequest request) {
-		// 유저 검증 (로그인 중복, 비밀번호)
 		User user = validation(request);
 
 		if (request.userType().equals(학생)) {
 			return loginStudent(request, user);
 		} else if (request.userType().equals(교사)) {
 			return loginTeacher(request, user);
-		} else {
-
+		} else if (request.userType().equals(관리자)) {
+			return loginAdmin(request, user);
 		}
 
 		throw new UserFailedException("알수없는 이유로 로그인 실패");
 	}
 
 	private ResponseEntity<?> loginTeacher(LoginRequest request, User user) {
+		checkEmploymentStatus(user);
+
 		TeacherQueryDto search = teacherQueryRepository.getTeacherLoginDto(user.getId());
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer " + getAccessToken(request));
@@ -68,9 +71,17 @@ public class UserService {
 		saveRefreshTokenAndSetCookie(user, headers);
 
 		TeacherLoginDto response = new TeacherLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
-			search.schoolName(), search.grade(), search.classNumber());
+			search.schoolName(), search.grade(), search.classNumber(), user.getProfileImagePath());
 
 		return ResponseEntity.ok().headers(headers).body(response);
+	}
+
+	private void checkEmploymentStatus(User user) {
+		if (teacherRepository.findByUser(user).getEmploymentStatus().equals(비재직)) {
+			throw new UserFailedException("재직중인 교사가 아닙니다.");
+		} else if (teacherRepository.findByUser(user).getEmploymentStatus() == null) {
+			throw new UserFailedException("알 수 없는 이유로 로그인 할 수 없습니다.");
+		}
 	}
 
 	private ResponseEntity<StudentLoginDto> loginStudent(LoginRequest request, User user) {
@@ -83,7 +94,18 @@ public class UserService {
 
 		StudentLoginDto response = new StudentLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
 			search.schoolName(), search.grade(), search.classNumber(), search.studentNumber(),
-			student.getTempPassword());
+			student.getTempPassword(), user.getProfileImagePath());
+
+		return ResponseEntity.ok().headers(headers).body(response);
+	}
+
+	private ResponseEntity<AdminLoginDto> loginAdmin(LoginRequest request, User user) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", "Bearer " + getAccessToken(request));
+
+		saveRefreshTokenAndSetCookie(user, headers);
+
+		AdminLoginDto response = new AdminLoginDto(user.getLoginId(), user.getName(), user.getUserType(), user.getProfileImagePath());
 
 		return ResponseEntity.ok().headers(headers).body(response);
 	}

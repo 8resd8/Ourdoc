@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendDetailStudent;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendRequest;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseStudent;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseTeacher;
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailStudent;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailTeacher;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseStudent;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
@@ -36,13 +36,13 @@ public class BookRecommendService {
 	private final TeacherClassRepository teacherClassRepository;
 	private final StudentClassRepository studentClassRepository;
 	private final ClassRoomRepository classRoomRepository;
+	private final BookService bookService;
 
-	public void addBookRecommend(BookRecommendRequest request, User user) {
+	public void addBookRecommend(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("추천도서를 생성할 권한이 없습니다.");
 		}
-		Book book = bookRepository.findById(request.bookId())
-			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		Book book = bookService.findBookById(request.bookId());
 		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 			.map(TeacherClass::getClassRoom)
 			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
@@ -54,12 +54,11 @@ public class BookRecommendService {
 		bookRecommendRepository.save(bookRecommend);
 	}
 
-	public void deleteBookRecommend(BookRecommendRequest request, User user) {
+	public void deleteBookRecommend(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("추천도서를 삭제할 권한이 없습니다.");
 		}
-		Book book = bookRepository.findById(request.bookId())
-			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		Book book = bookService.findBookById(request.bookId());
 		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 			.map(TeacherClass::getClassRoom)
 			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));

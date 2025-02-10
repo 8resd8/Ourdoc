@@ -9,5 +9,6 @@ public record TeacherLoginDto(
 	UserType role,
 	String schoolName,
 	int grade,
-	int classNumber
+	int classNumber,
+	String profileImagePath
 ) {}

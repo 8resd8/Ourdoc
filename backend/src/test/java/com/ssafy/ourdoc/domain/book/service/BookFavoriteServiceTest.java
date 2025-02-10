@@ -20,7 +20,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.ssafy.ourdoc.domain.book.dto.BookFavoriteRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
@@ -36,6 +36,9 @@ public class BookFavoriteServiceTest {
 
 	@Mock
 	private BookFavoriteRepository bookFavoriteRepository;
+
+	@Mock
+	private BookService bookService;
 
 	@InjectMocks
 	private BookFavoriteService bookFavoriteService;
@@ -53,10 +56,10 @@ public class BookFavoriteServiceTest {
 	void addBookFavoriteSuccess() {
 		User user = Mockito.mock(User.class);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 		when(bookFavoriteRepository.existsByBookAndUser(any(), any())).thenReturn(false);
 
-		bookFavoriteService.addBookFavorite(new BookFavoriteRequest(1L), user);
+		bookFavoriteService.addBookFavorite(new BookRequest(1L), user);
 
 		verify(bookFavoriteRepository, times(1)).save(any());
 	}
@@ -65,8 +68,9 @@ public class BookFavoriteServiceTest {
 	@DisplayName("책 관심 도서 등록 실패-도서 없음")
 	void addBookFavoriteFailSinceNoBook() {
 		User user = Mockito.mock(User.class);
-
-		assertThatThrownBy(() -> bookFavoriteService.addBookFavorite(new BookFavoriteRequest(999L), user)).isInstanceOf(
+		when(bookService.findBookById(anyLong()))
+			.thenThrow(new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		assertThatThrownBy(() -> bookFavoriteService.addBookFavorite(new BookRequest(999L), user)).isInstanceOf(
 			NoSuchElementException.class).hasMessage("해당하는 ID의 도서가 없습니다.");
 	}
 
@@ -75,10 +79,10 @@ public class BookFavoriteServiceTest {
 	void addBookFavoriteFailSinceDuplicate() {
 		User user = Mockito.mock(User.class);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 		when(bookFavoriteRepository.existsByBookAndUser(any(), any())).thenReturn(true);
 
-		assertThatThrownBy(() -> bookFavoriteService.addBookFavorite(new BookFavoriteRequest(1L), user)).isInstanceOf(
+		assertThatThrownBy(() -> bookFavoriteService.addBookFavorite(new BookRequest(1L), user)).isInstanceOf(
 			IllegalArgumentException.class).hasMessage("이미 관심 도서로 등록했습니다.");
 	}
 
@@ -86,11 +90,11 @@ public class BookFavoriteServiceTest {
 	@DisplayName("책 관심 도서 삭제 실패-도서 없음")
 	void deleteBookFavoriteFailSinceNoBook() {
 		User user = Mockito.mock(User.class);
-
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
+		when(bookService.findBookById(anyLong()))
+			.thenThrow(new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 
 		assertThatThrownBy(
-			() -> bookFavoriteService.deleteBookFavorite(new BookFavoriteRequest(999L), user)).isInstanceOf(
+			() -> bookFavoriteService.deleteBookFavorite(new BookRequest(999L), user)).isInstanceOf(
 			NoSuchElementException.class).hasMessage("해당하는 ID의 도서가 없습니다.");
 	}
 
@@ -99,11 +103,11 @@ public class BookFavoriteServiceTest {
 	void deleteBookFavoriteFailSinceDuplicate() {
 		User user = Mockito.mock(User.class);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 		when(bookFavoriteRepository.findByBookAndUser(any(), any())).thenReturn(Optional.empty());
 
 		assertThatThrownBy(
-			() -> bookFavoriteService.deleteBookFavorite(new BookFavoriteRequest(1L), user)).isInstanceOf(
+			() -> bookFavoriteService.deleteBookFavorite(new BookRequest(1L), user)).isInstanceOf(
 			IllegalArgumentException.class).hasMessage("관심 도서로 등록한 도서가 아닙니다.");
 	}
 
