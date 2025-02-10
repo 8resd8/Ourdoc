@@ -5,9 +5,10 @@ interface ModalProps {
   isOpen: boolean;
   onConfirm: () => void;
   onCancel: () => void;
+  type: string;
 }
 
-const Modal = ({ isOpen, onConfirm, onCancel }: ModalProps) => {
+const Modal = ({ type, isOpen, onConfirm, onCancel }: ModalProps) => {
   if (!isOpen) return null;
 
   return (
@@ -23,7 +24,11 @@ const Modal = ({ isOpen, onConfirm, onCancel }: ModalProps) => {
           <div>생년월일은 2000년 4월 23일,</div>
           <div>성별은 남자,</div>
           <div>사용하시려는 아이디는 smile0423 입니다.</div>
-          <div className="mt-4">회원가입을 진행할까요?</div>
+          {type === 'setup' ? (
+            <div className="mt-4 headline-small">소속변경을 진행할까요?</div>
+          ) : (
+            <div className="mt-4 headline-small">회원가입을 진행할까요?</div>
+          )}
         </div>
         <div className={classes.buttonContainer}>
           <button
