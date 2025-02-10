@@ -13,6 +13,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportCommentRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponse;
+import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponseWithId;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportFeedbackRepository;
@@ -43,6 +44,19 @@ public class BookReportTeacherService {
 		List<ReportTeacherResponse> convertDto = bookReportRepository.bookReports(user.getId(), request).stream()
 			.map(dto -> new ReportTeacherResponse(
 				dto.bookTitle(),
+				dto.studentNumber(),
+				dto.studentName(),
+				dto.createdAt(),
+				(dto.approveTime() == null) ? 있음 : 없음
+			))
+			.toList();
+		return convertDto;
+	}
+
+	public List<ReportTeacherResponseWithId> getReportTeacherHomeworkResponses(Long homeworkId) {
+		List<ReportTeacherResponseWithId> convertDto = bookReportRepository.bookReportsHomework(homeworkId).stream()
+			.map(dto -> new ReportTeacherResponseWithId(
+				dto.id(),
 				dto.studentNumber(),
 				dto.studentName(),
 				dto.createdAt(),

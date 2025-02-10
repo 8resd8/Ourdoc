@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.domain.book.dto;
+package com.ssafy.ourdoc.domain.book.dto.recommend;
 
 import java.util.List;
 

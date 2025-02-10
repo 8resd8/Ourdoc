@@ -17,8 +17,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
-import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 
@@ -69,7 +69,7 @@ class BookServiceTest {
 	@Test
 	@DisplayName("책 제목 조회 테스트")
 	void searchBookByTitle() {
-		BookRequest request = new BookRequest("홍길동전", "", "");
+		BookSearchRequest request = new BookSearchRequest("홍길동전", "", "");
 		List<Book> mockBooks = List.of(
 			Book.builder().isbn("1234").title("홍길동전").author("허균").publisher("조선출판사").build(),
 			Book.builder().isbn("12345").title("홍길동전").author("허균").publisher("고전문학사").build()
@@ -85,7 +85,7 @@ class BookServiceTest {
 	@Test
 	@DisplayName("책 제목과 출판사 조회 테스트")
 	void searchBookByTitleAndPublisher() {
-		BookRequest request = new BookRequest("홍길동전", "", "고전문학사");
+		BookSearchRequest request = new BookSearchRequest("홍길동전", "", "고전문학사");
 		List<Book> mockBooks = List.of(
 			Book.builder().isbn("12345").title("홍길동전").author("허균").publisher("고전문학사").build()
 		);

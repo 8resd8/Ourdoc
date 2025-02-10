@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendRequest;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseStudent;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendResponseTeacher;
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseStudent;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseTeacher;
 import com.ssafy.ourdoc.domain.book.service.BookRecommendService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
@@ -24,7 +24,7 @@ public class BookRecommendController {
 	private final BookRecommendService bookRecommendService;
 
 	@PostMapping("/teachers/recommend")
-	public void addRecommend(@RequestBody BookRecommendRequest request, @Login User user) {
+	public void addRecommend(@RequestBody BookRequest request, @Login User user) {
 		bookRecommendService.addBookRecommend(request, user);
 	}
 

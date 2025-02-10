@@ -20,7 +20,7 @@ import com.ssafy.ourdoc.data.entity.ClassRoomSample;
 import com.ssafy.ourdoc.data.entity.SchoolSample;
 import com.ssafy.ourdoc.data.entity.TeacherClassSample;
 import com.ssafy.ourdoc.data.entity.UserSample;
-import com.ssafy.ourdoc.domain.book.dto.BookRecommendRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
@@ -44,6 +44,9 @@ public class BookRecommendServiceTest {
 	@Mock
 	private TeacherClassRepository teacherClassRepository;
 
+	@Mock
+	private BookService bookService;
+
 	@InjectMocks
 	private BookRecommendService bookRecommendService;
 
@@ -63,13 +66,13 @@ public class BookRecommendServiceTest {
 		ClassRoom classRoom = ClassRoomSample.classRoom(school);
 		TeacherClass teacherClass = TeacherClassSample.teacherClass(user, classRoom);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 
 		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(Optional.of(teacherClass));
 
 		when(bookRecommendRepository.existsByBookAndUserAndClassRoom(any(), any(), any())).thenReturn(false);
 
-		bookRecommendService.addBookRecommend(new BookRecommendRequest(1L), user);
+		bookRecommendService.addBookRecommend(new BookRequest(1L), user);
 
 		verify(bookRecommendRepository, times(1)).save(any());
 	}
@@ -80,7 +83,7 @@ public class BookRecommendServiceTest {
 		User user = UserSample.user(UserType.학생);
 
 		assertThatThrownBy(
-			() -> bookRecommendService.addBookRecommend(new BookRecommendRequest(1L), user)).isInstanceOf(
+			() -> bookRecommendService.addBookRecommend(new BookRequest(1L), user)).isInstanceOf(
 			ForbiddenException.class).hasMessage("추천도서를 생성할 권한이 없습니다.");
 	}
 
@@ -88,9 +91,11 @@ public class BookRecommendServiceTest {
 	@DisplayName("책 추천 도서 등록 실패-도서 없음")
 	void addBookRecommendFailSinceNoBook() {
 		User user = UserSample.user(UserType.교사);
+		when(bookService.findBookById(anyLong()))
+			.thenThrow(new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 
 		assertThatThrownBy(
-			() -> bookRecommendService.addBookRecommend(new BookRecommendRequest(999L), user)).isInstanceOf(
+			() -> bookRecommendService.addBookRecommend(new BookRequest(999L), user)).isInstanceOf(
 			NoSuchElementException.class).hasMessage("해당하는 ID의 도서가 없습니다.");
 	}
 
@@ -102,13 +107,13 @@ public class BookRecommendServiceTest {
 		ClassRoom classRoom = ClassRoomSample.classRoom(school);
 		TeacherClass teacherClass = TeacherClassSample.teacherClass(user, classRoom);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 
 		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(Optional.of(teacherClass));
 		when(bookRecommendRepository.existsByBookAndUserAndClassRoom(any(), any(), any())).thenReturn(true);
 
 		assertThatThrownBy(
-			() -> bookRecommendService.addBookRecommend(new BookRecommendRequest(1L), user)).isInstanceOf(
+			() -> bookRecommendService.addBookRecommend(new BookRequest(1L), user)).isInstanceOf(
 			IllegalArgumentException.class).hasMessage("이미 추천 도서로 등록했습니다.");
 	}
 
@@ -116,11 +121,11 @@ public class BookRecommendServiceTest {
 	@DisplayName("책 추천 도서 삭제 실패-도서 없음")
 	void deleteBookRecommendFailSinceNoBook() {
 		User user = UserSample.user(UserType.교사);
-
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
+		when(bookService.findBookById(anyLong()))
+			.thenThrow(new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
 
 		assertThatThrownBy(
-			() -> bookRecommendService.deleteBookRecommend(new BookRecommendRequest(999L), user)).isInstanceOf(
+			() -> bookRecommendService.deleteBookRecommend(new BookRequest(999L), user)).isInstanceOf(
 			NoSuchElementException.class).hasMessage("해당하는 ID의 도서가 없습니다.");
 	}
 
@@ -132,12 +137,12 @@ public class BookRecommendServiceTest {
 		ClassRoom classRoom = ClassRoomSample.classRoom(school);
 		TeacherClass teacherClass = TeacherClassSample.teacherClass(user, classRoom);
 
-		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
+		when(bookService.findBookById(anyLong())).thenReturn(book);
 		when(teacherClassRepository.findByUserIdAndActive(any(), any())).thenReturn(Optional.of(teacherClass));
 		when(bookRecommendRepository.findByBookAndUserAndClassRoom(any(), any(), any())).thenReturn(Optional.empty());
 
 		assertThatThrownBy(
-			() -> bookRecommendService.deleteBookRecommend(new BookRecommendRequest(1L), user)).isInstanceOf(
+			() -> bookRecommendService.deleteBookRecommend(new BookRequest(1L), user)).isInstanceOf(
 			IllegalArgumentException.class).hasMessage("추천 도서로 등록한 도서가 아닙니다.");
 	}
 

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ssafy.ourdoc.domain.book.dto.BookFavoriteRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.service.BookFavoriteService;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -25,19 +25,19 @@ public class BookFavoriteController {
 
 	private final BookFavoriteService bookFavoriteService;
 
-	@PostMapping("")
-	public void addFavorite(@RequestBody BookFavoriteRequest request, @Login User user) {
+	@PostMapping
+	public void addFavorite(@RequestBody BookRequest request, @Login User user) {
 		bookFavoriteService.addBookFavorite(request, user);
 	}
 
-	@GetMapping("")
+	@GetMapping
 	public ResponseEntity<List<BookResponse>> getFavorite(@Login User user) {
 		List<BookResponse> books = bookFavoriteService.getBookFavorites(user);
 		return ResponseEntity.ok(books);
 	}
 
-	@DeleteMapping("")
-	public void deleteFavorite(@RequestBody BookFavoriteRequest request, @Login User user) {
+	@DeleteMapping
+	public void deleteFavorite(@RequestBody BookRequest request, @Login User user) {
 		bookFavoriteService.deleteBookFavorite(request, user);
 	}
 }
