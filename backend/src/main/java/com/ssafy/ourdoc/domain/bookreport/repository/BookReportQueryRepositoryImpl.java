@@ -12,6 +12,7 @@ import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 
 import java.time.Year;
 import java.util.List;
+import java.util.Optional;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -109,6 +110,21 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			).fetch();
 	}
 
+	@Override
+	public long myBookReportsCount(Long userId, int grade) {
+		return Optional.ofNullable(
+			queryFactory.select(bookReport.count())
+				.from(bookReport)
+				.join(bookReport.studentClass, studentClass)
+				.join(studentClass.classRoom, classRoom)
+				.where(
+					studentClass.user.id.eq(userId),
+					classRoom.grade.eq(grade),
+					bookReport.approveTime.isNotNull()
+				).fetchOne()
+		).orElse(0L);
+	}
+
 	private BooleanExpression eqYear(Integer year) {
 		return year == null ? null : classRoom.year.eq(Year.of(year));
 	}
@@ -126,4 +142,5 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 		return (schoolName != null && !schoolName.isEmpty())
 			? school.schoolName.eq(schoolName) : null;
 	}
+
 }
