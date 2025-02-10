@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.time.Year;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -32,11 +33,11 @@ import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
-import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
-import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeRequest;
@@ -178,7 +179,8 @@ public class TeacherService {
 		Long classId = teacherClassRepository.findByUserIdAndActive(user.getId(), 활성)
 			.orElseThrow(() -> new IllegalArgumentException("조회할 학급이 없습니다."))
 			.getClassRoom().getId();
-		Page<StudentProfileDto> studentProfileDtoList = studentClassQueryRepository.findStudentsByClassRoomIdAndActiveAndAuthStatus(classId, 활성, 승인, pageable);
+		Page<StudentProfileDto> studentProfileDtoList = studentClassQueryRepository.findStudentsByClassRoomIdAndActiveAndAuthStatus(
+			classId, 활성, 승인, pageable);
 		return new StudentListResponse(studentProfileDtoList);
 	}
 
@@ -205,7 +207,8 @@ public class TeacherService {
 		return "학생 소속 변경이 " + (request.isApproved() ? "승인" : "거절") + "되었습니다.";
 	}
 
-	private void changeAuthStatusOfStudentClass(VerificateAffiliationChangeRequest request, User studentUser, Long classId) {
+	private void changeAuthStatusOfStudentClass(VerificateAffiliationChangeRequest request, User studentUser,
+		Long classId) {
 		if (request.isApproved()) {
 			studentClassQueryRepository.updateAuthStatusOfStudentClass(studentUser.getId(), classId, 승인);
 		} else {
