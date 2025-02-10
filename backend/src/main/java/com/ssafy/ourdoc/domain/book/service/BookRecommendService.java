@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailStudent;
 import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailTeacher;
 import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseStudent;
@@ -68,15 +69,16 @@ public class BookRecommendService {
 		bookRecommendRepository.delete(bookRecommend);
 	}
 
-	public BookRecommendResponseTeacher getBookRecommendsTeacher(User user) {
+	public BookRecommendResponseTeacher getBookRecommendsTeacher(BookSearchRequest request, User user) {
 		ClassRoom userClassRoom = getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
 		int grade = userClassRoom.getGrade();
 		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
 
 		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
-
-		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomIn(sameGradeClass);
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
+			searchedBooks);
 
 		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
@@ -85,11 +87,13 @@ public class BookRecommendService {
 		return new BookRecommendResponseTeacher(studentCount, details);
 	}
 
-	public BookRecommendResponseTeacher getBookRecommendsTeacherClass(User user) {
+	public BookRecommendResponseTeacher getBookRecommendsTeacherClass(BookSearchRequest request, User user) {
 		ClassRoom userClassRoom = getUserClassRoom(user);
 		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
 
-		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoom(userClassRoom);
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomAndBookIn(userClassRoom,
+			searchedBooks);
 
 		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
