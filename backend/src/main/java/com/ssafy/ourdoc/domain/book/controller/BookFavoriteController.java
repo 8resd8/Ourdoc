@@ -25,18 +25,18 @@ public class BookFavoriteController {
 
 	private final BookFavoriteService bookFavoriteService;
 
-	@PostMapping("")
+	@PostMapping
 	public void addFavorite(@RequestBody BookRequest request, @Login User user) {
 		bookFavoriteService.addBookFavorite(request, user);
 	}
 
-	@GetMapping("")
+	@GetMapping
 	public ResponseEntity<List<BookResponse>> getFavorite(@Login User user) {
 		List<BookResponse> books = bookFavoriteService.getBookFavorites(user);
 		return ResponseEntity.ok(books);
 	}
 
-	@DeleteMapping("")
+	@DeleteMapping
 	public void deleteFavorite(@RequestBody BookRequest request, @Login User user) {
 		bookFavoriteService.deleteBookFavorite(request, user);
 	}
