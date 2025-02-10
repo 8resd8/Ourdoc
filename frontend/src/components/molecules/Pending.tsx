@@ -14,7 +14,7 @@ const Pending = () => {
           <div className="text-center">
             <div className="headline-medium text-gray-800">승인 중입니다.</div>
             <div className="headline-medium text-gray-800 mt-2">
-              관리자 혹은 담방 선생님께 문의해주세요.
+              관리자 혹은 담당 선생님께 문의해주세요.
             </div>
             <div className="flex justify-center mt-4">
               <img

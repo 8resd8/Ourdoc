@@ -18,21 +18,15 @@ const Header: React.FC<HeaderProps> = ({ userName }) => {
           >
             메인
           </a>
-          <a
-            href="/study"
-            className="text-sm  headline-medium text-gray-800 hover:text-red-500"
-          >
+          <a href="/study" className="text-sm  headline-medium text-gray-800 ">
             학급
           </a>
-          <a
-            href="/books"
-            className="text-sm  headline-medium text-gray-800 hover:text-red-500"
-          >
+          <a href="/books" className="text-sm  headline-medium text-gray-800 ">
             도서
           </a>
           <a
             href="/records"
-            className="text-sm  headline-medium text-gray-800 hover:text-red-500"
+            className="text-sm  headline-medium text-gray-800 "
           >
             독서록
           </a>
