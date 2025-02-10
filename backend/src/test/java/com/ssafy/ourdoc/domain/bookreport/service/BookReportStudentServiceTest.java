@@ -4,7 +4,6 @@ import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,13 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.FeedbackRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
@@ -32,7 +29,6 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
-import com.ssafy.ourdoc.global.common.enums.EvaluatorType;
 import com.ssafy.ourdoc.global.common.enums.HomeworkStatus;
 import com.ssafy.ourdoc.global.common.enums.OcrCheck;
 
@@ -42,14 +38,14 @@ class BookReportStudentServiceTest {
 	@InjectMocks
 	private BookReportStudentService bookReportStudentService;
 
+	@InjectMocks
+	private BookReportService bookReportService;
+
 	@Mock
 	private BookReportRepository bookReportRepository;
 
 	@Mock
 	private BookReportFeedbackRepository feedbackRepository;
-
-	@Mock
-	private BookReportService bookReportService;
 
 	@Mock
 	private StudentClassRepository studentClassRepository;
