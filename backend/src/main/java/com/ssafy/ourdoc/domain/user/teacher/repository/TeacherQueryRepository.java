@@ -14,4 +14,6 @@ public interface TeacherQueryRepository {
 	TeacherProfileResponseDto findTeacherProfileByUserId(Long userId);
 
 	Page<TeacherVerificationDto> findPendingTeachers(AuthStatus authStatus, Pageable pageable);
+
+	void approveTeacher(Long teacherId);
 }
