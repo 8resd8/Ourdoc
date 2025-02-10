@@ -125,6 +125,41 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 		).orElse(0L);
 	}
 
+	@Override
+	public double classAverageBookReportsCount(Long userId, int grade) {
+		Long classRoomId = queryFactory
+			.select(studentClass.classRoom.id)
+			.from(studentClass)
+			.join(studentClass.classRoom, classRoom)
+			.where(
+				studentClass.user.id.eq(userId),
+				classRoom.grade.eq(grade)
+			).fetchOne();
+
+		long count = Optional.ofNullable(
+				queryFactory
+					.select(bookReport.count())
+					.from(bookReport)
+					.join(bookReport.studentClass, studentClass)
+					.join(studentClass.classRoom, classRoom)
+					.where(
+						classRoom.id.eq(classRoomId),
+						bookReport.approveTime.isNotNull()
+					).fetchOne())
+			.orElse(0L);
+
+		long studentCount = Optional.ofNullable(
+			queryFactory
+				.select(studentClass.count())
+				.from(studentClass)
+				.join(studentClass.classRoom, classRoom)
+				.where(classRoom.id.eq(classRoomId))
+				.fetchOne()
+		).orElse(0L);
+
+		return (studentCount == 0) ? 0.0 : (double)count / studentCount;
+	}
+
 	private BooleanExpression eqYear(Integer year) {
 		return year == null ? null : classRoom.year.eq(Year.of(year));
 	}
