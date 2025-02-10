@@ -241,8 +241,12 @@ public class TeacherService {
 		throw new IllegalArgumentException("알 수 없는 이유로 조회 실패");
 	}
 
-	public List<ClassRoom> getClassRoomsTeacher(Long userId) {
-		return classRoomRepository.findByTeacher(userId);
+	public List<SchoolClassDto> getClassRoomsTeacher(Long userId) {
+		List<SchoolClassDto> schoolClassDtos = classRoomRepository.findByTeacher(userId);
+		if (schoolClassDtos.isEmpty()) {
+			throw new NoSuchElementException("해당하는 사용자에 해당하는 학급 정보가 없습니다.");
+		}
+		return schoolClassDtos;
 	}
 
 	public List<SchoolClassDto> getClassRoomsTeacherAndYear(Long userId, Year year) {

@@ -34,11 +34,22 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 	}
 
 	@Override
-	public List<ClassRoom> findByTeacher(Long userId) {
-		return queryFactory.selectFrom(classRoom)
-			.join(classRoom, teacherClass.classRoom)
+	public List<SchoolClassDto> findByTeacher(Long userId) {
+		return queryFactory.select(new QSchoolClassDto(
+				classRoom.id,
+				school.schoolName,
+				classRoom.grade,
+				classRoom.classNumber,
+				classRoom.year,
+				studentClass.count().intValue()))
+			.from(classRoom)
 			.join(classRoom.school, school)
-			.where(teacherClass.user.id.eq(userId))
+			.join(teacherClass).on(teacherClass.classRoom.eq(classRoom))
+			.leftJoin(studentClass).on(studentClass.classRoom.eq(classRoom))
+			.where(
+				teacherClass.user.id.eq(userId)
+			)
+			.groupBy(classRoom.id)
 			.fetch();
 	}
 
