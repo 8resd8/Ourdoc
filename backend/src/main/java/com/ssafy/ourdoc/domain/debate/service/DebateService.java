@@ -28,7 +28,7 @@ public class DebateService {
 	private final OpenviduService openviduService;
 
 	public Page<RoomDto> getDebateRooms(Pageable pageable) {
-		Page<Room> roomPage = debateRoomRepository.findAll(pageable);
+		Page<Room> roomPage = debateRoomRepository.findByEndAtIsNull(pageable);
 		return roomPage.map(room -> {
 			Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(room.getId());
 			return new RoomDto(
@@ -90,5 +90,13 @@ public class DebateService {
 		debateRoomOnlineRepository.save(roomOnline);
 
 		return token;
+	}
+
+	public void leaveDebateRoom(User user, Long roomId) {
+		RoomOnline roomOnline = debateRoomOnlineRepository
+			.findActiveByRoomIdAndUserId(roomId, user.getId())
+			.orElseThrow(() -> new IllegalArgumentException("해당 방에 접속 중인 유저가 아닙니다."));
+		debateRoomOnlineRepository.updateEndAt(roomOnline.getId());
+		debateRoomOnlineRepository.save(roomOnline);
 	}
 }

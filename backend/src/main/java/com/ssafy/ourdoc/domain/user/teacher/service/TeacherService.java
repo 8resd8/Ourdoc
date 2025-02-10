@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.time.Year;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -35,10 +34,10 @@ import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
-import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
+import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
@@ -194,9 +193,9 @@ public class TeacherService {
 				classId, 대기)
 			.orElseThrow(() -> new IllegalArgumentException("해당 학생의 소속 반 신청 정보를 찾을 수 없습니다."));
 
-		if (studentRepository.findByUser(studentUser).getAuthStatus() == 거절) {
+		if (studentRepository.findByUser(studentUser).getAuthStatus().equals(거절)) {
 			throw new IllegalArgumentException("학생 인증이 되지 않은 회원입니다.");
-		} else if (studentRepository.findByUser(studentUser).getAuthStatus() == 대기) {
+		} else if (studentRepository.findByUser(studentUser).getAuthStatus().equals(대기)) {
 			changeAuthStatusOfStudent(request, studentUser);
 			changeAuthStatusOfStudentClass(request, studentUser, classId);
 		} else {
@@ -227,7 +226,16 @@ public class TeacherService {
 			.orElseThrow(() -> new IllegalArgumentException("활성화된 학급이 없습니다."))
 			.getClassRoom().getId();
 
-		return studentClassQueryRepository.findStudentsByClassIdAndActiveAndAuthStatus(classId, 활성, AuthStatus.대기, pageable);
+		return studentClassQueryRepository.findStudentsByClassIdAndActiveAndAuthStatus(classId, 활성, 대기, pageable);
+	}
+
+	public TeacherProfileResponseDto getTeacherProfile(User user) {
+		if (user.getActive().equals(활성)) {
+			return teacherQueryRepository.findTeacherProfileByUserId(user.getId());
+		} else if (user.getActive().equals(비활성)) {
+			throw new IllegalArgumentException("재직중인 교사가 아닙니다.");
+		}
+		throw new IllegalArgumentException("알 수 없는 이유로 조회 실패");
 	}
 
 	public List<ClassRoom> getClassRoomsTeacher(Long userId) {
