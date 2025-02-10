@@ -117,7 +117,7 @@ public class StudentClassQueryRepositoryImpl implements StudentClassQueryReposit
 				studentClass.active.eq(active),
 				studentClass.authStatus.eq(authStatus)
 			)
-			.orderBy(user.name.asc()) // 이름순 정렬
+			.orderBy(studentClass.createdAt.asc()) // 이름순 정렬
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
