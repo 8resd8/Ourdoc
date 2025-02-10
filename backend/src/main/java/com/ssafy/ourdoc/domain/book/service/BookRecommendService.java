@@ -15,6 +15,7 @@ import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
+import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -37,6 +38,7 @@ public class BookRecommendService {
 	private final StudentClassRepository studentClassRepository;
 	private final ClassRoomRepository classRoomRepository;
 	private final BookService bookService;
+	private final BookReportRepository bookReportRepository;
 
 	public void addBookRecommend(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
@@ -77,10 +79,9 @@ public class BookRecommendService {
 
 		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomIn(sameGradeClass);
 
-		int submitCount = 0; // 독서록 제출 개수
 		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
-			.map(bookRecommend -> BookRecommendDetailTeacher.of(bookRecommend.getBook(), bookRecommend, submitCount))
-			.collect(Collectors.toList());
+			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
+			.toList();
 
 		return new BookRecommendResponseTeacher(studentCount, details);
 	}
@@ -91,10 +92,9 @@ public class BookRecommendService {
 
 		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoom(userClassRoom);
 
-		int submitCount = 0; // 독서록 제출 개수
 		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
-			.map(bookRecommend -> BookRecommendDetailTeacher.of(bookRecommend.getBook(), bookRecommend, submitCount))
-			.collect(Collectors.toList());
+			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
+			.toList();
 
 		return new BookRecommendResponseTeacher(studentCount, details);
 	}
@@ -124,5 +124,11 @@ public class BookRecommendService {
 				.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
 		}
 		throw new NoSuchElementException("현재 유효한 상태의 학급 정보가 없습니다.");
+	}
+
+	private BookRecommendDetailTeacher toBookRecommendDetailTeacher(BookRecommend bookRecommend, Long userId) {
+		Long bookId = bookRecommend.getBook().getId();
+		int submitCount = bookReportRepository.countByUserIdAndBookId(userId, bookId);
+		return BookRecommendDetailTeacher.of(bookRecommend, submitCount);
 	}
 }
