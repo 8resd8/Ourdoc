@@ -15,4 +15,4 @@ public interface BookReportRepository extends JpaRepository<BookReport, Long>, B
 
 	@Query("select count(*) from BookReport br join br.studentClass sc where sc.user.id = :userId and br.book.id = :bookId")
 	int countByUserIdAndBookId(@Param("userId") Long userId, @Param("bookId") Long bookId);
-
+}

@@ -64,8 +64,9 @@ public class BookReport extends BaseTimeEntity {
 	@Column(name = "approve_time")
 	private LocalDateTime approveTime;
 
-	@OneToMany(mappedBy = "bookReport", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "bookReport", fetch = FetchType.LAZY, cascade = {CascadeType.ALL, CascadeType.REMOVE})
 	private List<BookReportFeedBack> bookReportFeedBack = new ArrayList<>();
+
 
 	@Builder
 	public BookReport(StudentClass studentClass, Book book, Homework homework, String beforeContent,

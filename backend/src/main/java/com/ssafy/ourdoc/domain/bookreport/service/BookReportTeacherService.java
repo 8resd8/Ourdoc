@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.bookreport.service;
 import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Page;
