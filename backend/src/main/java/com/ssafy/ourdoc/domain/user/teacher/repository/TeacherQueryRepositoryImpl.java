@@ -5,13 +5,24 @@ import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
 import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacher.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
+import static com.ssafy.ourdoc.global.common.enums.Active.*;
+import static com.ssafy.ourdoc.global.common.enums.EmploymentStatus.*;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.user.dto.TeacherQueryDto;
+import com.ssafy.ourdoc.domain.user.dto.TeacherVerificationDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.entity.QTeacher;
+import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
+import com.ssafy.ourdoc.global.common.enums.EmploymentStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,5 +68,33 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 			.join(classRoom.school, school)
 			.where(user.id.eq(userId))
 			.fetchOne();
+	}
+
+	@Override
+	public Page<TeacherVerificationDto> findPendingTeachers(AuthStatus authStatus, Pageable pageable) {
+		List<TeacherVerificationDto> content = queryFactory
+			.select(Projections.constructor(TeacherVerificationDto.class,
+				teacher.id,
+				user.loginId,
+				user.name,
+				teacher.email,
+				teacher.phone,
+				teacher.certificateImageUrl
+			))
+			.from(teacher)
+			.join(user).on(teacher.user.id.eq(user.id))
+			.where(teacher.employmentStatus.eq(비재직), user.active.eq(활성))
+			.orderBy(teacher.createdAt.asc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		long totalCount = queryFactory
+			.select(teacher.count())
+			.from(teacher)
+			.where(teacher.employmentStatus.eq(비재직), user.active.eq(활성))
+			.fetchOne();
+
+		return new PageImpl<>(content, pageable, totalCount);
 	}
 }
