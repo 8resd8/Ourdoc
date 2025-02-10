@@ -14,6 +14,8 @@ import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.FeedbackRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
@@ -80,6 +82,16 @@ public class BookReportStudentService {
 			.toList();
 
 		return new BookReportListResponse(bookReportDtos);
+	}
+
+	public BookReportStatisticsResponse getBookReportStatistics(User user, BookReportStatisticsRequest request) {
+		long myCount = bookReportRepository.myBookReportsCount(user.getId(), request.grade());
+
+		double averageCount = bookReportRepository.classAverageBookReportsCount(user.getId(), request.grade());
+
+		long highestCount = bookReportRepository.classHighestBookReportCount(user.getId(), request.grade());
+
+		return new BookReportStatisticsResponse((int)myCount, averageCount, (int)highestCount);
 	}
 
 }
