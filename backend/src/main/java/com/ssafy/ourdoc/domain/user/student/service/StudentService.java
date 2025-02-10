@@ -17,10 +17,12 @@ import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentAffiliationChangeRequest;
+import com.ssafy.ourdoc.domain.user.student.dto.StudentProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentSignupRequest;
 import com.ssafy.ourdoc.domain.user.student.dto.ValidatedEntities;
 import com.ssafy.ourdoc.domain.user.student.entity.Student;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
@@ -41,6 +43,7 @@ public class StudentService {
 	private final SchoolRepository schoolRepository;
 	private final ClassRoomRepository classRoomRepository;
 	private final StudentClassRepository studentClassRepository;
+	private final StudentClassQueryRepository studentClassQueryRepository;
 
 	// 1. 학생 회원가입
 	public Long signup(StudentSignupRequest request) {
@@ -145,5 +148,9 @@ public class StudentService {
 		}
 
 		return classRoom;
+	}
+
+	public StudentProfileResponseDto getStudentProfile(User user) {
+		return studentClassQueryRepository.findStudentProfileByUserId(user.getId());
 	}
 }
