@@ -1,4 +1,4 @@
-import { api } from '../services/api';
+import { api, multipartApi } from '../services/api';
 
 // 인터페이스 정의
 export interface AwardDetail {
@@ -39,7 +39,5 @@ export const createAwardApi = async (
   formData.append('title', data.title);
   formData.append('file', data.file);
 
-  await api.post('/awards', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  await multipartApi.post('/awards', formData);
 };
