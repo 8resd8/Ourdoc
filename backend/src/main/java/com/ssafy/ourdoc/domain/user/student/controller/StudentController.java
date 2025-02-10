@@ -39,7 +39,7 @@ public class StudentController {
 
 	// 3. 학생 본인 정보 조회
 	@GetMapping("/profile")
-	public StudentProfileResponseDto getStudentProfile(@Login User user) {
+	public ResponseEntity<?> getStudentProfile(@Login User user) {
 		return studentService.getStudentProfile(user);
 	}
 
