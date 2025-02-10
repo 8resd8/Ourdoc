@@ -58,4 +58,15 @@ public class Room extends BaseTimeEntity {
 		this.maxPeople = maxPeople;
 	}
 
+	public void updateTitle(String title) {
+		this.title = title;
+	}
+
+	public void updatePassword(String password) {
+		this.password = password;
+	}
+
+	public void updateMaxPeople(int maxPeople) {
+		this.maxPeople = maxPeople;
+	}
 }
