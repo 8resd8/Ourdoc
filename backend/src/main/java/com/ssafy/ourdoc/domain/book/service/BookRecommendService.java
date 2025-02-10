@@ -85,14 +85,24 @@ public class BookRecommendService {
 		return new BookRecommendResponseTeacher(studentCount, details);
 	}
 
-	public BookRecommendResponseStudent getBookRecommendsStudent(User user) {
+	public BookRecommendResponseTeacher getBookRecommendsTeacherClass(User user) {
 		ClassRoom userClassRoom = getUserClassRoom(user);
-		Long schoolId = userClassRoom.getSchool().getId();
-		int grade = userClassRoom.getGrade();
+		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
 
-		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoom(userClassRoom);
 
-		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomIn(sameGradeClass);
+		int submitCount = 0; // 독서록 제출 개수
+		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
+			.map(bookRecommend -> BookRecommendDetailTeacher.of(bookRecommend.getBook(), bookRecommend, submitCount))
+			.collect(Collectors.toList());
+
+		return new BookRecommendResponseTeacher(studentCount, details);
+	}
+
+	public BookRecommendResponseStudent getBookRecommendsStudentClass(User user) {
+		ClassRoom userClassRoom = getUserClassRoom(user);
+
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoom(userClassRoom);
 
 		boolean submitStatus = true; // 독서록 제출 여부
 		List<BookRecommendDetailStudent> details = bookRecommends.stream()
