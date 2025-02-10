@@ -138,9 +138,9 @@ public class StudentService {
 
 		// 이미 승인 요청이 되어 있는 경우 조회
 		StudentClass studentClass = studentClassRepository.findByUserAndClassRoom(user, classRoom);
-		if (studentClass != null && studentClass.getAuthStatus() == 대기) {
+		if (studentClass != null && studentClass.getAuthStatus().equals(대기)) {
 			throw new IllegalArgumentException("이미 승인 요청 중입니다.");
-		} else if (studentClass != null && studentClass.getAuthStatus() == 승인) {
+		} else if (studentClass != null && studentClass.getAuthStatus().equals(승인)) {
 			throw new IllegalArgumentException("이미 소속된 학급입니다.");
 		}
 
