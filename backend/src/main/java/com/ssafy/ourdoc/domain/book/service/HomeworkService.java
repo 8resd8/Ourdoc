@@ -69,11 +69,10 @@ public class HomeworkService {
 
 	public List<HomeworkResponseTeacher> getHomeworkTeachers(BookSearchRequest request, User user) {
 		List<SchoolClassDto> schoolClasses = teacherService.getClassRoomsTeacher(user.getId());
-		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		List<HomeworkResponseTeacher> responses = schoolClasses.stream()
 			.map(schoolClass -> {
-				List<Homework> homeworks = homeworkRepository.findByClassRoomIdAndBookIn(schoolClass.id(),
-					searchedBooks);
+				List<Homework> homeworks = homeworkRepository.findByClassIdAndSearchBook(schoolClass.id(),
+					request.title(), request.author(), request.publisher());
 				List<HomeworkDetailTeacher> homeworkDetails = homeworks.stream()
 					.map(homework -> getHomeworkDetailTeacher(homework.getId(), user))
 					.toList();

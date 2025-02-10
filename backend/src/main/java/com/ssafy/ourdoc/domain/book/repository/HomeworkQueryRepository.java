@@ -9,4 +9,6 @@ public interface HomeworkQueryRepository {
 	List<Homework> findByUserIdAndYear(Long userId, Year year);
 
 	List<Homework> findByClassIn(List<Long> classIds);
+
+	List<Homework> findByClassIdAndSearchBook(Long classId, String title, String author, String publisher);
 }
