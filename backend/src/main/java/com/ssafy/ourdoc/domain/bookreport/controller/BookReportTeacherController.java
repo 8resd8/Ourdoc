@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.bookreport.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +30,9 @@ public class BookReportTeacherController {
 	private final BookReportTeacherService bookReportTeacherService;
 
 	@GetMapping
-	public ReportTeacherListResponse getBookReportList(@Login User user, @RequestBody ReportTeacherRequest request) {
-		return bookReportTeacherService.getBookReports(user, request);
+	public ReportTeacherListResponse getBookReportList(@Login User user, @RequestBody ReportTeacherRequest request,
+		@PageableDefault(page = 0, size = 10) Pageable pageable) {
+		return bookReportTeacherService.getBookReports(user, request, pageable);
 	}
 
 	@PatchMapping("/{bookReportId}/stamp")

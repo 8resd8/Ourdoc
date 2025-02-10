@@ -1,6 +1,6 @@
 package com.ssafy.ourdoc.domain.bookreport.dto.teacher;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
-public record ReportTeacherListResponse(List<ReportTeacherResponse> bookReports) {
+public record ReportTeacherListResponse(Page<ReportTeacherResponse> bookReports) {
 }
