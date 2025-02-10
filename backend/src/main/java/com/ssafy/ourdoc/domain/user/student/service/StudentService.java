@@ -8,7 +8,9 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResponseErrorHandler;
 
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.entity.School;
@@ -16,11 +18,14 @@ import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
+import com.ssafy.ourdoc.domain.user.student.dto.InactiveStudentProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentAffiliationChangeRequest;
+import com.ssafy.ourdoc.domain.user.student.dto.StudentProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentSignupRequest;
 import com.ssafy.ourdoc.domain.user.student.dto.ValidatedEntities;
 import com.ssafy.ourdoc.domain.user.student.entity.Student;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
@@ -41,6 +46,8 @@ public class StudentService {
 	private final SchoolRepository schoolRepository;
 	private final ClassRoomRepository classRoomRepository;
 	private final StudentClassRepository studentClassRepository;
+	private final StudentClassQueryRepository studentClassQueryRepository;
+	private final ResponseErrorHandler responseErrorHandler;
 
 	// 1. 학생 회원가입
 	public Long signup(StudentSignupRequest request) {
@@ -145,5 +152,16 @@ public class StudentService {
 		}
 
 		return classRoom;
+	}
+
+	public ResponseEntity<?> getStudentProfile(User user) {
+		Active active = user.getActive();
+		if (active == 활성) {
+			StudentProfileResponseDto response = studentClassQueryRepository.findStudentProfileByUserId(user.getId());
+			return ResponseEntity.ok().body(response);
+		} else {
+			InactiveStudentProfileResponseDto response = studentClassQueryRepository.findInactiveStudentProfileByUserId(user.getId());
+			return ResponseEntity.ok().body(response);
+		}
 	}
 }
