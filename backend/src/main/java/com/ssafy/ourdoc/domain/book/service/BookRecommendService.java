@@ -2,7 +2,6 @@ package com.ssafy.ourdoc.domain.book.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -99,15 +98,30 @@ public class BookRecommendService {
 		return new BookRecommendResponseTeacher(studentCount, details);
 	}
 
+	public BookRecommendResponseStudent getBookRecommendsStudent(User user) {
+		ClassRoom userClassRoom = getUserClassRoom(user);
+		Long schoolId = userClassRoom.getSchool().getId();
+		int grade = userClassRoom.getGrade();
+
+		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
+
+		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomIn(sameGradeClass);
+
+		List<BookRecommendDetailStudent> details = bookRecommends.stream()
+			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
+			.toList();
+
+		return new BookRecommendResponseStudent(details);
+	}
+
 	public BookRecommendResponseStudent getBookRecommendsStudentClass(User user) {
 		ClassRoom userClassRoom = getUserClassRoom(user);
 
 		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoom(userClassRoom);
 
-		boolean submitStatus = true; // 독서록 제출 여부
 		List<BookRecommendDetailStudent> details = bookRecommends.stream()
-			.map(bookRecommend -> BookRecommendDetailStudent.of(bookRecommend.getBook(), bookRecommend, submitStatus))
-			.collect(Collectors.toList());
+			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
+			.toList();
 
 		return new BookRecommendResponseStudent(details);
 	}
@@ -130,5 +144,11 @@ public class BookRecommendService {
 		Long bookId = bookRecommend.getBook().getId();
 		int submitCount = bookReportRepository.countByUserIdAndBookId(userId, bookId);
 		return BookRecommendDetailTeacher.of(bookRecommend, submitCount);
+	}
+
+	private BookRecommendDetailStudent toBookRecommendDetailStudent(BookRecommend bookRecommend, Long userId) {
+		Long bookId = bookRecommend.getBook().getId();
+		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(userId, bookId) > 0;
+		return BookRecommendDetailStudent.of(bookRecommend, submitStatus);
 	}
 }
