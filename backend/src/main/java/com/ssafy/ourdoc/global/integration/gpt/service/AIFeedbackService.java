@@ -24,7 +24,7 @@ public class AIFeedbackService {
 
 	public FeedbackResponse spelling(User user, FeedbackRequest request) {
 		int studentGrade = getStudentGrade(user);
-		String aiSpellingFeedback = chatModel.call(Prompt.feedback(studentGrade, request.content()));
+		String aiSpellingFeedback = chatModel.call(Prompt.spelling(studentGrade, request.content()));
 
 		return new FeedbackResponse(aiSpellingFeedback);
 	}

@@ -7,6 +7,9 @@ import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
@@ -51,8 +54,8 @@ public class BookReportStudentService {
 	}
 
 
-	public BookReportListResponse getBookReports(User user, int grade) {
-		List<BookReport> bookReports = bookReportRepository.findByUserIdAndGrade(user.getId(), grade);
+	public BookReportListResponse getBookReports(User user, int grade, Pageable pageable) {
+		Page<BookReport> bookReports = bookReportRepository.findByUserIdAndGrade(user.getId(), grade, pageable);
 
 		List<BookReportDto> bookReportDtos = bookReports.stream()
 			.map(report -> new BookReportDto(
@@ -63,7 +66,9 @@ public class BookReportStudentService {
 			))
 			.toList();
 
-		return new BookReportListResponse(bookReportDtos);
+		Page<BookReportDto> bookReportDtoPage = new PageImpl<>(bookReportDtos, pageable,
+			bookReports.getTotalElements());
+		return new BookReportListResponse(bookReportDtoPage);
 	}
 
 	public void deleteBookReport(Long bookReportId) {
