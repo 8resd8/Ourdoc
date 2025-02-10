@@ -1,5 +1,8 @@
 package com.ssafy.ourdoc.domain.bookreport.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,8 +41,9 @@ public class BookReportStudentController {
 	}
 
 	@GetMapping("/student")
-	public BookReportListResponse getBookReportList(@Login User user, @RequestParam("grade") int grade) {
-		return bookReportStudentService.getBookReports(user, grade);
+	public BookReportListResponse getBookReportList(@Login User user, @RequestParam("grade") int grade,
+		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+		return bookReportStudentService.getBookReports(user, grade, pageable);
 	}
 
 }
