@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
 import com.ssafy.ourdoc.domain.book.repository.BookFavoriteRepository;
@@ -42,8 +43,9 @@ public class BookFavoriteService {
 		bookFavoriteRepository.delete(bookFavorite);
 	}
 
-	public List<BookResponse> getBookFavorites(User user) {
-		List<BookFavorite> bookFavorites = bookFavoriteRepository.findByUser(user);
+	public List<BookResponse> getBookFavorites(BookSearchRequest request, User user) {
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+		List<BookFavorite> bookFavorites = bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks);
 		List<Book> books = bookFavorites.stream().map(BookFavorite::getBook).toList();
 		return books.stream().map(BookResponse::of).collect(Collectors.toList());
 	}
