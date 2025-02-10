@@ -1,7 +1,6 @@
 package com.ssafy.ourdoc.domain.debate.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -106,16 +105,7 @@ public class DebateService {
 		}
 
 		Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(roomId);
-		List<RoomOnline> roomOnlines = debateRoomOnlineRepository.findAllActiveByRoomId(roomId);
-
-		List<OnlineUserDto> onlineUserList = roomOnlines.stream()
-			.map(roomOnline -> new OnlineUserDto(
-				roomOnline.getUser().getId(),
-				roomOnline.getUser().getName(),
-				roomOnline.getUser().getUserType(),
-				roomOnline.getUser().getProfileImagePath()
-			)).collect(Collectors.toList());
-
+		List<OnlineUserDto> onlineUserList = debateRoomOnlineRepository.findOnlineUsersByRoomId(roomId);
 		return new RoomDetailDto(
 			room.getId(),
 			room.getTitle(),
