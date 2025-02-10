@@ -34,6 +34,12 @@ public class BookRecommendController {
 		return ResponseEntity.ok(response);
 	}
 
+	@GetMapping("/students/recommend")
+	public ResponseEntity<BookRecommendResponseStudent> getRecommendStudent(@Login User user) {
+		BookRecommendResponseStudent response = bookRecommendService.getBookRecommendsStudent(user);
+		return ResponseEntity.ok(response);
+	}
+
 	@GetMapping("/teachers/recommend/classes")
 	public ResponseEntity<BookRecommendResponseTeacher> getRecommendTeacherClass(@Login User user) {
 		BookRecommendResponseTeacher response = bookRecommendService.getBookRecommendsTeacherClass(user);
