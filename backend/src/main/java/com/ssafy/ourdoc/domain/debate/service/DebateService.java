@@ -96,7 +96,7 @@ public class DebateService {
 		RoomOnline roomOnline = debateRoomOnlineRepository
 			.findActiveByRoomIdAndUserId(roomId, user.getId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 방에 접속 중인 유저가 아닙니다."));
-		roomOnline.markAsLeft();
+		debateRoomOnlineRepository.updateEndAt(roomOnline.getId());
 		debateRoomOnlineRepository.save(roomOnline);
 	}
 }
