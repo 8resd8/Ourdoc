@@ -4,7 +4,6 @@ import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,13 +13,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.FeedbackRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
@@ -32,7 +33,6 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
-import com.ssafy.ourdoc.global.common.enums.EvaluatorType;
 import com.ssafy.ourdoc.global.common.enums.HomeworkStatus;
 import com.ssafy.ourdoc.global.common.enums.OcrCheck;
 
@@ -126,20 +126,27 @@ class BookReportStudentServiceTest {
 	}
 
 	@Test
-	@DisplayName("특정 사용자의 학년별 독서록을 조회할 수 있다.")
+	@DisplayName("특정 사용자의 학년별 독서록을 페이지네이션으로 조회할 수 있다.")
 	void testGetBookReports() {
 		// given
-		when(bookReportRepository.findByUserIdAndGrade(mockUser.getId(), 3))
-			.thenReturn(List.of(mockBookReport));
+		Pageable pageable = PageRequest.of(0, 10); // 첫 번째 페이지, 페이지 크기 10
+		List<BookReport> mockBookReports = List.of(mockBookReport);
+		Page<BookReport> mockPage = new PageImpl<>(mockBookReports, pageable, mockBookReports.size());
+
+		when(bookReportRepository.findByUserIdAndGrade(mockUser.getId(), 3, pageable))
+			.thenReturn(mockPage);
 
 		// when
-		BookReportListResponse response = bookReportStudentService.getBookReports(mockUser, 3);
+		BookReportListResponse response = bookReportStudentService.getBookReports(mockUser, 3, pageable);
 
 		// then
 		assertThat(response).isNotNull();
-		assertThat(response.bookReports()).hasSize(1);
-		assertThat(response.bookReports().get(0).content()).isEqualTo("독서 후 감상");
-		assertThat(response.bookReports().get(0).approveStatus()).isEqualTo(ApproveStatus.없음);
-		assertThat(response.bookReports().get(0).homework()).isEqualTo(HomeworkStatus.미제출);
+		assertThat(response.bookReports().getContent()).hasSize(1); // Page의 content 검증
+		assertThat(response.bookReports().getContent().get(0).content()).isEqualTo("독서 후 감상");
+		assertThat(response.bookReports().getContent().get(0).approveStatus()).isEqualTo(ApproveStatus.없음);
+		assertThat(response.bookReports().getContent().get(0).homework()).isEqualTo(HomeworkStatus.미제출);
+		assertThat(response.bookReports().getTotalElements()).isEqualTo(1); // 전체 데이터 개수 검증
+		assertThat(response.bookReports().getTotalPages()).isEqualTo(1);   // 총 페이지 수 검증
 	}
+
 }
