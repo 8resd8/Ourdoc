@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.service.HomeworkService;
@@ -48,5 +49,11 @@ public class HomeworkController {
 	public ResponseEntity<HomeworkDetailTeacher> getHomework(@PathVariable("homeworkId") long homeworkId,
 		@Login User user) {
 		return ResponseEntity.ok(homeworkService.getHomeworkDetailTeacher(homeworkId, user));
+	}
+
+	@GetMapping("/students/homework/{homeworkId}")
+	public ResponseEntity<HomeworkDetailStudent> getHomeworkStudent(@PathVariable("homeworkId") long homeworkId,
+		@Login User user) {
+		return ResponseEntity.ok(homeworkService.getHomeworkDetailStudent(homeworkId, user));
 	}
 }
