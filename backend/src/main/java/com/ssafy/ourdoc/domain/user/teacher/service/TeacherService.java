@@ -36,6 +36,7 @@ import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
+import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
@@ -226,5 +227,13 @@ public class TeacherService {
 			.getClassRoom().getId();
 
 		return studentClassQueryRepository.findStudentsByClassIdAndActiveAndAuthStatus(classId, 활성, AuthStatus.대기, pageable);
+	}
+
+	public TeacherProfileResponseDto getTeacherProfile(User user) {
+		if (user.getActive() == 활성) {
+			return teacherQueryRepository.findTeacherProfileByUserId(user.getId());
+		} else {
+			throw new IllegalArgumentException("재직중인 교사가 아닙니다.");
+		}
 	}
 }
