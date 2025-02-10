@@ -12,16 +12,12 @@ import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
-import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponseWithId;
-import com.ssafy.ourdoc.domain.bookreport.service.BookReportService;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportTeacherService;
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
-import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
-import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
@@ -36,20 +32,16 @@ import lombok.RequiredArgsConstructor;
 public class HomeworkService {
 
 	private final HomeworkRepository homeworkRepository;
-	private final BookRepository bookRepository;
 	private final TeacherClassRepository teacherClassRepository;
-	private final BookReportService bookReportService;
 	private final BookReportTeacherService bookReportTeacherService;
 	private final TeacherService teacherService;
-	private final StudentClassRepository studentClassRepository;
-	private final SchoolRepository schoolRepository;
+	private final BookService bookService;
 
 	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("숙제도서를 생성할 권한이 없습니다.");
 		}
-		Book book = bookRepository.findById(request.bookId())
-			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		Book book = bookService.findBookById(request.bookId());
 		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 			.map(TeacherClass::getClassRoom)
 			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
@@ -64,8 +56,7 @@ public class HomeworkService {
 		if (user.getUserType().equals(UserType.학생)) {
 			throw new ForbiddenException("숙제도서를 삭제할 권한이 없습니다.");
 		}
-		Book book = bookRepository.findById(request.bookId())
-			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+		Book book = bookService.findBookById(request.bookId());
 		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 			.map(TeacherClass::getClassRoom)
 			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
