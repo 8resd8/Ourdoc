@@ -70,7 +70,7 @@ public class BookReportStudentService {
 		BookReport bookReport = bookReportRepository.findById(bookReportId)
 			.orElseThrow(() -> new NoSuchElementException("지울 독서록이 없습니다."));
 
-		if (bookReport.getApproveTime() == null) {
+		if (bookReport.getApproveTime() != null) {
 			throw new IllegalArgumentException("승인이 된 독서록은 지울 수 없습니다.");
 		}
 
