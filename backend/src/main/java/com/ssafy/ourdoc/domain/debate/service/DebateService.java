@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
+import com.ssafy.ourdoc.domain.debate.dto.UpdateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 import com.ssafy.ourdoc.domain.debate.repository.DebateRoomOnlineRepository;
@@ -31,7 +32,7 @@ public class DebateService {
 	private final OpenviduService openviduService;
 
 	public Page<RoomDto> getDebateRooms(Pageable pageable) {
-		Page<Room> roomPage = debateRoomRepository.findAll(pageable);
+		Page<Room> roomPage = debateRoomRepository.findByEndAtIsNull(pageable);
 		return roomPage.map(room -> {
 			Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(room.getId());
 			return new RoomDto(
@@ -93,6 +94,41 @@ public class DebateService {
 		debateRoomOnlineRepository.save(roomOnline);
 
 		return token;
+	}
+
+	public void leaveDebateRoom(User user, Long roomId) {
+		RoomOnline roomOnline = debateRoomOnlineRepository
+			.findActiveByRoomIdAndUserId(roomId, user.getId())
+			.orElseThrow(() -> new IllegalArgumentException("해당 방에 접속 중인 유저가 아닙니다."));
+		debateRoomOnlineRepository.updateEndAt(roomOnline.getId());
+		debateRoomOnlineRepository.save(roomOnline);
+	}
+
+	public void updateDebateRoom(User user, Long roomId, UpdateRoomRequest request) {
+		Room room = debateRoomRepository.findById(roomId)
+			.orElseThrow(() -> new IllegalArgumentException("해당 방이 존재하지 않습니다."));
+
+		if (room.getEndAt() != null) {
+			throw new ForbiddenException("종료된 방입니다.");
+		}
+
+		if (!room.getUser().getId().equals(user.getId())) {
+			throw new ForbiddenException("방 수정 권한이 없습니다.");
+		}
+
+		if (request.title() != null && !request.title().isEmpty()) {
+			room.updateTitle(request.title());
+		}
+
+		if (request.password() != null && !request.password().isEmpty()) {
+			room.updatePassword(request.password());
+		}
+
+		if (request.maxPeople() != null) {
+			room.updateMaxPeople(request.maxPeople());
+		}
+
+		debateRoomRepository.save(room);
 	}
 
 	public void deleteDebateRoom(User user, Long roomId) {

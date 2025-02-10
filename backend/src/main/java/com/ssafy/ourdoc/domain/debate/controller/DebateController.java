@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
+import com.ssafy.ourdoc.domain.debate.dto.UpdateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.service.DebateService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
@@ -42,10 +44,22 @@ public class DebateController {
 	}
 
 	@PostMapping("/{roomId}/connection")
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<String> joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId, @RequestBody JoinRoomRequest request) {
+	public ResponseEntity<String> joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId,
+		@RequestBody JoinRoomRequest request) {
 		String token = debateService.joinDebateRoom(user, roomId, request);
 		return ResponseEntity.ok(token);
+	}
+
+	@DeleteMapping("/{roomId}/exit")
+	@ResponseStatus(HttpStatus.OK)
+	public void leaveDebateRoom(@Login User user, @PathVariable("roomId") Long roomId) {
+		debateService.leaveDebateRoom(user, roomId);
+	}
+
+	@PatchMapping("/{roomId}")
+	@ResponseStatus(HttpStatus.OK)
+	public void updateDebateRoom(@Login User user, @PathVariable("roomId") Long roomId, UpdateRoomRequest request) {
+		debateService.updateDebateRoom(user, roomId, request);
 	}
 
 	@DeleteMapping("/{roomId}")
