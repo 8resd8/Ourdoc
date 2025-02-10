@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Button from '../../atoms/Button';
 import InputField from '../../molecules/InputField';
 import classes from './StudentSetUp.module.css';
-import { signInApi } from '../../../api/auth/AuthApi';
 import Modal from '../../commons/Modal';
 import { useNavigate } from 'react-router-dom';
 
@@ -152,3 +151,10 @@ const StudentSetup = () => {
 };
 
 export default StudentSetup;
+function signInApi(arg0: {
+  userType: string;
+  loginId: string;
+  password: string;
+}) {
+  throw new Error('Function not implemented.');
+}
