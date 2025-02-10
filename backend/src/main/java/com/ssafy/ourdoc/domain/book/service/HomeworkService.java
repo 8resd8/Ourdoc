@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
+import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponseWithId;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportTeacherService;
@@ -36,6 +37,7 @@ public class HomeworkService {
 	private final BookReportTeacherService bookReportTeacherService;
 	private final TeacherService teacherService;
 	private final BookService bookService;
+	private final BookRepository bookRepository;
 
 	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
@@ -65,11 +67,13 @@ public class HomeworkService {
 		homeworkRepository.delete(homework);
 	}
 
-	public List<HomeworkResponseTeacher> getHomeworkTeachers(HomeworkRequest request, User user) {
-		List<SchoolClassDto> schoolClasses = teacherService.getClassRoomsTeacherAndYear(user.getId(), request.year());
+	public List<HomeworkResponseTeacher> getHomeworkTeachers(BookSearchRequest request, User user) {
+		List<SchoolClassDto> schoolClasses = teacherService.getClassRoomsTeacher(user.getId());
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		List<HomeworkResponseTeacher> responses = schoolClasses.stream()
 			.map(schoolClass -> {
-				List<Homework> homeworks = homeworkRepository.findByClassRoomId(schoolClass.id());
+				List<Homework> homeworks = homeworkRepository.findByClassRoomIdAndBookIn(schoolClass.id(),
+					searchedBooks);
 				List<HomeworkDetailTeacher> homeworkDetails = homeworks.stream()
 					.map(homework -> getHomeworkDetailTeacher(homework.getId(), user))
 					.toList();

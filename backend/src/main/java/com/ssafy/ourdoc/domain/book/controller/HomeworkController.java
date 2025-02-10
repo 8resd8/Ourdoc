@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.service.HomeworkService;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -39,7 +39,7 @@ public class HomeworkController {
 	}
 
 	@GetMapping("/teachers/homework")
-	public ResponseEntity<List<HomeworkResponseTeacher>> getHomeworks(@RequestBody HomeworkRequest request,
+	public ResponseEntity<List<HomeworkResponseTeacher>> getHomeworks(@RequestBody BookSearchRequest request,
 		@Login User user) {
 		return ResponseEntity.ok(homeworkService.getHomeworkTeachers(request, user));
 	}
