@@ -6,9 +6,18 @@ interface PropsType {
   label: string;
   placeholder: string;
   onChange?: (value: string) => void;
+  onCheckDuplicate?: () => void;
+  isIdChecked: boolean;
 }
 
-const SignupIdField = ({ id, label, placeholder, onChange }: PropsType) => {
+const SignupIdField = ({
+  id,
+  label,
+  placeholder,
+  onChange,
+  onCheckDuplicate,
+  isIdChecked,
+}: PropsType) => {
   return (
     <div>
       <Label label={label} htmlFor={id} />
@@ -16,9 +25,16 @@ const SignupIdField = ({ id, label, placeholder, onChange }: PropsType) => {
         id={id}
         placeholder={placeholder}
         onChange={(e) => onChange?.(e.target.value)}
+        disabled={isIdChecked}
       />
-      <button className="bg-primary-500 h-10 w-20 rounded-xl body-small text-gray-0">
-        중복확인
+      <button
+        className={`h-10 w-20 rounded-xl body-small ${
+          isIdChecked ? 'bg-gray-500 text-gray-0' : 'bg-primary-500 text-gray-0'
+        }`}
+        onClick={onCheckDuplicate}
+        disabled={isIdChecked}
+      >
+        {isIdChecked ? '확인완료' : '중복확인'}
       </button>
     </div>
   );
