@@ -43,7 +43,6 @@ public class DebateController {
 	}
 
 	@PostMapping("/{roomId}/connection")
-	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<String> joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId,
 		@RequestBody JoinRoomRequest request) {
 		String token = debateService.joinDebateRoom(user, roomId, request);
