@@ -95,7 +95,12 @@ const SignIn = () => {
           />
         </div>
         <div className={classes.btn}>
-          <Button type="" title="로그인" onClick={handleLogin} />
+          <Button
+            type="filled"
+            color="primary"
+            title="로그인"
+            onClick={handleLogin}
+          />
         </div>
         <div className={`${classes.btn_admin} ml-80 text-gray-500 body-small`}>
           관리자로 로그인
