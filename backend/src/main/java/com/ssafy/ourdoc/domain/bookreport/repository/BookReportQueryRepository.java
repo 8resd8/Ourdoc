@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
@@ -23,4 +24,6 @@ public interface BookReportQueryRepository {
 	double classAverageBookReportsCount(Long userId, int grade);
 
 	long classHighestBookReportCount(Long userId, int grade);
+
+	List<BookReportMonthlyStatisticsDto> myMonthlyBookReportCount(Long userId, int grade);
 }
