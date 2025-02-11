@@ -230,18 +230,12 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public List<BookReportHomeworkStudent> bookReportsHomeworkStudents(Long homeworkId) {
-		return queryFactory.select(new QBookReportHomeworkStudent(
+	public List<BookReportHomeworkStudentDto> bookReportsHomeworkStudents(Long homeworkId, Long userId) {
+		return queryFactory.select(Projections.constructor(BookReportHomeworkStudentDto.class,
 					bookReport.id,
 					bookReport.createdAt,
-					new CaseBuilder()
-						.when(bookReport.homework.id.isNotNull())
-						.then(SubmitStatus.제출)
-						.otherwise(SubmitStatus.미제출).as("submitStatus"),
-					new CaseBuilder()
-						.when(bookReport.approveTime.isNotNull())
-						.then(ApproveStatus.있음)
-						.otherwise(ApproveStatus.없음).as("approveStatus")
+					bookReport.homework.id,
+					bookReport.approveTime
 				)
 			)
 			.from(bookReport)
