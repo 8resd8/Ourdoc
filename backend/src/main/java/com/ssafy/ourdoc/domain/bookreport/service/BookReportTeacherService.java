@@ -11,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportCommentRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
@@ -106,5 +108,13 @@ public class BookReportTeacherService {
 	private BookReportFeedBack getTeacherReportFeedBack(Long bookReportId) {
 		return bookReportFeedbackRepository.findByBookReportIdAndEvaluatorType(bookReportId, 교사)
 			.orElseThrow(() -> new NoSuchElementException("피드백 독서록이 없습니다."));
+	}
+
+	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(User user) {
+		return bookReportRepository.classMonthlyBookReportCount(user.getId());
+	}
+
+	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(User user, int month) {
+		return bookReportRepository.classDailyBookReportCount(user.getId(), month);
 	}
 }
