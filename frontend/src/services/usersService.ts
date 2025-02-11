@@ -1,6 +1,7 @@
 import { accessTokenState } from './../recoil/atoms/usersAtoms';
 import { api, multipartApi } from '../services/api';
 import { getRecoil, setRecoil } from 'recoil-nexus';
+import secureLocalStorage from 'react-secure-storage';
 
 export interface SignupTeacherRequest {
   name: string;
@@ -80,14 +81,19 @@ export const signupStudentApi = async (
 
 // 로그인
 export const signinApi = async (data: LoginRequest): Promise<LoginResponse> => {
-  const response = await api.post<LoginResponse>('/users/signin', data);
-  const accessToken = response.headers['authorization'];
+  try {
+    const response = await api.post<LoginResponse>('/users/signin', data);
+    const accessToken = response.headers['authorization'];
 
-  if (!!accessToken) {
-    setRecoil(accessTokenState, accessToken);
+    if (accessToken) {
+      setRecoil(accessTokenState, accessToken);
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error('로그인 실패:', error);
+    throw new Error('로그인에 실패했습니다. 다시 시도해주세요.');
   }
-
-  return response.data;
 };
 
 // 로그아웃
@@ -95,10 +101,14 @@ export const signoutApi = async (): Promise<void> => {
   const accessToken = getRecoil(accessTokenState);
 
   if (accessToken) {
-    setRecoil(accessTokenState, null);
+    try {
+      await api.post('/users/signout');
+      secureLocalStorage.removeItem('accessTokenState');
+      setRecoil(accessTokenState, null);
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+    }
   }
-
-  await api.post('/users/signout');
 };
 
 // 아이디 중복 체크

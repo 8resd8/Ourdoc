@@ -1,5 +1,23 @@
 import { atom } from 'recoil';
 import { LoginResponse } from '../../services/usersService';
+import secureLocalStorage from 'react-secure-storage';
+import { recoilPersist } from 'recoil-persist';
+
+const secureStorage = {
+  getItem: (key: string) => {
+    const item = secureLocalStorage.getItem(key);
+
+    return typeof item === 'string' ? item : null;
+  },
+  setItem: (key: string, value: string) =>
+    secureLocalStorage.setItem(key, value),
+  removeItem: (key: string) => secureLocalStorage.removeItem(key),
+};
+
+const { persistAtom } = recoilPersist({
+  key: 'accessTokenState',
+  storage: secureStorage,
+});
 
 // 현재 로그인한 사용자 상태
 export const currentUserState = atom<LoginResponse | null>({
@@ -35,4 +53,5 @@ export const isSignupSuccessfulState = atom<boolean>({
 export const accessTokenState = atom<string | null>({
   key: 'accessTokenState',
   default: null,
+  effects_UNSTABLE: [persistAtom],
 });

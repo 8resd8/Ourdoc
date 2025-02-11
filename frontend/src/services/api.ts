@@ -12,6 +12,8 @@ const getAccessToken = () => getRecoil(accessTokenState);
 const setupInterceptors = (instance: AxiosInstance) => {
   instance.interceptors.request.use(
     (config) => {
+      console.log('api: ', config.url, 'called.');
+
       const accessToken = getAccessToken();
 
       if (accessToken) {
