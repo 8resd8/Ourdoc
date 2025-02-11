@@ -1,5 +1,5 @@
-import { accessTokenState } from './../recoil/atoms/usersAtoms';
-import { api, multipartApi } from '../services/api';
+import { accessTokenState } from '../recoil/atoms/usersAtoms';
+import { api, multipartApi } from './api';
 import { getRecoil, setRecoil } from 'recoil-nexus';
 import secureLocalStorage from 'react-secure-storage';
 
@@ -86,6 +86,7 @@ export const signinApi = async (data: LoginRequest): Promise<LoginResponse> => {
     const accessToken = response.headers['authorization'];
 
     if (accessToken) {
+      secureLocalStorage.setItem('accessTokenState', accessToken);
       setRecoil(accessTokenState, accessToken);
     }
 
@@ -103,10 +104,11 @@ export const signoutApi = async (): Promise<void> => {
   if (accessToken) {
     try {
       await api.post('/users/signout');
+    } catch (error) {
+      console.warn('서버 로그아웃 실패, 클라이언트 상태만 초기화');
+    } finally {
       secureLocalStorage.removeItem('accessTokenState');
       setRecoil(accessTokenState, null);
-    } catch (error) {
-      console.error('로그아웃 실패:', error);
     }
   }
 };

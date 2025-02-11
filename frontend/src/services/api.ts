@@ -1,18 +1,22 @@
 import axios, { AxiosInstance } from 'axios';
-import { getRecoil } from 'recoil-nexus';
-import { accessTokenState } from '../recoil/atoms';
+import { getRecoil, setRecoil } from 'recoil-nexus';
+import { accessTokenState } from '../recoil/atoms/usersAtoms';
+import secureLocalStorage from 'react-secure-storage';
+import { signoutApi } from './usersService';
 
 const baseURL = import.meta.env.VITE_APP_API_URL;
 
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 
-const getAccessToken = () => getRecoil(accessTokenState);
+const getAccessToken = () =>
+  getRecoil(accessTokenState) ||
+  (secureLocalStorage.getItem('accessTokenState') as string | null);
 
 const setupInterceptors = (instance: AxiosInstance) => {
   instance.interceptors.request.use(
     (config) => {
-      console.log('api: ', config.url, 'called.');
+      console.log('api: ', config.url, '호출됨.');
 
       const accessToken = getAccessToken();
 
@@ -48,6 +52,11 @@ const setupInterceptors = (instance: AxiosInstance) => {
         }
       }
           */
+
+      if (error.response?.status === 401) {
+        console.warn('비인가 에러 401. 로그아웃 진행');
+        await signoutApi(); // 401 오류 발생 시 자동 로그아웃
+      }
 
       return Promise.reject(error);
     }
