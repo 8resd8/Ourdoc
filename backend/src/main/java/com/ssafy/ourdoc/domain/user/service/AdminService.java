@@ -40,14 +40,15 @@ public class AdminService {
 		}
 	}
 
-	public void verifyTeacher(User user, TeacherVerificationRequest request) {
+	public String verifyTeacher(User user, TeacherVerificationRequest request) {
 		verifyAdmin(user);
 		checkPendingTeacher(request);
 
 		if (request.isApproved()) {
 			teacherQueryRepository.approveTeacher(request.teacherId());
+			return "교사 인증 요청 처리 완료";
 		} else {
-			throw new IllegalArgumentException("교사 재직 승인 요청을 거부했습니다.");
+			return "교사 인증 승인 요청 거부";
 		}
 	}
 
