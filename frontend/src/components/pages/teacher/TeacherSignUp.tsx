@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { signUpApi } from '../../../api/auth/AuthApi';
 import classes from './TeacherSignUp.module.css';
 import InputField from '../../molecules/InputField';
 import Button from '../../atoms/Button';
@@ -134,6 +133,7 @@ const TeacherSignUp = () => {
             label="아이디"
             placeholder="아이디를 입력해주세요"
             onChange={(value) => handleInputChange('loginId', value)}
+            isIdChecked={false}
           />
         </div>
         <div className={classes.input}>
@@ -240,12 +240,18 @@ const TeacherSignUp = () => {
         <div className={classes.btn}>
           <Button
             title="재직증명서 첨부하기"
-            type="upload"
+            type="outlined"
+            color="secondary"
             onClick={handleUploadClick}
           />
         </div>
         <div className={classes.btn}>
-          <Button type="signup" title="회원가입" onClick={handleSignUpClick} />
+          <Button
+            type="filled"
+            color="primary"
+            title="회원가입"
+            onClick={handleSignUpClick}
+          />
         </div>
         <Modal
           type="signup"
