@@ -30,14 +30,14 @@ const DebateRoom: React.FC = () => {
 
         try {
             const response = await api.post(
-                'http://localhost:8080/openvidu/join',
+                '/openvidu/join',
                 {
                     sessionName,
                     nickname,
                 },
                 {
                     headers: {
-                        Authorization: `eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0OCIsInJvbGUiOiLtlZnsg50iLCJpYXQiOjE3MzkyNTQxNzYsImV4cCI6MTczOTI5MDE3Nn0.uFmydygK6m0008il1MJ10EHsOy5eO54srAXhO91CB3Q`,
+                        Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0OCIsInJvbGUiOiLtlZnsg50iLCJpYXQiOjE3MzkyNzc1MzAsImV4cCI6MTczOTMxMzUzMH0.d2MB5umdBz0nId3e3H6S38zIpAWnuVWEtcrZN_-ZeZk`,
                     },
                     withCredentials: true,
                 }
