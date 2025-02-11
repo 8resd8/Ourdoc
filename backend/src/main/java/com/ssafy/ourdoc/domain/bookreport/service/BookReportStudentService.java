@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
@@ -102,6 +103,10 @@ public class BookReportStudentService {
 
 	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(User user, BookReportStatisticsRequest request) {
 		return bookReportRepository.myMonthlyBookReportCount(user.getId(), request.grade());
+	}
+
+	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(User user, BookReportStatisticsRequest request) {
+		return bookReportRepository.myDailyBookReportCount(user.getId(), request.grade(), request.month());
 	}
 
 }
