@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -33,7 +34,6 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDtoWithId;
@@ -396,7 +396,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public BookReportRankResponse bookReportRank(Long userId) {
+	public List<BookReportRankDto> bookReportRank(Long userId) {
 		Long classRoomId = queryFactory
 			.select(teacherClass.classRoom.id)
 			.from(teacherClass)
@@ -405,37 +405,26 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				teacherClass.active.eq(Active.활성)
 			).fetchOne();
 
-		List<Tuple> tuples = queryFactory
-			.select(studentClass.studentNumber, studentClass.user.name, bookReport.count())
-			.from(studentClass)
+		int a = 0;
+
+		return queryFactory
+			.select(Projections.constructor(
+				BookReportRankDto.class,
+				studentClass.studentNumber,
+				studentClass.user.name,
+				bookReport.count().intValue(),
+				Expressions.constant(0)
+			)).from(studentClass)
 			.join(studentClass.classRoom, classRoom)
 			.leftJoin(bookReport)
 			.on(
 				bookReport.studentClass.eq(studentClass)
 					.and(bookReport.approveTime.isNotNull())
-			)
-			.where(
+			).where(
 				classRoom.id.eq(classRoomId)
 			).groupBy(studentClass.studentNumber)
 			.orderBy(bookReport.count().desc())
 			.fetch();
-
-		List<BookReportRankDto> rankList = new ArrayList<>();
-		int rank = 0;
-		long prevCount = -1;
-		int totalCount = 0;
-		for (Tuple tuple : tuples) {
-			rank++;
-			int studentNumber = (int)tuple.get(studentClass.studentNumber);
-			String name = tuple.get(studentClass.user.name);
-			long readCount = tuple.get(bookReport.count());
-			totalCount += readCount;
-			if (rank < 4) {
-				rankList.add(new BookReportRankDto(studentNumber, name, (int)readCount, rank));
-			}
-		}
-
-		return new BookReportRankResponse(rankList, totalCount);
 	}
 
 	private List<BookReportDailyStatisticsDto> getDailyBookReportCountDtos(List<Tuple> tuples) {
