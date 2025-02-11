@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportCommentRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
@@ -116,5 +117,9 @@ public class BookReportTeacherService {
 
 	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(User user, int month) {
 		return bookReportRepository.classDailyBookReportCount(user.getId(), month);
+	}
+
+	public BookReportRankResponse getBookReportRank(User user) {
+		return bookReportRepository.bookReportRank(user.getId());
 	}
 }
