@@ -2,11 +2,13 @@ package com.ssafy.ourdoc.global.interceptor;
 
 import com.ssafy.ourdoc.global.util.JwtUtil;
 import com.ssafy.ourdoc.global.util.JwtRefreshService;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -18,8 +20,13 @@ public class JwtInterceptor implements HandlerInterceptor {
 	private final JwtRefreshService jwtRefreshService;
 
 	@Override
-	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
+		Exception {
 		String accessToken = extractToken(request);
+
+		if (request.getMethod().equals("OPTIONS")) {
+			return true;
+		}
 
 		if (accessToken == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Missing access token");
