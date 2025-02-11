@@ -8,7 +8,6 @@ import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
 import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
-import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 
 import java.time.Year;
@@ -33,6 +32,8 @@ import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.QBookReportFeedBack;
+import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
+import com.ssafy.ourdoc.global.common.enums.SubmitStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -235,12 +236,12 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 					bookReport.createdAt,
 					new CaseBuilder()
 						.when(bookReport.homework.id.isNotNull())
-						.then(true)
-						.otherwise(false),
+						.then(SubmitStatus.제출)
+						.otherwise(SubmitStatus.미제출).as("submitStatus"),
 					new CaseBuilder()
 						.when(bookReport.approveTime.isNotNull())
-						.then(있음)
-						.otherwise(없음)
+						.then(ApproveStatus.있음)
+						.otherwise(ApproveStatus.없음).as("approveStatus")
 				)
 			)
 			.from(bookReport)
