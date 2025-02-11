@@ -55,6 +55,7 @@ import com.ssafy.ourdoc.global.common.enums.EmploymentStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -73,6 +74,7 @@ public class TeacherService {
 	private final StudentClassRepository studentClassRepository;
 	private final StudentRepository studentRepository;
 	private final ClassRoomRepository classRoomRepository;
+	private final EntityManager em;
 
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {
@@ -266,9 +268,17 @@ public class TeacherService {
 			String profileImageUrl = s3StorageService.uploadFile(profileImage);
 			userRepository.updateProfileImage(user, profileImageUrl);
 		}
+		em.flush();
+		em.clear();
 
 		School school = schoolRepository.findBySchoolNameAndAddress(request.schoolName(), request.address());
 		teacherQueryRepository.updateTeacherProfile(user, request);
+		em.flush();
+		em.clear();
+
+		if (classRoomRepository.findBySchoolAndGradeAndClassNumber(school, request.grade(), request.classNumber()).isPresent()) {
+			return;
+		}
 
 		ClassRoom classRoom = ClassRoom.builder()
 			.school(school)
