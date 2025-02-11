@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.bookreport.service;
 
 import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
+import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 
 import java.util.NoSuchElementException;
 
@@ -9,6 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailResponse;
+import com.ssafy.ourdoc.domain.bookreport.dto.FeedbackRequest;
+import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
+import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
+import com.ssafy.ourdoc.domain.bookreport.repository.BookReportFeedbackRepository;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
 
@@ -20,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class BookReportService {
 
 	private final BookReportRepository bookReportRepository;
+	private final BookReportFeedbackRepository feedbackRepository;
 
 	public BookReportDetailResponse getBookReportDetail(Long bookReportId) {
 		BookReportDetailDto detailDto = bookReportRepository.bookReportDetail(bookReportId);
@@ -42,4 +48,15 @@ public class BookReportService {
 			.approveStatus(approveStatus)
 			.build();
 	}
+
+	// 작성한 독서록 기반 AI 피드백 받은것 처리
+	public void saveBookReportFeedback(FeedbackRequest request) {
+		BookReport bookReport = bookReportRepository.findById(request.bookReportId()).orElseThrow();
+		bookReport.saveAfterContent(request.afterContent());
+
+		BookReportFeedBack bookReportFeedBack = BookReportFeedBack.builder().bookReport(bookReport).type(인공지능).build();
+
+		feedbackRepository.save(bookReportFeedBack);
+	}
+
 }

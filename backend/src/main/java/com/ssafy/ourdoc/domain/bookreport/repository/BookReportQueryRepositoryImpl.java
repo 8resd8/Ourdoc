@@ -14,7 +14,12 @@ import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
@@ -33,7 +38,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<ReportTeacherDto> bookReports(Long userId, ReportTeacherRequest request) {
+	public Page<ReportTeacherDto> bookReports(Long userId, ReportTeacherRequest request, Pageable pageable) {
 		// 교사가 지금까지 했던 반 정보
 		List<Long> teacherContainClass = queryFactory
 			.select(teacherClass.classRoom.id)
@@ -41,7 +46,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.where(teacherClass.user.id.eq(userId))
 			.fetch();
 
-		return queryFactory
+		List<ReportTeacherDto> content = queryFactory
 			.select(new QReportTeacherDto(
 				book.title,
 				studentClass.studentNumber,
@@ -61,7 +66,31 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				eqStudentNumber(request.studentNumber()),
 				containsStudentName(request.studentName()),
 				eqSchoolName(request.schoolName())
-			).fetch();
+			)
+			.orderBy(bookReport.createdAt.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		long total = getTotal(request, teacherContainClass)
+			.fetchOne();
+
+		return new PageImpl<>(content, pageable, total);
+	}
+
+	private JPAQuery<Long> getTotal(ReportTeacherRequest request, List<Long> teacherContainClass) {
+		return queryFactory
+			.select(bookReport.count())
+			.from(bookReport)
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.classRoom, classRoom)
+			.where(
+				classRoom.id.in(teacherContainClass),
+				eqYear(request.year()),
+				eqStudentNumber(request.studentNumber()),
+				containsStudentName(request.studentName()),
+				eqSchoolName(request.schoolName())
+			);
 	}
 
 	@Override

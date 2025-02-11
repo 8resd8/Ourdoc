@@ -3,7 +3,6 @@ package com.ssafy.ourdoc.domain.book.dto.recommend;
 import java.time.LocalDateTime;
 
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
-import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 
 import lombok.Builder;
@@ -11,13 +10,13 @@ import lombok.Builder;
 @Builder
 public record BookRecommendDetailTeacher(
 	BookResponse book,
-	LocalDateTime creatAt,
+	LocalDateTime createdAt,
 	int submitCount
 ) {
-	public static BookRecommendDetailTeacher of(Book book, BookRecommend bookRecommend, int submitCount) {
+	public static BookRecommendDetailTeacher of(BookRecommend bookRecommend, int submitCount) {
 		return BookRecommendDetailTeacher.builder()
-			.book(BookResponse.of(book))
-			.creatAt(bookRecommend.getCreatedAt())
+			.book(BookResponse.of(bookRecommend.getBook()))
+			.createdAt(bookRecommend.getCreatedAt())
 			.submitCount(submitCount)
 			.build();
 	}
