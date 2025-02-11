@@ -241,6 +241,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.from(bookReport)
 			.join(homework).on(bookReport.homework.id.eq(homework.id))
 			.where(homework.id.eq(homeworkId))
+			.leftJoin(homework).on(bookReport.book.id.eq(homework.book.id))
 			.fetch();
 	}
 
