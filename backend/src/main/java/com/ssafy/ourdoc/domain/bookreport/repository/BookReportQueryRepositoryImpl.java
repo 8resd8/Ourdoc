@@ -12,6 +12,7 @@ import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 
 import java.time.Year;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -138,6 +139,91 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			).fetch();
 	}
 
+	@Override
+	public long myBookReportsCount(Long userId, int grade) {
+		return Optional.ofNullable(
+			queryFactory.select(bookReport.count())
+				.from(bookReport)
+				.join(bookReport.studentClass, studentClass)
+				.join(studentClass.classRoom, classRoom)
+				.where(
+					studentClass.user.id.eq(userId),
+					classRoom.grade.eq(grade),
+					bookReport.approveTime.isNotNull()
+				).fetchOne()
+		).orElse(0L);
+	}
+
+	@Override
+	public double classAverageBookReportsCount(Long userId, int grade) {
+		Long classRoomId = queryFactory
+			.select(studentClass.classRoom.id)
+			.from(studentClass)
+			.join(studentClass.classRoom, classRoom)
+			.where(
+				studentClass.user.id.eq(userId),
+				classRoom.grade.eq(grade)
+			).fetchOne();
+
+		if (classRoomId == null) {
+			return 0L;
+		}
+
+		long count = Optional.ofNullable(
+				queryFactory
+					.select(bookReport.count())
+					.from(bookReport)
+					.join(bookReport.studentClass, studentClass)
+					.join(studentClass.classRoom, classRoom)
+					.where(
+						classRoom.id.eq(classRoomId),
+						bookReport.approveTime.isNotNull()
+					).fetchOne())
+			.orElse(0L);
+
+		long studentCount = Optional.ofNullable(
+			queryFactory
+				.select(studentClass.count())
+				.from(studentClass)
+				.join(studentClass.classRoom, classRoom)
+				.where(classRoom.id.eq(classRoomId))
+				.fetchOne()
+		).orElse(0L);
+
+		return (studentCount == 0) ? 0.0 : (double)count / studentCount;
+	}
+
+	@Override
+	public long classHighestBookReportCount(Long userId, int grade) {
+		Long classRoomId = queryFactory
+			.select(studentClass.classRoom.id)
+			.from(studentClass)
+			.join(studentClass.classRoom, classRoom)
+			.where(
+				studentClass.user.id.eq(userId),
+				classRoom.grade.eq(grade)
+			).fetchOne();
+
+		if (classRoomId == null) {
+			return 0L;
+		}
+
+		return Optional.ofNullable(
+				queryFactory
+					.select(bookReport.count())
+					.from(bookReport)
+					.join(bookReport.studentClass, studentClass)
+					.join(studentClass.classRoom, classRoom)
+					.where(
+						classRoom.id.eq(classRoomId),
+						bookReport.approveTime.isNotNull()
+					).groupBy(studentClass.id)
+					.orderBy(bookReport.count().desc())
+					.limit(1)
+					.fetchOne())
+			.orElse(0L);
+	}
+
 	private BooleanExpression eqYear(Integer year) {
 		return year == null ? null : classRoom.year.eq(Year.of(year));
 	}
@@ -155,4 +241,5 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 		return (schoolName != null && !schoolName.isEmpty())
 			? school.schoolName.eq(schoolName) : null;
 	}
+
 }
