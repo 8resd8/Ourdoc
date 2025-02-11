@@ -31,4 +31,6 @@ public interface BookReportQueryRepository {
 	List<BookReportMonthlyStatisticsDto> classMonthlyBookReportCount(Long userId);
 
 	List<BookReportDailyStatisticsDto> myDailyBookReportCount(Long userId, int grade, int month);
+
+	List<BookReportDailyStatisticsDto> classDailyBookReportCount(Long userId, int month);
 }
