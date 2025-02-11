@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.bookreport.service;
 import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.HomeworkStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
+import static com.ssafy.ourdoc.global.common.enums.OcrCheck.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -38,6 +39,10 @@ public class BookReportStudentService {
 	private final NotificationService notificationService;
 
 	public void saveBookReport(User user, BookReadLogRequest request) {
+		if (request.ocrCheck() == 사용 && (request.imageUrl() == null || request.imageUrl().trim().isEmpty())) {
+			throw new IllegalArgumentException("OCR 사용 시 imageURL 입력이 필요합니다.");
+		}
+
 		StudentClass studentClass = studentClassRepository.findStudentClassByUserId(user.getId()).orElseThrow();
 		Book book = bookRepository.findById(request.bookId()).orElseThrow();
 
