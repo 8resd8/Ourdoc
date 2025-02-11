@@ -17,6 +17,7 @@ import com.ssafy.ourdoc.domain.user.dto.TeacherLoginDto;
 import com.ssafy.ourdoc.domain.user.dto.TeacherQueryDto;
 import com.ssafy.ourdoc.domain.user.dto.request.CheckPasswordRequest;
 import com.ssafy.ourdoc.domain.user.dto.response.AdminLoginDto;
+import com.ssafy.ourdoc.domain.user.dto.response.TeacherNotInClassLoginDto;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.entity.Student;
@@ -69,14 +70,19 @@ public class UserService {
 		headers.set("Authorization", "Bearer " + getAccessToken(request));
 
 		saveRefreshTokenAndSetCookie(user, headers);
+		String profileImagePath = user.getProfileImagePath() == null ? "" : user.getProfileImagePath();
 
-		TeacherLoginDto response = new TeacherLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
-			search != null ? search.schoolName() : null,
-			search != null ? search.grade() : null,
-			search != null ? search.classNumber() : null,
-			user.getProfileImagePath());
-
-		return ResponseEntity.ok().headers(headers).body(response);
+		if (search != null) {
+			TeacherLoginDto response = new TeacherLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
+				search.schoolName(), search.grade(), search.classNumber(), profileImagePath);
+			return ResponseEntity.ok().headers(headers).body(response);
+		} else if (search == null) {
+			TeacherNotInClassLoginDto response = new TeacherNotInClassLoginDto(user.getLoginId(), user.getName(),
+				user.getUserType(), profileImagePath);
+			return ResponseEntity.ok().headers(headers).body(response);
+		} else {
+			throw new UserFailedException("알 수 없는 이유로 로그인 실패");
+		}
 	}
 
 	private void checkEmploymentStatus(User user) {
@@ -94,10 +100,11 @@ public class UserService {
 		headers.set("Authorization", "Bearer " + getAccessToken(request));
 
 		saveRefreshTokenAndSetCookie(user, headers);
+		String profileImagePath = user.getProfileImagePath() == null ? "" : user.getProfileImagePath();
 
 		StudentLoginDto response = new StudentLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
 			search.schoolName(), search.grade(), search.classNumber(), search.studentNumber(),
-			student.getTempPassword(), user.getProfileImagePath());
+			student.getTempPassword(), profileImagePath);
 
 		return ResponseEntity.ok().headers(headers).body(response);
 	}
@@ -107,8 +114,9 @@ public class UserService {
 		headers.set("Authorization", "Bearer " + getAccessToken(request));
 
 		saveRefreshTokenAndSetCookie(user, headers);
+		String profileImagePath = user.getProfileImagePath() == null ? "" : user.getProfileImagePath();
 
-		AdminLoginDto response = new AdminLoginDto(user.getLoginId(), user.getName(), user.getUserType(), user.getProfileImagePath());
+		AdminLoginDto response = new AdminLoginDto(user.getLoginId(), user.getName(), user.getUserType(), profileImagePath);
 
 		return ResponseEntity.ok().headers(headers).body(response);
 	}
