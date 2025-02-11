@@ -11,6 +11,8 @@ import java.util.List;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.classroom.dto.QSchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
+import com.ssafy.ourdoc.domain.classroom.dto.teacher.QTeachersRoomDto;
+import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeachersRoomDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.global.common.enums.Active;
 
@@ -18,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
+
 	private final JPAQueryFactory queryFactory;
 
 	@Override
@@ -60,6 +63,21 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 				classRoom.year.eq(year)
 			)
 			.groupBy(classRoom.id)
+			.fetch();
+	}
+
+	@Override
+	public List<TeachersRoomDto> findByTeachersRoom(Long userId) {
+		return queryFactory
+			.select(new QTeachersRoomDto(
+				classRoom.school.schoolName,
+				classRoom.year,
+				classRoom.grade,
+				classRoom.classNumber
+			))
+			.from(teacherClass)
+			.join(teacherClass.classRoom, classRoom)
+			.where(teacherClass.user.id.eq(userId))
 			.fetch();
 	}
 }
