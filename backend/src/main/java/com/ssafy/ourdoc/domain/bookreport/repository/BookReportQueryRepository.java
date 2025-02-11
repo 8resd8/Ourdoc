@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankResponse;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
@@ -35,5 +35,5 @@ public interface BookReportQueryRepository {
 
 	List<BookReportDailyStatisticsDto> classDailyBookReportCount(Long userId, int month);
 
-	BookReportRankResponse bookReportRank(Long userId);
+	List<BookReportRankDto> bookReportRank(Long userId);
 }
