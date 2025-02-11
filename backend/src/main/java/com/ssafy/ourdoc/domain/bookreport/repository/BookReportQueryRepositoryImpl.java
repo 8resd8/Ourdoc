@@ -237,14 +237,15 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 
 	@Override
 	public List<BookReportMonthlyStatisticsDto> myMonthlyBookReportCount(Long userId, int grade) {
-		int year = Optional.ofNullable(queryFactory
-				.select(classRoom.year)
-				.from(studentClass)
-				.join(studentClass.classRoom, classRoom)
-				.where(
-					studentClass.user.id.eq(userId),
-					classRoom.grade.eq(grade)
-				).fetchOne())
+		int year = Optional.ofNullable(
+				queryFactory
+					.select(classRoom.year)
+					.from(studentClass)
+					.join(studentClass.classRoom, classRoom)
+					.where(
+						studentClass.user.id.eq(userId),
+						classRoom.grade.eq(grade)
+					).fetchOne())
 			.map(Year::getValue)
 			.orElse(0);
 
@@ -270,14 +271,15 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 
 	@Override
 	public List<BookReportMonthlyStatisticsDto> classMonthlyBookReportCount(Long userId) {
-		int year = Optional.ofNullable(queryFactory
-				.select(classRoom.year)
-				.from(teacherClass)
-				.join(teacherClass.classRoom, classRoom)
-				.where(
-					teacherClass.user.id.eq(userId),
-					teacherClass.active.eq(Active.활성)
-				).fetchOne())
+		int year = Optional.ofNullable(
+				queryFactory
+					.select(classRoom.year)
+					.from(teacherClass)
+					.join(teacherClass.classRoom, classRoom)
+					.where(
+						teacherClass.user.id.eq(userId),
+						teacherClass.active.eq(Active.활성)
+					).fetchOne())
 			.map(Year::getValue)
 			.orElse(0);
 
@@ -322,14 +324,15 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 
 	@Override
 	public List<BookReportDailyStatisticsDto> myDailyBookReportCount(Long userId, int grade, int month) {
-		int year = Optional.ofNullable(queryFactory
-				.select(classRoom.year)
-				.from(studentClass)
-				.join(studentClass.classRoom, classRoom)
-				.where(
-					studentClass.user.id.eq(userId),
-					classRoom.grade.eq(grade)
-				).fetchOne())
+		int year = Optional.ofNullable(
+				queryFactory
+					.select(classRoom.year)
+					.from(studentClass)
+					.join(studentClass.classRoom, classRoom)
+					.where(
+						studentClass.user.id.eq(userId),
+						classRoom.grade.eq(grade)
+					).fetchOne())
 			.map(Year::getValue)
 			.orElse(0);
 
@@ -350,6 +353,47 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			).groupBy(dayExpression)
 			.fetch();
 
+		return getDailyBookReportCountDtos(tuples);
+	}
+
+	@Override
+	public List<BookReportDailyStatisticsDto> classDailyBookReportCount(Long userId, int month) {
+		int year = Optional.ofNullable(
+				queryFactory
+					.select(classRoom.year)
+					.from(teacherClass)
+					.join(teacherClass.classRoom, classRoom)
+					.where(
+						teacherClass.user.id.eq(userId),
+						teacherClass.active.eq(Active.활성)
+					).fetchOne())
+			.map(Year::getValue)
+			.orElse(0);
+
+		Long classRoomId = queryFactory
+			.select(teacherClass.classRoom.id)
+			.from(teacherClass)
+			.where(
+				teacherClass.user.id.eq(userId),
+				teacherClass.active.eq(Active.활성)
+			).fetchOne();
+
+		List<Tuple> tuples = queryFactory
+			.select(dayExpression, bookReport.count())
+			.from(bookReport)
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.classRoom, classRoom)
+			.where(
+				classRoom.id.eq(classRoomId),
+				bookReport.approveTime.isNotNull(),
+				bookReport.createdAt.between(startDate(year, month), endDate(year, month))
+			).groupBy(dayExpression)
+			.fetch();
+
+		return getDailyBookReportCountDtos(tuples);
+	}
+
+	private List<BookReportDailyStatisticsDto> getDailyBookReportCountDtos(List<Tuple> tuples) {
 		Map<Integer, Long> reportCountByDay = tuples.stream()
 			.collect(Collectors.toMap(
 				tuple -> tuple.get(dayExpression),
@@ -398,7 +442,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	private LocalDateTime endDate(int year, int month) {
-		return YearMonth.of(year, month).atEndOfMonth().atTime(23, 59, 59);
+		return YearMonth.of(month <= 2 ? year + 1 : year, month).atEndOfMonth().atTime(23, 59, 59);
 	}
 
 	private final NumberExpression<Integer> monthExpression = Expressions.numberTemplate(
