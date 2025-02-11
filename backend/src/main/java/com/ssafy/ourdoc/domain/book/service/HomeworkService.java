@@ -30,6 +30,8 @@ import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
 import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
+import com.ssafy.ourdoc.global.common.enums.SubmitStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
@@ -129,7 +131,15 @@ public class HomeworkService {
 		}
 
 		HomeworkDto homeworkDto = new HomeworkDto(BookResponse.of(homework.getBook()), homework.getCreatedAt());
-		List<BookReportHomeworkStudent> bookReports = bookReportRepository.bookReportsHomeworkStudents(homeworkId);
+		List<BookReportHomeworkStudent> bookReports = bookReportRepository.bookReportsHomeworkStudents(homeworkId,
+				user.getId())
+			.stream()
+			.map(dto -> new BookReportHomeworkStudent(
+				dto.bookreportId(),
+				dto.createdAt(),
+				dto.homeworkId() != null ? SubmitStatus.제출 : SubmitStatus.미제출,
+				dto.approveTime() != null ? ApproveStatus.있음 : ApproveStatus.없음))
+			.toList();
 
 		return HomeworkDetailStudent.builder()
 			.homework(homeworkDto)
