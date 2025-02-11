@@ -26,7 +26,7 @@ public class AdminController {
 
 	@PatchMapping("/verification")
 	public ResponseEntity<String> verifyTeacher(@Login User user, @RequestBody TeacherVerificationRequest request) {
-		adminService.verifyTeacher(user, request);
-		return ResponseEntity.ok("교사 인증 요청 처리 완료");
+		String response = adminService.verifyTeacher(user, request);
+		return ResponseEntity.ok(response);
 	}
 }
