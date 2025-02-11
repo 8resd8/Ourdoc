@@ -5,6 +5,7 @@ import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.ourdoc.domain.user.entity.QUser;
 import com.ssafy.ourdoc.domain.user.entity.User;
 
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,13 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
 			.from(user)
 			.where(user.id.eq(userId))
 			.fetchOne();
+	}
+
+	@Override
+	public void updateProfileImage(User user, String profileImageUrl) {
+		queryFactory.update(QUser.user)
+			.set(QUser.user.profileImagePath, profileImageUrl)
+			.where(QUser.user.id.eq(user.getId()))
+			.execute();
 	}
 }
