@@ -30,3 +30,9 @@ export const isSignupSuccessfulState = atom<boolean>({
   key: 'isSignupSuccessfulState',
   default: false,
 });
+
+// accessToken 상태
+export const accessTokenState = atom<string | null>({
+  key: 'accessTokenState',
+  default: null,
+});

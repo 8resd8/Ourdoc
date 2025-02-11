@@ -1,4 +1,6 @@
+import { accessTokenState } from './../recoil/atoms/usersAtoms';
 import { api, multipartApi } from '../services/api';
+import { getRecoil, setRecoil } from 'recoil-nexus';
 
 export interface SignupTeacherRequest {
   name: string;
@@ -79,11 +81,23 @@ export const signupStudentApi = async (
 // 로그인
 export const signinApi = async (data: LoginRequest): Promise<LoginResponse> => {
   const response = await api.post<LoginResponse>('/users/signin', data);
+  const accessToken = response.headers['authorization'];
+
+  if (!!accessToken) {
+    setRecoil(accessTokenState, accessToken);
+  }
+
   return response.data;
 };
 
 // 로그아웃
 export const signoutApi = async (): Promise<void> => {
+  const accessToken = getRecoil(accessTokenState);
+
+  if (accessToken) {
+    setRecoil(accessTokenState, null);
+  }
+
   await api.post('/users/signout');
 };
 

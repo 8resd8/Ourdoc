@@ -3118,6 +3118,11 @@ react@^18.3.1:
   dependencies:
     loose-envify "^1.1.0"
 
+recoil-nexus@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/recoil-nexus/-/recoil-nexus-0.5.1.tgz#178e8f624862c7a22210da15974763f7360587f0"
+  integrity sha512-gjBOW1v2BYXkLpU3eHo5SzUjmkfX5NwnvziYqgSSWc56UNeYuFfVyAKDOPjJh9u9BA6383tgZN6TC/4zm96ffQ==
+
 recoil@^0.7.7:
   version "0.7.7"
   resolved "https://registry.npmjs.org/recoil/-/recoil-0.7.7.tgz"
