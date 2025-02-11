@@ -18,22 +18,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportHomeworkStudent;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.QBookReportFeedBack;
-import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
-import com.ssafy.ourdoc.global.common.enums.SubmitStatus;
 
 import lombok.RequiredArgsConstructor;
 
@@ -239,9 +236,9 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				)
 			)
 			.from(bookReport)
-			.join(homework).on(bookReport.homework.id.eq(homework.id))
-			.where(homework.id.eq(homeworkId))
 			.leftJoin(homework).on(bookReport.book.id.eq(homework.book.id))
+			.leftJoin(user).on(bookReport.studentClass.user.id.eq(user.id))
+			.where(bookReport.homework.id.eq(homeworkId), user.id.eq(userId))
 			.fetch();
 	}
 

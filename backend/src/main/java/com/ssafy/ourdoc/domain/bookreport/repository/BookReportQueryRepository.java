@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
@@ -19,7 +19,7 @@ public interface BookReportQueryRepository {
 
 	List<ReportTeacherDtoWithId> bookReportsHomework(Long homeworkId);
 
-	List<BookReportHomeworkStudent> bookReportsHomeworkStudents(Long homeworkId);
+	List<BookReportHomeworkStudentDto> bookReportsHomeworkStudents(Long homeworkId, Long userId);
 
 	long myBookReportsCount(Long userId, int grade);
 
