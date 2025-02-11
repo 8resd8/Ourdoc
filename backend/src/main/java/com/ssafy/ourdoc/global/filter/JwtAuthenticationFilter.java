@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.global.filter;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -22,12 +23,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
 	private final JwtBlacklistService blacklistService;
+	private final List<String> excludedPaths = List.of("/teachers/signup", "/students/signup",
+		"/users/signin", "/users/checkId");
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getRequestURI();
-		return path.startsWith("/users/signin") || path.startsWith("/teachers/signup") || path.startsWith("/students/signup")
-			|| path.startsWith("/users/checkId");
+		String contextPath = request.getContextPath();
+		return excludedPaths.stream().anyMatch(excluded -> (contextPath + excluded).equals(path));
 	}
 
 	@Override
