@@ -37,6 +37,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.QBookReportFeedBack;
+import com.ssafy.ourdoc.global.common.enums.Active;
 
 import lombok.RequiredArgsConstructor;
 
@@ -257,6 +258,54 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.where(
 				studentClass.user.id.eq(userId),
 				classRoom.grade.eq(grade),
+				bookReport.approveTime.isNotNull(),
+				bookReport.createdAt.between(startDate(year), endDate(year))
+			).groupBy(monthExpression)
+			.fetch();
+
+		Map<Integer, Long> reportCountByMonth = tuples.stream()
+			.collect(Collectors.toMap(
+				tuple -> tuple.get(monthExpression),
+				tuple -> tuple.get(bookReport.count())
+			));
+
+		List<BookReportMonthlyStatisticsDto> monthlyReports = new ArrayList<>();
+		for (int m = 1; m <= 12; m++) {
+			int count = reportCountByMonth.getOrDefault(m, 0L).intValue();
+			monthlyReports.add(new BookReportMonthlyStatisticsDto(m, count));
+		}
+
+		return monthlyReports;
+	}
+
+	@Override
+	public List<BookReportMonthlyStatisticsDto> classMonthlyBookReportCount(Long userId) {
+		int year = Optional.ofNullable(queryFactory
+				.select(classRoom.year)
+				.from(teacherClass)
+				.join(teacherClass.classRoom, classRoom)
+				.where(
+					teacherClass.user.id.eq(userId),
+					teacherClass.active.eq(Active.활성)
+				).fetchOne())
+			.map(Year::getValue)
+			.orElse(0);
+
+		Long classRoomId = queryFactory
+			.select(teacherClass.classRoom.id)
+			.from(teacherClass)
+			.where(
+				teacherClass.user.id.eq(userId),
+				teacherClass.active.eq(Active.활성)
+			).fetchOne();
+
+		List<Tuple> tuples = queryFactory
+			.select(monthExpression, bookReport.count())
+			.from(bookReport)
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.classRoom, classRoom)
+			.where(
+				classRoom.id.eq(classRoomId),
 				bookReport.approveTime.isNotNull(),
 				bookReport.createdAt.between(startDate(year), endDate(year))
 			).groupBy(monthExpression)
