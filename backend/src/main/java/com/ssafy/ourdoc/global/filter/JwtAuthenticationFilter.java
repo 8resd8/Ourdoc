@@ -1,10 +1,13 @@
 package com.ssafy.ourdoc.global.filter;
 
+import static com.ssafy.ourdoc.global.common.enums.UserType.*;
+
 import java.io.IOException;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.util.JwtBlacklistService;
 import com.ssafy.ourdoc.global.util.JwtUtil;
 
@@ -51,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		try {
 			Claims claims = jwtUtil.getClaims(token);
 			String userId = claims.getSubject();
-			String role = claims.get("role", String.class);
+			UserType role = UserType.valueOf(claims.get("role", String.class));
 
 			if (!isAuthorized(request.getRequestURI(), role)) {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN, "인가되지 않은 사용자입니다.");
@@ -71,14 +74,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 	}
 
-	private boolean isAuthorized(String path, String role) {
+	private boolean isAuthorized(String path, UserType role) {
 		boolean authorized = true;
 
-		if (path.startsWith("/admin") && !"관리자".equals(role)) {
+		if (path.startsWith("/admin") && !role.equals(관리자)) {
 			authorized = false;
-		} else if (path.startsWith("/teachers") && !"교사".equals(role)) {
+		} else if (path.startsWith("/teachers") && !role.equals(교사)) {
 			authorized = false;
-		} else if (path.startsWith("/students") && !"학생".equals(role)) {
+		} else if (path.startsWith("/students") && !role.equals(학생)) {
 			authorized = false;
 		}
 
