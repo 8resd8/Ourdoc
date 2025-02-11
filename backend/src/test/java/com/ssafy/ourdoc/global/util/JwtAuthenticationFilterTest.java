@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.global.util;
 
+import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.filter.JwtAuthenticationFilter;
 
 import io.jsonwebtoken.Claims;
@@ -51,7 +53,7 @@ class JwtAuthenticationFilterTest {
 		// 📌 Claims Mocking 추가 (여기가 핵심)
 		Claims mockClaims = mock(Claims.class);
 		given(mockClaims.getSubject()).willReturn("testUser");
-		given(mockClaims.get("role", String.class)).willReturn("ROLE_USER");
+		given(mockClaims.get("role", String.class)).willReturn(학생.name());
 		given(jwtUtil.getClaims("valid.jwt.token")).willReturn(mockClaims);  // ✅ Claims 반환하도록 설정
 
 		// When & Then: 요청 검증

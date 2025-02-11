@@ -20,6 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
 	private final LoginArgumentResolver loginArgumentResolver;
 	private final JwtInterceptor jwtInterceptor;
 
+	private final List<String> excludedPaths = List.of("/teachers/signup", "/students/signup", "/users/signin",
+		"/users/checkId", "debate/**", "/openvidu/**");
+
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
 		resolvers.add(loginArgumentResolver);
@@ -29,8 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(jwtInterceptor)
 			.addPathPatterns("/**")
-			.excludePathPatterns("/teachers/signup", "/students/signup", "/users/signin", "/users/checkId",
-				"/debate/**", "/openvidu/**");
+			.excludePathPatterns(excludedPaths.toArray(new String[0]));
 	}
 
 	@Override
@@ -38,7 +40,7 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addMapping("/**")
 			.allowedOrigins("http://localhost:5173")
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-			.allowedHeaders("Authorization", "Content-Type", "X-Requested-With", "Accept")
+			.allowedHeaders("*")
 			.allowCredentials(true);
 	}
 

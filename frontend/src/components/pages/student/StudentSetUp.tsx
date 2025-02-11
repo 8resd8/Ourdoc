@@ -93,7 +93,12 @@ const StudentSetup = () => {
               />
             </div>
             <div className={classes.btn}>
-              <Button type="" title="확인" onClick={handleSignUpClick} />
+              <Button
+                type="filled"
+                color="primary"
+                title="소속변경"
+                onClick={handleSignUpClick}
+              />
             </div>
           </div>
         ) : (
@@ -135,7 +140,12 @@ const StudentSetup = () => {
               />
             </div>
             <div className={classes.btn}>
-              <Button type="" title="로그인" onClick={handleLogin} />
+              <Button
+                type="filled"
+                color="primary"
+                title="로그인"
+                onClick={handleLogin}
+              />
             </div>
           </div>
         )}

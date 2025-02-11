@@ -19,18 +19,6 @@ const DebateBoard = () => {
       >
         토론방 개설
       </button>
-      <div>
-        <Button title="토론방 개설" />
-      </div>
-      <div>
-        <Button title="로그인" />
-      </div>
-      <div>
-        <Button title="로그아웃" />
-      </div>
-      <div>
-        <Button title="이력서 첨부" />
-      </div>
 
       {showModal && <CreateDebateRoom closeModal={closeModal} />}
     </div>
