@@ -1,16 +1,16 @@
 package com.ssafy.ourdoc.global.interceptor;
 
-import com.ssafy.ourdoc.global.util.JwtUtil;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerInterceptor;
+
 import com.ssafy.ourdoc.global.util.JwtRefreshService;
+import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 @RequiredArgsConstructor
@@ -22,6 +22,11 @@ public class JwtInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
 		Exception {
+		// 테스트 코드에 영향 있음
+		// if (request.getMethod().equals("OPTIONS")) {
+		// 	return true;
+		// }
+
 		String accessToken = extractToken(request);
 
 		if (accessToken == null) {
