@@ -1,6 +1,9 @@
 services:
   backend:
     container_name: ourdoc-backend
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
     image: ourdoc:0.0.1
     ports:
       - 8080:8080
@@ -8,6 +11,9 @@ services:
       - redis
   frontend:
     container_name: ourdoc-frontend
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     image: ourdoc-frontend:0.0.1
     ports:
       - 5173:5173
