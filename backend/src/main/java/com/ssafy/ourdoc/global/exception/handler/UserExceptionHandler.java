@@ -5,18 +5,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.ssafy.ourdoc.global.common.response.ErrorResponse;
 import com.ssafy.ourdoc.global.exception.UserFailedException;
 
-/**
- * 로그인 관련 예외를 처리하는 핸들러
- */
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestControllerAdvice
 public class UserExceptionHandler {
 
 	@ExceptionHandler
-	public ResponseEntity<String> handleUserFailedException(UserFailedException e) {
-		return ResponseEntity
-			.status(HttpStatus.UNAUTHORIZED) // HTTP 401 Unauthorized
-			.body(e.getMessage()); // 예외 메시지를 응답에 포함
+	public ResponseEntity<ErrorResponse> handleUserFailedException(UserFailedException e, HttpServletRequest request) {
+		return ErrorResponse.toResponseEntity(HttpStatus.UNAUTHORIZED, e.getMessage(), request.getRequestURI());
 	}
 }

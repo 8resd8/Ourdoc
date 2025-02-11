@@ -1,16 +1,13 @@
 import { useState } from 'react';
-import { signUpApi } from '../../../api/auth/AuthApi';
 import classes from './TeacherSignUp.module.css';
 import InputField from '../../molecules/InputField';
 import Button from '../../atoms/Button';
-import Datepicker, { DateValueType } from 'react-tailwindcss-datepicker';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Label from '../../atoms/Label';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import SignupIdField from '../../molecules/SignupIdField';
-import ButtonHalf from '../../atoms/ButtonHalf';
 import RadioField from '../../molecules/RadioField';
 import Modal from '../../commons/Modal';
 import UploadModal from '../../commons/UploadModal';
@@ -91,7 +88,12 @@ const TeacherSignUp = () => {
     setIsUploadModalOpen(false);
   };
 
-  const [birthDate, setBirthDate] = useState(dayjs());
+  const [birthDate, setBirthDate] = useState<dayjs.Dayjs | null>(null);
+
+  const handleBirthDateChange = (newValue: dayjs.Dayjs | null) => {
+    setBirthDate(newValue);
+    handleInputChange('birth', newValue?.format('YYYY-MM-DD') || '');
+  };
 
   return (
     <div className={classes.root}>
@@ -134,6 +136,7 @@ const TeacherSignUp = () => {
             label="아이디"
             placeholder="아이디를 입력해주세요"
             onChange={(value) => handleInputChange('loginId', value)}
+            isIdChecked={false}
           />
         </div>
         <div className={classes.input}>
@@ -195,6 +198,11 @@ const TeacherSignUp = () => {
           /> */}
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
             <DatePicker
+              value={birthDate}
+              onChange={handleBirthDateChange}
+              format="YYYY-MM-DD"
+              views={['year', 'month', 'day']}
+              openTo="year"
               slotProps={{
                 popper: {
                   sx: {
@@ -205,13 +213,6 @@ const TeacherSignUp = () => {
                   },
                 },
               }}
-              openTo="year"
-              views={['year', 'month', 'day']}
-              format="YYYY-MM-DD"
-              value={birthDate}
-              onChange={(value: any) =>
-                handleInputChange('birth', value.format('YYYY-MM-DD'))
-              }
               sx={{
                 minWidth: 420,
                 '& .MuiOutlinedInput-notchedOutline': {
@@ -240,12 +241,18 @@ const TeacherSignUp = () => {
         <div className={classes.btn}>
           <Button
             title="재직증명서 첨부하기"
-            type="upload"
+            type="outlined"
+            color="secondary"
             onClick={handleUploadClick}
           />
         </div>
         <div className={classes.btn}>
-          <Button type="signup" title="회원가입" onClick={handleSignUpClick} />
+          <Button
+            type="filled"
+            color="primary"
+            title="회원가입"
+            onClick={handleSignUpClick}
+          />
         </div>
         <Modal
           type="signup"

@@ -1,61 +1,90 @@
-import { useState } from 'react';
-import { signupStudentApi } from '../../../services/usersService';
+import { useState, useEffect } from 'react';
+import {
+  checkIdApi,
+  signupStudentApi,
+  SignupStudentRequest,
+} from '../../../services/usersService';
 import classes from './StudentSignup.module.css';
 import InputField from '../../molecules/InputField';
 import Button from '../../atoms/Button';
-import Datepicker, { DateValueType } from 'react-tailwindcss-datepicker';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import Label from '../../atoms/Label';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import SignupIdField from '../../molecules/SignupIdField';
-import ButtonHalf from '../../atoms/ButtonHalf';
 import RadioField from '../../molecules/RadioField';
 import Modal from '../../commons/Modal';
 
-interface signInRequestType {
-  name: string;
-  loginId: string;
-  password: string;
-  schoolName: string;
-  grade: string;
-  classNumber: string;
-  studentNumber: string;
-  birth: string;
-}
 const StudentSignUp = () => {
   const [gender, setGender] = useState('남자');
   const handleGenderChange = (selectedGender: string) => {
     setGender(selectedGender);
     setSignInRequest((prev) => ({ ...prev, gender: selectedGender }));
   };
-  console.log(gender);
-  const [signInRequest, setSignInRequest] = useState<signInRequestType>({
-    name: '',
+
+  const [signInRequest, setSignInRequest] = useState<SignupStudentRequest>({
     loginId: '',
     password: '',
-    schoolName: '',
-    grade: '',
-    classNumber: '',
-    studentNumber: '',
+    name: '',
+    studentNumber: 0,
     birth: '',
+    gender: '남자',
+    schoolName: '성천',
+    schoolId: 0,
+    grade: 1,
+    classNumber: 3,
   });
-  console.log(signInRequest);
+
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [isIdChecked, setIsIdChecked] = useState(false);
+  const [passwordCheck, setPasswordCheck] = useState('');
+  const [passwordValidate, setPasswordValidate] = useState<
+    'warning' | 'success' | 'danger' | ''
+  >('');
+
+  useEffect(() => {
+    const isValid =
+      Object.values(signInRequest).every((value) => value !== '') &&
+      isIdChecked &&
+      passwordValidate === 'success';
+    setIsFormValid(isValid);
+  }, [signInRequest, isIdChecked, passwordValidate]);
 
   const handleInputChange = (id: string, value: string) => {
     setSignInRequest((prev) => ({ ...prev, [id]: value }));
+    if (id === 'loginId') {
+      setIsIdChecked(false);
+    }
+    if (id === 'passwordCheck') {
+      setPasswordCheck(value);
+      setPasswordValidate(
+        value === signInRequest.password ? 'success' : 'danger'
+      );
+    }
   };
 
   const handleSignUp = async () => {
     try {
-      // const response = await signUpApi({
-      //   loginId: "",
-      //   password: "",
-      // });
+      console.log('회원가입 요청:', signInRequest);
+      // const response = await signupStudentApi(signInRequest);
       // console.log('회원가입 성공:', response);
     } catch (error) {
       console.error('회원가입 실패:', error);
+    }
+  };
+
+  const handleCheckDuplicateId = async () => {
+    try {
+      const response = await checkIdApi({ loginId: signInRequest.loginId });
+      if (response) {
+        alert('이미 사용 중인 아이디입니다.');
+      } else {
+        alert('사용 가능한 아이디입니다.');
+        setIsIdChecked(true);
+      }
+    } catch (error) {
+      console.error('아이디 중복 확인 실패:', error);
     }
   };
 
@@ -78,7 +107,12 @@ const StudentSignUp = () => {
     setIsModalOpen(false);
   };
 
-  const [birthDate, setBirthDate] = useState(dayjs());
+  const [birthDate, setBirthDate] = useState<dayjs.Dayjs | null>(null);
+
+  const handleBirthDateChange = (newValue: dayjs.Dayjs | null) => {
+    setBirthDate(newValue);
+    handleInputChange('birth', newValue?.format('YYYY-MM-DD') || '');
+  };
 
   return (
     <div className={classes.root}>
@@ -105,17 +139,13 @@ const StudentSignUp = () => {
           </div>
         </div>
         <div className={`${classes.input}`}>
-          {/* <InputField
-            id="loginId"
-            label="아이디"
-            placeholder="아이디를 입력해주세요"
-            onChange={(value) => handleInputChange('loginId', value)}
-          /> */}
           <SignupIdField
             id="loginId"
             label="아이디"
             placeholder="아이디를 입력해주세요"
             onChange={(value) => handleInputChange('loginId', value)}
+            onCheckDuplicate={handleCheckDuplicateId}
+            isIdChecked={isIdChecked}
           />
         </div>
         <div className={classes.input}>
@@ -130,10 +160,11 @@ const StudentSignUp = () => {
 
         <div className={classes.input}>
           <InputField
-            validate="warning"
+            validate={passwordValidate}
             id="passwordCheck"
             label="비밀번호 확인"
             placeholder="비밀번호를 한번 더 입력해주세요"
+            onChange={(value) => handleInputChange('passwordCheck', value)}
           />
         </div>
         <div className={classes.input}>
@@ -156,31 +187,23 @@ const StudentSignUp = () => {
         </div>
         <div className={classes.input}>
           <Label label="생년월일" htmlFor="birth" />
-          {/* <InputField
-            id="birth"
-            label="생년월일"
-            placeholder="생년월일을 입력해주세요"
-            onChange={(value) => handleInputChange('password', value)}
-          /> */}
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
             <DatePicker
+              value={birthDate}
+              onChange={handleBirthDateChange}
+              format="YYYY-MM-DD"
+              views={['year', 'month', 'day']}
+              openTo="year"
               slotProps={{
                 popper: {
                   sx: {
                     '& .MuiPaper-root': {
-                      minWidth: 400, // 팝업 너비
-                      minHeight: 300, // 팝업 높이
+                      minWidth: 400,
+                      minHeight: 300,
                     },
                   },
                 },
               }}
-              openTo="year"
-              views={['year', 'month', 'day']}
-              format="YYYY-MM-DD"
-              value={birthDate}
-              onChange={(value: any) =>
-                handleInputChange('birth', value.format('YYYY-MM-DD'))
-              }
               sx={{
                 minWidth: 420,
                 '& .MuiOutlinedInput-notchedOutline': {
@@ -207,7 +230,13 @@ const StudentSignUp = () => {
           />
         </div>
         <div className={classes.btn}>
-          <Button type="" title="회원가입" onClick={handleSignUpClick} />
+          <Button
+            title="회원가입"
+            onClick={handleSignUpClick}
+            disabled={!isFormValid}
+            type={'filled'}
+            color={'primary'}
+          />
         </div>
         <Modal
           type="signup"

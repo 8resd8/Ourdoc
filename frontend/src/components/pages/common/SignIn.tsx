@@ -1,12 +1,17 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '../../atoms/Button';
 import InputField from '../../molecules/InputField';
 import classes from './SignIn.module.css';
 import { signinApi } from '../../../services/usersService';
+import { currentUserState, userStatusSelector } from '../../../recoil';
+import { useSetRecoilState } from 'recoil';
 
 const SignIn = () => {
   const [userType, setUserType] = useState('학생');
   const [loginInfo, setLoginInfo] = useState({ loginId: '', password: '' });
+  const navigate = useNavigate();
+  const setUser = useSetRecoilState(currentUserState);
 
   const handleInputChange = (id: string, value: string) => {
     setLoginInfo((prev) => ({ ...prev, [id]: value }));
@@ -19,7 +24,14 @@ const SignIn = () => {
         loginId: loginInfo.loginId,
         password: loginInfo.password,
       });
-      console.log('로그인 성공:', response);
+
+      setUser(response);
+
+      if (userType === '학생') {
+        navigate('/student/main');
+      } else if (userType === '교사') {
+        navigate('/teacher/main');
+      }
     } catch (error) {
       console.error('로그인 실패:', error);
     }
@@ -83,7 +95,12 @@ const SignIn = () => {
           />
         </div>
         <div className={classes.btn}>
-          <Button type="" title="로그인" onClick={handleLogin} />
+          <Button
+            type="filled"
+            color="primary"
+            title="로그인"
+            onClick={handleLogin}
+          />
         </div>
         <div className={`${classes.btn_admin} ml-80 text-gray-500 body-small`}>
           관리자로 로그인

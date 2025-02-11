@@ -13,4 +13,7 @@ export default defineConfig({
   optimizeDeps: {
     include: ['dayjs'],
   },
+  server: {
+    allowedHosts: ['i12a405.p.ssafy.io'],
+  },
 });

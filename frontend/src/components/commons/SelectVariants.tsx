@@ -29,7 +29,7 @@ export default function StyledSelect() {
         onChange={handleChange}
         label="분류"
         sx={{
-          fontSize: '16px', // 드롭다운 글씨 크기
+          fontSize: '15px', // 드롭다운 글씨 크기
           color: '#555', // 드롭다운 텍스트 색상
           '& .MuiSelect-icon': {
             color: '#888', // 드롭다운 아이콘 색상
