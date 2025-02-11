@@ -26,4 +26,6 @@ public interface BookReportQueryRepository {
 	long classHighestBookReportCount(Long userId, int grade);
 
 	List<BookReportMonthlyStatisticsDto> myMonthlyBookReportCount(Long userId, int grade);
+
+	List<BookReportMonthlyStatisticsDto> classMonthlyBookReportCount(Long userId);
 }
