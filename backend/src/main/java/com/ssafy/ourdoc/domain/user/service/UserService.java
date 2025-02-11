@@ -71,7 +71,10 @@ public class UserService {
 		saveRefreshTokenAndSetCookie(user, headers);
 
 		TeacherLoginDto response = new TeacherLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
-			search.schoolName(), search.grade(), search.classNumber(), user.getProfileImagePath());
+			search != null ? search.schoolName() : null,
+			search != null ? search.grade() : null,
+			search != null ? search.classNumber() : null,
+			user.getProfileImagePath());
 
 		return ResponseEntity.ok().headers(headers).body(response);
 	}
