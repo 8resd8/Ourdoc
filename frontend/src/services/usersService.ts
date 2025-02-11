@@ -79,6 +79,8 @@ export const signupStudentApi = async (
 // 로그인
 export const signinApi = async (data: LoginRequest): Promise<LoginResponse> => {
   const response = await api.post<LoginResponse>('/users/signin', data);
+  console.log(response.headers);
+
   return response.data;
 };
 
