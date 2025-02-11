@@ -48,7 +48,7 @@ public class OpenViduService {
 	 * customSessionId를 이용해 고유한 세션명을 지정
 	 */
 	private String createSession(String sessionName) {
-		String url = OPENVIDU_URL;
+		String url = OPENVIDU_URL + "/openvidu/api/sessions";
 		HttpHeaders headers = createHeaders();
 		JSONObject body = new JSONObject();
 		body.put("customSessionId", sessionName);
@@ -71,7 +71,7 @@ public class OpenViduService {
 	 * OpenVidu 서버에 토큰 생성 요청
 	 */
 	private String createToken(String sessionId) {
-		String url = OPENVIDU_URL;
+		String url = OPENVIDU_URL + "/openvidu/api/tokens";
 		HttpHeaders headers = createHeaders();
 		JSONObject body = new JSONObject();
 		body.put("session", sessionId);
