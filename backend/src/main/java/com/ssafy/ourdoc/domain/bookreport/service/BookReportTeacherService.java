@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.bookreport.service;
 import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportCommentRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherListResponse;
@@ -120,6 +122,19 @@ public class BookReportTeacherService {
 	}
 
 	public BookReportRankResponse getBookReportRank(User user) {
-		return bookReportRepository.bookReportRank(user.getId());
+		List<BookReportRankDto> rankList = bookReportRepository.bookReportRank(user.getId());
+		List<BookReportRankDto> podiumList = new ArrayList<>();
+		int rank = 0;
+		int totalCount = 0;
+		for (BookReportRankDto rankDto : rankList) {
+			rank++;
+			long readCount = rankDto.readCount();
+			totalCount += readCount;
+			if (rank < 4) {
+				podiumList.add(new BookReportRankDto(rankDto.studentNumber(), rankDto.name(), (int)readCount, rank));
+			}
+		}
+
+		return new BookReportRankResponse(podiumList, totalCount);
 	}
 }
