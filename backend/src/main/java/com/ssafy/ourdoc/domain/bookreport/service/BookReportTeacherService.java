@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportCommentRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherListResponse;
@@ -111,5 +112,9 @@ public class BookReportTeacherService {
 
 	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(User user) {
 		return bookReportRepository.classMonthlyBookReportCount(user.getId());
+	}
+
+	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(User user, int month) {
+		return bookReportRepository.classDailyBookReportCount(user.getId(), month);
 	}
 }
