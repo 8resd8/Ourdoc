@@ -21,7 +21,7 @@ public class WebConfig implements WebMvcConfigurer {
 	private final JwtInterceptor jwtInterceptor;
 
 	private final List<String> excludedPaths = List.of("/teachers/signup", "/students/signup", "/users/signin",
-		"/users/checkId");
+		"/users/checkId", "debate/**", "/openvidu/**");
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
@@ -39,10 +39,10 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 			.allowedOrigins("http://localhost:5173")
-			.allowedMethods("GET", "POST", "PUT", "DELETE")
+			.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
 			.allowedHeaders("*")
-			.exposedHeaders("Authorization")
 			.allowCredentials(true);
 	}
+
 }
 
