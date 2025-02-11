@@ -79,9 +79,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		if (path.startsWith("/admin") && !role.equals(관리자)) {
 			authorized = false;
-		} else if (path.startsWith("/teachers") && !role.equals(교사)) {
+		} else if ((path.startsWith("/teachers") || path.startsWith("/books/teachers") ||
+			path.startsWith("/bookreports/teachers")) && !role.equals(교사)) {
 			authorized = false;
-		} else if (path.startsWith("/students") && !role.equals(학생)) {
+		} else if ((path.startsWith("/students") || path.startsWith("/books/students") ||
+			path.startsWith("/bookreports/students")) && !role.equals(학생)) {
 			authorized = false;
 		}
 
