@@ -24,10 +24,6 @@ public class JwtInterceptor implements HandlerInterceptor {
 		Exception {
 		String accessToken = extractToken(request);
 
-		if (request.getMethod().equals("OPTIONS")) {
-			return true;
-		}
-
 		if (accessToken == null) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Missing access token");
 			return false;
