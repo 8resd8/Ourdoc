@@ -74,7 +74,7 @@ public class TeacherController {
 		return teacherService.getTeacherProfile(user);
 	}
 
-	@PatchMapping(value = "/profile")
+	@PatchMapping("/profile")
 	public ResponseEntity<String> updateTeacherProfile(
 		@Login User user,
 		@RequestPart(required = false) MultipartFile profileImage,
