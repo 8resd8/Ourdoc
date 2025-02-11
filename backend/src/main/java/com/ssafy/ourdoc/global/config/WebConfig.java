@@ -20,6 +20,9 @@ public class WebConfig implements WebMvcConfigurer {
 	private final LoginArgumentResolver loginArgumentResolver;
 	private final JwtInterceptor jwtInterceptor;
 
+	private final List<String> excludedPaths = List.of("/teachers/signup", "/students/signup", "/users/signin",
+		"/users/checkId");
+
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
 		resolvers.add(loginArgumentResolver);
@@ -29,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(jwtInterceptor)
 			.addPathPatterns("/**")
-			.excludePathPatterns("/teachers/signup", "/students/signup", "/users/signin", "/users/checkId");
+			.excludePathPatterns(excludedPaths.toArray(new String[0]));
 	}
 
 	@Override
