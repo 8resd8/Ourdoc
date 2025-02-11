@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.user.dto.TeacherQueryDto;
 import com.ssafy.ourdoc.domain.user.dto.TeacherVerificationDto;
@@ -119,15 +120,36 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 
 	@Override
 	public void updateTeacherProfile(User user, TeacherProfileUpdateRequest request) {
-		queryFactory.update(QUser.user)
-			.set(QUser.user.name, request.name())
-			.where(QUser.user.id.eq(user.getId()))
-			.execute();
+		JPAUpdateClause userUpdate = queryFactory.update(QUser.user)
+			.where(QUser.user.id.eq(user.getId()));
 
-		queryFactory.update(teacher)
-			.set(teacher.email, request.email())
-			.set(teacher.phone, request.phone())
-			.where(teacher.user.eq(user))
-			.execute();
+		boolean isUserUpdated = false;
+
+		if (request.name() != null && !request.name().isEmpty()) {
+			userUpdate.set(QUser.user.name, request.name());
+			isUserUpdated = true;
+		}
+
+		if (isUserUpdated) {
+			userUpdate.execute();
+		}
+
+		JPAUpdateClause teacherUpdate = queryFactory.update(teacher)
+			.where(teacher.user.eq(user));
+
+		boolean isTeacherUpdated = false;
+
+		if (request.email() != null && !request.email().isEmpty()) {
+			teacherUpdate.set(teacher.email, request.email());
+			isTeacherUpdated = true;
+		}
+		if (request.phone() != null && !request.phone().isEmpty()) {
+			teacherUpdate.set(teacher.phone, request.phone());
+			isTeacherUpdated = true;
+		}
+
+		if (isTeacherUpdated) {
+			teacherUpdate.execute();
+		}
 	}
 }
