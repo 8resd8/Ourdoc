@@ -19,9 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.user.dto.TeacherQueryDto;
 import com.ssafy.ourdoc.domain.user.dto.TeacherVerificationDto;
+import com.ssafy.ourdoc.domain.user.entity.QUser;
+import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
+import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileUpdateRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.QTeacher;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
@@ -41,7 +45,7 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 		return queryFactory
 			.select(Projections.constructor(
 				TeacherQueryDto.class,
-				school.schoolName,
+				school.schoolName.coalesce("null"),
 				classRoom.grade,
 				classRoom.classNumber
 			))
@@ -110,6 +114,20 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 			.set(teacher.certificateTime, LocalDateTime.now())
 			.set(teacher.updatedAt, LocalDateTime.now())
 			.where(teacher.id.eq(teacherId).and(teacher.employmentStatus.eq(비재직)))
+			.execute();
+	}
+
+	@Override
+	public void updateTeacherProfile(User user, TeacherProfileUpdateRequest request) {
+		queryFactory.update(QUser.user)
+			.set(QUser.user.name, request.name())
+			.where(QUser.user.id.eq(user.getId()))
+			.execute();
+
+		queryFactory.update(teacher)
+			.set(teacher.email, request.email())
+			.set(teacher.phone, request.phone())
+			.where(teacher.user.eq(user))
 			.execute();
 	}
 }
