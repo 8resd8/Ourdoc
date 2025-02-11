@@ -19,8 +19,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -44,12 +46,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		// 블랙리스트에 있는 토큰이면 401 응답
 		if (blacklistService.isBlacklisted(token)) {
+			log.info("Unauthorized: Token is blacklisted {}", token);
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Token is blacklisted");
 			return;
 		}
 
 		// 토큰이 없거나, 유효하지 않다면 401 반환
 		if (token == null || !jwtUtil.validateToken(token)) {
+			log.info("Unauthorized: Invalid or missing token {}", token);
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid or missing token");
 			return;
 		}
@@ -60,6 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			UserType role = UserType.valueOf(claims.get("role", String.class));
 
 			if (!isAuthorized(request.getRequestURI(), role)) {
+				log.info("인가되지 않은 사용자입니다. {}", token);
 				response.sendError(HttpServletResponse.SC_FORBIDDEN, "인가되지 않은 사용자입니다.");
 				return;
 			}
@@ -73,6 +78,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 		} catch (JwtException e) {
 			// JWT 검증 실패 시 401 반환
+			log.info("Unauthorized: Invalid token {}", e.getMessage());
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid token");
 		}
 	}
