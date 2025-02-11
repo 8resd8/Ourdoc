@@ -3,7 +3,7 @@ package com.ssafy.ourdoc.domain.debate.dto;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 
 public record OnlineUserDto(
-	String schoolName,
+	Long userId,
 	String name,
 	UserType userType,
 	String profileImagePath
