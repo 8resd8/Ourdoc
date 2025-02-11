@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
@@ -62,6 +63,12 @@ public class BookReportStudentController {
 	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(@Login User user,
 		@RequestBody BookReportStatisticsRequest request) {
 		return bookReportStudentService.getMonthlyBookReportStatistics(user, request);
+	}
+
+	@GetMapping("/statistics/days")
+	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(@Login User user,
+		@RequestBody BookReportStatisticsRequest request) {
+		return bookReportStudentService.getDailyBookReportStatistics(user, request);
 	}
 
 }
