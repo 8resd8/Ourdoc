@@ -4,7 +4,7 @@ import Button from '../../atoms/Button';
 import InputField from '../../molecules/InputField';
 import classes from './SignIn.module.css';
 import { signinApi } from '../../../services/usersService';
-import { currentUserState, userStatusSelector } from '../../../recoil';
+import { currentUserState } from '../../../recoil';
 import { useSetRecoilState } from 'recoil';
 
 const SignIn = () => {
