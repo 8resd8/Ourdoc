@@ -29,16 +29,18 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(jwtInterceptor)
 			.addPathPatterns("/**")
-			.excludePathPatterns("/teachers/signup", "/students/signup", "/users/signin", "/users/checkId");
+			.excludePathPatterns("/teachers/signup", "/students/signup", "/users/signin", "/users/checkId",
+				"/debate/**", "/openvidu/**");
 	}
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
 			.allowedOrigins("http://localhost:5173")
-			.allowedMethods("GET", "POST", "PUT", "DELETE")
-			.allowedHeaders("*")
+			.allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+			.allowedHeaders("Authorization", "Content-Type", "X-Requested-With", "Accept")
 			.allowCredentials(true);
 	}
+
 }
 
