@@ -10,18 +10,26 @@ import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 import static com.ssafy.ourdoc.global.common.enums.EvaluatorType.*;
 
+import java.time.LocalDateTime;
 import java.time.Year;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDtoWithId;
@@ -224,6 +232,51 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.orElse(0L);
 	}
 
+	@Override
+	public List<BookReportMonthlyStatisticsDto> myMonthlyBookReportCount(Long userId, int grade) {
+		int year = Optional.ofNullable(queryFactory
+				.select(classRoom.year)
+				.from(studentClass)
+				.join(studentClass.classRoom, classRoom)
+				.where(
+					studentClass.user.id.eq(userId),
+					classRoom.grade.eq(grade)
+				).fetchOne())
+			.map(Year::getValue)
+			.orElse(0);
+
+		if (year == 0) {
+			return new ArrayList<>();
+		}
+
+		List<Tuple> tuples = queryFactory
+			.select(monthExpression, bookReport.count())
+			.from(bookReport)
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.classRoom, classRoom)
+			.where(
+				studentClass.user.id.eq(userId),
+				classRoom.grade.eq(grade),
+				bookReport.approveTime.isNotNull(),
+				bookReport.createdAt.between(startDate(year), endDate(year))
+			).groupBy(monthExpression)
+			.fetch();
+
+		Map<Integer, Long> reportCountByMonth = tuples.stream()
+			.collect(Collectors.toMap(
+				tuple -> tuple.get(monthExpression),
+				tuple -> tuple.get(bookReport.count())
+			));
+
+		List<BookReportMonthlyStatisticsDto> monthlyReports = new ArrayList<>();
+		for (int m = 1; m <= 12; m++) {
+			int count = reportCountByMonth.getOrDefault(m, 0L).intValue();
+			monthlyReports.add(new BookReportMonthlyStatisticsDto(m, count));
+		}
+
+		return monthlyReports;
+	}
+
 	private BooleanExpression eqYear(Integer year) {
 		return year == null ? null : classRoom.year.eq(Year.of(year));
 	}
@@ -242,4 +295,15 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			? school.schoolName.eq(schoolName) : null;
 	}
 
+	private LocalDateTime startDate(int year) {
+		return LocalDateTime.of(year, 3, 1, 0, 0, 0);
+	}
+
+	private LocalDateTime endDate(int year) {
+		return LocalDateTime.of(year + 1, 2, Year.of(year + 1).isLeap() ? 29 : 28, 23, 59, 59);
+	}
+
+	private final NumberExpression<Integer> monthExpression = Expressions.numberTemplate(
+		Integer.class, "function('MONTH', {0})", bookReport.createdAt
+	);
 }
