@@ -5,10 +5,9 @@ public record TeacherProfileUpdateRequest(
 	String loginId,
 	String email,
 	String phone,
-	String schoolName,
-	String address,
-	int year,
-	int grade,
-	int classNumber
+	Long schoolId,
+	Integer year,
+	Integer grade,
+	Integer classNumber
 ) {
 }
