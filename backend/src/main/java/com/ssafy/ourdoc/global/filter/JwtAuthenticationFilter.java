@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.global.filter;
 import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,11 +30,16 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	@Value("${prod.excluded-paths}")
-	private String[] excludedPathsArray;
+	private String excludedPathsRaw;
 
 	private final JwtUtil jwtUtil;
 	private final JwtBlacklistService blacklistService;
-	private final List<String> excludedPaths = List.of(excludedPathsArray);
+	private List<String> excludedPaths;
+
+	@PostConstruct
+	public void init() {
+		excludedPaths = Arrays.asList(excludedPathsRaw.split(","));
+	}
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
