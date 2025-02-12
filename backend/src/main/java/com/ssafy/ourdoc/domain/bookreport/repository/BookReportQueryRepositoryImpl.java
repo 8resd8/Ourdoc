@@ -59,6 +59,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 
 		List<ReportTeacherDto> content = queryFactory
 			.select(new QReportTeacherDto(
+				bookReport.id.as("bookReportId"),
 				book.title,
 				studentClass.studentNumber,
 				user.name.as("studentName"),
