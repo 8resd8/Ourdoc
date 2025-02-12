@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
-import com.ssafy.ourdoc.domain.debate.dto.RoomDetailDto;
+import com.ssafy.ourdoc.domain.debate.dto.RoomDetailResponse;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
 import com.ssafy.ourdoc.domain.debate.dto.UpdateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.service.DebateService;
@@ -53,9 +53,9 @@ public class DebateController {
 
 	@GetMapping("/{roomId}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<RoomDetailDto> getDebateRoom(@PathVariable("roomId") Long roomId) {
-		RoomDetailDto roomDetailDto = debateService.getDebateRoomDetail(roomId);
-		return ResponseEntity.ok(roomDetailDto);
+	public ResponseEntity<RoomDetailResponse> getDebateRoom(@PathVariable("roomId") Long roomId) {
+		RoomDetailResponse roomDetailResponse = debateService.getDebateRoomDetail(roomId);
+		return ResponseEntity.ok(roomDetailResponse);
 	}
 
 	@DeleteMapping("/{roomId}/exit")

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.OnlineUserDto;
-import com.ssafy.ourdoc.domain.debate.dto.RoomDetailDto;
+import com.ssafy.ourdoc.domain.debate.dto.RoomDetailResponse;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
 import com.ssafy.ourdoc.domain.debate.dto.UpdateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
@@ -151,7 +151,7 @@ public class DebateService {
 		debateRoomRepository.save(room);
 	}
 
-	public RoomDetailDto getDebateRoomDetail(Long roomId) {
+	public RoomDetailResponse getDebateRoomDetail(Long roomId) {
 		Room room = debateRoomRepository.findById(roomId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 방은 존재하지 않습니다."));
 
@@ -161,7 +161,7 @@ public class DebateService {
 
 		Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(roomId);
 		List<OnlineUserDto> onlineUserList = debateRoomOnlineRepository.findOnlineUsersByRoomId(roomId);
-		return new RoomDetailDto(
+		return new RoomDetailResponse(
 			room.getId(),
 			room.getTitle(),
 			room.getUser().getName(),
