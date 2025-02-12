@@ -7,10 +7,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookMostDto;
+import com.ssafy.ourdoc.domain.book.dto.BookMostResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
+import com.ssafy.ourdoc.domain.user.entity.User;
 
 import groovy.util.logging.Slf4j;
 import jakarta.transaction.Transactional;
@@ -49,5 +52,11 @@ public class BookService {
 	public Book findBookById(Long id) {
 		return bookRepository.findById(id)
 			.orElseThrow(() -> new NoSuchElementException("해당하는 ID의 도서가 없습니다."));
+	}
+
+	public BookMostResponse getBookMost(User user) {
+		BookMostDto gradeMost = bookRepository.findBookGradeMost(user.getId());
+		BookMostDto classMost = bookRepository.findBookClassMost(user.getId());
+		return new BookMostResponse(gradeMost, classMost);
 	}
 }
