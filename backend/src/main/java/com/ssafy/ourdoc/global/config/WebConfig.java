@@ -39,12 +39,12 @@ public class WebConfig implements WebMvcConfigurer {
 		resolvers.add(loginArgumentResolver);
 	}
 
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(jwtInterceptor)
-			.addPathPatterns("/**")
-			.excludePathPatterns(excludedPaths.toArray(new String[0]));
-	}
+	// @Override
+	// public void addInterceptors(InterceptorRegistry registry) {
+	// 	registry.addInterceptor(jwtInterceptor)
+	// 		.addPathPatterns("/**")
+	// 		.excludePathPatterns(excludedPaths.toArray(new String[0]));
+	// }
 
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
