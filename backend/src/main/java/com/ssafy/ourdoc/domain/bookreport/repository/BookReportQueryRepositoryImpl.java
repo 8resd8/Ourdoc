@@ -23,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -32,6 +33,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
@@ -236,6 +238,22 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 					.limit(1)
 					.fetchOne())
 			.orElse(0L);
+	}
+
+	@Override
+	public List<BookReportHomeworkStudentDto> bookReportsHomeworkStudents(Long homeworkId, Long userId) {
+		return queryFactory.select(Projections.constructor(BookReportHomeworkStudentDto.class,
+					bookReport.id,
+					bookReport.createdAt,
+					bookReport.homework.id,
+					bookReport.approveTime
+				)
+			)
+			.from(bookReport)
+			.leftJoin(homework).on(bookReport.book.id.eq(homework.book.id))
+			.leftJoin(user).on(bookReport.studentClass.user.id.eq(user.id))
+			.where(bookReport.homework.id.eq(homeworkId), user.id.eq(userId))
+			.fetch();
 	}
 
 	@Override

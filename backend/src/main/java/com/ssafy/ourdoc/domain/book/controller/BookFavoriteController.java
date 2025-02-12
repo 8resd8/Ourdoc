@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.service.BookFavoriteService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
@@ -31,8 +32,8 @@ public class BookFavoriteController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<BookResponse>> getFavorite(@Login User user) {
-		List<BookResponse> books = bookFavoriteService.getBookFavorites(user);
+	public ResponseEntity<List<BookResponse>> getFavorite(@RequestBody BookSearchRequest request, @Login User user) {
+		List<BookResponse> books = bookFavoriteService.getBookFavorites(request, user);
 		return ResponseEntity.ok(books);
 	}
 

@@ -15,4 +15,6 @@ public interface BookFavoriteRepository extends JpaRepository<BookFavorite, Long
 	boolean existsByBookAndUser(Book book, User user);
 
 	List<BookFavorite> findByUser(User user);
+
+	List<BookFavorite> findByUserAndBookIn(User user, List<Book> books);
 }

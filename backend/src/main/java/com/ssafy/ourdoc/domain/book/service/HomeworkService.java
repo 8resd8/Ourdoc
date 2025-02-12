@@ -7,28 +7,40 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkRequest;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDto;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
+import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponseWithId;
+import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportTeacherService;
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
+import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
 import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
+import com.ssafy.ourdoc.global.common.enums.SubmitStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class HomeworkService {
 
 	private final HomeworkRepository homeworkRepository;
@@ -36,6 +48,10 @@ public class HomeworkService {
 	private final BookReportTeacherService bookReportTeacherService;
 	private final TeacherService teacherService;
 	private final BookService bookService;
+	private final BookRepository bookRepository;
+	private final BookReportRepository bookReportRepository;
+	private final ClassRoomRepository classRoomRepository;
+	private final StudentClassRepository studentClassRepository;
 
 	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
@@ -65,11 +81,12 @@ public class HomeworkService {
 		homeworkRepository.delete(homework);
 	}
 
-	public List<HomeworkResponseTeacher> getHomeworkTeachers(HomeworkRequest request, User user) {
-		List<SchoolClassDto> schoolClasses = teacherService.getClassRoomsTeacherAndYear(user.getId(), request.year());
+	public List<HomeworkResponseTeacher> getHomeworkTeachers(BookSearchRequest request, User user) {
+		List<SchoolClassDto> schoolClasses = teacherService.getClassRoomsTeacher(user.getId());
 		List<HomeworkResponseTeacher> responses = schoolClasses.stream()
 			.map(schoolClass -> {
-				List<Homework> homeworks = homeworkRepository.findByClassRoomId(schoolClass.id());
+				List<Homework> homeworks = homeworkRepository.findByClassIdAndSearchBook(schoolClass.id(),
+					request.title(), request.author(), request.publisher());
 				List<HomeworkDetailTeacher> homeworkDetails = homeworks.stream()
 					.map(homework -> getHomeworkDetailTeacher(homework.getId(), user))
 					.toList();
@@ -103,6 +120,32 @@ public class HomeworkService {
 			.createdAt(homework.getCreatedAt())
 			.submitCount(bookreports.size())
 			.bookreports(bookreports)
+			.build();
+	}
+
+	public HomeworkDetailStudent getHomeworkDetailStudent(Long homeworkId, User user) {
+		Homework homework = homeworkRepository.findById(homeworkId)
+			.orElseThrow(() -> new NoSuchElementException("해당하는 숙제가 없습니다."));
+		ClassRoom classRoom = homework.getClassRoom();
+		StudentClass studentClass = studentClassRepository.findByUserAndClassRoom(user, classRoom);
+		if (studentClass == null) {
+			throw new IllegalArgumentException("해당 숙제에 해당하는 학급의 학생이 아닙니다.");
+		}
+
+		HomeworkDto homeworkDto = new HomeworkDto(BookResponse.of(homework.getBook()), homework.getCreatedAt());
+		List<BookReportHomeworkStudent> bookReports = bookReportRepository.bookReportsHomeworkStudents(homeworkId,
+				user.getId())
+			.stream()
+			.map(dto -> new BookReportHomeworkStudent(
+				dto.bookreportId(),
+				dto.createdAt(),
+				dto.homeworkId() != null ? SubmitStatus.제출 : SubmitStatus.미제출,
+				dto.approveTime() != null ? ApproveStatus.있음 : ApproveStatus.없음))
+			.toList();
+
+		return HomeworkDetailStudent.builder()
+			.homework(homeworkDto)
+			.bookreports(bookReports)
 			.build();
 	}
 }
