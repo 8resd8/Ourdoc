@@ -16,11 +16,12 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
-import com.ssafy.ourdoc.domain.bookreport.dto.FeedbackRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.notification.service.NotificationService;
@@ -61,12 +62,12 @@ public class BookReportStudentService {
 		notificationService.sendNotifyStudentFromTeacher(user, 독서록); // 알림전송
 	}
 
-
 	public BookReportListResponse getBookReports(User user, int grade, Pageable pageable) {
 		Page<BookReport> bookReports = bookReportRepository.findByUserIdAndGrade(user.getId(), grade, pageable);
 
 		List<BookReportDto> bookReportDtos = bookReports.stream()
 			.map(report -> new BookReportDto(
+				report.getId(),
 				report.getAfterContent(),
 				report.getCreatedAt(),
 				report.getApproveTime() == null ? 없음 : 있음,
@@ -98,6 +99,16 @@ public class BookReportStudentService {
 		long highestCount = bookReportRepository.classHighestBookReportCount(user.getId(), request.grade());
 
 		return new BookReportStatisticsResponse((int)myCount, averageCount, (int)highestCount);
+	}
+
+	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(User user,
+		BookReportStatisticsRequest request) {
+		return bookReportRepository.myMonthlyBookReportCount(user.getId(), request.grade());
+	}
+
+	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(User user,
+		BookReportStatisticsRequest request) {
+		return bookReportRepository.myDailyBookReportCount(user.getId(), request.grade(), request.month());
 	}
 
 }

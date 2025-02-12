@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.bookreport.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportCommentRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
@@ -59,6 +64,17 @@ public class BookReportTeacherController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteBookReportComment(@PathVariable("bookreportId") Long bookreportId) {
 		bookReportTeacherService.deleteComment(bookreportId);
+	}
+
+	@GetMapping("/statistics/months")
+	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(@Login User user) {
+		return bookReportTeacherService.getMonthlyBookReportStatistics(user);
+	}
+
+	@GetMapping("/statistics/days")
+	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(@Login User user, @RequestBody
+		BookReportStatisticsRequest request) {
+		return bookReportTeacherService.getDailyBookReportStatistics(user, request.month());
 	}
 
 }

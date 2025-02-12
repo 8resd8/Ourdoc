@@ -2,6 +2,7 @@ package com.ssafy.ourdoc.domain.user.teacher.service;
 
 import static com.ssafy.ourdoc.global.common.enums.Active.*;
 import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
+import static com.ssafy.ourdoc.global.common.enums.EmploymentStatus.*;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -28,9 +29,11 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.repository.UserQueryRepository;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
@@ -39,6 +42,7 @@ import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
+import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileUpdateRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.Teacher;
@@ -46,9 +50,12 @@ import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherQueryRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
+import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.EmploymentStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -67,6 +74,7 @@ public class TeacherService {
 	private final StudentClassRepository studentClassRepository;
 	private final StudentRepository studentRepository;
 	private final ClassRoomRepository classRoomRepository;
+	private final EntityManager em;
 
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {
@@ -102,6 +110,7 @@ public class TeacherService {
 			.email(request.email())
 			.phone(request.phone())
 			.certificateImageUrl(certificateImageUrl)
+			.employmentStatus(비재직)
 			.build();
 
 		Teacher savedTeacher = teacherRepository.save(teacher);
@@ -255,5 +264,63 @@ public class TeacherService {
 			throw new NoSuchElementException("해당하는 연도와 사용자에 해당하는 학급 정보가 없습니다.");
 		}
 		return schoolClassDtos;
+	}
+
+	public void updateTeacherProfile(User user, MultipartFile profileImage, TeacherProfileUpdateRequest request) {
+
+		// 프로필 이미지 수정
+		if (profileImage != null && !profileImage.isEmpty()) {
+			String profileImageUrl = s3StorageService.uploadFile(profileImage);
+			userRepository.updateProfileImage(user, profileImageUrl);
+		}
+		em.flush();
+		em.clear();
+
+		// 학교 제외 정보 수정 (동적 쿼리로 수정해야 함)
+		teacherQueryRepository.updateTeacherProfile(user, request);
+		em.flush();
+		em.clear();
+
+		// 학교 정보 확인 (학급이 확인되면 다음 로직 진행. 없으면 return)
+		School school = (request.schoolId() != null) ?
+			schoolRepository.findById(request.schoolId()).orElse(null) : null;
+		if (school == null || request.grade() == null || request.classNumber() == null || request.year() == null) {
+			return;
+		}
+
+		// 이미 본인이 생성한 동일한 학급이 있는 확인. 있으면 updated_at 업데이트
+		List<ClassRoom> classRoomList = classRoomRepository.findBySchoolAndGradeAndClassNumberAndYear(
+			school, request.grade(), request.classNumber(), Year.of(request.year()))
+			.orElse(null);
+
+		if (classRoomList != null) {
+			for (ClassRoom classRoom : classRoomList) {
+				TeacherClass teacherClass = teacherClassRepository.findByUserIdAndClassRoomId(user.getId(), classRoom.getId())
+					.orElse(null);
+				if (teacherClass != null) {
+					teacherClassRepository.updateUpdatedAt(user.getId(), classRoom.getId());
+					return;
+				}
+			}
+		}
+
+		// class 테이블에 학급 생성(중복 상관 없음. classId로 구분할 것)
+		ClassRoom classRoom = ClassRoom.builder()
+			.school(school)
+			.grade(request.grade())
+			.classNumber(request.classNumber())
+			.year(Year.of(request.year()))
+			.build();
+
+		classRoomRepository.save(classRoom);
+
+		// teacherClass 테이블에 생성
+		TeacherClass teacherClass = TeacherClass.builder()
+			.user(user)
+			.classRoom(classRoom)
+			.active(비활성)
+			.build();
+
+		teacherClassRepository.save(teacherClass);
 	}
 }

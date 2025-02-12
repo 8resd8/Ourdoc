@@ -42,6 +42,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 		throws ServletException, IOException {
 
+		// Preflight 응답은 바로 통과
+		if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
 		String token = extractToken(request);
 
 		// 블랙리스트에 있는 토큰이면 401 응답

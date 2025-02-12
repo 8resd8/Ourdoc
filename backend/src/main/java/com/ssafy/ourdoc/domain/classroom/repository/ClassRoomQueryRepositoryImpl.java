@@ -2,15 +2,21 @@ package com.ssafy.ourdoc.domain.classroom.repository;
 
 import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
+import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
 import java.time.Year;
 import java.util.List;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.classroom.dto.QSchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
+import com.ssafy.ourdoc.domain.classroom.dto.teacher.QTeacherRoomStudentDto;
+import com.ssafy.ourdoc.domain.classroom.dto.teacher.QTeachersRoomDto;
+import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeacherRoomStudentDto;
+import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeachersRoomDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.global.common.enums.Active;
 
@@ -18,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
+
 	private final JPAQueryFactory queryFactory;
 
 	@Override
@@ -34,22 +41,11 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 	}
 
 	@Override
-	public List<SchoolClassDto> findByTeacher(Long userId) {
-		return queryFactory.select(new QSchoolClassDto(
-				classRoom.id,
-				school.schoolName,
-				classRoom.grade,
-				classRoom.classNumber,
-				classRoom.year,
-				studentClass.count().intValue()))
-			.from(classRoom)
+	public List<ClassRoom> findByTeacher(Long userId) {
+		return queryFactory.selectFrom(classRoom)
+			.join(classRoom, teacherClass.classRoom)
 			.join(classRoom.school, school)
-			.join(teacherClass).on(teacherClass.classRoom.eq(classRoom))
-			.leftJoin(studentClass).on(studentClass.classRoom.eq(classRoom))
-			.where(
-				teacherClass.user.id.eq(userId)
-			)
-			.groupBy(classRoom.id)
+			.where(teacherClassEq(userId))
 			.fetch();
 	}
 
@@ -67,10 +63,47 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 			.join(teacherClass).on(teacherClass.classRoom.eq(classRoom))
 			.leftJoin(studentClass).on(studentClass.classRoom.eq(classRoom))
 			.where(
-				teacherClass.user.id.eq(userId),
+				teacherClassEq(userId),
 				classRoom.year.eq(year)
 			)
 			.groupBy(classRoom.id)
 			.fetch();
+	}
+
+	@Override
+	public List<TeachersRoomDto> findByTeachersRoom(Long userId) {
+		return queryFactory
+			.select(new QTeachersRoomDto(
+				classRoom.school.schoolName,
+				classRoom.year,
+				classRoom.grade,
+				classRoom.classNumber
+			))
+			.from(teacherClass)
+			.join(teacherClass.classRoom, classRoom).fetchJoin()
+			.where(teacherClassEq(userId))
+			.fetch();
+	}
+
+	@Override
+	public List<TeacherRoomStudentDto> findByTeachersRoomStudent(Long userId, Integer year) {
+		return queryFactory
+			.select(new QTeacherRoomStudentDto(
+				user.name.as("studentName"),
+				classRoom.classNumber
+			))
+			.from(teacherClass)
+			.join(teacherClass.classRoom, classRoom).fetchJoin()
+			.join(teacherClass.user, user).fetchJoin()
+			.where(teacherClassEq(userId), yearEq(year))
+			.fetch();
+	}
+
+	private static BooleanExpression yearEq(Integer year) {
+		return classRoom.year.eq(Year.of(year));
+	}
+
+	private static BooleanExpression teacherClassEq(Long userId) {
+		return teacherClass.user.id.eq(userId);
 	}
 }
