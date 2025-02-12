@@ -113,10 +113,11 @@ public class StudentClassQueryRepositoryImpl implements StudentClassQueryReposit
 				classRoom.grade,
 				classRoom.classNumber,
 				studentClass.studentNumber,
+				user.birth,
 				user.active
 			))
 			.from(user)
-			.join(studentClass).on(user.id.eq(studentClass.user.id))
+			.join(studentClass).on(user.id.eq(studentClass.user.id), studentClass.active.eq(활성))
 			.join(studentClass.classRoom, classRoom)
 			.where(user.id.eq(userId))
 			.fetchOne();
@@ -129,11 +130,10 @@ public class StudentClassQueryRepositoryImpl implements StudentClassQueryReposit
 				user.profileImagePath,
 				user.name,
 				user.loginId,
+				user.birth,
 				user.active
 			))
 			.from(user)
-			.join(studentClass).on(user.id.eq(studentClass.user.id))
-			.join(studentClass.classRoom, classRoom)
 			.where(user.id.eq(userid))
 			.fetchOne();
 	}
