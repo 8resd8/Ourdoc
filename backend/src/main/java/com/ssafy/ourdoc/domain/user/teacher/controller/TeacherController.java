@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.teacher.dto.QrResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
@@ -42,10 +43,10 @@ public class TeacherController {
 	}
 
 	// 2. QR 생성
-	@GetMapping(value = "/{teacherId}/code", produces = MediaType.IMAGE_PNG_VALUE)
-	public ResponseEntity<byte[]> generateTeacherInviteCode(@PathVariable Long teacherId) {
-		byte[] qrImage = teacherService.generateTeacherClassQr(teacherId);
-		return ResponseEntity.ok(qrImage);
+	@GetMapping(value = "/{teacherId}/code")
+	public ResponseEntity<QrResponseDto> generateTeacherInviteCode(@PathVariable Long teacherId) {
+		QrResponseDto response = teacherService.generateTeacherClassQr(teacherId);
+		return ResponseEntity.ok(response);
 	}
 
 	// 3. 학생 소속 변경 승인/거부

@@ -62,3 +62,5 @@ openvidu:
 
 prod:
   url: ${prod.url}
+  QrUrl: ${prod.QrUrl}
+  excluded-paths: ${prod.excluded-paths}
