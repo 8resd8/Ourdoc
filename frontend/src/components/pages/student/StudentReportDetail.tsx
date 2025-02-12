@@ -60,7 +60,7 @@ const StudentReportDetail = () => {
           />
         </div>
         <div className="flex justify-end">
-          <div className="inline-flex py-[12px] px-[16px] bg-[#c22b20] rounded-[10px] justify-center items-center text-center text-white text-base font-normal font-['Pretendard'] leading-normal">
+          <div className="inline-flex py-[12px] px-[16px] bg-system-danger rounded-[10px] justify-center items-center text-center text-white text-base font-normal font-['Pretendard'] leading-normal">
             삭제하기
           </div>
         </div>

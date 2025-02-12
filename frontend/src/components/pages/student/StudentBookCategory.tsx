@@ -96,8 +96,8 @@ const StudentBookCategory = () => {
               생텍쥐페리생텍쥐페리생텍쥐페리 지음 | 새옴
             </div>
           </div>
-          <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-[#ff6f61] justify-center items-center gap-2.5 inline-flex">
-            <div className="text-[#ff6f61] text-base font-normal font-['Pretendard'] leading-normal">
+          <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-primary-500 justify-center items-center gap-2.5 inline-flex">
+            <div className="text-primary-500 text-base font-normal font-['Pretendard'] leading-normal">
               숙제하기
             </div>
           </div>
@@ -144,8 +144,8 @@ const StudentBookCategory = () => {
               생텍쥐페리 지음 | 새옴
             </div>
           </div>
-          <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-[#c22b20] justify-center items-center gap-2.5 inline-flex">
-            <div className="text-[#c22b20] text-base font-normal font-['Pretendard'] leading-normal">
+          <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-system-danger justify-center items-center gap-2.5 inline-flex">
+            <div className="text-system-danger text-base font-normal font-['Pretendard'] leading-normal">
               관심 해제하기
             </div>
           </div>
@@ -210,8 +210,8 @@ const StudentBookCategory = () => {
               생텍쥐페리생텍쥐페리생텍쥐페리 지음 | 새옴
             </div>
           </div>
-          <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-[#ff6f61] justify-center items-center gap-2.5 inline-flex">
-            <div className="text-[#ff6f61] text-base font-normal font-['Pretendard'] leading-normal">
+          <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-primary-500 justify-center items-center gap-2.5 inline-flex">
+            <div className="text-primary-500 text-base font-normal font-['Pretendard'] leading-normal">
               숙제하기
             </div>
           </div>
@@ -258,8 +258,8 @@ const StudentBookCategory = () => {
               생텍쥐페리 지음 | 새옴
             </div>
           </div>
-          <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-[#c22b20] justify-center items-center gap-2.5 inline-flex">
-            <div className="text-[#c22b20] text-base font-normal font-['Pretendard'] leading-normal">
+          <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-system-danger justify-center items-center gap-2.5 inline-flex">
+            <div className="text-system-danger text-base font-normal font-['Pretendard'] leading-normal">
               관심 해제하기
             </div>
           </div>

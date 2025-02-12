@@ -40,8 +40,8 @@ const TeacherReportList = () => {
         </div>
         <div className="h-[296px] left-0 top-[164px] absolute flex-col justify-start items-start gap-4 inline-flex">
           <div className="h-[136px] relative">
-            <div className="w-[226px] h-10 px-10 py-2 left-0 top-[48px] absolute bg-[#fff1ef] flex-col justify-start items-start gap-2 inline-flex">
-              <div className="text-[#ff6f61] text-base font-bold font-['Pretendard'] leading-normal">
+            <div className="w-[226px] h-10 px-10 py-2 left-0 top-[48px] absolute bg-primary-50 flex-col justify-start items-start gap-2 inline-flex">
+              <div className="text-primary-500 text-base font-bold font-['Pretendard'] leading-normal">
                 성룡초 1학년 2반
               </div>
             </div>
@@ -145,11 +145,11 @@ const TeacherReportList = () => {
               김보민
             </div>
           </div>
-          <div className="self-stretch h-10 px-4 py-2 bg-[#fff1ef] justify-start items-center gap-2 inline-flex">
-            <div className="text-center text-[#ff6f61] text-sm font-bold font-['Pretendard'] leading-tight">
+          <div className="self-stretch h-10 px-4 py-2 bg-primary-50 justify-start items-center gap-2 inline-flex">
+            <div className="text-center text-primary-500 text-sm font-bold font-['Pretendard'] leading-tight">
               2번
             </div>
-            <div className="w-[97px] text-[#ff6f61] text-base font-bold font-['Pretendard'] leading-normal">
+            <div className="w-[97px] text-primary-500 text-base font-bold font-['Pretendard'] leading-normal">
               김융융
             </div>
           </div>
@@ -212,8 +212,8 @@ const TeacherReportList = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#00c380] justify-center items-center inline-flex">
-                  <div className="text-center text-[#00c380] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                  <div className="text-center text-system-success text-sm font-normal font-['Pretendard'] leading-tight">
                     완료
                   </div>
                 </div>
@@ -236,14 +236,14 @@ const TeacherReportList = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#c22b20] justify-center items-center inline-flex">
-                  <div className="text-center text-[#c22b20] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-danger justify-center items-center inline-flex">
+                  <div className="text-center text-system-danger text-sm font-normal font-['Pretendard'] leading-tight">
                     미완료
                   </div>
                 </div>
               </div>
             </div>
-            <div className="self-stretch px-6 py-3 bg-[#fff1ef] justify-start items-center gap-[18px] inline-flex">
+            <div className="self-stretch px-6 py-3 bg-primary-50 justify-start items-center gap-[18px] inline-flex">
               <div className="w-[60px] text-center text-gray-800 text-base font-normal font-['Pretendard'] leading-normal">
                 1
               </div>
@@ -260,8 +260,8 @@ const TeacherReportList = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 bg-white rounded-[5px] border border-[#00c380] justify-center items-center inline-flex">
-                  <div className="text-center text-[#00c380] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 bg-white rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                  <div className="text-center text-system-success text-sm font-normal font-['Pretendard'] leading-tight">
                     완료
                   </div>
                 </div>
@@ -284,8 +284,8 @@ const TeacherReportList = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#00c380] justify-center items-center inline-flex">
-                  <div className="text-center text-[#00c380] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                  <div className="text-center text-system-success text-sm font-normal font-['Pretendard'] leading-tight">
                     완료
                   </div>
                 </div>
@@ -308,8 +308,8 @@ const TeacherReportList = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#00c380] justify-center items-center inline-flex">
-                  <div className="text-center text-[#00c380] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                  <div className="text-center text-system-success text-sm font-normal font-['Pretendard'] leading-tight">
                     완료
                   </div>
                 </div>
@@ -332,8 +332,8 @@ const TeacherReportList = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#00c380] justify-center items-center inline-flex">
-                  <div className="text-center text-[#00c380] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                  <div className="text-center text-system-success text-sm font-normal font-['Pretendard'] leading-tight">
                     완료
                   </div>
                 </div>
@@ -356,8 +356,8 @@ const TeacherReportList = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#00c380] justify-center items-center inline-flex">
-                  <div className="text-center text-[#00c380] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                  <div className="text-center text-system-success text-sm font-normal font-['Pretendard'] leading-tight">
                     완료
                   </div>
                 </div>
@@ -380,8 +380,8 @@ const TeacherReportList = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#00c380] justify-center items-center inline-flex">
-                  <div className="text-center text-[#00c380] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                  <div className="text-center text-system-success text-sm font-normal font-['Pretendard'] leading-tight">
                     완료
                   </div>
                 </div>
@@ -404,8 +404,8 @@ const TeacherReportList = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#00c380] justify-center items-center inline-flex">
-                  <div className="text-center text-[#00c380] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                  <div className="text-center text-system-success text-sm font-normal font-['Pretendard'] leading-tight">
                     완료
                   </div>
                 </div>
@@ -428,8 +428,8 @@ const TeacherReportList = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#00c380] justify-center items-center inline-flex">
-                  <div className="text-center text-[#00c380] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                  <div className="text-center text-system-success text-sm font-normal font-['Pretendard'] leading-tight">
                     완료
                   </div>
                 </div>

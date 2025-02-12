@@ -159,7 +159,7 @@ const TeacherBookSearch = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="h-6 pl-2 pr-3 py-1 bg-white rounded-[15px] border border-[#ff6f61] justify-start items-center gap-1 inline-flex">
+                  <div className="h-6 pl-2 pr-3 py-1 bg-white rounded-[15px] border border-primary-500 justify-start items-center gap-1 inline-flex">
                     <div className="justify-start items-center gap-2 flex">
                       <div data-svg-wrapper className="relative">
                         <svg
@@ -192,7 +192,7 @@ const TeacherBookSearch = () => {
                           </defs>
                         </svg>
                       </div>
-                      <div className="text-center text-[#ff6f61] text-xs font-normal font-['Pretendard'] leading-none">
+                      <div className="text-center text-primary-500 text-xs font-normal font-['Pretendard'] leading-none">
                         숙제
                       </div>
                     </div>

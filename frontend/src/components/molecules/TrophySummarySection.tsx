@@ -7,24 +7,24 @@ export const TrophySummarySection = () => {
       <div className="self-stretch grow shrink basis-0 flex-col justify-center items-start flex">
         <div className="self-stretch py-6 justify-center items-center gap-9 inline-flex">
           <div>
-            <span className="text-[#ff6f61] text-base font-normal font-['Pretendard'] leading-normal">
+            <span className="text-primary-500 text-base font-normal font-['Pretendard'] leading-normal">
               칭찬도장{' '}
             </span>
-            <span className="text-[#ff6f61] text-[22px] font-semibold font-['Pretendard'] leading-relaxed">
+            <span className="text-primary-500 text-[22px] font-semibold font-['Pretendard'] leading-relaxed">
               7
             </span>
-            <span className="text-[#ff6f61] text-base font-normal font-['Pretendard'] leading-normal">
+            <span className="text-primary-500 text-base font-normal font-['Pretendard'] leading-normal">
               개를 모았어요.
             </span>
           </div>
           <div>
-            <span className="text-[#ff6f61] text-base font-normal font-['Pretendard'] leading-normal">
+            <span className="text-primary-500 text-base font-normal font-['Pretendard'] leading-normal">
               반 친구 12명 중에{' '}
             </span>
-            <span className="text-[#ff6f61] text-[22px] font-semibold font-['Pretendard'] leading-relaxed">
+            <span className="text-primary-500 text-[22px] font-semibold font-['Pretendard'] leading-relaxed">
               1
             </span>
-            <span className="text-[#ff6f61] text-base font-normal font-['Pretendard'] leading-normal">
+            <span className="text-primary-500 text-base font-normal font-['Pretendard'] leading-normal">
               번째로 많이 읽었어요.
             </span>
           </div>

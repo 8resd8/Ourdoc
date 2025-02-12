@@ -45,14 +45,14 @@ export const ClassNameHomeworkListSection = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#00c380] justify-center items-center inline-flex">
-                  <div className="text-center text-[#00c380] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                  <div className="text-center text-system-success text-sm font-normal font-['Pretendard'] leading-tight">
                     제출 완료
                   </div>
                 </div>
               </div>
             </div>
-            <div className="self-stretch px-6 py-3 bg-[#fff1ef] justify-start items-center gap-[18px] inline-flex">
+            <div className="self-stretch px-6 py-3 bg-primary-50 justify-start items-center gap-[18px] inline-flex">
               <div className="w-[60px] text-center text-gray-800 text-base font-normal font-['Pretendard'] leading-normal">
                 2
               </div>
@@ -70,8 +70,8 @@ export const ClassNameHomeworkListSection = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#00c380] justify-center items-center inline-flex">
-                  <div className="text-center text-[#00c380] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                  <div className="text-center text-system-success text-sm font-normal font-['Pretendard'] leading-tight">
                     제출 완료
                   </div>
                 </div>
@@ -95,8 +95,8 @@ export const ClassNameHomeworkListSection = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 rounded-[5px] border border-[#c22b20] justify-center items-center inline-flex">
-                  <div className="text-center text-[#c22b20] text-sm font-normal font-['Pretendard'] leading-tight">
+                <div className="px-3 py-1 rounded-[5px] border border-system-danger justify-center items-center inline-flex">
+                  <div className="text-center text-system-danger text-sm font-normal font-['Pretendard'] leading-tight">
                     미제출
                   </div>
                 </div>

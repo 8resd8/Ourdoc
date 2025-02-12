@@ -102,7 +102,7 @@ const StudentAllReportList = () => {
             alt={book.title}
           />
           {book.isHomework && (
-            <div className="w-[181px] h-11 px-[46px] py-1 left-0 top-[188px] absolute bg-[#ff6f61]/70 rounded-br-[10px] justify-center items-center gap-2.5 inline-flex">
+            <div className="w-[181px] h-11 px-[46px] py-1 left-0 top-[188px] absolute bg-primary-500/70 rounded-br-[10px] justify-center items-center gap-2.5 inline-flex">
               <div className="text-white text-base font-normal font-['Pretendard'] leading-normal">
                 숙제 도서
               </div>
@@ -138,12 +138,12 @@ const StudentAllReportList = () => {
               >
                 <div className="w-12 flex-col justify-center items-center inline-flex">
                   <div
-                    className={`text-center ${grade === 4 ? 'text-[#ff6f61]' : 'text-gray-700'} text-[26px] font-semibold font-['Pretendard'] leading-[30px]`}
+                    className={`text-center ${grade === 4 ? 'text-primary-500' : 'text-gray-700'} text-[26px] font-semibold font-['Pretendard'] leading-[30px]`}
                   >
                     {grade}
                   </div>
                   <div
-                    className={`text-center ${grade === 4 ? 'text-[#ff6f61]' : 'text-gray-700'} text-xs font-normal font-['Pretendard'] leading-none`}
+                    className={`text-center ${grade === 4 ? 'text-primary-500' : 'text-gray-700'} text-xs font-normal font-['Pretendard'] leading-none`}
                   >
                     학년
                   </div>
