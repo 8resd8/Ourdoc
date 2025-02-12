@@ -20,11 +20,11 @@ public class WebConfig implements WebMvcConfigurer {
 	@Value("${prod.url}")
 	private String prodUrl;
 
+	@Value("${prod.excluded-paths}")
+	private String[] excludedPathsArray;
+
 	private final LoginArgumentResolver loginArgumentResolver;
 	private final JwtInterceptor jwtInterceptor;
-
-	private final List<String> excludedPaths = List.of("/teachers/signup", "/students/signup", "/users/signin",
-		"/users/signout", "/users/checkId", "/debate/**", "/openvidu/**");
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
@@ -33,6 +33,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
+		List<String> excludedPaths = List.of(excludedPathsArray);
 		registry.addInterceptor(jwtInterceptor)
 			.addPathPatterns("/**")
 			.excludePathPatterns(excludedPaths.toArray(new String[0]));
