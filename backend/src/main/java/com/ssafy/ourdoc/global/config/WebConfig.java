@@ -24,7 +24,7 @@ public class WebConfig implements WebMvcConfigurer {
 	private final JwtInterceptor jwtInterceptor;
 
 	private final List<String> excludedPaths = List.of("/teachers/signup", "/students/signup", "/users/signin",
-		"/users/checkId", "/debate/**", "/openvidu/**");
+		"users/signout", "/users/checkId", "/debate/**", "/openvidu/**");
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {

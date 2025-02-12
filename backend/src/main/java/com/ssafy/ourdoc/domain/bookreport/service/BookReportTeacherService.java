@@ -46,6 +46,7 @@ public class BookReportTeacherService {
 		Pageable pageable) {
 		Page<ReportTeacherResponse> pageDto = bookReportRepository.bookReports(user.getId(), request, pageable)
 			.map(dto -> new ReportTeacherResponse(
+				dto.bookReportId(),
 				dto.bookTitle(),
 				dto.studentNumber(),
 				dto.studentName(),
