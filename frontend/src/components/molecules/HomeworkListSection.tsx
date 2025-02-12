@@ -32,7 +32,7 @@ export const HomeworkListSection = () => {
       </div>
       <div className="self-stretch h-[191px] flex-col justify-start items-center gap-3 flex">
         <div className="self-stretch h-[191px] relative">
-          <div className="w-[1016px] h-12 px-6 py-3 left-0 top-0 absolute border-b border-black justify-start items-center gap-[18px] inline-flex">
+          <div className="w-[1016px] h-12 px-6 py-3 left-0 top-0 absolute border-b border-gray-900 justify-start items-center gap-[18px] inline-flex">
             <div className="w-[60px] text-center text-gray-800 body-medium">
               No
             </div>

@@ -80,7 +80,7 @@ const TeacherBookSearch = () => {
               />
               <div className="mt-12 w-full">
                 <div className="flex float-end gap-4">
-                  <div className="h-6 pl-2 pr-3 py-1 bg-white rounded-[15px] border border-[#2c2c2c] justify-start items-center gap-1 inline-flex">
+                  <div className="h-6 pl-2 pr-3 py-1 bg-white rounded-[15px] border border-gray-800 justify-start items-center gap-1 inline-flex">
                     <div className="justify-start items-center gap-2 flex">
                       <div data-svg-wrapper className="relative">
                         <svg
@@ -106,12 +106,12 @@ const TeacherBookSearch = () => {
                           </defs>
                         </svg>
                       </div>
-                      <div className="text-center text-[#2c2c2c] text-xs font-normal font-['Pretendard'] leading-none">
+                      <div className="text-center text-gray-800 text-xs font-normal font-['Pretendard'] leading-none">
                         관심
                       </div>
                     </div>
                   </div>
-                  <div className="h-6 pl-2 pr-3 py-1 bg-white rounded-[15px] border border-[#2c2c2c] justify-start items-center gap-1 inline-flex">
+                  <div className="h-6 pl-2 pr-3 py-1 bg-white rounded-[15px] border border-gray-800 justify-start items-center gap-1 inline-flex">
                     <div className="justify-end items-center gap-2 flex">
                       <div className="w-4 h-4 relative">
                         <div className="w-4 h-4 left-0 top-0 absolute" />
@@ -154,7 +154,7 @@ const TeacherBookSearch = () => {
                           </svg>
                         </div>
                       </div>
-                      <div className="text-center text-[#2c2c2c] text-xs font-normal font-['Pretendard'] leading-none">
+                      <div className="text-center text-gray-800 text-xs font-normal font-['Pretendard'] leading-none">
                         학급
                       </div>
                     </div>

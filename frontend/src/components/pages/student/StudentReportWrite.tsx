@@ -17,34 +17,34 @@ const StudentReportWrite = () => {
             성룡 초등학교 3학년 1반 7번
           </div>
           <div className="flex flex-row">
-            <div className="w-[70px] py-[8px] px-[8px] border border-black justify-center items-center text-center text-black report-font truncate">
+            <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-black report-font truncate">
               책제목
             </div>
-            <div className="w-[530px] py-[8px] px-[8px] border border-black justify-center items-center text-center text-black report-font truncate">
+            <div className="w-[530px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-black report-font truncate">
               은ㅇㅁㄹ
             </div>
           </div>
           <div className="flex flex-row">
-            <div className="w-[70px] py-[8px] px-[8px] border border-black justify-center items-center text-center text-black report-font truncate">
+            <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-black report-font truncate">
               책제목
             </div>
-            <div className="w-[130px] py-[8px] px-[8px] border border-black justify-center items-center text-center text-black report-font truncate">
+            <div className="w-[130px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-black report-font truncate">
               김미소
             </div>
-            <div className="w-[70px] py-[8px] px-[8px] border border-black justify-center items-center text-center text-black report-font truncate">
+            <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-black report-font truncate">
               출판사
             </div>
-            <div className="w-[130px] py-[8px] px-[8px] border border-black justify-center items-center text-center text-black report-font truncate">
+            <div className="w-[130px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-black report-font truncate">
               기므므
             </div>
-            <div className="w-[70px] py-[8px] px-[8px] border border-black justify-center items-center text-center text-black report-font truncate">
+            <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-black report-font truncate">
               작성일
             </div>
-            <div className="w-[130px] py-[8px] px-[8px] border border-black justify-center items-center text-center text-black report-font truncate">
+            <div className="w-[130px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-black report-font truncate">
               2024.01.03
             </div>
           </div>
-          <div className="w-[600px] h-[543px] py-[8px] px-[8px] border border-black justify-center items-center text-black report-font break-words overflow-auto">
+          <div className="w-[600px] h-[543px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-black report-font break-words overflow-auto">
             {`2024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.03
         2024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.03
         2024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.03
