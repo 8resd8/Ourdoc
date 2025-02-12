@@ -15,6 +15,7 @@ import 'dayjs/locale/ko';
 import SignupIdField from '../../molecules/SignupIdField';
 import RadioField from '../../molecules/RadioField';
 import Modal from '../../commons/Modal';
+import { notify } from '../../commons/Toast';
 
 const StudentSignUp = () => {
   const [gender, setGender] = useState('남자');
@@ -78,9 +79,15 @@ const StudentSignUp = () => {
     try {
       const response = await checkIdApi({ loginId: signInRequest.loginId });
       if (response) {
-        alert('이미 사용 중인 아이디입니다.');
+        notify({
+          type: 'error',
+          text: '중복된 아이디입니다.',
+        });
       } else {
-        alert('사용 가능한 아이디입니다.');
+        notify({
+          type: 'success',
+          text: '사용가능한 아이디입니다.',
+        });
         setIsIdChecked(true);
       }
     } catch (error) {
@@ -113,6 +120,7 @@ const StudentSignUp = () => {
     setBirthDate(newValue);
     handleInputChange('birth', newValue?.format('YYYY-MM-DD') || '');
   };
+  console.log(gender);
 
   return (
     <div className={classes.root}>

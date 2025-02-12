@@ -6,6 +6,7 @@ import classes from './SignIn.module.css';
 import { signinApi } from '../../../services/usersService';
 import { currentUserState } from '../../../recoil';
 import { useSetRecoilState } from 'recoil';
+import { notify } from '../../commons/Toast';
 
 const SignIn = () => {
   const [userType, setUserType] = useState('학생');
@@ -33,7 +34,11 @@ const SignIn = () => {
         navigate('/teacher/main');
       }
     } catch (error) {
-      console.error('로그인 실패:', error);
+      notify({
+        type: 'error',
+        text: '아이디 또는 비밀번호가 일치하지 않습니다.',
+      });
+      // console.error('로그인 실패:', error);
     }
   };
 
@@ -87,7 +92,7 @@ const SignIn = () => {
         </div>
         <div className={classes.input} onKeyDown={handleKeyPress}>
           <InputField
-            validate="warning"
+            validate=""
             id="password"
             label="비밀번호"
             placeholder="비밀번호를 입력해주세요"
@@ -102,9 +107,9 @@ const SignIn = () => {
             onClick={handleLogin}
           />
         </div>
-        <div className={`${classes.btn_admin} ml-80 text-gray-500 body-small`}>
+        {/* <div className={`${classes.btn_admin} ml-80 text-gray-500 body-small`}>
           관리자로 로그인
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -84,7 +84,7 @@ const Router = () => {
           <Route path="reports" element={<TeacherReportList />} />
           <Route path="report/:id" element={<TeacherReportDetail />} />
           <Route path="homework/list" element={<TeacherHomeWorkReportList />} />
-          <Route path="students" element={<TeacherStudentInfo />} />
+          <Route path="student-info" element={<TeacherStudentInfo />} />
           <Route path="noti" element={<TeacherNoti />} />
           <Route path="class-auth" element={<TeacherClassAuth />} />
           <Route path="class-info" element={<TeacherClassInfo />} />

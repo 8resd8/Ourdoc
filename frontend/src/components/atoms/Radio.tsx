@@ -7,10 +7,12 @@ interface PropsType {
 }
 
 const Radio = ({ placeholder, isSelected, onClick }: PropsType) => {
+  console.log(isSelected);
+
   return (
     <span
       onClick={onClick}
-      className={`${classes.input} ${isSelected ? classes.selected : ''} text-primary-500 body-medium`}
+      className={`${classes.input} ${isSelected ? 'text-primary-500 body-medium border-primary-500 border' : 'border-gray-200 border body-medium text-gray-200'} `}
     >
       {placeholder}
     </span>

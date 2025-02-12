@@ -3,6 +3,7 @@ import { api, multipartApi } from './api';
 import { getRecoil, setRecoil } from 'recoil-nexus';
 import secureLocalStorage from 'react-secure-storage';
 import { useSetRecoilState } from 'recoil';
+import { notify } from '../components/commons/Toast';
 
 export interface SignupTeacherRequest {
   name: string;
@@ -85,7 +86,10 @@ export const signinApi = async (data: LoginRequest): Promise<LoginResponse> => {
   try {
     const response = await api.post<LoginResponse>('/users/signin', data);
     const accessToken = response.headers['authorization'];
-
+    notify({
+      type: 'info',
+      text: '로그인 성공!',
+    });
     if (accessToken) {
       setRecoil(accessTokenState, accessToken);
     }

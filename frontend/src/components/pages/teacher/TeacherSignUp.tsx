@@ -11,6 +11,7 @@ import SignupIdField from '../../molecules/SignupIdField';
 import RadioField from '../../molecules/RadioField';
 import Modal from '../../commons/Modal';
 import UploadModal from '../../commons/UploadModal';
+import { signupTeacherApi } from '../../../services/usersService';
 
 interface signInRequestType {
   loginId: string;
@@ -43,11 +44,31 @@ const TeacherSignUp = () => {
 
   const handleSignUp = async () => {
     try {
-      // const response = await signUpApi({
-      //   loginId: "",
-      //   password: "",
-      // });
-      // console.log('회원가입 성공:', response);
+      const certificateFile = new File(['temp'], 'certificate.png', {
+        type: 'image/png',
+      });
+
+      // JSON 데이터를 문자열로 변환
+      const teacherData = {
+        name: 'zz',
+        loginId: '1',
+        password: '1',
+        birth: '1',
+        gender: '1',
+        email: '1',
+        phone: '1',
+      };
+
+      const formData = new FormData();
+      formData.append(
+        'request',
+        new Blob([JSON.stringify(teacherData)], { type: 'application/json' })
+      );
+      formData.append('certificateFile', certificateFile);
+
+      const response = await signupTeacherApi(formData);
+
+      console.log('회원가입 성공:', response);
     } catch (error) {
       console.error('회원가입 실패:', error);
     }

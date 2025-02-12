@@ -79,9 +79,8 @@ const StudentMyPage = () => {
       <div className="mt-6 w-[414px] space-y-4">
         {[
           { label: '아이디', value: 'usertest' },
-          { label: '이메일', value: 'usertest@baver.com' },
           { label: '소속', value: 'ㅁㅁ초등학교 1학년 2반' },
-          { label: '전화번호', value: '010-1441-1441' },
+          { label: '생년월일', value: '2012-01-03' },
         ].map((item, index) => (
           <div key={index} className="border-b pb-2">
             <div className="body-small text-gray-800">{item.label}</div>
@@ -89,11 +88,11 @@ const StudentMyPage = () => {
           </div>
         ))}
       </div>
-      {/* <div className="mt-6 space-y-4 w-[414px]">
+      <div className="mt-6 space-y-4 w-[414px]">
         <button className="w-full py-3 border border-secondary-500 text-secondary-500 rounded-[10px] cursor-pointer">
           프로필 이미지 수정
         </button>
-      </div> */}
+      </div>
       {modalType && (
         <Modal type={modalType} onClose={() => setModalType(null)} />
       )}
