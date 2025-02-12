@@ -108,11 +108,33 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 			.fetch();
 	}
 
+	@Override
+	public List<SchoolClassDto> findByStudent(Long userId) {
+		return queryFactory.select(new QSchoolClassDto(
+				classRoom.id,
+				school.schoolName,
+				classRoom.grade,
+				classRoom.classNumber,
+				classRoom.year,
+				studentClass.count().intValue()))
+			.from(classRoom)
+			.join(classRoom.school, school)
+			.join(studentClass).on(studentClass.classRoom.eq(classRoom))
+			.leftJoin(teacherClass).on(teacherClass.classRoom.eq(classRoom))
+			.where(studentClassEq(userId))
+			.groupBy(classRoom.id)
+			.fetch();
+	}
+
 	private static BooleanExpression yearEq(Integer year) {
 		return classRoom.year.eq(Year.of(year));
 	}
 
 	private static BooleanExpression teacherClassEq(Long userId) {
 		return teacherClass.user.id.eq(userId);
+	}
+
+	private static BooleanExpression studentClassEq(Long userId) {
+		return studentClass.user.id.eq(userId);
 	}
 }

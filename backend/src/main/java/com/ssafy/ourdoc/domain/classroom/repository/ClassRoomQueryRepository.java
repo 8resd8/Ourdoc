@@ -18,4 +18,6 @@ public interface ClassRoomQueryRepository {
 	List<TeachersRoomDto> findByTeachersRoom(Long userId);
 
 	List<TeacherRoomStudentDto> findByTeachersRoomStudent(Long userId, Integer year);
+
+	List<SchoolClassDto> findByStudent(Long userId);
 }
