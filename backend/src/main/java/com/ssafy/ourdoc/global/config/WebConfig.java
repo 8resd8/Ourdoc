@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.global.config;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.ssafy.ourdoc.global.interceptor.JwtInterceptor;
 import com.ssafy.ourdoc.global.resolver.LoginArgumentResolver;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -21,10 +23,16 @@ public class WebConfig implements WebMvcConfigurer {
 	private String prodUrl;
 
 	@Value("${prod.excluded-paths}")
-	private String[] excludedPathsArray;
+	private String excludedPathsRaw;
 
 	private final LoginArgumentResolver loginArgumentResolver;
 	private final JwtInterceptor jwtInterceptor;
+	private List<String> excludedPaths;
+
+	@PostConstruct
+	public void init() {
+		excludedPaths = Arrays.asList(excludedPathsRaw.split(","));
+	}
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
@@ -33,7 +41,6 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		List<String> excludedPaths = List.of(excludedPathsArray);
 		registry.addInterceptor(jwtInterceptor)
 			.addPathPatterns("/**")
 			.excludePathPatterns(excludedPaths.toArray(new String[0]));
