@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.debate.repository;
 
+import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
+import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
 import static com.ssafy.ourdoc.domain.debate.entity.QRoomOnline.*;
 import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
@@ -66,8 +68,7 @@ public class DebateRoomQueryRepositoryImpl implements DebateRoomQueryRepository 
 		QClassRoom studentClassRoom = new QClassRoom("studentClassRoom");
 		QSchool studentSchool = new QSchool("studentSchool");
 
-		return queryFactory
-			.select(
+		return queryFactory.select(
 				Projections.constructor(
 					OnlineUserDto.class,
 					Expressions.stringTemplate(
@@ -93,5 +94,14 @@ public class DebateRoomQueryRepositoryImpl implements DebateRoomQueryRepository 
 				roomOnline.room.id.eq(roomId),
 				roomOnline.createdAt.eq(roomOnline.updatedAt)
 			).fetch();
+	}
+
+	public String getSchoolName(Long id) {
+		return queryFactory.select(school.schoolName)
+			.from(teacherClass)
+			.leftJoin(teacherClass.classRoom, classRoom)
+			.leftJoin(classRoom.school, school)
+			.where(teacherClass.user.id.eq(id))
+			.fetchOne();
 	}
 }
