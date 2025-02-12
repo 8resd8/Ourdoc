@@ -106,7 +106,7 @@ const TeacherBookSearch = () => {
                           </defs>
                         </svg>
                       </div>
-                      <div className="text-center text-gray-800 text-xs font-normal font-['Pretendard'] leading-none">
+                      <div className="text-center text-gray-800 caption-medium">
                         관심
                       </div>
                     </div>
@@ -154,7 +154,7 @@ const TeacherBookSearch = () => {
                           </svg>
                         </div>
                       </div>
-                      <div className="text-center text-gray-800 text-xs font-normal font-['Pretendard'] leading-none">
+                      <div className="text-center text-gray-800 caption-medium">
                         학급
                       </div>
                     </div>
@@ -192,7 +192,7 @@ const TeacherBookSearch = () => {
                           </defs>
                         </svg>
                       </div>
-                      <div className="text-center text-primary-500 text-xs font-normal font-['Pretendard'] leading-none">
+                      <div className="text-center text-primary-500 caption-medium">
                         숙제
                       </div>
                     </div>

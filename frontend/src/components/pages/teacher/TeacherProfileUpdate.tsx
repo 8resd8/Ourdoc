@@ -6,7 +6,7 @@ const TeacherProfileUpdate = () => {
         src="/assets/images/tmpProfile.png"
         alt="프로필"
       />
-      <div className="text-center text-gray-800 text-[22px] font-semibold leading-relaxed mt-4">
+      <div className="text-center text-gray-800 body-medium font-semibold mt-4">
         나미소 님
       </div>
       <div className="flex flex-col justify-start items-center gap-[72px] mt-6">

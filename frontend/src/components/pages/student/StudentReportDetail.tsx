@@ -60,19 +60,17 @@ const StudentReportDetail = () => {
           />
         </div>
         <div className="flex justify-end">
-          <div className="inline-flex py-[12px] px-[16px] bg-system-danger rounded-[10px] justify-center items-center text-center text-white text-base font-normal font-['Pretendard'] leading-normal">
+          <div className="inline-flex py-[12px] px-[16px] bg-system-danger rounded-[10px] justify-center items-center text-center text-white body-medium">
             삭제하기
           </div>
         </div>
       </div>
       <div className="flex flex-col w-[600px]">
         <div>
-          <div className="text-black text-sm font-normal font-['Pretendard'] leading-tight">
-            AI 선생님 의견
-          </div>
+          <div className="text-black body-small">AI 선생님 의견</div>
           <div className="w-[413px] h-[421px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
             <div className="w-[389px]">
-              <span className="text-gray-800 text-base font-normal font-['Pretendard'] leading-normal">
+              <span className="text-gray-800 body-medium">
                 원문: 이 책은 나에게 많은 감동을 주었다. 주인공의 용기 있는
                 선택이 인상적이었고, 나도 그런 용기를 갖고 싶다고 생각했다.
                 <br />
@@ -83,7 +81,7 @@ const StudentReportDetail = () => {
                 첨삭 포인트:
                 <br />
               </span>
-              <span className="text-gray-800 text-base font-normal font-['Pretendard'] leading-normal">
+              <span className="text-gray-800 body-medium">
                 더 구체적인 표현 → "많은 감동" → "깊은 감동"
                 <br />
                 문장 자연스럽게 다듬기 → "주인공의 용기 있는 선택이
@@ -95,19 +93,17 @@ const StudentReportDetail = () => {
                 느꼈다"로 바꿔 감정이 더 잘 전달됨.
                 <br />
               </span>
-              <span className="text-gray-800 text-base font-normal font-['Pretendard'] leading-normal">
+              <span className="text-gray-800 body-medium">
                 이런 방식으로 독서록을 다듬으면 더 좋은 글이 될 수 있어! 😊
               </span>
             </div>
           </div>
         </div>
         <div>
-          <div className="text-black text-sm font-normal font-['Pretendard'] leading-tight">
-            담임 선생님 의견
-          </div>
+          <div className="text-black body-small">담임 선생님 의견</div>
           <div className="w-[413px] h-[126px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
             <div className="w-[389px]">
-              <span className="text-gray-800 text-base font-normal font-['Pretendard'] leading-normal">
+              <span className="text-gray-800 body-medium">
                 첨삭 전: 이 책은 나에게 많은 감동을 주었다. 첨삭 후: 이 책은
                 나에게 깊고 진한 감동을 안겨 주었다 첨삭 전: 이 책은 나에게 많은
                 감동을 주었다. 첨삭 후: 이 책은 나에게 깊고 진한 감동을 안겨

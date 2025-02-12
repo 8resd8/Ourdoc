@@ -56,10 +56,10 @@ const StudentReportWrite = () => {
           </div>
         </div>
         <div className="flex justify-end">
-          <div className="inline-flex py-[12px] w-[305px] border border-secondary-500 bg-gray-50 rounded-[10px] justify-center items-center text-center text-secondary-500 text-base font-normal font-['Pretendard'] leading-normal">
+          <div className="inline-flex py-[12px] w-[305px] border border-secondary-500 bg-gray-50 rounded-[10px] justify-center items-center text-center text-secondary-500 body-medium">
             사진 업로드
           </div>
-          <div className="inline-flex py-[12px] w-[305px] bg-primary-500 rounded-[10px] justify-center items-center text-center text-white text-base font-normal font-['Pretendard'] leading-normal">
+          <div className="inline-flex py-[12px] w-[305px] bg-primary-500 rounded-[10px] justify-center items-center text-center text-white body-medium">
             독서록 저장
           </div>
         </div>

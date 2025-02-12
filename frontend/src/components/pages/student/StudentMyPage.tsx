@@ -11,7 +11,7 @@ const Modal: React.FC<ModalProps> = ({ type, onClose }) => {
       <div className="bg-white rounded-[30px] shadow-lg p-6 w-[414px]">
         {type === 'passwordConfirm' && (
           <>
-            <div className="text-center text-[22px] font-semibold text-gray-800">
+            <div className="text-center body-medium font-semibold text-gray-800">
               비밀번호를 입력해주세요.
             </div>
             <input
@@ -23,7 +23,7 @@ const Modal: React.FC<ModalProps> = ({ type, onClose }) => {
         )}
         {type === 'passwordReset' && (
           <>
-            <div className="text-center text-[22px] font-semibold text-gray-800">
+            <div className="text-center body-medium font-semibold text-gray-800">
               변경할 비밀번호를 입력해주세요.
             </div>
             <input
@@ -40,7 +40,7 @@ const Modal: React.FC<ModalProps> = ({ type, onClose }) => {
         )}
         {type === 'createClass' && (
           <>
-            <div className="text-center text-[22px] font-semibold text-gray-800">
+            <div className="text-center body-medium font-semibold text-gray-800">
               새 학급 생성
             </div>
             <p className="mt-4 text-center text-gray-800">

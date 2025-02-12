@@ -103,18 +103,16 @@ const StudentAllReportList = () => {
           />
           {book.isHomework && (
             <div className="w-[181px] h-11 px-[46px] py-1 left-0 top-[188px] absolute bg-primary-500/70 rounded-br-[10px] justify-center items-center gap-2.5 inline-flex">
-              <div className="text-white text-base font-normal font-['Pretendard'] leading-normal">
-                숙제 도서
-              </div>
+              <div className="text-white body-medium">숙제 도서</div>
             </div>
           )}
         </div>
         <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-          <div className="grow shrink basis-0 self-stretch text-gray-800 text-lg font-semibold font-['Pretendard'] leading-normal">
+          <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
             {book.title}
           </div>
         </div>
-        <div className="self-stretch h-12 text-gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+        <div className="self-stretch h-12 text-gray-300 body-small">
           {book.isHomework
             ? book.date
             : `${book.author} 지음 | ${book.publisher}`}
@@ -127,7 +125,7 @@ const StudentAllReportList = () => {
     <div className="flex justify-center items-center ">
       <div className="">
         <div className="border-b border-gray-200 w-[calc(100vw_-_20px)]">
-          <div className="text-center text-gray-800 text-[26px] font-semibold font-['Pretendard'] leading-[30px] mt-8">
+          <div className="text-center text-gray-800 headline-large mt-8">
             4학년
           </div>
           <div className="flex justify-center items-center gap-8 mt-[40px] w-full">
@@ -138,12 +136,12 @@ const StudentAllReportList = () => {
               >
                 <div className="w-12 flex-col justify-center items-center inline-flex">
                   <div
-                    className={`text-center ${grade === 4 ? 'text-primary-500' : 'text-gray-700'} text-[26px] font-semibold font-['Pretendard'] leading-[30px]`}
+                    className={`text-center ${grade === 4 ? 'text-primary-500' : 'text-gray-700'} headline-large`}
                   >
                     {grade}
                   </div>
                   <div
-                    className={`text-center ${grade === 4 ? 'text-primary-500' : 'text-gray-700'} text-xs font-normal font-['Pretendard'] leading-none`}
+                    className={`text-center ${grade === 4 ? 'text-primary-500' : 'text-gray-700'} caption-medium`}
                   >
                     학년
                   </div>
@@ -151,14 +149,12 @@ const StudentAllReportList = () => {
               </div>
             ))}
           </div>
-          <div className="w-[1064px] text-right text-gray-700 text-sm font-normal font-['Pretendard'] leading-tight mb-2 mt-8 m-auto">
+          <div className="w-[1064px] text-right text-gray-700 body-small mb-2 mt-8 m-auto">
             14권 읽음
           </div>
         </div>
         <div className="w-[1064px] m-auto">
-          <div className="text-gray-800 mt-10 text-[22px] font-semibold font-['Pretendard'] leading-relaxed">
-            1월
-          </div>
+          <div className="text-gray-800 mt-10 headline-medium">1월</div>
           <div className="flex justify-center mt-4">
             <div className=" flex flex-wrap justify-between">
               {bookData.map((book, index) => (

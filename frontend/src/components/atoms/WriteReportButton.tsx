@@ -7,9 +7,7 @@ export const WriteReportButton = ({ onClick }: { onClick: Function }) => {
       <div data-svg-wrapper className="relative">
         <img src="/assets/images/write.png" className="h-[36px] w-[36px]" />
       </div>
-      <div className="text-white text-xs font-bold font-['Pretendard'] leading-none">
-        독서록 작성
-      </div>
+      <div className="text-white body-small font-bold">독서록 작성</div>
     </div>
   );
 };

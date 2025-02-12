@@ -4,9 +4,7 @@ export const DebateButton = ({ onClick }: { onClick: Function }) => {
       <div data-svg-wrapper className="relative">
         <img src="/assets/images/book.png" className="h-[36px] w-[36px]" />
       </div>
-      <div className="text-secondary-500 text-xs font-bold font-['Pretendard'] leading-none">
-        독서토론방
-      </div>
+      <div className="text-secondary-500 body-small font-bold">독서토론방</div>
     </div>
   );
 };

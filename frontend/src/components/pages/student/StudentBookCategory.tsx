@@ -88,18 +88,16 @@ const StudentBookCategory = () => {
               />
             </div>
             <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 text-lg font-semibold font-['Pretendard'] leading-normal">
+              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
                 어린왕자
               </div>
             </div>
-            <div className="self-stretch h-12 text-gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+            <div className="self-stretch h-12 text-gray-300 body-small">
               생텍쥐페리생텍쥐페리생텍쥐페리 지음 | 새옴
             </div>
           </div>
           <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-primary-500 justify-center items-center gap-2.5 inline-flex">
-            <div className="text-primary-500 text-base font-normal font-['Pretendard'] leading-normal">
-              숙제하기
-            </div>
+            <div className="text-primary-500 body-medium">숙제하기</div>
           </div>
         </div>
         <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
@@ -112,18 +110,16 @@ const StudentBookCategory = () => {
               />
             </div>
             <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 text-lg font-semibold font-['Pretendard'] leading-normal">
+              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
                 어린왕자
               </div>
             </div>
-            <div className="self-stretch h-12 text-gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+            <div className="self-stretch h-12 text-gray-300 body-small">
               생텍쥐페리 지음 | 새옴
             </div>
           </div>
           <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-gray-500 justify-center items-center gap-2.5 inline-flex">
-            <div className="text-gray-500 text-base font-normal font-['Pretendard'] leading-normal">
-              제출 완료
-            </div>
+            <div className="text-gray-500 body-medium">제출 완료</div>
           </div>
         </div>
         <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
@@ -136,18 +132,16 @@ const StudentBookCategory = () => {
               />
             </div>
             <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 text-lg font-semibold font-['Pretendard'] leading-normal">
+              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
                 어린왕자
               </div>
             </div>
-            <div className="self-stretch h-12 text-gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+            <div className="self-stretch h-12 text-gray-300 body-small">
               생텍쥐페리 지음 | 새옴
             </div>
           </div>
           <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-system-danger justify-center items-center gap-2.5 inline-flex">
-            <div className="text-system-danger text-base font-normal font-['Pretendard'] leading-normal">
-              관심 해제하기
-            </div>
+            <div className="text-system-danger body-medium">관심 해제하기</div>
           </div>
         </div>
         <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
@@ -160,11 +154,11 @@ const StudentBookCategory = () => {
               />
             </div>
             <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 text-lg font-semibold font-['Pretendard'] leading-normal">
+              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
                 어린왕자
               </div>
             </div>
-            <div className="self-stretch h-12 text-gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+            <div className="self-stretch h-12 text-gray-300 body-small">
               생텍쥐페리 지음 | 새옴
             </div>
           </div>
@@ -179,11 +173,11 @@ const StudentBookCategory = () => {
               />
             </div>
             <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 text-lg font-semibold font-['Pretendard'] leading-normal">
+              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
                 어린왕자
               </div>
             </div>
-            <div className="self-stretch h-12 text-gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+            <div className="self-stretch h-12 text-gray-300 body-small">
               생텍쥐페리 지음 | 새옴
             </div>
           </div>
@@ -202,18 +196,16 @@ const StudentBookCategory = () => {
               />
             </div>
             <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 text-lg font-semibold font-['Pretendard'] leading-normal">
+              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
                 어린왕자
               </div>
             </div>
-            <div className="self-stretch h-12 text-gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+            <div className="self-stretch h-12 text-gray-300 body-small">
               생텍쥐페리생텍쥐페리생텍쥐페리 지음 | 새옴
             </div>
           </div>
           <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-primary-500 justify-center items-center gap-2.5 inline-flex">
-            <div className="text-primary-500 text-base font-normal font-['Pretendard'] leading-normal">
-              숙제하기
-            </div>
+            <div className="text-primary-500 body-medium">숙제하기</div>
           </div>
         </div>
         <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
@@ -226,18 +218,16 @@ const StudentBookCategory = () => {
               />
             </div>
             <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 text-lg font-semibold font-['Pretendard'] leading-normal">
+              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
                 어린왕자
               </div>
             </div>
-            <div className="self-stretch h-12 text-gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+            <div className="self-stretch h-12 text-gray-300 body-small">
               생텍쥐페리 지음 | 새옴
             </div>
           </div>
           <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-gray-500 justify-center items-center gap-2.5 inline-flex">
-            <div className="text-gray-500 text-base font-normal font-['Pretendard'] leading-normal">
-              제출 완료
-            </div>
+            <div className="text-gray-500 body-medium">제출 완료</div>
           </div>
         </div>
         <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
@@ -250,18 +240,16 @@ const StudentBookCategory = () => {
               />
             </div>
             <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 text-lg font-semibold font-['Pretendard'] leading-normal">
+              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
                 어린왕자
               </div>
             </div>
-            <div className="self-stretch h-12 text-gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+            <div className="self-stretch h-12 text-gray-300 body-small">
               생텍쥐페리 지음 | 새옴
             </div>
           </div>
           <div className="self-stretch py-[4px] bg-white rounded-[10px] border border-system-danger justify-center items-center gap-2.5 inline-flex">
-            <div className="text-system-danger text-base font-normal font-['Pretendard'] leading-normal">
-              관심 해제하기
-            </div>
+            <div className="text-system-danger body-medium">관심 해제하기</div>
           </div>
         </div>
         <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
@@ -274,11 +262,11 @@ const StudentBookCategory = () => {
               />
             </div>
             <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 text-lg font-semibold font-['Pretendard'] leading-normal">
+              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
                 어린왕자
               </div>
             </div>
-            <div className="self-stretch h-12 text-gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+            <div className="self-stretch h-12 text-gray-300 body-small">
               생텍쥐페리 지음 | 새옴
             </div>
           </div>
@@ -293,11 +281,11 @@ const StudentBookCategory = () => {
               />
             </div>
             <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 text-lg font-semibold font-['Pretendard'] leading-normal">
+              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
                 어린왕자
               </div>
             </div>
-            <div className="self-stretch h-12 text-gray-300 text-sm font-normal font-['Pretendard'] leading-tight">
+            <div className="self-stretch h-12 text-gray-300 body-small">
               생텍쥐페리 지음 | 새옴
             </div>
           </div>
