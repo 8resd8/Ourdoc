@@ -35,10 +35,12 @@ import com.ssafy.ourdoc.global.common.enums.SubmitStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class HomeworkService {
 
 	private final HomeworkRepository homeworkRepository;
