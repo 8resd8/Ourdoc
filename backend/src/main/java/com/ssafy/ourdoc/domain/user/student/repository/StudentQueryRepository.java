@@ -26,6 +26,7 @@ public class StudentQueryRepository {
 			.select(Projections.constructor(
 				StudentQueryDto.class,
 					school.schoolName,
+				school.id,
 				classRoom.grade,
 				classRoom.classNumber,
 				studentClass.studentNumber
@@ -33,8 +34,7 @@ public class StudentQueryRepository {
 			.from(studentClass)
 			.join(classRoom).on(studentClass.classRoom.id.eq(classRoom.id))
 			.join(school).on(classRoom.school.id.eq(school.id))
-			.where(studentClass.user.id.eq(userId),
-				studentClass.active.eq((활성)))
+			.where(studentClass.user.id.eq(userId), studentClass.active.eq((활성)))
 			.fetchOne();
 	}
 }
