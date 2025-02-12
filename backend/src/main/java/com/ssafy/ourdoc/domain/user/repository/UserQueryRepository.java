@@ -8,4 +8,6 @@ public interface UserQueryRepository {
 	String findPasswordById(Long userId);
 
 	void updateProfileImage(User user, String profileImageUrl);
+
+	void updatePassword(User user, String newHashedPassword);
 }
