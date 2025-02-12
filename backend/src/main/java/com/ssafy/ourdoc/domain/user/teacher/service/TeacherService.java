@@ -264,6 +264,7 @@ public class TeacherService {
 
 	public void updateTeacherProfile(User user, MultipartFile profileImage, TeacherProfileUpdateRequest request) {
 
+		// 프로필 이미지 수정
 		if (profileImage != null && !profileImage.isEmpty()) {
 			String profileImageUrl = s3StorageService.uploadFile(profileImage);
 			userRepository.updateProfileImage(user, profileImageUrl);
@@ -271,15 +272,35 @@ public class TeacherService {
 		em.flush();
 		em.clear();
 
-		School school = schoolRepository.findBySchoolNameAndAddress(request.schoolName(), request.address());
+		// 학교 제외 정보 수정 (동적 쿼리로 수정해야 함)
 		teacherQueryRepository.updateTeacherProfile(user, request);
 		em.flush();
 		em.clear();
 
-		if (classRoomRepository.findBySchoolAndGradeAndClassNumber(school, request.grade(), request.classNumber()).isPresent()) {
+		// 학교 정보 확인 (학급이 확인되면 다음 로직 진행. 없으면 return)
+		School school = (request.schoolId() != null) ?
+			schoolRepository.findById(request.schoolId()).orElse(null) : null;
+		if (school == null || request.grade() == null || request.classNumber() == null || request.year() == null) {
 			return;
 		}
 
+		// 이미 본인이 생성한 동일한 학급이 있는 확인. 있으면 updated_at 업데이트
+		List<ClassRoom> classRoomList = classRoomRepository.findBySchoolAndGradeAndClassNumberAndYear(
+			school, request.grade(), request.classNumber(), Year.of(request.year()))
+			.orElse(null);
+
+		if (classRoomList != null) {
+			for (ClassRoom classRoom : classRoomList) {
+				TeacherClass teacherClass = teacherClassRepository.findByUserIdAndClassRoomId(user.getId(), classRoom.getId())
+					.orElse(null);
+				if (teacherClass != null) {
+					teacherClassRepository.updateUpdatedAt(user.getId(), classRoom.getId());
+					return;
+				}
+			}
+		}
+
+		// class 테이블에 학급 생성(중복 상관 없음. classId로 구분할 것)
 		ClassRoom classRoom = ClassRoom.builder()
 			.school(school)
 			.grade(request.grade())
@@ -289,6 +310,7 @@ public class TeacherService {
 
 		classRoomRepository.save(classRoom);
 
+		// teacherClass 테이블에 생성
 		TeacherClass teacherClass = TeacherClass.builder()
 			.user(user)
 			.classRoom(classRoom)
