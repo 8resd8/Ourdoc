@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -40,6 +41,13 @@ class JwtAuthenticationFilterTest {
 		mockMvc = MockMvcBuilders.standaloneSetup(new JwtTestController()) // 테스트용 컨트롤러 추가
 			.addFilter(jwtAuthenticationFilter) // 필터 적용
 			.build();
+
+		// 🔥 @Value("${prod.excluded-paths}")를 강제로 설정
+		String mockExcludedPaths = "/teachers/signup,/students/signup,/users/signin,/users/signout,/users/checkId,/debate/**,/openvidu/**";
+		ReflectionTestUtils.setField(jwtAuthenticationFilter, "excludedPathsRaw", mockExcludedPaths);
+
+		// 🔥 @PostConstruct init() 강제 실행
+		ReflectionTestUtils.invokeMethod(jwtAuthenticationFilter, "init");
 	}
 
 	@Test
