@@ -81,12 +81,13 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 			)).from(book)
 			.leftJoin(bookReport)
 			.on(bookReport.book.eq(book)
-				.and(bookReport.approveTime.isNotNull()))
-			.join(bookReport.studentClass, studentClass)
-			.join(studentClass.classRoom, classRoom)
+				.and(bookReport.approveTime.isNotNull())
+				.and(bookReport.createdAt.between(startDate(year), endDate(year)))
+			)
+			.leftJoin(bookReport.studentClass, studentClass)
+			.leftJoin(studentClass.classRoom, classRoom)
 			.where(
-				classRoom.grade.eq(grade),
-				bookReport.createdAt.between(startDate(year), endDate(year))
+				classRoom.grade.eq(grade).or(bookReport.isNull())
 			).groupBy(book.id)
 			.orderBy(bookReport.count().desc())
 			.limit(1)
@@ -128,16 +129,16 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 					book.publishTime,
 					book.imageUrl
 				), bookReport.count().intValue()
-			)).from(bookReport)
-			.join(bookReport.book, book)
-			.join(bookReport.studentClass, studentClass)
+			)).from(book)
 			.leftJoin(bookReport)
-			.on(bookReport.studentClass.eq(studentClass)
+			.on(bookReport.book.eq(book)
+				.and(bookReport.createdAt.between(startDate(year), endDate(year)))
 				.and(bookReport.approveTime.isNotNull())
 			)
+			.leftJoin(bookReport.studentClass, studentClass)
+			.leftJoin(studentClass.classRoom, classRoom)
 			.where(
-				classRoom.id.eq(classRoomId),
-				bookReport.createdAt.between(startDate(year), endDate(year))
+				classRoom.id.eq(classRoomId).or(bookReport.isNull())
 			).groupBy(book.id)
 			.orderBy(bookReport.count().desc())
 			.limit(1)
