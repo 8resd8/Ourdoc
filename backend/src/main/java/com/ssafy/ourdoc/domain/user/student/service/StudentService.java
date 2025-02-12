@@ -4,14 +4,15 @@ import static com.ssafy.ourdoc.global.common.enums.Active.*;
 import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.TempPassword.*;
 
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResponseErrorHandler;
 
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
@@ -30,7 +31,6 @@ import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
-import com.ssafy.ourdoc.global.common.enums.TempPassword;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 
 import jakarta.transaction.Transactional;
@@ -160,8 +160,17 @@ public class StudentService {
 			StudentProfileResponseDto response = studentClassQueryRepository.findStudentProfileByUserId(user.getId());
 			return ResponseEntity.ok().body(response);
 		} else {
-			InactiveStudentProfileResponseDto response = studentClassQueryRepository.findInactiveStudentProfileByUserId(user.getId());
+			InactiveStudentProfileResponseDto response = studentClassQueryRepository.findInactiveStudentProfileByUserId(
+				user.getId());
 			return ResponseEntity.ok().body(response);
 		}
+	}
+
+	public List<SchoolClassDto> getClassRoomsStudent(Long userId) {
+		List<SchoolClassDto> schoolClassDtos = classRoomRepository.findByStudent(userId);
+		if (schoolClassDtos.isEmpty()) {
+			throw new NoSuchElementException("해당하는 사용자에 해당하는 학급 정보가 없습니다.");
+		}
+		return schoolClassDtos;
 	}
 }
