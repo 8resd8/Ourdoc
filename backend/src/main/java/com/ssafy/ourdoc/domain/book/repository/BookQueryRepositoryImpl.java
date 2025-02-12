@@ -62,7 +62,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 			.select(Projections.constructor(
 				BookMostDto.class,
 				Projections.constructor(
-					BookDetailResponse.class,
+					BookDetailDto.class,
 					book.id,
 					book.title,
 					book.author,
@@ -109,7 +109,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 			.select(Projections.constructor(
 				BookMostDto.class,
 				Projections.constructor(
-					BookDetailResponse.class,
+					BookDetailDto.class,
 					book.id,
 					book.title,
 					book.author,
