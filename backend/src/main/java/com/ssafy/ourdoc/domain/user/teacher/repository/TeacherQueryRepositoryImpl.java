@@ -46,14 +46,15 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 		return queryFactory
 			.select(Projections.constructor(
 				TeacherQueryDto.class,
-				school.schoolName.coalesce("null"),
+				school.schoolName,
+				school.id,
 				classRoom.grade,
 				classRoom.classNumber
 			))
 			.from(teacherClass)
 			.join(classRoom).on(teacherClass.classRoom.id.eq(classRoom.id))
 			.join(school).on(classRoom.school.id.eq(school.id))
-			.where(teacherClass.user.id.eq(userId))
+			.where(teacherClass.user.id.eq(userId), teacherClass.active.eq(활성))
 			.fetchOne();
 	}
 
