@@ -53,9 +53,7 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 			.join(classRoom.school, school)
 			.join(teacherClass).on(teacherClass.classRoom.eq(classRoom))
 			.leftJoin(studentClass).on(studentClass.classRoom.eq(classRoom))
-			.where(
-				teacherClass.user.id.eq(userId)
-			)
+			.where(teacherClassEq(userId))
 			.groupBy(classRoom.id)
 			.fetch();
 	}
