@@ -1,5 +1,11 @@
 import { signoutApi } from '../../../services/usersService';
 import { useNavigate } from 'react-router';
+import { MonthlyReportChart } from '../../organisms/MonthlyReportChart';
+import { MonthlyReportListSection } from '../../organisms/MonthlyReportListSection';
+import { HomeworkListSection } from '../../organisms/HomeworkListSection';
+import { NotificationSection } from '../../organisms/NotificationSection';
+import { RankingSection } from '../../organisms/RankingSection';
+import { MostReadBookSection } from '../../organisms/MostReadBookSection';
 
 const TeacherMain = () => {
   const navigate = useNavigate();
@@ -14,9 +20,19 @@ const TeacherMain = () => {
   };
 
   return (
-    <div>
-      TeacherMain Component
-      <div onClick={logout}>logout</div>
+    <div className="mx-auto p-4">
+      <div onClick={logout} className="cursor-pointer text-primary-500">
+        logout
+      </div>
+      <RankingSection />
+      <NotificationSection />
+      <HomeworkListSection />
+      <MonthlyReportChart />
+      <MonthlyReportListSection />
+      <div>
+        <MostReadBookSection title={'학년에서 가장 많이 읽은 책'} />
+        <MostReadBookSection title={'반에서 가장 많이 읽은 책'} />
+      </div>
     </div>
   );
 };
