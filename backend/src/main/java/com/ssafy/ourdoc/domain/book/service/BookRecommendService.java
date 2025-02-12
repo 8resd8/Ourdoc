@@ -27,10 +27,12 @@ import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BookRecommendService {
 	private final BookRepository bookRepository;
 	private final BookRecommendRepository bookRecommendRepository;
