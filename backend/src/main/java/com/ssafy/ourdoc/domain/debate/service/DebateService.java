@@ -37,12 +37,14 @@ public class DebateService {
 		Page<Room> roomPage = debateRoomRepository.findByEndAtIsNull(pageable);
 		return roomPage.map(room -> {
 			Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(room.getId());
+			String schoolName = debateRoomRepository.getSchoolName(room.getUser().getId());
 			return new RoomDto(
 				room.getId(),
 				room.getTitle(),
 				room.getUser().getName(),
 				room.getMaxPeople(),
-				currentPeople
+				currentPeople,
+				schoolName
 			);
 		});
 	}
