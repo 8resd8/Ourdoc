@@ -10,9 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookMostResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.service.BookService;
+import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.global.annotation.Login;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,4 +37,11 @@ public class BookController {
 		BookDetailResponse book = bookService.getBookDetail(bookId);
 		return ResponseEntity.ok(book);
 	}
+
+	@GetMapping("/most")
+	public ResponseEntity<BookMostResponse> getMost(@Login User user) {
+		BookMostResponse books = bookService.getBookMost(user);
+		return ResponseEntity.ok(books);
+	}
+
 }
