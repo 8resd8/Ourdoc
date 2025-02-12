@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 
-public interface DebateRoomRepository extends JpaRepository<Room, Long> {
+public interface DebateRoomRepository extends JpaRepository<Room, Long>, DebateRoomQueryRepository {
 	Page<Room> findByEndAtIsNull(Pageable pageable);
 }
