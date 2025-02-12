@@ -80,7 +80,7 @@ public class TeacherService {
 	private final EntityManager em;
 
 	@Value("${prod.QrUrl}")
-	String prodUrl;
+	private String prodUrl;
 
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {

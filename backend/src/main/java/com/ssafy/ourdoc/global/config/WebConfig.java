@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 	@Value("${prod.url}")
-	String prodUrl;
+	private String prodUrl;
 
 	private final LoginArgumentResolver loginArgumentResolver;
 	private final JwtInterceptor jwtInterceptor;
