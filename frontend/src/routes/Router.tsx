@@ -9,7 +9,6 @@ import StudentSetUp from '../components/pages/student/StudentSetUp';
 import StudentSignUp from '../components/pages/student/StudentSignUp';
 import StudentMain from '../components/pages/student/StudentMain';
 import StudentMyPage from '../components/pages/student/StudentMyPage';
-import StudentStatistics from '../components/pages/student/StudentStatistics';
 import StudentReportWrite from '../components/pages/student/StudentReportWrite';
 import StudentReportDetail from '../components/pages/student/StudentReportDetail';
 import StudentAllReportList from '../components/pages/student/StudentAllReportList';
@@ -18,6 +17,8 @@ import StudentBookCategory from '../components/pages/student/StudentBookCategory
 import StudentBookList from '../components/pages/student/StudentBookList';
 import StudentBookSearch from '../components/pages/student/StudentBookSearch';
 import StudentHomeWorkReportList from '../components/pages/student/StudentHomeWorkReportList';
+import StudentTrophy from '../components/pages/student/StudentTrophy';
+import StudentHeader from '../components/commons/StudentHeader';
 
 // Teacher 컴포넌트
 import TeacherBookCategory from '../components/pages/teacher/TeacherBookCategory';
@@ -38,7 +39,6 @@ import TeacherStudentInfo from '../components/pages/teacher/TeacherStudentInfo';
 import AuthLayout from '../layouts/AuthLayout';
 import Pending from '../components/molecules/Pending';
 import WebRtcBoard from '../components/pages/common/WebRtcBoard';
-import StudentHeader from '../components/commons/StudentHeader';
 import TeacherHeader from '../components/commons/TeacherHeader';
 
 const Router = () => {
@@ -63,10 +63,10 @@ const Router = () => {
           <Route path="main" element={<StudentMain />} />
           <Route path="signup" element={<StudentSignUp />} />
           <Route path="mypage" element={<StudentMyPage />} />
-          <Route path="statistics" element={<StudentStatistics />} />
+          <Route path="trophy" element={<StudentTrophy />} />
           <Route path="report/write" element={<StudentReportWrite />} />
           <Route path="report/detail/:id" element={<StudentReportDetail />} />
-          <Route path="report/list" element={<StudentAllReportList />} />
+          <Route path="reports" element={<StudentAllReportList />} />
           <Route path="noti" element={<StudentNoti />} />
           <Route path="book/category" element={<StudentBookCategory />} />
           <Route path="book/list" element={<StudentBookList />} />
@@ -83,10 +83,7 @@ const Router = () => {
           <Route path="statistics" element={<TeacherStatistics />} />
           <Route path="reports" element={<TeacherReportList />} />
           <Route path="report/:id" element={<TeacherReportDetail />} />
-          <Route
-            path="homework-reports"
-            element={<TeacherHomeWorkReportList />}
-          />
+          <Route path="homework/list" element={<TeacherHomeWorkReportList />} />
           <Route path="students" element={<TeacherStudentInfo />} />
           <Route path="noti" element={<TeacherNoti />} />
           <Route path="class-auth" element={<TeacherClassAuth />} />

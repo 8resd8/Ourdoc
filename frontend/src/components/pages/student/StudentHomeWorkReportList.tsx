@@ -1,5 +1,5 @@
 const StudentHomeWorkReportList = () => {
-  return <div>StudentHomeWorkReportList Component</div>;
+  return <div></div>;
 };
 
 export default StudentHomeWorkReportList;
