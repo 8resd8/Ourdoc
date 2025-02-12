@@ -6,12 +6,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import java.util.List;
-
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 import com.ssafy.ourdoc.domain.classroom.entity.QClassRoom;
 import com.ssafy.ourdoc.domain.classroom.entity.QSchool;
 import com.ssafy.ourdoc.domain.debate.dto.OnlineUserDto;
