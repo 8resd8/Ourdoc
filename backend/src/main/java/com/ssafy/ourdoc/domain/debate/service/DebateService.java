@@ -18,7 +18,6 @@ import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 import com.ssafy.ourdoc.domain.debate.repository.DebateRoomOnlineRepository;
 import com.ssafy.ourdoc.domain.debate.repository.DebateRoomRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
-import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 import com.ssafy.ourdoc.global.integration.openvidu.service.OpenviduService;
 
@@ -50,10 +49,6 @@ public class DebateService {
 	}
 
 	public void createDebateRoom(User user, CreateRoomRequest request) {
-		if (user.getUserType() == UserType.학생) {
-			throw new ForbiddenException("독서토론방 생성 권한이 없습니다.");
-		}
-
 		String sessionId = openviduService.createSession();
 
 		Room room = Room.builder()
