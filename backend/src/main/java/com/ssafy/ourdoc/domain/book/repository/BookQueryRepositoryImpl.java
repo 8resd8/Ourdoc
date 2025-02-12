@@ -13,9 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookDetailDto;
 import com.ssafy.ourdoc.domain.book.dto.BookMostDto;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.global.common.enums.Active;
@@ -46,16 +47,21 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 	}
 
 	public BookMostDto findBookGradeMost(Long userId) {
-		int year = Optional.ofNullable(
-				queryFactory
-					.select(classRoom.year)
-					.from(teacherClass)
-					.join(teacherClass.classRoom, classRoom)
-					.where(
-						teacherClass.user.id.eq(userId),
-						teacherClass.active.eq(Active.활성)
-					).fetchOne())
+		Tuple tuple = queryFactory
+			.select(classRoom.year, classRoom.grade)
+			.from(teacherClass)
+			.join(teacherClass.classRoom, classRoom)
+			.where(
+				teacherClass.user.id.eq(userId),
+				teacherClass.active.eq(Active.활성)
+			).fetchOne();
+
+		int year = Optional.ofNullable(tuple)
+			.map(t -> t.get(classRoom.year))
 			.map(Year::getValue)
+			.orElse(0);
+		int grade = Optional.ofNullable(tuple)
+			.map(t -> t.get(classRoom.grade))
 			.orElse(0);
 
 		return queryFactory
@@ -76,7 +82,10 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 			.leftJoin(bookReport)
 			.on(bookReport.book.eq(book)
 				.and(bookReport.approveTime.isNotNull()))
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.classRoom, classRoom)
 			.where(
+				classRoom.grade.eq(grade),
 				bookReport.createdAt.between(startDate(year), endDate(year))
 			).groupBy(book.id)
 			.orderBy(bookReport.count().desc())
