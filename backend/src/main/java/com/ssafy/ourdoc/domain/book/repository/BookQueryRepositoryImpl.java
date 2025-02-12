@@ -12,7 +12,10 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
-import com.querydsl.core.BooleanBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -28,6 +31,24 @@ import lombok.RequiredArgsConstructor;
 public class BookQueryRepositoryImpl implements BookQueryRepository {
 	private final JPAQueryFactory queryFactory;
 
+	@Override
+	public Page<Book> findBookPage(String title, String author, String publisher, Pageable pageable) {
+		List<Book> books = queryFactory
+			.selectFrom(book)
+			.where(
+				containsTitle(title),
+				containsAuthor(author),
+				containsPublisher(publisher)
+			)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		long total = findBookList(title, author, publisher).size();
+		return new PageImpl<>(books, pageable, total);
+	}
+
+	@Override
 	public List<Book> findBookList(String title, String author, String publisher) {
 		return queryFactory
 			.selectFrom(book)
