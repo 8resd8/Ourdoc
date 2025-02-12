@@ -15,6 +15,7 @@ import com.ssafy.ourdoc.domain.user.dto.StudentLoginDto;
 import com.ssafy.ourdoc.domain.user.dto.StudentQueryDto;
 import com.ssafy.ourdoc.domain.user.dto.TeacherLoginDto;
 import com.ssafy.ourdoc.domain.user.dto.TeacherQueryDto;
+import com.ssafy.ourdoc.domain.user.dto.request.ChangePasswordRequest;
 import com.ssafy.ourdoc.domain.user.dto.request.CheckPasswordRequest;
 import com.ssafy.ourdoc.domain.user.dto.response.AdminLoginDto;
 import com.ssafy.ourdoc.domain.user.dto.response.TeacherNotInClassLoginDto;
@@ -172,5 +173,11 @@ public class UserService {
 	public boolean verifyPassword(User user, CheckPasswordRequest request) {
 		String encryptedPasswordFromDB = userRepository.findPasswordById(user.getId());
 		return BCrypt.checkpw(request.password(), encryptedPasswordFromDB);
+	}
+
+	// 비밀번호 변경
+	public void changePassword(User user, ChangePasswordRequest request) {
+		String encodedPassword = BCrypt.hashpw(request.newPassword(), BCrypt.gensalt());
+		userRepository.updatePassword(user, encodedPassword);
 	}
 }
