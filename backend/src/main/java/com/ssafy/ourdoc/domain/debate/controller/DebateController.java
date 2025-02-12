@@ -38,7 +38,7 @@ public class DebateController {
 		return ResponseEntity.ok(rooms);
 	}
 
-	@PostMapping
+	@PostMapping("/teachers")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void createDebateRoom(@Login User user, @RequestBody CreateRoomRequest request) {
 		debateService.createDebateRoom(user, request);
@@ -64,13 +64,13 @@ public class DebateController {
 		debateService.leaveDebateRoom(user, roomId);
 	}
 
-	@PatchMapping("/{roomId}")
+	@PatchMapping("/teachers/{roomId}")
 	@ResponseStatus(HttpStatus.OK)
 	public void updateDebateRoom(@Login User user, @PathVariable("roomId") Long roomId, UpdateRoomRequest request) {
 		debateService.updateDebateRoom(user, roomId, request);
 	}
 
-	@DeleteMapping("/{roomId}")
+	@DeleteMapping("/teachers/{roomId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteDebateRoom(@Login User user, @PathVariable("roomId") Long roomId) {
 		debateService.deleteDebateRoom(user, roomId);
