@@ -38,7 +38,7 @@ public class BookController {
 		return ResponseEntity.ok(book);
 	}
 
-	@GetMapping("/most")
+	@GetMapping("/teachers/mostread")
 	public ResponseEntity<BookMostResponse> getMost(@Login User user) {
 		BookMostResponse books = bookService.getBookMost(user);
 		return ResponseEntity.ok(books);
