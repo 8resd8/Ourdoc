@@ -1,11 +1,12 @@
 import { signoutApi } from '../../../services/usersService';
 import { useNavigate } from 'react-router';
-import { MonthlyReportChart } from '../../organisms/MonthlyReportChart';
-import { MonthlyReportListSection } from '../../organisms/MonthlyReportListSection';
-import { HomeworkListSection } from '../../organisms/HomeworkListSection';
-import { NotificationSection } from '../../organisms/NotificationSection';
-import { RankingSection } from '../../organisms/RankingSection';
-import { MostReadBookSection } from '../../organisms/MostReadBookSection';
+import { MonthlyReportChart } from '../../molecules/MonthlyReportChart';
+import { MonthlyReportListSection } from '../../molecules/MonthlyReportListSection';
+import { HomeworkListSection } from '../../molecules/HomeworkListSection';
+import { NotificationSection } from '../../molecules/NotificationSection';
+import { RankingSection } from '../../molecules/RankingSection';
+import { MostReadBookSection } from '../../molecules/MostReadBookSection';
+import { DebateButton } from '../../atoms/DebateButton';
 
 const TeacherMain = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const TeacherMain = () => {
       <div onClick={logout} className="cursor-pointer text-primary-500">
         logout
       </div>
+      <DebateButton onClick={() => {}} />
       <RankingSection />
       <NotificationSection />
       <HomeworkListSection />
