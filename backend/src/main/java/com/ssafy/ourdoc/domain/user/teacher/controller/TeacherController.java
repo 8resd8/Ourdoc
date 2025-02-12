@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.user.teacher.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -32,6 +33,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TeacherController {
 
+	@Value("${prod.QrUrl}")
+	private String prodQrUrl;
+
+	@Value("${prod.ChangeQrUrl}")
+	private String prodChangeQrUrl;
+
 	private final TeacherService teacherService;
 
 	// 1. 교사 회원가입
@@ -42,10 +49,17 @@ public class TeacherController {
 		return ResponseEntity.ok("교사 회원가입 완료.");
 	}
 
-	// 2. QR 생성
+	// 2. QR 생성(회원가입)
 	@GetMapping(value = "/{teacherId}/code")
-	public ResponseEntity<QrResponseDto> generateTeacherInviteCode(@PathVariable Long teacherId) {
-		QrResponseDto response = teacherService.generateTeacherClassQr(teacherId);
+	public ResponseEntity<QrResponseDto> generateSignupCode(@PathVariable Long teacherId) {
+		QrResponseDto response = teacherService.generateTeacherClassQr(teacherId, prodQrUrl);
+		return ResponseEntity.ok(response);
+	}
+
+	// QR 생성(단순 소속 변경)
+	@GetMapping("/{teacherId}/change/code")
+	public ResponseEntity<QrResponseDto> generateChangeCode(@PathVariable Long teacherId) {
+		QrResponseDto response = teacherService.generateTeacherClassQr(teacherId, prodChangeQrUrl);
 		return ResponseEntity.ok(response);
 	}
 

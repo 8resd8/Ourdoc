@@ -79,9 +79,6 @@ public class TeacherService {
 	private final ClassRoomRepository classRoomRepository;
 	private final EntityManager em;
 
-	@Value("${prod.QrUrl}")
-	private String prodUrl;
-
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {
 
@@ -125,7 +122,7 @@ public class TeacherService {
 	}
 
 	// 2. QR 생성
-	public QrResponseDto generateTeacherClassQr(Long teacherId) {
+	public QrResponseDto generateTeacherClassQr(Long teacherId, String url) {
 		// 1) 교사 조회
 		Teacher teacher = teacherRepository.findById(teacherId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 ID의 교사가 없습니다."));
@@ -142,7 +139,7 @@ public class TeacherService {
 		int classNumber = classRoom.getClassNumber();
 
 		// 3) QR에 담을 json 데이터
-		String QrLink = String.format(prodUrl, schoolName, schoolId, grade, classNumber);
+		String QrLink = String.format(url, schoolName, schoolId, grade, classNumber);
 
 		// json 데이터의 한글이 깨지지 않도록 설정
 		Map<EncodeHintType, Object> hints = new HashMap<>();

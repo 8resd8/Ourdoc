@@ -112,7 +112,6 @@ public class StudentService {
 	public void requestStudentAffiliationChange(User user, StudentAffiliationChangeRequest request) {
 		ClassRoom classRoom = validateAffiliation(user, request);
 
-		// 새로운 student_class 엔티티 생성
 		StudentClass newStudentClass = StudentClass.builder()
 			.user(user)
 			.classRoom(classRoom)
@@ -121,16 +120,13 @@ public class StudentService {
 			.active(Active.활성) // 활성 상태로 추가
 			.build();
 
-		// student_class 테이블에 새로운 row 추가
 		studentClassRepository.save(newStudentClass);
 	}
 
 	private ClassRoom validateAffiliation(User user, StudentAffiliationChangeRequest request) {
 		// 학교 조회
-		School school = schoolRepository.findBySchoolNameAndAddress(request.schoolName(), request.address());
-		if (school == null) {
-			throw new NoSuchElementException("해당 학교를 찾을 수 없습니다.");
-		}
+		School school = schoolRepository.findById(request.schoolId())
+			.orElseThrow(() -> new NoSuchElementException("해당 학교를 찾을 수 없습니다."));
 
 		// 학년 및 반 조회
 		ClassRoom classRoom = classRoomRepository.findBySchoolAndGradeAndClassNumber(
