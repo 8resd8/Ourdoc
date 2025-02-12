@@ -11,6 +11,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResponseErrorHandler;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.entity.School;
@@ -32,7 +33,9 @@ import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.global.common.enums.TempPassword;
 import com.ssafy.ourdoc.global.common.enums.UserType;
+import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -47,7 +50,8 @@ public class StudentService {
 	private final ClassRoomRepository classRoomRepository;
 	private final StudentClassRepository studentClassRepository;
 	private final StudentClassQueryRepository studentClassQueryRepository;
-	private final ResponseErrorHandler responseErrorHandler;
+	private final S3StorageService s3StorageService;
+	private final EntityManager em;
 
 	// 1. 학생 회원가입
 	public Long signup(StudentSignupRequest request) {
@@ -163,5 +167,14 @@ public class StudentService {
 			InactiveStudentProfileResponseDto response = studentClassQueryRepository.findInactiveStudentProfileByUserId(user.getId());
 			return ResponseEntity.ok().body(response);
 		}
+	}
+
+	public void updateProfileImage(User user, MultipartFile profileImage) {
+		if (profileImage != null && !profileImage.isEmpty()) {
+			String profileImageUrl = s3StorageService.uploadFile(profileImage);
+			userRepository.updateProfileImage(user, profileImageUrl);
+		}
+		em.flush();
+		em.clear();
 	}
 }
