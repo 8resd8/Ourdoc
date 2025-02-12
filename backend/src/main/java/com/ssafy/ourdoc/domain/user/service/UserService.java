@@ -74,7 +74,7 @@ public class UserService {
 
 		if (search != null) {
 			TeacherLoginDto response = new TeacherLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
-				search.schoolName(), search.grade(), search.classNumber(), profileImagePath);
+				search.schoolName(), search.schoolId(), search.grade(), search.classNumber(), profileImagePath);
 			return ResponseEntity.ok().headers(headers).body(response);
 		} else if (search == null) {
 			TeacherNotInClassLoginDto response = new TeacherNotInClassLoginDto(user.getLoginId(), user.getName(),
