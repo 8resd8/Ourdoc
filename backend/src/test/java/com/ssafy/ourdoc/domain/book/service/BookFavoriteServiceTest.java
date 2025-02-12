@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
 import com.ssafy.ourdoc.domain.book.repository.BookFavoriteRepository;
@@ -44,11 +45,13 @@ public class BookFavoriteServiceTest {
 	private BookFavoriteService bookFavoriteService;
 
 	private Book book;
+	private BookSearchRequest request;
 
 	@BeforeEach
 	void setUp() throws Exception {
 		book = Book.builder().isbn("1234").title("홍길동전").author("허균").publisher("조선출판사").build();
 		setBookId(book, 1L);
+		request = new BookSearchRequest("", "", "");
 	}
 
 	@Test
@@ -116,15 +119,18 @@ public class BookFavoriteServiceTest {
 	void getBookFavoriteSuccess() {
 		User user = Mockito.mock(User.class);
 
+		List<Book> searchedBooks = List.of(book);
 		List<BookFavorite> mockBookFavorite = List.of(
 			new BookFavorite(book, user)
 		);
 
-		when(bookFavoriteRepository.findByUser(user)).thenReturn(mockBookFavorite);
+		when(bookRepository.findBookList(request.title(), request.author(), request.publisher())).thenReturn(
+			searchedBooks);
+		when(bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks)).thenReturn(mockBookFavorite);
 
-		List<BookResponse> bookFavorites = bookFavoriteService.getBookFavorites(user);
+		List<BookResponse> bookFavorites = bookFavoriteService.getBookFavorites(request, user);
 
-		verify(bookFavoriteRepository, times(1)).findByUser(user);
+		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks);
 		assertThat(bookFavorites).isEqualTo(List.of(BookResponse.of(book)));
 
 	}
@@ -134,13 +140,16 @@ public class BookFavoriteServiceTest {
 	void getEmptyBookFavoriteSuccess() {
 		User user = Mockito.mock(User.class);
 
+		List<Book> searchedBooks = List.of(book);
 		List<BookFavorite> mockBookFavorite = new ArrayList<>();
 
-		when(bookFavoriteRepository.findByUser(user)).thenReturn(mockBookFavorite);
+		when(bookRepository.findBookList(request.title(), request.author(), request.publisher())).thenReturn(
+			searchedBooks);
+		when(bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks)).thenReturn(mockBookFavorite);
 
-		List<BookResponse> bookFavorites = bookFavoriteService.getBookFavorites(user);
+		List<BookResponse> bookFavorites = bookFavoriteService.getBookFavorites(request, user);
 
-		verify(bookFavoriteRepository, times(1)).findByUser(user);
+		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks);
 		assertTrue(bookFavorites.isEmpty());
 	}
 
