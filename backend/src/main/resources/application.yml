@@ -51,8 +51,6 @@ logging:
   level:
     root: info
     com.ssafy.ourdoc: debug
-  file:
-    name: ourdoc.log
 
 school:
   api-url: ${school.elesch-api-url}
