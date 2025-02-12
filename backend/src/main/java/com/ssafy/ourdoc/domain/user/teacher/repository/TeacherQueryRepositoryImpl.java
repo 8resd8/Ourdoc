@@ -19,9 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
+import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.user.dto.TeacherQueryDto;
 import com.ssafy.ourdoc.domain.user.dto.TeacherVerificationDto;
+import com.ssafy.ourdoc.domain.user.entity.QUser;
+import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
+import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileUpdateRequest;
 import com.ssafy.ourdoc.domain.user.teacher.entity.QTeacher;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
@@ -42,13 +47,14 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 			.select(Projections.constructor(
 				TeacherQueryDto.class,
 				school.schoolName,
+				school.id,
 				classRoom.grade,
 				classRoom.classNumber
 			))
 			.from(teacherClass)
 			.join(classRoom).on(teacherClass.classRoom.id.eq(classRoom.id))
 			.join(school).on(classRoom.school.id.eq(school.id))
-			.where(teacherClass.user.id.eq(userId))
+			.where(teacherClass.user.id.eq(userId), teacherClass.active.eq(활성))
 			.fetchOne();
 	}
 
@@ -111,5 +117,40 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 			.set(teacher.updatedAt, LocalDateTime.now())
 			.where(teacher.id.eq(teacherId).and(teacher.employmentStatus.eq(비재직)))
 			.execute();
+	}
+
+	@Override
+	public void updateTeacherProfile(User user, TeacherProfileUpdateRequest request) {
+		JPAUpdateClause userUpdate = queryFactory.update(QUser.user)
+			.where(QUser.user.id.eq(user.getId()));
+
+		boolean isUserUpdated = false;
+
+		if (request.name() != null && !request.name().isEmpty()) {
+			userUpdate.set(QUser.user.name, request.name());
+			isUserUpdated = true;
+		}
+
+		if (isUserUpdated) {
+			userUpdate.execute();
+		}
+
+		JPAUpdateClause teacherUpdate = queryFactory.update(teacher)
+			.where(teacher.user.eq(user));
+
+		boolean isTeacherUpdated = false;
+
+		if (request.email() != null && !request.email().isEmpty()) {
+			teacherUpdate.set(teacher.email, request.email());
+			isTeacherUpdated = true;
+		}
+		if (request.phone() != null && !request.phone().isEmpty()) {
+			teacherUpdate.set(teacher.phone, request.phone());
+			isTeacherUpdated = true;
+		}
+
+		if (isTeacherUpdated) {
+			teacherUpdate.execute();
+		}
 	}
 }
