@@ -103,7 +103,7 @@ public class UserService {
 		String profileImagePath = user.getProfileImagePath() == null ? "" : user.getProfileImagePath();
 
 		StudentLoginDto response = new StudentLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
-			search.schoolName(), search.grade(), search.classNumber(), search.studentNumber(),
+			search.schoolName(), search.schoolId(), search.grade(), search.classNumber(), search.studentNumber(),
 			student.getTempPassword(), profileImagePath);
 
 		return ResponseEntity.ok().headers(headers).body(response);
