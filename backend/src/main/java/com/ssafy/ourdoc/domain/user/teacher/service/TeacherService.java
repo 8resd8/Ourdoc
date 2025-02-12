@@ -136,9 +136,8 @@ public class TeacherService {
 		int classNumber = classRoom.getClassNumber();
 
 		// 3) QR에 담을 json 데이터
-		// schoolName, 학년, 반 (url은 추후 수정 필요)
 		String googleFormLink = String.format(
-			"https://docs.google.com/forms/d/e/1FAIpQLSfxNCzcxL07Kzo27rCINXu4PHxco7Y4aT8iyi3ys-3PU5j5fg/viewform?usp=pp_url&entry.93879875=%s&entry.640235071=%d&entry.631690045=%d&entry.581945071=%d",
+			"https://i12a405.p.ssafy.io/student/signup?schoolName=%s&classNumber=%d&grade=%d&teacherId=%d",
 			schoolName,        // 학교
 			schoolId,    // 주소
 			grade,            // 학년
