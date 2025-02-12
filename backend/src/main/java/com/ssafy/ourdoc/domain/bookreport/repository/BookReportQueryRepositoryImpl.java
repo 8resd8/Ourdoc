@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -32,6 +33,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDtoWithId;
@@ -392,6 +394,38 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.fetch();
 
 		return getDailyBookReportCountDtos(tuples);
+	}
+
+	@Override
+	public List<BookReportRankDto> bookReportRank(Long userId) {
+		Long classRoomId = queryFactory
+			.select(teacherClass.classRoom.id)
+			.from(teacherClass)
+			.where(
+				teacherClass.user.id.eq(userId),
+				teacherClass.active.eq(Active.활성)
+			).fetchOne();
+
+		int a = 0;
+
+		return queryFactory
+			.select(Projections.constructor(
+				BookReportRankDto.class,
+				studentClass.studentNumber,
+				studentClass.user.name,
+				bookReport.count().intValue(),
+				Expressions.constant(0)
+			)).from(studentClass)
+			.join(studentClass.classRoom, classRoom)
+			.leftJoin(bookReport)
+			.on(
+				bookReport.studentClass.eq(studentClass)
+					.and(bookReport.approveTime.isNotNull())
+			).where(
+				classRoom.id.eq(classRoomId)
+			).groupBy(studentClass.studentNumber)
+			.orderBy(bookReport.count().desc())
+			.fetch();
 	}
 
 	private List<BookReportDailyStatisticsDto> getDailyBookReportCountDtos(List<Tuple> tuples) {
