@@ -8,7 +8,7 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.global.common.enums.Active;
 
-public interface TeacherClassRepository extends JpaRepository<TeacherClass, Long> {
+public interface TeacherClassRepository extends JpaRepository<TeacherClass, Long>, TeacherClassQueryRepository {
 	Optional<TeacherClass> findByUserIdAndClassRoomId(Long userId, Long classRoomId);
 
 	Optional<TeacherClass> findByUserIdAndActive(Long userId, Active active);
