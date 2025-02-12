@@ -156,7 +156,7 @@ public class StudentService {
 
 	public ResponseEntity<?> getStudentProfile(User user) {
 		Active active = user.getActive();
-		if (active == 활성) {
+		if (active.equals(활성)) {
 			StudentProfileResponseDto response = studentClassQueryRepository.findStudentProfileByUserId(user.getId());
 			return ResponseEntity.ok().body(response);
 		} else {
