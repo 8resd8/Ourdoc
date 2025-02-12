@@ -5,6 +5,7 @@ import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,10 +27,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+	@Value("${prod.excluded-paths}")
+	private String[] excludedPathsArray;
+
 	private final JwtUtil jwtUtil;
 	private final JwtBlacklistService blacklistService;
-	private final List<String> excludedPaths = List.of("/teachers/signup", "/students/signup",
-		"/users/signin", "/users/checkId");
+	private final List<String> excludedPaths = List.of(excludedPathsArray);
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
