@@ -85,10 +85,11 @@ public class TeacherController {
 
 	// 6. 교사 본인 정보 조회
 	@GetMapping("/profile")
-	public TeacherProfileResponseDto getTeacherProfile(@Login User user) {
+	public ResponseEntity<?> getTeacherProfile(@Login User user) {
 		return teacherService.getTeacherProfile(user);
 	}
 
+	// 교사 정보 수정
 	@PatchMapping("/profile")
 	public ResponseEntity<String> updateTeacherProfile(
 		@Login User user,
