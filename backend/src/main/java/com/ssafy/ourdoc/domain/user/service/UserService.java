@@ -177,6 +177,12 @@ public class UserService {
 
 	// 비밀번호 변경
 	public void changePassword(User user, ChangePasswordRequest request) {
+		if (request.newPassword() == null || request.newPassword().isBlank()) {
+			throw new IllegalArgumentException("새 비밀번호를 입력해주세요.");
+		}
+		if (BCrypt.checkpw(request.newPassword(), user.getPassword())) {
+			throw new IllegalArgumentException("기존 비밀번호와 다른 비밀번호를 입력해주세요.");
+		}
 		String encodedPassword = BCrypt.hashpw(request.newPassword(), BCrypt.gensalt());
 		userRepository.updatePassword(user, encodedPassword);
 	}
