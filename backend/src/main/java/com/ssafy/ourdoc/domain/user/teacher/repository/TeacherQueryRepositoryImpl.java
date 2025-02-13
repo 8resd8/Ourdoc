@@ -48,6 +48,7 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 				TeacherQueryDto.class,
 				school.schoolName,
 				school.id,
+				classRoom.id,
 				classRoom.grade,
 				classRoom.classNumber
 			))
