@@ -23,5 +23,5 @@ public interface BookRecommendRepository extends JpaRepository<BookRecommend, Lo
 
 	List<BookRecommend> findByClassRoomIn(List<ClassRoom> classRooms);
 
-	List<BookRecommend> findByClassRoomInAndBookIn(List<ClassRoom> classRooms, List<Book> books);
+	Page<BookRecommend> findByClassRoomInAndBookIn(List<ClassRoom> classRooms, List<Book> books, Pageable pageable);
 }

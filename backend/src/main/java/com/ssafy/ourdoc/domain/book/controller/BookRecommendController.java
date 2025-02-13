@@ -40,8 +40,8 @@ public class BookRecommendController {
 
 	@GetMapping("/teachers/recommend/grades")
 	public ResponseEntity<BookRecommendResponseTeacher> getRecommendTeacher(@ModelAttribute BookSearchRequest request,
-		@Login User user) {
-		BookRecommendResponseTeacher response = bookRecommendService.getBookRecommendsTeacher(request, user);
+		@Login User user, @PageableDefault(page = 0, size = 10) Pageable pageable) {
+		BookRecommendResponseTeacher response = bookRecommendService.getBookRecommendsTeacher(request, user, pageable);
 		return ResponseEntity.ok(response);
 	}
 

@@ -74,7 +74,8 @@ public class BookRecommendService {
 		bookRecommendRepository.delete(bookRecommend);
 	}
 
-	public BookRecommendResponseTeacher getBookRecommendsTeacher(BookSearchRequest request, User user) {
+	public BookRecommendResponseTeacher getBookRecommendsTeacher(BookSearchRequest request, User user,
+		Pageable pageable) {
 		ClassRoom userClassRoom = getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
 		int grade = userClassRoom.getGrade();
@@ -82,14 +83,15 @@ public class BookRecommendService {
 
 		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
 		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
-		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
-			searchedBooks);
+		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
+			searchedBooks, pageable);
 
 		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
 			.toList();
 
-		return new BookRecommendResponseTeacher(studentCount, details);
+		Page<BookRecommendDetailTeacher> content = new PageImpl<>(details, pageable, details.size());
+		return new BookRecommendResponseTeacher(studentCount, content);
 	}
 
 	public BookRecommendResponseTeacher getBookRecommendsTeacherClass(BookSearchRequest request, User user,
@@ -105,7 +107,8 @@ public class BookRecommendService {
 			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
 			.toList();
 
-		return new BookRecommendResponseTeacher(studentCount, details);
+		Page<BookRecommendDetailTeacher> content = new PageImpl<>(details, pageable, details.size());
+		return new BookRecommendResponseTeacher(studentCount, content);
 	}
 
 	public BookRecommendResponseStudent getBookRecommendsStudent(BookSearchRequest request, User user,
@@ -116,8 +119,8 @@ public class BookRecommendService {
 
 		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
 		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
-		List<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
-			searchedBooks);
+		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
+			searchedBooks, pageable);
 
 		List<BookRecommendDetailStudent> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
