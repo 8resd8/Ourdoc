@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.user.student.dto;
 
+import java.util.Date;
+
 import com.ssafy.ourdoc.global.common.enums.Active;
 
 public record StudentProfileResponseDto(
@@ -10,6 +12,7 @@ public record StudentProfileResponseDto(
 	int grade,
 	int classNumber,
 	int studentNumber,
+	Date birth,
 	Active active
 ) {
 }

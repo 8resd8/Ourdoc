@@ -1,25 +1,23 @@
 package com.ssafy.ourdoc.domain.debate.repository;
 
+import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
+import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
 import static com.ssafy.ourdoc.domain.debate.entity.QRoomOnline.*;
+import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
+import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
+import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import java.util.List;
-
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 import com.ssafy.ourdoc.domain.classroom.entity.QClassRoom;
 import com.ssafy.ourdoc.domain.classroom.entity.QSchool;
 import com.ssafy.ourdoc.domain.debate.dto.OnlineUserDto;
-import com.ssafy.ourdoc.domain.debate.entity.QRoomOnline;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
-import com.ssafy.ourdoc.domain.user.entity.QUser;
-import com.ssafy.ourdoc.domain.user.student.entity.QStudentClass;
-import com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 
 import lombok.RequiredArgsConstructor;
@@ -63,19 +61,14 @@ public class DebateRoomQueryRepositoryImpl implements DebateRoomQueryRepository 
 	}
 
 	public List<OnlineUserDto> findOnlineUsersByRoomId(Long roomId) {
-		QRoomOnline roomOnline = QRoomOnline.roomOnline;
-		QUser user = QUser.user;
 
-		QTeacherClass teacherClass = QTeacherClass.teacherClass;
 		QClassRoom teacherClassRoom = new QClassRoom("teacherClassRoom");
 		QSchool teacherSchool = new QSchool("teacherSchool");
 
-		QStudentClass studentClass = QStudentClass.studentClass;
 		QClassRoom studentClassRoom = new QClassRoom("studentClassRoom");
 		QSchool studentSchool = new QSchool("studentSchool");
 
-		return queryFactory
-			.select(
+		return queryFactory.select(
 				Projections.constructor(
 					OnlineUserDto.class,
 					Expressions.stringTemplate(
@@ -101,5 +94,14 @@ public class DebateRoomQueryRepositoryImpl implements DebateRoomQueryRepository 
 				roomOnline.room.id.eq(roomId),
 				roomOnline.createdAt.eq(roomOnline.updatedAt)
 			).fetch();
+	}
+
+	public String getSchoolName(Long id) {
+		return queryFactory.select(school.schoolName)
+			.from(teacherClass)
+			.leftJoin(teacherClass.classRoom, classRoom)
+			.leftJoin(classRoom.school, school)
+			.where(teacherClass.user.id.eq(id))
+			.fetchOne();
 	}
 }

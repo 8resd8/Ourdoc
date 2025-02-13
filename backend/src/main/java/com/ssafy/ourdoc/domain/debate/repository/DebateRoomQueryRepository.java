@@ -16,4 +16,6 @@ public interface DebateRoomQueryRepository {
 	List<RoomOnline> findAllActiveByRoomId(Long roomId);
 
 	List<OnlineUserDto> findOnlineUsersByRoomId(Long roomId);
+
+	String getSchoolName(Long id);
 }

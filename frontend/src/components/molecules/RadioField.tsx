@@ -20,13 +20,13 @@ const RadioField = ({
       <div className={classes.radioContainer}>
         <Radio
           placeholder="남자"
-          isSelected={selectedGender === '남자'}
-          onClick={() => onGenderChange('남자')}
+          isSelected={selectedGender === '남'}
+          onClick={() => onGenderChange('남')}
         />
         <Radio
           placeholder="여자"
-          isSelected={selectedGender === '여자'}
-          onClick={() => onGenderChange('여자')}
+          isSelected={selectedGender === '여'}
+          onClick={() => onGenderChange('여')}
         />
       </div>
     </div>

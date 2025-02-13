@@ -5,6 +5,7 @@ public record RoomDto(
 	String title,
 	String creatorName,
 	int maxPeople,
-	Long currentPeople
+	Long currentPeople,
+	String schoolName
 ) {
 }

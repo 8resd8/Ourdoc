@@ -80,7 +80,7 @@ const TeacherBookSearch = () => {
               />
               <div className="mt-12 w-full">
                 <div className="flex float-end gap-4">
-                  <div className="h-6 pl-2 pr-3 py-1 bg-white rounded-[15px] border border-[#2c2c2c] justify-start items-center gap-1 inline-flex">
+                  <div className="h-6 pl-2 pr-3 py-1 bg-gray-0 rounded-[15px] border border-gray-800 justify-start items-center gap-1 inline-flex">
                     <div className="justify-start items-center gap-2 flex">
                       <div data-svg-wrapper className="relative">
                         <svg
@@ -106,12 +106,12 @@ const TeacherBookSearch = () => {
                           </defs>
                         </svg>
                       </div>
-                      <div className="text-center text-[#2c2c2c] text-xs font-normal font-['Pretendard'] leading-none">
+                      <div className="text-center text-gray-800 caption-medium">
                         관심
                       </div>
                     </div>
                   </div>
-                  <div className="h-6 pl-2 pr-3 py-1 bg-white rounded-[15px] border border-[#2c2c2c] justify-start items-center gap-1 inline-flex">
+                  <div className="h-6 pl-2 pr-3 py-1 bg-gray-0 rounded-[15px] border border-gray-800 justify-start items-center gap-1 inline-flex">
                     <div className="justify-end items-center gap-2 flex">
                       <div className="w-4 h-4 relative">
                         <div className="w-4 h-4 left-0 top-0 absolute" />
@@ -154,12 +154,12 @@ const TeacherBookSearch = () => {
                           </svg>
                         </div>
                       </div>
-                      <div className="text-center text-[#2c2c2c] text-xs font-normal font-['Pretendard'] leading-none">
+                      <div className="text-center text-gray-800 caption-medium">
                         학급
                       </div>
                     </div>
                   </div>
-                  <div className="h-6 pl-2 pr-3 py-1 bg-white rounded-[15px] border border-[#ff6f61] justify-start items-center gap-1 inline-flex">
+                  <div className="h-6 pl-2 pr-3 py-1 bg-gray-0 rounded-[15px] border border-primary-500 justify-start items-center gap-1 inline-flex">
                     <div className="justify-start items-center gap-2 flex">
                       <div data-svg-wrapper className="relative">
                         <svg
@@ -192,7 +192,7 @@ const TeacherBookSearch = () => {
                           </defs>
                         </svg>
                       </div>
-                      <div className="text-center text-[#ff6f61] text-xs font-normal font-['Pretendard'] leading-none">
+                      <div className="text-center text-primary-500 caption-medium">
                         숙제
                       </div>
                     </div>
@@ -201,12 +201,14 @@ const TeacherBookSearch = () => {
                 <h3 className="mb-[10px] text-gray-800 headline-medium">
                   {book.title}
                 </h3>
-                <p className="text-sm text-gray-600">저자: {book.author}</p>
-                <p className="text-sm text-gray-600">
+                <p className="body-medium text-gray-600">저자: {book.author}</p>
+                <p className="body-medium text-gray-600">
                   출판사: {book.publisher}
                 </p>
-                <p className="text-sm text-gray-600">장르: {book.genre}</p>
-                <p className="text-sm text-gray-600">출판년도: {book.year}</p>
+                <p className="body-medium text-gray-600">장르: {book.genre}</p>
+                <p className="body-medium text-gray-600">
+                  출판년도: {book.year}
+                </p>
               </div>
             </div>
           ))}

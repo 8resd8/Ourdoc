@@ -4,7 +4,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ userName }) => {
   return (
-    <header className="bg-white shadow-md">
+    <header className="bg-gray-0 shadow-xxsmall">
       <div className="container mx-auto flex justify-between items-center py-4 px-6">
         <div className="flex items-center space-x-4">
           <img src="/assets/images/logo1.png" alt="로고" className="h-[70px]" />
@@ -14,20 +14,17 @@ const Header: React.FC<HeaderProps> = ({ userName }) => {
         <nav className="flex space-x-6">
           <a
             href="/main"
-            className="text-sm headline-medium text-primary-500 hover:underline"
+            className="headline-medium text-primary-500 hover:underline"
           >
             메인
           </a>
-          <a href="/study" className="text-sm  headline-medium text-gray-800 ">
+          <a href="/study" className="headline-medium text-gray-800 ">
             학급
           </a>
-          <a href="/books" className="text-sm  headline-medium text-gray-800 ">
+          <a href="/books" className="headline-medium text-gray-800 ">
             도서
           </a>
-          <a
-            href="/records"
-            className="text-sm  headline-medium text-gray-800 "
-          >
+          <a href="/records" className="headline-medium text-gray-800 ">
             독서록
           </a>
         </nav>
@@ -41,7 +38,7 @@ const Header: React.FC<HeaderProps> = ({ userName }) => {
               className="w-6 h-6"
             />
           </button>
-          <span className="text-sm text-gray-800">{userName} 님</span>
+          <span className="body-medium text-gray-800">{userName} 님</span>
         </div>
       </div>
     </header>

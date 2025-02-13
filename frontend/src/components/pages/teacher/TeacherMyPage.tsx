@@ -8,10 +8,10 @@ interface ModalProps {
 const Modal: React.FC<ModalProps> = ({ type, onClose }) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-50">
-      <div className="bg-white rounded-[30px] shadow-lg p-6 w-[414px]">
+      <div className="bg-gray-0 rounded-[30px] shadow-small p-6 w-[414px]">
         {type === 'passwordConfirm' && (
           <>
-            <div className="text-center text-[22px] font-semibold text-gray-800">
+            <div className="text-center body-medium font-semibold text-gray-800">
               비밀번호를 입력해주세요.
             </div>
             <input
@@ -23,7 +23,7 @@ const Modal: React.FC<ModalProps> = ({ type, onClose }) => {
         )}
         {type === 'passwordReset' && (
           <>
-            <div className="text-center text-[22px] font-semibold text-gray-800">
+            <div className="text-center body-medium font-semibold text-gray-800">
               변경할 비밀번호를 입력해주세요.
             </div>
             <input
@@ -40,11 +40,11 @@ const Modal: React.FC<ModalProps> = ({ type, onClose }) => {
         )}
         {type === 'createClass' && (
           <>
-            <div className="text-center text-[22px] font-semibold text-gray-800">
+            <div className="text-center body-medium font-semibold text-gray-800">
               새 학급 생성
             </div>
             <p className="mt-4 text-center text-gray-800">
-              <span className="text-red-500">성룡초등학교 1학년 1반</span>
+              <span className="text-primary-500">성룡초등학교 1학년 1반</span>
               으로 만들까요?
             </p>
           </>
@@ -56,7 +56,7 @@ const Modal: React.FC<ModalProps> = ({ type, onClose }) => {
           >
             취소
           </button>
-          <button className="flex-1 py-3 bg-primary-500 text-white rounded-[10px] ml-2">
+          <button className="flex-1 py-3 bg-primary-500 text-gray-0 rounded-[10px] ml-2">
             확인
           </button>
         </div>
@@ -75,7 +75,9 @@ const TeacherMyPage = () => {
         src="/assets/images/tmpProfile.png"
         alt="프로필 이미지"
       />
-      <div className="mt-4 text-2xl font-semibold text-gray-800">나미소 님</div>
+      <div className="mt-4 headline-medium font-semibold text-gray-800">
+        나미소 님
+      </div>
       <div className="mt-6 w-[414px] space-y-4">
         {[
           { label: '아이디', value: 'usertest' },
@@ -98,7 +100,7 @@ const TeacherMyPage = () => {
         </button>
         <button
           onClick={() => setModalType('createClass')}
-          className="flex-1 px-3 py-4 bg-primary-500 text-white rounded-[10px] ml-2 cursor-pointer"
+          className="flex-1 px-3 py-4 bg-primary-500 text-gray-0 rounded-[10px] ml-2 cursor-pointer"
         >
           새 학급 생성
         </button>

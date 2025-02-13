@@ -86,6 +86,8 @@ export const updateStudentAffiliationApi = async (data: {
 // 본인 반 학생 목록 조회
 export const getClassStudentListApi = async (): Promise<StudentProfile[]> => {
   const response = await api.get('/teachers/students/profile');
+  console.log(response);
+
   return response.data.studentProfiles;
 };
 

@@ -40,12 +40,14 @@ import AuthLayout from '../layouts/AuthLayout';
 import Pending from '../components/molecules/Pending';
 import WebRtcBoard from '../components/pages/common/WebRtcBoard';
 import TeacherHeader from '../components/commons/TeacherHeader';
+import Test from '../components/pages/Test';
 
 const Router = () => {
   return (
     <Routes>
       {/* 로그인 및 회원가입 페이지 (헤더 & 푸터 X) */}
       <Route element={<AuthLayout />}>
+        <Route path="/test" element={<Test />} />
         <Route path="/" element={<SignIn />} />
         <Route path="/student/setup" element={<StudentSetUp />} />
         <Route path="/student/signup" element={<StudentSignUp />} />
@@ -84,7 +86,7 @@ const Router = () => {
           <Route path="reports" element={<TeacherReportList />} />
           <Route path="report/:id" element={<TeacherReportDetail />} />
           <Route path="homework/list" element={<TeacherHomeWorkReportList />} />
-          <Route path="students" element={<TeacherStudentInfo />} />
+          <Route path="student-info" element={<TeacherStudentInfo />} />
           <Route path="noti" element={<TeacherNoti />} />
           <Route path="class-auth" element={<TeacherClassAuth />} />
           <Route path="class-info" element={<TeacherClassInfo />} />

@@ -4,7 +4,7 @@
   padding: 8px 12px;
   transition: border-color 0.3s ease;
   text-align: center;
-  border: 1px solid #ff6f61;
+  /* border: 1px solid #ff6f61; */
   border-radius: 10px;
   cursor: pointer;
 }

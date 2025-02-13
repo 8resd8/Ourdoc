@@ -27,6 +27,7 @@ spring:
       properties:
         hibernate:
           dialect: org.hibernate.dialect.MySQLDialect
+          jdbc.batch_size: 100
       ddl-auto: update
     show-sql: true
   config:
@@ -62,3 +63,6 @@ openvidu:
 
 prod:
   url: ${prod.url}
+  QrUrl: ${prod.QrUrl}
+  ChangeQrUrl: ${prod.ChangeQrUrl}
+  excluded-paths: ${prod.excluded-paths}

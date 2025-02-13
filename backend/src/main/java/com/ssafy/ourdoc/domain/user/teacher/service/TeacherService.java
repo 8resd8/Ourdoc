@@ -15,7 +15,9 @@ import java.util.Optional;
 
 import javax.imageio.ImageIO;
 
+import org.apache.hc.client5.http.utils.Base64;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,9 +37,11 @@ import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserQueryRepository;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
+import com.ssafy.ourdoc.domain.user.student.dto.StudentSignupRequest;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
+import com.ssafy.ourdoc.domain.user.teacher.dto.QrResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
@@ -79,6 +83,8 @@ public class TeacherService {
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {
 
+		validateSignupRequest(request);
+
 		// 1) 중복 ID 체크
 		Optional<User> existingUser = userRepository.findByLoginId(request.loginId());
 		if (existingUser.isPresent()) {
@@ -118,8 +124,19 @@ public class TeacherService {
 		return savedTeacher.getId();
 	}
 
+	private void validateSignupRequest(TeacherSignupRequest request) {
+		if (request == null || request.name() == null || request.name().isBlank()
+			|| request.loginId() == null || request.loginId().isBlank()
+			|| request.password() == null || request.password().isBlank()
+			|| request.birth() == null || request.gender() == null
+			|| request.email() == null || request.email().isBlank()
+			|| request.phone() == null || request.phone().isBlank()) {
+			throw new IllegalArgumentException("입력되지 않은 정보가 있습니다.");
+		}
+	}
+
 	// 2. QR 생성
-	public byte[] generateTeacherClassQr(Long teacherId) {
+	public QrResponseDto generateTeacherClassQr(Long teacherId, String url) {
 		// 1) 교사 조회
 		Teacher teacher = teacherRepository.findById(teacherId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 ID의 교사가 없습니다."));
@@ -136,14 +153,7 @@ public class TeacherService {
 		int classNumber = classRoom.getClassNumber();
 
 		// 3) QR에 담을 json 데이터
-		// schoolName, 학년, 반 (url은 추후 수정 필요)
-		String googleFormLink = String.format(
-			"https://docs.google.com/forms/d/e/1FAIpQLSfxNCzcxL07Kzo27rCINXu4PHxco7Y4aT8iyi3ys-3PU5j5fg/viewform?usp=pp_url&entry.93879875=%s&entry.640235071=%d&entry.631690045=%d&entry.581945071=%d",
-			schoolName,        // 학교
-			schoolId,    // 주소
-			grade,            // 학년
-			classNumber        // 반
-		);
+		String QrLink = String.format(url, schoolName, schoolId, grade, classNumber);
 
 		// json 데이터의 한글이 깨지지 않도록 설정
 		Map<EncodeHintType, Object> hints = new HashMap<>();
@@ -152,10 +162,8 @@ public class TeacherService {
 
 		try {
 			// 4) QR BitMatrix 생성
-			BitMatrix bitMatrix = new MultiFormatWriter().encode(googleFormLink, // 여기 데이터를 넣음
-				BarcodeFormat.QR_CODE, 300, // width
-				300, // height
-				hints);
+			BitMatrix bitMatrix = new MultiFormatWriter().encode(QrLink, // 여기 데이터를 넣음
+				BarcodeFormat.QR_CODE, 300, 300, hints);
 
 			// 5) BitMatrix -> BufferedImage 변환
 			BufferedImage qrImage = MatrixToImageWriter.toBufferedImage(bitMatrix);
@@ -163,7 +171,8 @@ public class TeacherService {
 			// 6) PNG 형식으로 byte[] 출력
 			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 				ImageIO.write(qrImage, "png", baos);
-				return baos.toByteArray();
+				String qrImageBase64 = Base64.encodeBase64String(baos.toByteArray());
+				return new QrResponseDto(qrImageBase64, QrLink);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException("QR 코드 생성 중 오류가 발생했습니다.", e);

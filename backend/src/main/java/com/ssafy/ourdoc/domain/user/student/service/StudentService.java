@@ -11,6 +11,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResponseErrorHandler;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
@@ -32,7 +33,9 @@ import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
+import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
+import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -47,11 +50,13 @@ public class StudentService {
 	private final ClassRoomRepository classRoomRepository;
 	private final StudentClassRepository studentClassRepository;
 	private final StudentClassQueryRepository studentClassQueryRepository;
-	private final ResponseErrorHandler responseErrorHandler;
+	private final S3StorageService s3StorageService;
+	private final EntityManager em;
 
 	// 1. 학생 회원가입
 	public Long signup(StudentSignupRequest request) {
 
+		validateSignupRequest(request);
 		ValidatedEntities validatedEntities = validateAndRetrieveEntities(request);
 
 		// User 엔티티 생성
@@ -88,6 +93,27 @@ public class StudentService {
 		return savedStudent.getId();
 	}
 
+	private void validateSignupRequest(StudentSignupRequest request) {
+		if (request == null || request.name() == null || request.name().isBlank()
+		|| request.loginId() == null || request.loginId().isBlank()
+		|| request.password() == null || request.password().isBlank()
+		|| request.schoolId() == null || request.grade() == null
+		|| request.classNumber() == null || request.studentNumber() == null
+		|| request.birth() == null || request.gender() == null) {
+			throw new IllegalArgumentException("입력되지 않은 정보가 있습니다.");
+		}
+		if (request.grade() <= 0 || request.grade() > 6) {
+			throw new IllegalArgumentException("학년은 1 ~ 6 사이의 값이어야 합니다.");
+		}
+		if (request.classNumber() <= 0) {
+			throw new IllegalArgumentException("반 번호는 1 이상이어야 합니다.");
+		}
+		if (request.studentNumber() <= 0) {
+			throw new IllegalArgumentException("학생 번호는 1 이상이어야 합니다.");
+		}
+	}
+
+
 	public ValidatedEntities validateAndRetrieveEntities(StudentSignupRequest request) {
 		// 1) 아이디 중복 체크
 		if (userRepository.findByLoginId(request.loginId()).isPresent()) {
@@ -112,7 +138,6 @@ public class StudentService {
 	public void requestStudentAffiliationChange(User user, StudentAffiliationChangeRequest request) {
 		ClassRoom classRoom = validateAffiliation(user, request);
 
-		// 새로운 student_class 엔티티 생성
 		StudentClass newStudentClass = StudentClass.builder()
 			.user(user)
 			.classRoom(classRoom)
@@ -121,16 +146,13 @@ public class StudentService {
 			.active(Active.활성) // 활성 상태로 추가
 			.build();
 
-		// student_class 테이블에 새로운 row 추가
 		studentClassRepository.save(newStudentClass);
 	}
 
 	private ClassRoom validateAffiliation(User user, StudentAffiliationChangeRequest request) {
 		// 학교 조회
-		School school = schoolRepository.findBySchoolNameAndAddress(request.schoolName(), request.address());
-		if (school == null) {
-			throw new NoSuchElementException("해당 학교를 찾을 수 없습니다.");
-		}
+		School school = schoolRepository.findById(request.schoolId())
+			.orElseThrow(() -> new NoSuchElementException("해당 학교를 찾을 수 없습니다."));
 
 		// 학년 및 반 조회
 		ClassRoom classRoom = classRoomRepository.findBySchoolAndGradeAndClassNumber(
@@ -156,14 +178,22 @@ public class StudentService {
 
 	public ResponseEntity<?> getStudentProfile(User user) {
 		Active active = user.getActive();
-		if (active == 활성) {
+		if (active.equals(활성)) {
 			StudentProfileResponseDto response = studentClassQueryRepository.findStudentProfileByUserId(user.getId());
 			return ResponseEntity.ok().body(response);
 		} else {
-			InactiveStudentProfileResponseDto response = studentClassQueryRepository.findInactiveStudentProfileByUserId(
-				user.getId());
+			InactiveStudentProfileResponseDto response = studentClassQueryRepository.findInactiveStudentProfileByUserId(user.getId());
 			return ResponseEntity.ok().body(response);
 		}
+	}
+
+	public void updateProfileImage(User user, MultipartFile profileImage) {
+		if (profileImage != null && !profileImage.isEmpty()) {
+			String profileImageUrl = s3StorageService.uploadFile(profileImage);
+			userRepository.updateProfileImage(user, profileImageUrl);
+		}
+		em.flush();
+		em.clear();
 	}
 
 	public List<SchoolClassDto> getClassRoomsStudent(Long userId) {

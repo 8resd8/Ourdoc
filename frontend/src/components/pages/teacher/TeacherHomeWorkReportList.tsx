@@ -55,22 +55,24 @@ const TeacherHomeWorkReportList = () => {
     <div className="w-[1200px] mx-auto mt-8">
       {/* 숙제 도서 카드 */}
       <div className="flex justify-center mb-8">
-        <div className="flex bg-white shadow-md rounded-lg p-6 w-[630px] h-[340px]">
+        <div className="flex bg-gray-0 shadow-xxsmall rounded-lg p-6 w-[630px] h-[340px]">
           <img
             src={bookInfo.image}
             alt={bookInfo.title}
             className="w-[190px] h-[282px] object-cover rounded-md mr-6"
           />
           <div className="">
-            <h2 className="text-xl font-bold mb-4">{bookInfo.title}</h2>
-            <p className="text-sm text-gray-700 mb-2">
+            <h2 className="headline-medium font-bold mb-4">{bookInfo.title}</h2>
+            <p className="body-medium text-gray-700 mb-2">
               저자: {bookInfo.author}
             </p>
-            <p className="text-sm text-gray-700 mb-2">
+            <p className="body-medium text-gray-700 mb-2">
               출판사: {bookInfo.publisher}
             </p>
-            <p className="text-sm text-gray-700 mb-2">장르: {bookInfo.genre}</p>
-            <p className="text-sm text-gray-700 mb-2">
+            <p className="body-medium text-gray-700 mb-2">
+              장르: {bookInfo.genre}
+            </p>
+            <p className="body-medium text-gray-700 mb-2">
               출판년도: {bookInfo.year}
             </p>
           </div>

@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.user.teacher.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.teacher.dto.QrResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
@@ -31,6 +33,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TeacherController {
 
+	@Value("${prod.QrUrl}")
+	private String prodQrUrl;
+
+	@Value("${prod.ChangeQrUrl}")
+	private String prodChangeQrUrl;
+
 	private final TeacherService teacherService;
 
 	// 1. 교사 회원가입
@@ -41,11 +49,18 @@ public class TeacherController {
 		return ResponseEntity.ok("교사 회원가입 완료.");
 	}
 
-	// 2. QR 생성
-	@GetMapping(value = "/{teacherId}/code", produces = MediaType.IMAGE_PNG_VALUE)
-	public ResponseEntity<byte[]> generateTeacherInviteCode(@PathVariable Long teacherId) {
-		byte[] qrImage = teacherService.generateTeacherClassQr(teacherId);
-		return ResponseEntity.ok(qrImage);
+	// 2. QR 생성(회원가입)
+	@GetMapping(value = "/{teacherId}/code")
+	public ResponseEntity<QrResponseDto> generateSignupCode(@PathVariable Long teacherId) {
+		QrResponseDto response = teacherService.generateTeacherClassQr(teacherId, prodQrUrl);
+		return ResponseEntity.ok(response);
+	}
+
+	// QR 생성(단순 소속 변경)
+	@GetMapping("/{teacherId}/change/code")
+	public ResponseEntity<QrResponseDto> generateChangeCode(@PathVariable Long teacherId) {
+		QrResponseDto response = teacherService.generateTeacherClassQr(teacherId, prodChangeQrUrl);
+		return ResponseEntity.ok(response);
 	}
 
 	// 3. 학생 소속 변경 승인/거부

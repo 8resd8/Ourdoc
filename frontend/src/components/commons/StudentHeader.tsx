@@ -9,7 +9,7 @@ const StudentHeader: React.FC = () => {
 
   return (
     <>
-      <header className="bg-white shadow-md">
+      <header className="bg-gray-0 shadow-xxsmall">
         <div className="container mx-auto flex justify-between items-center py-4 px-6">
           <div className="flex items-center space-x-4">
             <img
@@ -23,25 +23,25 @@ const StudentHeader: React.FC = () => {
           <nav className="flex space-x-6">
             <Link
               to="/student/main"
-              className="text-sm headline-medium text-primary-500 hover:underline"
+              className="body-medium headline-medium text-primary-500 hover:underline"
             >
               메인
             </Link>
             <Link
               to="/student/study"
-              className="text-sm  headline-medium text-gray-800 "
+              className="body-medium  headline-medium text-gray-800 "
             >
               도서
             </Link>
             <Link
               to="/student/books"
-              className="text-sm  headline-medium text-gray-800 "
+              className="body-medium  headline-medium text-gray-800 "
             >
               독서록
             </Link>
             <Link
               to="/student/records"
-              className="text-sm  headline-medium text-gray-800 "
+              className="body-medium  headline-medium text-gray-800 "
             >
               내 성취도
             </Link>
@@ -56,7 +56,7 @@ const StudentHeader: React.FC = () => {
                 className="w-6 h-6"
               />
             </button>
-            <span className="text-sm text-gray-800">{userName} 님</span>
+            <span className="body-medium text-gray-800">{userName} 님</span>
           </div>
         </div>
       </header>

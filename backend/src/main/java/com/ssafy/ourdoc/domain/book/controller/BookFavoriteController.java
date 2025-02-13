@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +33,7 @@ public class BookFavoriteController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<BookResponse>> getFavorite(@RequestBody BookSearchRequest request, @Login User user) {
+	public ResponseEntity<List<BookResponse>> getFavorite(@ModelAttribute BookSearchRequest request, @Login User user) {
 		List<BookResponse> books = bookFavoriteService.getBookFavorites(request, user);
 		return ResponseEntity.ok(books);
 	}
