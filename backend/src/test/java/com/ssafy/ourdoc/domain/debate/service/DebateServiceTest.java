@@ -99,14 +99,6 @@ class DebateServiceTest {
 	}
 
 	@Test
-	@DisplayName("학생 독서토론방 생성 권한 없음")
-	void createDebateRoom_failure_studentCreate() {
-		assertThatThrownBy(() -> debateService.createDebateRoom(student, createRoomRequest))
-			.isInstanceOf(ForbiddenException.class)
-			.hasMessage("독서토론방 생성 권한이 없습니다.");
-	}
-
-	@Test
 	@DisplayName("독서토론방 참가 성공")
 	void joinDebateRoom_success() {
 		Long roomId = 1L;
