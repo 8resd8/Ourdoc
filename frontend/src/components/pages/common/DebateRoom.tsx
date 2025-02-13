@@ -258,7 +258,7 @@ const DebateRoom: React.FC = () => {
                     {/* [방 생성 및 입장하기] */}
                     <div className={classes.card}>
                         <div className={classes['card-header']}>
-                            <h2>방 생성 및 입장하기</h2>
+                            <h2><strong>방 개설자 전용 화면: 방 생성 및 입장하기</strong></h2>
                             <p>세션 이름과 닉네임을 입력하고 방을 생성하세요.</p>
                         </div>
                         <div className={classes['input-group']}>
@@ -300,7 +300,7 @@ const DebateRoom: React.FC = () => {
                     {/* [방 세션ID로 입장하기] */}
                     <div className={classes.card}>
                         <div className={classes['card-header']}>
-                            <h2>방 세션ID로 입장하기</h2>
+                            <h2><strong>초대받은 사용자 전용 화면</strong></h2>
                             <p>세션 ID와 닉네임을 입력하고 입장하세요.</p>
                         </div>
                         <div className={classes['input-group']}>
