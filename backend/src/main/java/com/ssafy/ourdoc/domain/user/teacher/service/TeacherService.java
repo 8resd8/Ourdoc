@@ -20,6 +20,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,6 +46,7 @@ import com.ssafy.ourdoc.domain.user.teacher.dto.QrResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
+import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherNotInClassProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileUpdateRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
@@ -250,9 +252,20 @@ public class TeacherService {
 		return studentClassQueryRepository.findStudentsByClassIdAndActiveAndAuthStatus(classId, 활성, 대기, pageable);
 	}
 
-	public TeacherProfileResponseDto getTeacherProfile(User user) {
+	// 교사 본인 정보 조회
+	public ResponseEntity<?> getTeacherProfile(User user) {
 		if (user.getActive().equals(활성)) {
-			return teacherQueryRepository.findTeacherProfileByUserId(user.getId());
+			// 학급이 있는 교사일 때
+			if (teacherClassRepository.findByUserIdAndActive(user.getId(), 활성).isPresent()) {
+				TeacherProfileResponseDto response = teacherQueryRepository.findTeacherProfileByUserId(user.getId());
+				return ResponseEntity.ok(response);
+			}
+
+			// 학급이 없는 교사일 때
+			Teacher teacher = teacherRepository.findByUser(user);
+			TeacherNotInClassProfileDto response = new TeacherNotInClassProfileDto(user.getProfileImagePath(), user.getName(),
+				user.getLoginId(), teacher.getEmail(), teacher.getPhone());
+			return ResponseEntity.ok(response);
 		} else if (user.getActive().equals(비활성)) {
 			throw new IllegalArgumentException("재직중인 교사가 아닙니다.");
 		}
@@ -275,6 +288,7 @@ public class TeacherService {
 		return schoolClassDtos;
 	}
 
+	// 교사 정보 수정
 	public void updateTeacherProfile(User user, MultipartFile profileImage, TeacherProfileUpdateRequest request) {
 
 		// 프로필 이미지 수정
