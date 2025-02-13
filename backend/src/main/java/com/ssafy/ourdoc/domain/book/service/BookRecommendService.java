@@ -91,7 +91,7 @@ public class BookRecommendService {
 			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
 			.toList();
 
-		Page<BookRecommendDetailTeacher> content = new PageImpl<>(details, pageable, details.size());
+		Page<BookRecommendDetailTeacher> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
 		return new BookRecommendResponseTeacher(studentCount, content);
 	}
 
@@ -108,7 +108,7 @@ public class BookRecommendService {
 			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
 			.toList();
 
-		Page<BookRecommendDetailTeacher> content = new PageImpl<>(details, pageable, details.size());
+		Page<BookRecommendDetailTeacher> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
 		return new BookRecommendResponseTeacher(studentCount, content);
 	}
 
@@ -127,7 +127,7 @@ public class BookRecommendService {
 			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
 			.toList();
 
-		Page<BookRecommendDetailStudent> content = new PageImpl<>(details, pageable, details.size());
+		Page<BookRecommendDetailStudent> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
 		return new BookRecommendResponseStudent(content);
 	}
 
@@ -142,7 +142,7 @@ public class BookRecommendService {
 		List<BookRecommendDetailStudent> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
 			.toList();
-		Page<BookRecommendDetailStudent> content = new PageImpl<>(details, pageable, details.size());
+		Page<BookRecommendDetailStudent> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
 		return new BookRecommendResponseStudent(content);
 	}
 
