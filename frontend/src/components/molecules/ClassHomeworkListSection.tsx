@@ -1,6 +1,6 @@
 export const ClassNameHomeworkListSection = () => {
   return (
-    <div className="w-[1064px] h-[289px] p-6 bg-white rounded-[15px] shadow-[0px_2px_12px_1px_rgba(33,33,33,0.09)] flex-col justify-start items-start gap-3 inline-flex">
+    <div className="w-[1064px] h-[289px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
       <div className="text-gray-800 headline-medium">숙제</div>
       <div className="self-stretch h-[203px] flex-col justify-start items-center gap-3 flex">
         <div className="self-stretch h-[203px] relative">

@@ -95,15 +95,15 @@ const StudentAllReportList = () => {
     <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
       <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
         <div className="w-[185px] h-[232px] relative">
-          <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-white rounded-tr-[10px] rounded-br-[10px] shadow-[0px_2px_14px_2px_rgba(33,33,33,0.03)] border border-gray-200" />
+          <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200" />
           <img
-            className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-[0px_2px_14px_2px_rgba(33,33,33,0.03)] border border-gray-200"
+            className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
             src={book.image}
             alt={book.title}
           />
           {book.isHomework && (
             <div className="w-[181px] h-11 px-[46px] py-1 left-0 top-[188px] absolute bg-primary-500/70 rounded-br-[10px] justify-center items-center gap-2.5 inline-flex">
-              <div className="text-white body-medium">숙제 도서</div>
+              <div className="text-gray-0 body-medium">숙제 도서</div>
             </div>
           )}
         </div>
@@ -132,7 +132,7 @@ const StudentAllReportList = () => {
             {[1, 2, 3, 4].map((grade) => (
               <div
                 key={grade}
-                className="w-[72px] h-[72px] px-3 bg-white rounded-[15px] shadow-[0px_2px_14px_2px_rgba(33,33,33,0.03)] flex justify-center items-center"
+                className="w-[72px] h-[72px] px-3 bg-gray-0 rounded-[15px] shadow-xxsmall flex justify-center items-center"
               >
                 <div className="w-12 flex-col justify-center items-center inline-flex">
                   <div

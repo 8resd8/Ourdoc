@@ -4,15 +4,15 @@ interface MostReadBookProps {
 
 export const MostReadBookSection = ({ title }: MostReadBookProps) => {
   return (
-    <div className="w-[522px] h-[430px] p-6 bg-white rounded-[15px] shadow-[0px_2px_12px_1px_rgba(33,33,33,0.09)] flex-col justify-start items-start gap-3 inline-flex">
+    <div className="w-[522px] h-[430px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
       <div className="text-gray-800 headline-medium">{title}</div>
       <div className="self-stretch px-6 py-3 justify-between items-center inline-flex">
         <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
           <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
             <div className="w-[185px] h-[232px] relative">
-              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-white rounded-tr-[10px] rounded-br-[10px] shadow-[0px_2px_14px_2px_rgba(33,33,33,0.03)] border border-gray-200"></div>
+              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
               <img
-                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-[0px_2px_14px_2px_rgba(33,33,33,0.03)] border border-gray-200"
+                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
                 src="https://placehold.co/181x232"
               />
             </div>

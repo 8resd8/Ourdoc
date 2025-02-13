@@ -3,14 +3,14 @@ const TeacherStudentInfo: React.FC = () => {
     <div className="flex  items-center flex-col  p-4 mt-[80px] ">
       <div className="flex w-[1100px] justify-items-center">
         {/* 좌측 학생 정보 */}
-        <div className="w-[414px] mt-11 bg-white rounded-xl  mr-4">
+        <div className="w-[414px] mt-11 bg-gray-0 rounded-xl  mr-4">
           <div className="flex flex-col items-center">
             <img
               src="/assets/images/tmpProfile.png"
               alt="학생 아바타"
               className="w-32 h-32 rounded-full border border-gray-300 mb-4"
             />
-            <h1 className="text-xl font-bold">1번 김현우 ♂ ♀</h1>
+            <h1 className="headline-medium font-bold">1번 김현우 ♂ ♀</h1>
           </div>
           <div className="mt-6">
             <div className="mb-2">
@@ -40,7 +40,7 @@ const TeacherStudentInfo: React.FC = () => {
 
         {/* 우측 상장 정보 */}
         <div>
-          <div className="w-[630px] h-[518px] bg-white rounded-xl shadow-xsmall p-6">
+          <div className="w-[630px] h-[518px] bg-gray-0 rounded-xl shadow-xsmall p-6">
             <h2 className="headline-medium font-bold mb-4">상장</h2>
             <div className="grid grid-cols-3 gap-4">
               {[...Array(3)].map((_, index) => (
@@ -53,7 +53,7 @@ const TeacherStudentInfo: React.FC = () => {
                     alt="상장"
                     className="w-12 h-12 mb-2"
                   />
-                  <p className="text-sm font-medium text-gray-700">
+                  <p className="body-medium font-medium text-gray-700">
                     착한 어린이 상
                   </p>
                 </div>
@@ -62,7 +62,7 @@ const TeacherStudentInfo: React.FC = () => {
           </div>
           <div>
             <div className="w-full mt-6 flex-col ">
-              <button className="w-full h-[56px] bg-primary-500 text-white py-3 rounded-lg hover:bg-primary-400">
+              <button className="w-full h-[56px] bg-primary-500 text-gray-0 py-3 rounded-lg hover:bg-primary-400">
                 독서 기록 조회하기
               </button>
             </div>

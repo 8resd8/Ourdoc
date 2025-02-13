@@ -51,7 +51,7 @@ const UploadModal = ({ isOpen, onConfirm, onCancel }: ModalProps) => {
           />
           <img src="../assets/images/fileImage.png" />
           {/* {selectedFile && (
-            <div className="text-sm text-gray-600">{selectedFile.name}</div>
+            <div className="body-medium text-gray-600">{selectedFile.name}</div>
           )} */}
         </div>
         <div className={classes.buttonContainer}>
@@ -63,7 +63,7 @@ const UploadModal = ({ isOpen, onConfirm, onCancel }: ModalProps) => {
           </button>
           <button
             onClick={handleConfirm}
-            className="w-[180px] h-[48px] rounded-[10px] bg-primary-500 text-white cursor-pointer"
+            className="w-[180px] h-[48px] rounded-[10px] bg-primary-500 text-gray-0 cursor-pointer"
           >
             확인
           </button>

@@ -81,12 +81,14 @@ const StudentBookSearch = () => {
                 <h3 className="mb-[10px] text-gray-800 headline-medium">
                   {book.title}
                 </h3>
-                <p className="text-sm text-gray-600">저자: {book.author}</p>
-                <p className="text-sm text-gray-600">
+                <p className="body-medium text-gray-600">저자: {book.author}</p>
+                <p className="body-medium text-gray-600">
                   출판사: {book.publisher}
                 </p>
-                <p className="text-sm text-gray-600">장르: {book.genre}</p>
-                <p className="text-sm text-gray-600">출판년도: {book.year}</p>
+                <p className="body-medium text-gray-600">장르: {book.genre}</p>
+                <p className="body-medium text-gray-600">
+                  출판년도: {book.year}
+                </p>
               </div>
             </div>
           ))}

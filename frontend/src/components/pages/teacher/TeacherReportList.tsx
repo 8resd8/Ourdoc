@@ -1,7 +1,7 @@
 const TeacherReportList = () => {
   return (
     <div className="">
-      <div className="w-[226px] h-[914px] left-0 top-[110px] absolute bg-white border-r border-gray-200  overflow-hidden">
+      <div className="w-[226px] h-[914px] left-0 top-[110px] absolute bg-gray-0 border-r border-gray-200  overflow-hidden">
         <div className="w-[194px] p-2 left-[16px] top-[56px] absolute border-b border-gray-900 justify-between items-center inline-flex">
           <div className="text-gray-300 body-medium">도서를 검색해주세요.</div>
           <div data-svg-wrapper className="relative">
@@ -29,7 +29,7 @@ const TeacherReportList = () => {
             </svg>
           </div>
         </div>
-        <div className="w-[226px] h-[796px] left-0 top-[112px] absolute bg-white border-t border-gray-200" />
+        <div className="w-[226px] h-[796px] left-0 top-[112px] absolute bg-gray-0 border-t border-gray-200" />
         <div className="left-[16px] top-[24px] absolute text-gray-800 caption-medium">
           도서 검색
         </div>
@@ -43,7 +43,7 @@ const TeacherReportList = () => {
                 성룡초 1학년 2반
               </div>
             </div>
-            <div className="w-[226px] h-10 px-10 py-2 left-0 top-[96px] absolute bg-white flex-col justify-start items-start gap-2 inline-flex">
+            <div className="w-[226px] h-10 px-10 py-2 left-0 top-[96px] absolute bg-gray-0 flex-col justify-start items-start gap-2 inline-flex">
               <div className="text-gray-800 body-medium">성천초 1학년 7반</div>
             </div>
             <div className="w-[226px] h-10 px-4 py-2 left-0 top-0 absolute flex-col justify-start items-start gap-2 inline-flex">
@@ -72,7 +72,7 @@ const TeacherReportList = () => {
             </div>
           </div>
           <div className="h-[88px] relative">
-            <div className="w-[226px] h-10 px-10 py-2 left-0 top-[48px] absolute bg-white flex-col justify-start items-start gap-2 inline-flex">
+            <div className="w-[226px] h-10 px-10 py-2 left-0 top-[48px] absolute bg-gray-0 flex-col justify-start items-start gap-2 inline-flex">
               <div className="text-gray-800 body-medium">성룡초 1학년 2반</div>
             </div>
             <div className="w-[226px] h-10 px-4 py-2 left-0 top-0 absolute flex-col justify-start items-start gap-2 inline-flex">
@@ -126,12 +126,12 @@ const TeacherReportList = () => {
           </div>
         </div>
       </div>
-      <div className="w-[158px] h-[914px] left-[227px] top-[110px] absolute bg-white border-r border-gray-200">
+      <div className="w-[158px] h-[914px] left-[227px] top-[110px] absolute bg-gray-0 border-r border-gray-200">
         <div className="left-[16px] top-[24px] absolute text-center text-gray-800 caption-medium">
           학생별 보기
         </div>
         <div className="h-[184px] left-0 top-[52px] absolute flex-col justify-start items-start gap-2 inline-flex">
-          <div className="self-stretch h-10 px-4 py-2 bg-white justify-start items-center gap-2 inline-flex">
+          <div className="self-stretch h-10 px-4 py-2 bg-gray-0 justify-start items-center gap-2 inline-flex">
             <div className="text-center text-gray-800 body-small">1번</div>
             <div className="w-[97px] text-gray-800 body-medium">김보민</div>
           </div>
@@ -143,13 +143,13 @@ const TeacherReportList = () => {
               김융융
             </div>
           </div>
-          <div className="self-stretch h-10 px-4 py-2 bg-white justify-start items-center gap-2 inline-flex">
+          <div className="self-stretch h-10 px-4 py-2 bg-gray-0 justify-start items-center gap-2 inline-flex">
             <div className="text-center text-gray-800 body-small">3번</div>
             <div className="w-[97px] text-gray-800 body-medium">
               김김보김보민보민
             </div>
           </div>
-          <div className="self-stretch h-10 px-4 py-2 bg-white justify-start items-center gap-2 inline-flex">
+          <div className="self-stretch h-10 px-4 py-2 bg-gray-0 justify-start items-center gap-2 inline-flex">
             <div className="text-center text-gray-800 body-small">4번</div>
             <div className="w-[97px] text-gray-800 body-medium">
               김김보김보민루루보민
@@ -244,7 +244,7 @@ const TeacherReportList = () => {
                 5월 1일
               </div>
               <div className="w-[120px] flex-col justify-start items-center inline-flex">
-                <div className="px-3 py-1 bg-white rounded-[5px] border border-system-success justify-center items-center inline-flex">
+                <div className="px-3 py-1 bg-gray-0 rounded-[5px] border border-system-success justify-center items-center inline-flex">
                   <div className="text-center text-system-success body-small">
                     완료
                   </div>

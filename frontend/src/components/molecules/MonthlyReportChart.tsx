@@ -1,6 +1,6 @@
 export const MonthlyReportChart = () => {
   return (
-    <div className="w-[630px] h-[368px] p-6 bg-white rounded-[15px] shadow-[0px_2px_12px_1px_rgba(33,33,33,0.09)] flex-col justify-start items-start gap-3 inline-flex">
+    <div className="w-[630px] h-[368px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
       <div className="text-gray-800 headline-medium">월별 독서록 개수</div>
       <div className="w-[582px] h-[276px] relative">
         <div className="w-[544.12px] h-[22.68px] px-6 left-[37.88px] top-[253.32px] absolute justify-between items-center inline-flex">

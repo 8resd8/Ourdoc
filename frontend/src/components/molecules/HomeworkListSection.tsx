@@ -2,7 +2,7 @@ import { HomeworkListTile } from '../atoms/HomeworkListTile';
 
 export const HomeworkListSection = () => {
   return (
-    <div className="w-[1064px] h-[277px] p-6 bg-white rounded-[15px] shadow-[0px_2px_12px_1px_rgba(33,33,33,0.09)] flex-col justify-start items-start gap-3 inline-flex">
+    <div className="w-[1064px] h-[277px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
       <div className="w-[1016px] justify-between items-start inline-flex">
         <div className="text-gray-800 headline-medium">숙제 현황</div>
         <div data-svg-wrapper className="relative">

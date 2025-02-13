@@ -98,15 +98,15 @@ const StudentTrophy = () => {
     <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
       <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
         <div className="w-[185px] h-[232px] relative">
-          <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-white rounded-tr-[10px] rounded-br-[10px] shadow-[0px_2px_14px_2px_rgba(33,33,33,0.03)] border border-gray-200" />
+          <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200" />
           <img
-            className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-[0px_2px_14px_2px_rgba(33,33,33,0.03)] border border-gray-200"
+            className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
             src={book.image}
             alt={book.title}
           />
           {book.isHomework && (
             <div className="w-[181px] h-11 px-[46px] py-1 left-0 top-[188px] absolute bg-primary-500/70 rounded-br-[10px] justify-center items-center gap-2.5 inline-flex">
-              <div className="text-white body-medium">숙제 도서</div>
+              <div className="text-gray-0 body-medium">숙제 도서</div>
             </div>
           )}
         </div>
@@ -135,7 +135,7 @@ const StudentTrophy = () => {
             {[1, 2, 3, 4].map((grade) => (
               <div
                 key={grade}
-                className="w-[72px] h-[72px] px-3 bg-white rounded-[15px] shadow-[0px_2px_14px_2px_rgba(33,33,33,0.03)] flex justify-center items-center"
+                className="w-[72px] h-[72px] px-3 bg-gray-0 rounded-[15px] shadow-xxsmall flex justify-center items-center"
               >
                 <div className="w-12 flex-col justify-center items-center inline-flex">
                   <div
@@ -159,7 +159,7 @@ const StudentTrophy = () => {
             <MonthlyReportListSection />
           </div>
           <div>
-            <div className="w-[517px] h-[460px] p-6 left-[193px] top-[790px] absolute bg-white rounded-[15px] shadow-[0px_2px_12px_1px_rgba(33,33,33,0.09)] flex-col justify-start items-start gap-3 inline-flex">
+            <div className="w-[517px] h-[460px] p-6 left-[193px] top-[790px] absolute bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
               <div className="text-gray-800 headline-medium">
                 학급 평균과 나
               </div>
@@ -171,7 +171,7 @@ const StudentTrophy = () => {
                       <span className="text-gray-700 body-medium">권</span>
                     </div>
                   </div>
-                  <div className="self-stretch text-center text-black body-medium">
+                  <div className="self-stretch text-center text-gray-800 body-medium">
                     학급 평균
                   </div>
                 </div>
@@ -190,7 +190,7 @@ const StudentTrophy = () => {
                 </div>
               </div>
             </div>
-            <div className="h-[222px] p-6 left-[193px] w-[1000px] top-[1330px] absolute bg-white rounded-[15px] shadow-[0px_2px_12px_1px_rgba(33,33,33,0.09)] flex-col justify-start items-start gap-3 inline-flex">
+            <div className="h-[222px] p-6 left-[193px] w-[1000px] top-[1330px] absolute bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
               <div className="text-gray-800 headline-medium">상장</div>
               <div className="self-stretch justify-start items-center gap-6 inline-flex ">
                 <div className="w-32 flex-col justify-start items-center gap-3 inline-flex">
@@ -231,7 +231,7 @@ const StudentTrophy = () => {
                 </div>
               </div>
             </div>
-            <div className="h-[242px] p-6 left-[193px] top-[1632px] absolute bg-white rounded-[15px] shadow-[0px_2px_12px_1px_rgba(33,33,33,0.09)] flex-col justify-start items-start gap-3 inline-flex">
+            <div className="h-[242px] p-6 left-[193px] top-[1632px] absolute bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
               <div>
                 <span className="text-gray-800 headline-medium">칭찬도장 </span>
                 <span className="text-gray-700 body-medium">4개</span>
@@ -309,7 +309,7 @@ const StudentTrophy = () => {
                 </div>
               </div>
             </div>
-            <div className="w-[522px] h-[464px] p-6 left-[730px] top-[790px] absolute bg-white rounded-[15px] shadow-[0px_2px_12px_1px_rgba(33,33,33,0.09)] flex-col justify-start items-start gap-3 inline-flex">
+            <div className="w-[522px] h-[464px] p-6 left-[730px] top-[790px] absolute bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
               <div className="text-gray-800 headline-medium">반 1등과 나</div>
               <div className="self-stretch grow shrink basis-0 justify-start items-start gap-2 inline-flex overflow-hidden">
                 <div className="grow shrink basis-0 self-stretch justify-center items-center gap-9 flex">
@@ -320,7 +320,7 @@ const StudentTrophy = () => {
                         <span className="text-gray-700 body-medium">권</span>
                       </div>
                     </div>
-                    <div className="self-stretch text-center text-black body-medium">
+                    <div className="self-stretch text-center text-gray-800 body-medium">
                       반 1등
                     </div>
                   </div>

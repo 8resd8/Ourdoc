@@ -39,7 +39,7 @@ const TeacherBookCategory = () => {
             className={`${classes.input} flex items-center  w-80  gap-2 h-[46px] overflow-hidden`}
           >
             <input
-              className={` w-full h-full pl-5 outline-none placeholder-gray-500 text-sm`}
+              className={` w-full h-full pl-5 outline-none placeholder-gray-500 body-medium`}
               placeholder="검색어를 입력해주세요."
               type="text"
             />

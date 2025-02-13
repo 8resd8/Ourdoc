@@ -1,6 +1,6 @@
 export const TrophySummarySection = () => {
   return (
-    <div className="h-[238px] p-6 bg-white rounded-[15px] shadow-[0px_2px_12px_1px_rgba(33,33,33,0.09)] flex-col justify-start items-start gap-3 inline-flex">
+    <div className="h-[238px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
       <div className="text-gray-800 headline-medium">성취도</div>
       <div className="self-stretch grow shrink basis-0 flex-col justify-center items-start flex">
         <div className="self-stretch py-6 justify-center items-center gap-9 inline-flex">

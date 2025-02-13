@@ -17,15 +17,15 @@ const RoomCard: React.FC<{
 }) => {
   return (
     <div
-      className={`flex flex-col p-4 border rounded-lg shadow-sm ${
+      className={`flex flex-col p-4 border rounded-lg ${
         selected ? 'bg-red-50 border-gray-200' : ' border-gray-200'
       }`}
     >
       <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-      <p className="text-sm text-gray-500">
+      <p className="body-medium text-gray-500">
         {school} | {teacher}
       </p>
-      <div className="flex justify-between items-center mt-4 text-sm text-gray-700">
+      <div className="flex justify-between items-center mt-4 body-medium text-gray-700">
         <span className="font-medium text-gray-600">
           {currentParticipants} / {maxParticipants} 명
         </span>
@@ -48,7 +48,7 @@ const WebRtcBoard: React.FC = () => {
   return (
     <div className="container mx-auto p-4 w-[950px]">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">독서토론 게시판</h1>
+        <h1 className="headline-medium font-bold">독서토론 게시판</h1>
         <button className="px-4 py-2 border border-primary-500 border-w body-medium rounded-lg text-primary-500">
           방 만들기
         </button>
