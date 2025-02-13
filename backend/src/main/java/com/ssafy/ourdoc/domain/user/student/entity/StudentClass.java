@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.user.student.entity;
 
+import static com.ssafy.ourdoc.global.common.enums.Active.*;
+
 import java.time.LocalDateTime;
 
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
@@ -63,5 +65,11 @@ public class StudentClass extends BaseTimeEntity {
 		this.studentNumber = studentNumber;
 		this.active = active;
 		this.authStatus = authStatus;
+	}
+
+	public void updateActive() {
+		if (this.active == 활성) {
+			this.active = 비활성;
+		}
 	}
 }
