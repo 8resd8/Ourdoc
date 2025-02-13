@@ -102,7 +102,7 @@ public class TeacherController {
 	}
 
 	// 교사 학급 생성(활성화)
-	@PostMapping("class")
+	@PostMapping("/class")
 	public ResponseEntity<String> createClass(@Login User user) {
 		teacherService.createClass(user);
 		return ResponseEntity.ok("학급이 생성되었습니다.");
