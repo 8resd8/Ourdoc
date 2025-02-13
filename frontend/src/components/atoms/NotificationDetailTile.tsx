@@ -6,7 +6,7 @@ export const NotificationDetailTile = () => {
   const date = '2시간전';
   const isRead = true;
   return (
-    <div className="w-[846px] self-stretch p-[24px] border-b border-gray-200 justify-between items-center inline-flex hover:bg-primary-50">
+    <div className="w-[846px] self-stretch p-[24px] justify-between items-center inline-flex hover:bg-primary-50 cursor-pointer">
       <div className="text-center text-primary-500 body-medium">{type}</div>
       <div className="w-[589px] flex-col justify-start items-end gap-3 inline-flex">
         <div
