@@ -88,7 +88,7 @@ public class UserService {
 
 	private void checkEmploymentStatus(User user) {
 		if (teacherRepository.findByUser(user).getEmploymentStatus().equals(비재직)) {
-			throw new UserFailedException("재직중인 교사가 아닙니다.");
+			throw new UserFailedException("승인되지 않은 교사입니다.");
 		} else if (teacherRepository.findByUser(user).getEmploymentStatus() == null) {
 			throw new UserFailedException("알 수 없는 이유로 로그인 할 수 없습니다.");
 		}
