@@ -2,7 +2,7 @@ import { RankingProfile } from '../atoms/RankingProfile';
 
 export const RankingSection = () => {
   return (
-    <div className="w-[582px] h-[238px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
+    <div className="w-[630px] h-[238px] p-[24px] bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-[12px] inline-flex">
       <div className="self-stretch justify-start items-start gap-3 inline-flex">
         <div>
           <span className="text-gray-800 headline-medium">

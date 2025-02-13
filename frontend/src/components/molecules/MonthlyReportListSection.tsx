@@ -19,7 +19,7 @@ export const MonthlyReportListSection = () => {
   ];
 
   return (
-    <div className="w-[444px] h-[368px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex ">
+    <div className="w-[414px] h-[368px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex ">
       <div className="text-gray-800 headline-medium">10월</div>
       <div className="self-stretch grow shrink basis-0 justify-start items-start gap-2 inline-flex overflow-y-scroll">
         <div className="grow shrink basis-0 self-stretch flex-col justify-start items-start inline-flex">
