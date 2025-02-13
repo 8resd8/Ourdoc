@@ -15,8 +15,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookListResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
@@ -74,10 +79,12 @@ class BookServiceTest {
 			Book.builder().isbn("1234").title("홍길동전").author("허균").publisher("조선출판사").build(),
 			Book.builder().isbn("12345").title("홍길동전").author("허균").publisher("고전문학사").build()
 		);
-		when(bookRepository.findBookList("홍길동전", "", "")).thenReturn(mockBooks);
-		List<BookResponse> result = bookService.searchBook(request);
-		assertThat(result.size()).isEqualTo(2);
-		result.forEach(book -> {
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<Book> mockBookPage = new PageImpl<>(mockBooks, pageable, mockBooks.size());
+		when(bookRepository.findBookPage("홍길동전", "", "", pageable)).thenReturn(mockBookPage);
+		BookListResponse result = bookService.searchBook(request, pageable);
+		assertThat(result.book().getTotalElements()).isEqualTo(2);
+		result.book().forEach(book -> {
 			assertThat(book.title()).contains("홍길동전");
 		});
 	}
@@ -89,10 +96,12 @@ class BookServiceTest {
 		List<Book> mockBooks = List.of(
 			Book.builder().isbn("12345").title("홍길동전").author("허균").publisher("고전문학사").build()
 		);
-		when(bookRepository.findBookList("홍길동전", "", "고전문학사")).thenReturn(mockBooks);
-		List<BookResponse> result = bookService.searchBook(request);
-		assertThat(result.size()).isEqualTo(1);
-		BookResponse book = result.get(0);
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<Book> mockBookPage = new PageImpl<>(mockBooks, pageable, mockBooks.size());
+		when(bookRepository.findBookPage("홍길동전", "", "고전문학사", pageable)).thenReturn(mockBookPage);
+		BookListResponse result = bookService.searchBook(request, pageable);
+		assertThat(result.book().getTotalElements()).isEqualTo(1);
+		BookResponse book = result.book().getContent().get(0);
 		assertThat(book.title()).isEqualTo("홍길동전");
 		assertThat(book.publisher()).isEqualTo("고전문학사");
 	}

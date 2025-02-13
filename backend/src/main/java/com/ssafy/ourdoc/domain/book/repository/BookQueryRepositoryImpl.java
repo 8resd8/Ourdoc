@@ -12,9 +12,13 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
-import com.querydsl.core.BooleanBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.book.dto.BookDetailDto;
 import com.ssafy.ourdoc.domain.book.dto.BookMostDto;
@@ -27,22 +31,32 @@ import lombok.RequiredArgsConstructor;
 public class BookQueryRepositoryImpl implements BookQueryRepository {
 	private final JPAQueryFactory queryFactory;
 
+	@Override
+	public Page<Book> findBookPage(String title, String author, String publisher, Pageable pageable) {
+		List<Book> books = queryFactory
+			.selectFrom(book)
+			.where(
+				containsTitle(title),
+				containsAuthor(author),
+				containsPublisher(publisher)
+			)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		long total = findBookList(title, author, publisher).size();
+		return new PageImpl<>(books, pageable, total);
+	}
+
+	@Override
 	public List<Book> findBookList(String title, String author, String publisher) {
-		BooleanBuilder builder = new BooleanBuilder();
-
-		if (title != null && !title.isEmpty()) {
-			builder.and(book.title.containsIgnoreCase(title));
-		}
-		if (author != null && !author.isEmpty()) {
-			builder.and(book.author.containsIgnoreCase(author));
-		}
-		if (publisher != null && !publisher.isEmpty()) {
-			builder.and(book.publisher.containsIgnoreCase(publisher));
-		}
-
 		return queryFactory
 			.selectFrom(book)
-			.where(builder)
+			.where(
+				containsTitle(title),
+				containsAuthor(author),
+				containsPublisher(publisher)
+			)
 			.fetch();
 	}
 
@@ -151,5 +165,17 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 
 	private LocalDateTime endDate(int year) {
 		return YearMonth.of(year + 1, 2).atEndOfMonth().atTime(23, 59, 59);
+	}
+
+	private BooleanExpression containsTitle(String title) {
+		return (title != null && !title.isEmpty()) ? book.title.containsIgnoreCase(title) : null;
+	}
+
+	private BooleanExpression containsAuthor(String author) {
+		return (author != null && !author.isEmpty()) ? book.author.containsIgnoreCase(author) : null;
+	}
+
+	private BooleanExpression containsPublisher(String publisher) {
+		return (publisher != null && !publisher.isEmpty()) ? book.publisher.containsIgnoreCase(publisher) : null;
 	}
 }

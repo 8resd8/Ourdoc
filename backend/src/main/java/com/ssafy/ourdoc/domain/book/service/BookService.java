@@ -2,11 +2,14 @@ package com.ssafy.ourdoc.domain.book.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookListResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookMostDto;
 import com.ssafy.ourdoc.domain.book.dto.BookMostResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
@@ -37,11 +40,14 @@ public class BookService {
 		bookRepository.saveAll(books);
 	}
 
-	public List<BookResponse> searchBook(BookSearchRequest request) {
-		List<Book> books = bookRepository.findBookList(request.title(), request.author(), request.publisher());
-		return books.stream()
+	public BookListResponse searchBook(BookSearchRequest request, Pageable pageable) {
+		Page<Book> books = bookRepository.findBookPage(request.title(), request.author(), request.publisher(),
+			pageable);
+		List<BookResponse> bookResponse = books.stream()
 			.map(BookResponse::of)
-			.collect(Collectors.toList());
+			.toList();
+		Page<BookResponse> bookResponsePage = new PageImpl<>(bookResponse, pageable, books.getTotalElements());
+		return new BookListResponse(bookResponsePage);
 	}
 
 	public BookDetailResponse getBookDetail(Long id) {
