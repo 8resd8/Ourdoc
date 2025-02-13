@@ -27,19 +27,19 @@ public class BookRecommendController {
 
 	private final BookRecommendService bookRecommendService;
 
-	@PostMapping("/teachers/recommend")
+	@PostMapping("/teachers/recommend/classes")
 	public void addRecommend(@RequestBody BookRequest request, @Login User user) {
 		bookRecommendService.addBookRecommend(request, user);
 	}
 
-	@GetMapping("/teachers/recommend")
+	@GetMapping("/teachers/recommend/grades")
 	public ResponseEntity<BookRecommendResponseTeacher> getRecommendTeacher(@ModelAttribute BookSearchRequest request,
 		@Login User user) {
 		BookRecommendResponseTeacher response = bookRecommendService.getBookRecommendsTeacher(request, user);
 		return ResponseEntity.ok(response);
 	}
 
-	@GetMapping("/students/recommend")
+	@GetMapping("/students/recommend/grades")
 	public ResponseEntity<BookRecommendResponseStudent> getRecommendStudent(@ModelAttribute BookSearchRequest request,
 		@Login User user, @PageableDefault(page = 0, size = 10) Pageable pageable) {
 		BookRecommendResponseStudent response = bookRecommendService.getBookRecommendsStudent(request, user, pageable);
