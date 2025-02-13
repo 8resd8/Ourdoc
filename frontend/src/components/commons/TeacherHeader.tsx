@@ -1,10 +1,9 @@
-import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { Link } from 'react-router-dom';
 import { currentUserState } from '../../recoil';
 import Layout from '../../layouts/Layout';
 
-const TeacherHeader: React.FC = () => {
+const TeacherHeader = () => {
   const userName = useRecoilValue(currentUserState)?.name;
 
   return (

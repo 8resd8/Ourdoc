@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface ModalProps {
   type: 'passwordConfirm' | 'passwordReset' | 'createClass';
   onClose: () => void;
 }
 
-const Modal: React.FC<ModalProps> = ({ type, onClose }) => {
+const Modal = ({ type, onClose }: ModalProps) => {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-50">
       <div className="bg-gray-0 rounded-[30px] shadow-small p-6 w-[414px]">

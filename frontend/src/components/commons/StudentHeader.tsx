@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { currentUserState } from '../../recoil';
 import Layout from '../../layouts/Layout';
 
-const StudentHeader: React.FC = () => {
+const StudentHeader = () => {
   const userName = useRecoilValue(currentUserState)?.name;
 
   return (

@@ -1,4 +1,4 @@
-const TeacherStudentInfo: React.FC = () => {
+const TeacherStudentInfo = () => {
   return (
     <div className="flex  items-center flex-col  p-4 mt-[80px] ">
       <div className="flex w-[1100px] justify-items-center">
