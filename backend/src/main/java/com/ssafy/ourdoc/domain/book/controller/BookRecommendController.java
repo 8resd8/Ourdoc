@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.book.controller;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,11 @@ public class BookRecommendController {
 	@PostMapping("/teachers/recommend/classes")
 	public void addRecommend(@RequestBody BookRequest request, @Login User user) {
 		bookRecommendService.addBookRecommend(request, user);
+	}
+
+	@DeleteMapping("/teachers/recommend/classes")
+	public void deleteRecommend(@RequestBody BookRequest request, @Login User user) {
+		bookRecommendService.deleteBookRecommend(request, user);
 	}
 
 	@GetMapping("/teachers/recommend/grades")
