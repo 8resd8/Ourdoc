@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.user.service;
 
+import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.EmploymentStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 
@@ -28,6 +29,7 @@ import com.ssafy.ourdoc.domain.user.student.repository.StudentQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherQueryRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.global.common.enums.EmploymentStatus;
 import com.ssafy.ourdoc.global.config.JwtConfig;
 import com.ssafy.ourdoc.global.exception.UserFailedException;
@@ -77,7 +79,7 @@ public class UserService {
 
 		if (search != null) {
 			TeacherLoginDto response = new TeacherLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
-				search.schoolName(), search.schoolId(), search.grade(), search.classNumber(), profileImagePath);
+				search.schoolName(), search.schoolId(), search.classId(), search.grade(), search.classNumber(), profileImagePath);
 			return ResponseEntity.ok().headers(headers).body(response);
 		} else if (search == null) {
 			TeacherNotInClassLoginDto response = new TeacherNotInClassLoginDto(user.getLoginId(), user.getName(),
@@ -98,11 +100,14 @@ public class UserService {
 
 	private ResponseEntity<StudentLoginDto> loginStudent(LoginRequest request, User user) {
 		Student student = studentRepository.findByUser(user);
-		StudentQueryDto search = studentQueryRepository.getStudentLoginDto(user.getId());
 
-		if (search == null) {
-			throw new NoSuchElementException("승인 대기 중입니다.");
+		if (student.getAuthStatus() == 대기) {
+			throw new IllegalArgumentException("승인 대기 중입니다.");
+		} else if (student.getAuthStatus() == 거절) {
+			throw new IllegalArgumentException("학생 승인이 거절되었습니다.");
 		}
+
+		StudentQueryDto search = studentQueryRepository.getStudentLoginDto(user.getId());
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer " + getAccessToken(request));
@@ -111,7 +116,7 @@ public class UserService {
 		String profileImagePath = user.getProfileImagePath() == null ? "" : user.getProfileImagePath();
 
 		StudentLoginDto response = new StudentLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
-			search.schoolName(), search.schoolId(), search.grade(), search.classNumber(), search.studentNumber(),
+			search.schoolName(), search.schoolId(), search.classId(), search.grade(), search.classNumber(), search.studentNumber(),
 			student.getTempPassword(), profileImagePath);
 
 		return ResponseEntity.ok().headers(headers).body(response);
