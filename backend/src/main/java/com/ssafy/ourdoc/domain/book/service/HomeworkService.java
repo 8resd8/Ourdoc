@@ -108,7 +108,7 @@ public class HomeworkService {
 			throw new IllegalArgumentException("숙제를 생성한 교사가 아닙니다.");
 		}
 
-		int submitCount = 0;
+		int submitCount = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId);
 		List<ReportTeacherResponseWithId> bookReports = bookReportTeacherService.getReportTeacherHomeworkResponses(
 			homeworkId);
 		return HomeworkDetailTeacher.of(homework, submitCount, bookReports);
@@ -137,7 +137,7 @@ public class HomeworkService {
 			throw new IllegalArgumentException("해당 숙제에 해당하는 학급의 학생이 아닙니다.");
 		}
 
-		boolean submitStatus = false;
+		boolean submitStatus = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId) > 0;
 		List<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
 			homeworkId, user.getId());
 		return HomeworkDetailStudent.of(homework, submitStatus, bookReports);
