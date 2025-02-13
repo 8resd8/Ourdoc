@@ -24,15 +24,12 @@ import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportTeacherService;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
-import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.classroom.service.ClassService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
-import com.ssafy.ourdoc.domain.user.student.service.StudentService;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
-import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
@@ -46,16 +43,13 @@ import lombok.RequiredArgsConstructor;
 public class HomeworkService {
 
 	private final HomeworkRepository homeworkRepository;
-	private final TeacherClassRepository teacherClassRepository;
-	private final BookReportTeacherService bookReportTeacherService;
-	private final TeacherService teacherService;
-	private final BookService bookService;
 	private final BookRepository bookRepository;
 	private final BookReportRepository bookReportRepository;
-	private final ClassRoomRepository classRoomRepository;
+	private final TeacherClassRepository teacherClassRepository;
 	private final StudentClassRepository studentClassRepository;
-	private final StudentService studentService;
+	private final BookService bookService;
 	private final ClassService classService;
+	private final BookReportTeacherService bookReportTeacherService;
 	private final BookReportStudentService bookReportStudentService;
 
 	public void addHomework(BookRequest request, User user) {
@@ -97,7 +91,7 @@ public class HomeworkService {
 		List<HomeworkDetailTeacher> details = homeworks.stream()
 			.map(homework -> getHomeworkDetailTeacher(homework.getId(), user))
 			.toList();
-		Page<HomeworkDetailTeacher> content = new PageImpl<>(details, pageable, details.size());
+		Page<HomeworkDetailTeacher> content = new PageImpl<>(details, pageable, homeworks.getTotalElements());
 		return new HomeworkResponseTeacher(studentCount, content);
 	}
 
@@ -124,7 +118,7 @@ public class HomeworkService {
 		List<HomeworkDetailStudent> details = homeworks.stream()
 			.map(homework -> getHomeworkDetailStudent(homework.getId(), user))
 			.toList();
-		Page<HomeworkDetailStudent> content = new PageImpl<>(details, pageable, details.size());
+		Page<HomeworkDetailStudent> content = new PageImpl<>(details, pageable, homeworks.getTotalElements());
 		return new HomeworkResponseStudent(content);
 	}
 
