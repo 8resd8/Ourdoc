@@ -18,6 +18,7 @@ import com.ssafy.ourdoc.domain.classroom.entity.QClassRoom;
 import com.ssafy.ourdoc.domain.classroom.entity.QSchool;
 import com.ssafy.ourdoc.domain.debate.dto.OnlineUserDto;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
+import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 
 import lombok.RequiredArgsConstructor;
@@ -101,7 +102,10 @@ public class DebateRoomQueryRepositoryImpl implements DebateRoomQueryRepository 
 			.from(teacherClass)
 			.leftJoin(teacherClass.classRoom, classRoom)
 			.leftJoin(classRoom.school, school)
-			.where(teacherClass.user.id.eq(id))
+			.where(
+				teacherClass.active.eq(Active.활성),
+				teacherClass.user.id.eq(id)
+			)
 			.fetchOne();
 	}
 }

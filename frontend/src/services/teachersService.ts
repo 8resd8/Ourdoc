@@ -7,6 +7,11 @@ export interface TemporaryPasswordResponse {
   tempPassword: string;
 }
 
+export interface QrResponse {
+  qrCode: String;
+  qrUrl: String;
+}
+
 export interface UpdateStudentInfoRequest {
   grade: string;
   class: string;
@@ -28,10 +33,24 @@ export interface TeacherProfileUpdateRequest {
 }
 
 export interface StudentProfile {
-  id: string;
   name: string;
-  grade: string;
-  class: string;
+  loginId: string;
+  birth: string;
+  gender: string;
+  studentNumber: number;
+  certificateTime: string | null;
+  profileImagePath: string | null;
+}
+
+export interface StudentListResponse {
+  content: StudentProfile[];
+  pageable: object;
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  first: boolean;
+  size: number;
+  empty: boolean;
 }
 
 export interface StudentAcademicInfo {
@@ -40,6 +59,36 @@ export interface StudentAcademicInfo {
   grade: string;
   class: string;
   academicRecords: Record<string, any>;
+}
+
+export interface PendingStudentProfile {
+  studentNumber: number;
+  name: string;
+  loginId: string;
+  birth: string;
+  gender: string;
+  createdAt: string;
+}
+
+export interface PendingStudentsResponse {
+  content: PendingStudentProfile[];
+  pageable: Pageable;
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}
+export interface Pageable {
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
 }
 
 export interface School {
@@ -65,12 +114,22 @@ export const issueTemporaryPasswordApi = async (
   return response.data;
 };
 
-// 학생 초대 QR코드 발급
-export const generateStudentInviteCodeApi = async (
-  teacherId: string
-): Promise<string> => {
-  const response = await api.get(`/teachers/${teacherId}/code`);
-  return response.data.qrCode;
+// 학생 초대 QR코드 발급(회원가입시)
+export const generateSignupInviteCodeApi = async (
+  teacherId: number
+): Promise<QrResponse> => {
+  const response = await api.get<QrResponse>(`/teachers/${teacherId}/code`);
+  return response.data;
+};
+
+// 학생 초대 QR코드 발급(학년변경시)
+export const generateChangeInviteCodeApi = async (
+  teacherId: number
+): Promise<QrResponse> => {
+  const response = await api.get<QrResponse>(
+    `/teachers/${teacherId}/change/code`
+  );
+  return response.data;
 };
 
 // 학생 소속 입력 승인/거절
@@ -84,9 +143,14 @@ export const updateStudentAffiliationApi = async (data: {
 };
 
 // 본인 반 학생 목록 조회
-export const getClassStudentListApi = async (): Promise<StudentProfile[]> => {
-  const response = await api.get('/teachers/students/profile');
-  console.log(response);
+export const getClassStudentListApi = async (data: {
+  page: number;
+  size: number;
+}): Promise<StudentListResponse> => {
+  const response = await api.get('/teachers/students/profile', {
+    params: data,
+  });
+  console.log(response.data.studentProfiles);
 
   return response.data.studentProfiles;
 };
@@ -97,6 +161,18 @@ export const getStudentAcademicInfoApi = async (
 ): Promise<StudentAcademicInfo> => {
   const response = await api.get(`/teachers/students/${studentId}/profile`);
   return response.data.student;
+};
+
+// 학급 가입 대기 학생 목록 조회
+export const getPendingStudentsListApi = async (data: {
+  page: number;
+  size: number;
+}): Promise<PendingStudentsResponse> => {
+  const response = await api.get('/teachers/students/pending', {
+    params: data,
+  });
+  console.log(response);
+  return response.data;
 };
 
 // 학생 정보 삭제
@@ -113,14 +189,11 @@ export const updateStudentInfoApi = async (
 };
 
 // 교사 본인 정보 조회
-export const getTeacherProfileApi = async (
-  teacherId: string
-): Promise<TeacherProfileResponse> => {
-  const response = await api.get<TeacherProfileResponse>(
-    `/teachers/${teacherId}/profile`
-  );
-  return response.data;
-};
+export const getTeacherProfileApi =
+  async (): Promise<TeacherProfileResponse> => {
+    const response = await api.get<TeacherProfileResponse>(`/teachers/profile`);
+    return response.data;
+  };
 
 // 교사 본인 정보 수정
 export const updateTeacherProfileApi = async (

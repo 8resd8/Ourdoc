@@ -6,6 +6,7 @@ interface PropsType {
   id: string;
   label: string;
   placeholder: string;
+  inputType: 'text' | 'password';
   validate: 'warning' | 'success' | 'danger' | '';
   onChange?: (value: string) => void;
 }
@@ -16,6 +17,7 @@ const InputField = ({
   label,
   placeholder,
   onChange,
+  inputType,
 }: PropsType) => {
   const getValidationMessage = () => {
     switch (validate) {
@@ -36,6 +38,7 @@ const InputField = ({
     <div>
       <Label label={label} htmlFor={id} />
       <Input
+        inputType={inputType}
         id={id}
         placeholder={placeholder}
         onChange={(e) => onChange?.(e.target.value)}

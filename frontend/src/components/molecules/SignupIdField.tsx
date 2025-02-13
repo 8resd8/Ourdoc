@@ -6,7 +6,7 @@ interface PropsType {
   label: string;
   placeholder: string;
   onChange?: (value: string) => void;
-  onCheckDuplicate?: () => void;
+  onCheckDuplicate: () => void;
   isIdChecked: boolean;
 }
 
@@ -28,7 +28,7 @@ const SignupIdField = ({
         disabled={isIdChecked}
       />
       <button
-        className={`h-10 w-20 rounded-xl body-small ${
+        className={`h-10 w-20 rounded-xl body-small cursor-pointer ${
           isIdChecked ? 'bg-gray-500 text-gray-0' : 'bg-primary-500 text-gray-0'
         }`}
         onClick={onCheckDuplicate}

@@ -33,12 +33,13 @@ const SignIn = () => {
       } else if (userType === '교사') {
         navigate('/teacher/main');
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error('로그인 실패:', error);
+
       notify({
         type: 'error',
-        text: '아이디 또는 비밀번호가 일치하지 않습니다.',
+        text: '로그인이 실패했습니다.',
       });
-      // console.error('로그인 실패:', error);
     }
   };
 
@@ -84,6 +85,7 @@ const SignIn = () => {
         <div className={classes.input}>
           <InputField
             validate=""
+            inputType="text"
             id="loginId"
             label="아이디"
             placeholder="아이디를 입력해주세요"
@@ -93,6 +95,7 @@ const SignIn = () => {
         <div className={classes.input} onKeyDown={handleKeyPress}>
           <InputField
             validate=""
+            inputType="password"
             id="password"
             label="비밀번호"
             placeholder="비밀번호를 입력해주세요"
@@ -107,9 +110,12 @@ const SignIn = () => {
             onClick={handleLogin}
           />
         </div>
-        {/* <div className={`${classes.btn_admin} ml-80 text-gray-500 body-small`}>
-          관리자로 로그인
-        </div> */}
+        <div
+          onClick={() => navigate('/teacher/signup')}
+          className={`${classes.btn_admin}  ${userType === '교사' ? 'visible' : 'invisible'} mt-2 ml-84 text-gray-500 body-small`}
+        >
+          교사 회원가입
+        </div>
       </div>
     </div>
   );

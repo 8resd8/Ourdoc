@@ -16,13 +16,13 @@ import SignupIdField from '../../molecules/SignupIdField';
 import RadioField from '../../molecules/RadioField';
 import Modal from '../../commons/Modal';
 import { notify } from '../../commons/Toast';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const StudentSignUp = () => {
   const [gender, setGender] = useState('남');
   const handleGenderChange = (selectedGender: string) => {
     setGender(selectedGender);
-    setSignInRequest((prev) => ({ ...prev, gender: selectedGender }));
+    setSignUpRequest((prev) => ({ ...prev, gender: selectedGender }));
   };
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -36,7 +36,7 @@ const StudentSignUp = () => {
   const classNumber = queryParams.get('classNumber');
   console.log('classNumber', classNumber);
 
-  const [signInRequest, setSignInRequest] = useState<SignupStudentRequest>({
+  const [signUpRequest, setSignUpRequest] = useState<SignupStudentRequest>({
     loginId: '',
     password: '',
     name: '',
@@ -58,31 +58,35 @@ const StudentSignUp = () => {
 
   useEffect(() => {
     const isValid =
-      Object.values(signInRequest).every((value) => value !== '') &&
+      Object.values(signUpRequest).every((value) => value !== '') &&
       isIdChecked &&
       passwordValidate === 'success';
     setIsFormValid(isValid);
-  }, [signInRequest, isIdChecked, passwordValidate]);
+  }, [signUpRequest, isIdChecked, passwordValidate]);
 
   const handleInputChange = (id: string, value: string) => {
-    setSignInRequest((prev) => ({ ...prev, [id]: value }));
+    setSignUpRequest((prev) => ({ ...prev, [id]: value }));
     if (id === 'loginId') {
       setIsIdChecked(false);
     }
     if (id === 'passwordCheck') {
       setPasswordCheck(value);
       setPasswordValidate(
-        value === signInRequest.password ? 'success' : 'danger'
+        value === signUpRequest.password ? 'success' : 'danger'
       );
     }
   };
-
+  const router = useNavigate();
   const handleSignUp = async () => {
     try {
-      console.log('회원가입 요청:', signInRequest);
-      const response = await signupStudentApi(signInRequest);
-      console.log(signInRequest);
+      console.log('회원가입 요청:', signUpRequest);
+      const response = await signupStudentApi(signUpRequest);
       console.log('회원가입 성공:', response);
+      notify({
+        type: 'success',
+        text: '회원가입이 완료되었습니다.',
+      });
+      router('/pending'); // 승인대기 페이지로 이동
     } catch (error) {
       console.error('회원가입 실패:', error);
     }
@@ -90,7 +94,14 @@ const StudentSignUp = () => {
 
   const handleCheckDuplicateId = async () => {
     try {
-      const response = await checkIdApi({ loginId: signInRequest.loginId });
+      if (signUpRequest.loginId === '') {
+        notify({
+          type: 'error',
+          text: '아이디를 입력해주세요',
+        });
+        return;
+      }
+      const response = await checkIdApi({ loginId: signUpRequest.loginId });
       if (response) {
         notify({
           type: 'error',
@@ -172,6 +183,7 @@ const StudentSignUp = () => {
         <div className={classes.input}>
           <InputField
             validate=""
+            inputType="password"
             id="password"
             label="비밀번호"
             placeholder="비밀번호를 입력해주세요"
@@ -183,6 +195,7 @@ const StudentSignUp = () => {
           <InputField
             validate={passwordValidate}
             id="passwordCheck"
+            inputType="password"
             label="비밀번호 확인"
             placeholder="비밀번호를 한번 더 입력해주세요"
             onChange={(value) => handleInputChange('passwordCheck', value)}
@@ -191,6 +204,7 @@ const StudentSignUp = () => {
         <div className={classes.input}>
           <InputField
             validate=""
+            inputType="text"
             id="name"
             label="이름"
             placeholder="이름을 입력해주세요"
@@ -200,6 +214,7 @@ const StudentSignUp = () => {
         <div className={classes.input}>
           <InputField
             validate=""
+            inputType="text"
             id="number"
             label="출석번호"
             placeholder="출석번호를 입력해주세요"
@@ -260,10 +275,23 @@ const StudentSignUp = () => {
           />
         </div>
         <Modal
-          type="signup"
           isOpen={isModalOpen}
           onConfirm={handleConfirm}
           onCancel={handleCancel}
+          title={'입력하신 정보를 확인할게요.'}
+          body={
+            <div>
+              <div className="text-primary-500">
+                성룡 초등학교 1학년 3반 12번, 김미소님!
+              </div>
+              <div>생년월일은 2000년 4월 23일,</div>
+              <div>성별은 남자,</div>
+              <div>사용하시려는 아이디는 smile0423 입니다.</div>
+              <div className="mt-4 headline-small">회원가입을 진행할까요?</div>
+            </div>
+          }
+          confirmText={'네, 진행할래요'}
+          cancelText={'아니요, 다시할래요'}
         />
       </div>
     </div>
