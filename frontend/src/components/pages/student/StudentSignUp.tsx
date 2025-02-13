@@ -16,13 +16,25 @@ import SignupIdField from '../../molecules/SignupIdField';
 import RadioField from '../../molecules/RadioField';
 import Modal from '../../commons/Modal';
 import { notify } from '../../commons/Toast';
+import { useLocation } from 'react-router-dom';
 
 const StudentSignUp = () => {
-  const [gender, setGender] = useState('남자');
+  const [gender, setGender] = useState('남');
   const handleGenderChange = (selectedGender: string) => {
     setGender(selectedGender);
     setSignInRequest((prev) => ({ ...prev, gender: selectedGender }));
   };
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  const schoolName = queryParams.get('schoolName');
+  console.log('schoolName', schoolName);
+  const schoolId = queryParams.get('schoolId');
+  console.log('schoolId', schoolId);
+  const grade = queryParams.get('grade');
+  console.log('grade', grade);
+  const classNumber = queryParams.get('classNumber');
+  console.log('classNumber', classNumber);
 
   const [signInRequest, setSignInRequest] = useState<SignupStudentRequest>({
     loginId: '',
@@ -30,11 +42,11 @@ const StudentSignUp = () => {
     name: '',
     studentNumber: 0,
     birth: '',
-    gender: '남자',
-    schoolName: '성천',
-    schoolId: 0,
-    grade: 1,
-    classNumber: 3,
+    gender: gender,
+    schoolName: schoolName || '',
+    schoolId: schoolId ? parseInt(schoolId) : 0,
+    grade: grade ? parseInt(grade) : 0,
+    classNumber: classNumber ? parseInt(classNumber) : 0,
   });
 
   const [isFormValid, setIsFormValid] = useState(false);
@@ -68,8 +80,9 @@ const StudentSignUp = () => {
   const handleSignUp = async () => {
     try {
       console.log('회원가입 요청:', signInRequest);
-      // const response = await signupStudentApi(signInRequest);
-      // console.log('회원가입 성공:', response);
+      const response = await signupStudentApi(signInRequest);
+      console.log(signInRequest);
+      console.log('회원가입 성공:', response);
     } catch (error) {
       console.error('회원가입 실패:', error);
     }

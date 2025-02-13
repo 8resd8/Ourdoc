@@ -11,6 +11,7 @@ import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDto;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
@@ -26,6 +27,7 @@ import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
+import com.ssafy.ourdoc.domain.user.student.service.StudentService;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
@@ -52,6 +54,7 @@ public class HomeworkService {
 	private final BookReportRepository bookReportRepository;
 	private final ClassRoomRepository classRoomRepository;
 	private final StudentClassRepository studentClassRepository;
+	private final StudentService studentService;
 
 	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
@@ -121,6 +124,29 @@ public class HomeworkService {
 			.submitCount(bookreports.size())
 			.bookreports(bookreports)
 			.build();
+	}
+
+	public List<HomeworkResponseStudent> getHomeworkStudents(BookSearchRequest request, User user) {
+		List<SchoolClassDto> schoolClasses = studentService.getClassRoomsStudent(user.getId());
+		List<HomeworkResponseStudent> responses = schoolClasses.stream()
+			.map(schoolClass -> {
+				List<Homework> homeworks = homeworkRepository.findByClassIdAndSearchBook(schoolClass.id(),
+					request.title(), request.author(), request.publisher());
+				List<HomeworkDetailStudent> homeworkDetails = homeworks.stream()
+					.map(homework -> getHomeworkDetailStudent(homework.getId(), user))
+					.toList();
+
+				return new HomeworkResponseStudent(
+					schoolClass.schoolName(),
+					schoolClass.grade(),
+					schoolClass.classNumber(),
+					schoolClass.year(),
+					homeworkDetails
+				);
+			})
+			.toList();
+
+		return responses;
 	}
 
 	public HomeworkDetailStudent getHomeworkDetailStudent(Long homeworkId, User user) {

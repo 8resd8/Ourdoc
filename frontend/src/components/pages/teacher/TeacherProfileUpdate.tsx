@@ -6,7 +6,7 @@ const TeacherProfileUpdate = () => {
         src="/assets/images/tmpProfile.png"
         alt="프로필"
       />
-      <div className="text-center text-gray-800 text-[22px] font-semibold leading-relaxed mt-4">
+      <div className="text-center text-gray-800 body-medium font-semibold mt-4">
         나미소 님
       </div>
       <div className="flex flex-col justify-start items-center gap-[72px] mt-6">
@@ -23,7 +23,7 @@ const TeacherProfileUpdate = () => {
                 type="text"
                 placeholder={item.placeholder}
                 disabled={item.disabled}
-                className="w-full h-10 py-2 bg-white border-b border-gray-200 text-gray-800 text-base focus:outline-none"
+                className="w-full h-10 py-2 bg-gray-0 border-b border-gray-200 text-gray-800 body-small focus:outline-none"
               />
             </div>
           ))}
@@ -34,7 +34,7 @@ const TeacherProfileUpdate = () => {
                 <input
                   type="text"
                   placeholder={label}
-                  className="w-full h-10 py-2 border-b border-gray-200 text-gray-800 text-base focus:outline-none"
+                  className="w-full h-10 py-2 border-b border-gray-200 text-gray-800 body-small focus:outline-none"
                 />
               </div>
             ))}

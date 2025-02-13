@@ -2,6 +2,7 @@ package com.ssafy.ourdoc.domain.book.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,28 +31,30 @@ public class BookRecommendController {
 	}
 
 	@GetMapping("/teachers/recommend")
-	public ResponseEntity<BookRecommendResponseTeacher> getRecommendTeacher(@RequestBody BookSearchRequest request,
+	public ResponseEntity<BookRecommendResponseTeacher> getRecommendTeacher(@ModelAttribute BookSearchRequest request,
 		@Login User user) {
 		BookRecommendResponseTeacher response = bookRecommendService.getBookRecommendsTeacher(request, user);
 		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/students/recommend")
-	public ResponseEntity<BookRecommendResponseStudent> getRecommendStudent(@RequestBody BookSearchRequest request,
+	public ResponseEntity<BookRecommendResponseStudent> getRecommendStudent(@ModelAttribute BookSearchRequest request,
 		@Login User user) {
 		BookRecommendResponseStudent response = bookRecommendService.getBookRecommendsStudent(request, user);
 		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/teachers/recommend/classes")
-	public ResponseEntity<BookRecommendResponseTeacher> getRecommendTeacherClass(@RequestBody BookSearchRequest request,
+	public ResponseEntity<BookRecommendResponseTeacher> getRecommendTeacherClass(
+		@ModelAttribute BookSearchRequest request,
 		@Login User user) {
 		BookRecommendResponseTeacher response = bookRecommendService.getBookRecommendsTeacherClass(request, user);
 		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/students/recommend/classes")
-	public ResponseEntity<BookRecommendResponseStudent> getRecommendStudentClass(@RequestBody BookSearchRequest request,
+	public ResponseEntity<BookRecommendResponseStudent> getRecommendStudentClass(
+		@ModelAttribute BookSearchRequest request,
 		@Login User user) {
 		BookRecommendResponseStudent response = bookRecommendService.getBookRecommendsStudentClass(request, user);
 		return ResponseEntity.ok(response);

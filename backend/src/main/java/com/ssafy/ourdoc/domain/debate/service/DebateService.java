@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.OnlineUserDto;
-import com.ssafy.ourdoc.domain.debate.dto.RoomDetailDto;
+import com.ssafy.ourdoc.domain.debate.dto.RoomDetailResponse;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
 import com.ssafy.ourdoc.domain.debate.dto.UpdateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
@@ -18,7 +18,6 @@ import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 import com.ssafy.ourdoc.domain.debate.repository.DebateRoomOnlineRepository;
 import com.ssafy.ourdoc.domain.debate.repository.DebateRoomRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
-import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 import com.ssafy.ourdoc.global.integration.openvidu.service.OpenviduService;
 
@@ -37,21 +36,19 @@ public class DebateService {
 		Page<Room> roomPage = debateRoomRepository.findByEndAtIsNull(pageable);
 		return roomPage.map(room -> {
 			Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(room.getId());
+			String schoolName = debateRoomRepository.getSchoolName(room.getUser().getId());
 			return new RoomDto(
 				room.getId(),
 				room.getTitle(),
 				room.getUser().getName(),
 				room.getMaxPeople(),
-				currentPeople
+				currentPeople,
+				schoolName
 			);
 		});
 	}
 
 	public void createDebateRoom(User user, CreateRoomRequest request) {
-		if (user.getUserType() == UserType.학생) {
-			throw new ForbiddenException("독서토론방 생성 권한이 없습니다.");
-		}
-
 		String sessionId = openviduService.createSession();
 
 		Room room = Room.builder()
@@ -151,7 +148,7 @@ public class DebateService {
 		debateRoomRepository.save(room);
 	}
 
-	public RoomDetailDto getDebateRoomDetail(Long roomId) {
+	public RoomDetailResponse getDebateRoomDetail(Long roomId) {
 		Room room = debateRoomRepository.findById(roomId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 방은 존재하지 않습니다."));
 
@@ -161,7 +158,7 @@ public class DebateService {
 
 		Long currentPeople = debateRoomOnlineRepository.countCurrentPeople(roomId);
 		List<OnlineUserDto> onlineUserList = debateRoomOnlineRepository.findOnlineUsersByRoomId(roomId);
-		return new RoomDetailDto(
+		return new RoomDetailResponse(
 			room.getId(),
 			room.getTitle(),
 			room.getUser().getName(),

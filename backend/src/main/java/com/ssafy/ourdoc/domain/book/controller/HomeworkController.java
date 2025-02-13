@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.service.HomeworkService;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -40,7 +42,7 @@ public class HomeworkController {
 	}
 
 	@GetMapping("/teachers/homework")
-	public ResponseEntity<List<HomeworkResponseTeacher>> getHomeworks(@RequestBody BookSearchRequest request,
+	public ResponseEntity<List<HomeworkResponseTeacher>> getHomeworks(@ModelAttribute BookSearchRequest request,
 		@Login User user) {
 		return ResponseEntity.ok(homeworkService.getHomeworkTeachers(request, user));
 	}
@@ -49,6 +51,12 @@ public class HomeworkController {
 	public ResponseEntity<HomeworkDetailTeacher> getHomework(@PathVariable("homeworkId") long homeworkId,
 		@Login User user) {
 		return ResponseEntity.ok(homeworkService.getHomeworkDetailTeacher(homeworkId, user));
+	}
+
+	@GetMapping("/students/homework")
+	public ResponseEntity<List<HomeworkResponseStudent>> getHomeworksStudent(@RequestBody BookSearchRequest request,
+		@Login User user) {
+		return ResponseEntity.ok(homeworkService.getHomeworkStudents(request, user));
 	}
 
 	@GetMapping("/students/homework/{homeworkId}")

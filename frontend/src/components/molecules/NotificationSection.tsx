@@ -2,7 +2,7 @@ import { NotificationTile } from '../atoms/NotificationTile';
 
 export const NotificationSection = () => {
   return (
-    <div className="w-[414px] h-[238px] p-6 bg-white rounded-[15px] shadow-[0px_2px_12px_1px_rgba(33,33,33,0.09)] flex-col justify-start items-start gap-3 inline-flex">
+    <div className="w-[414px] h-[238px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
       <div className="self-stretch justify-between items-start inline-flex">
         <div>
           <span className="text-gray-800 headline-medium">알림 </span>
