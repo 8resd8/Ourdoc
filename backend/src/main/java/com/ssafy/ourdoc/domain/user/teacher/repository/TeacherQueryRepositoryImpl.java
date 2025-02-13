@@ -133,6 +133,7 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 		}
 
 		if (isUserUpdated) {
+			userUpdate.set(QUser.user.updatedAt, LocalDateTime.now());
 			userUpdate.execute();
 		}
 
@@ -151,6 +152,7 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 		}
 
 		if (isTeacherUpdated) {
+			teacherUpdate.set(teacher.updatedAt, LocalDateTime.now());
 			teacherUpdate.execute();
 		}
 	}
