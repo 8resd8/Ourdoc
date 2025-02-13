@@ -1,7 +1,7 @@
 package com.ssafy.ourdoc.domain.book.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.ourdoc.domain.book.dto.BookListResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
-import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.service.BookFavoriteService;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -33,8 +33,9 @@ public class BookFavoriteController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<BookResponse>> getFavorite(@ModelAttribute BookSearchRequest request, @Login User user) {
-		List<BookResponse> books = bookFavoriteService.getBookFavorites(request, user);
+	public ResponseEntity<BookListResponse> getFavorite(@ModelAttribute BookSearchRequest request, @Login User user,
+		@PageableDefault(page = 0, size = 10) Pageable pageable) {
+		BookListResponse books = bookFavoriteService.getBookFavorites(request, user, pageable);
 		return ResponseEntity.ok(books);
 	}
 

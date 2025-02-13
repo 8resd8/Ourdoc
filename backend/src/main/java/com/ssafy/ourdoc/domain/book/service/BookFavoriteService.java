@@ -1,10 +1,13 @@
 package com.ssafy.ourdoc.domain.book.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.ourdoc.domain.book.dto.BookListResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
@@ -43,10 +46,12 @@ public class BookFavoriteService {
 		bookFavoriteRepository.delete(bookFavorite);
 	}
 
-	public List<BookResponse> getBookFavorites(BookSearchRequest request, User user) {
+	public BookListResponse getBookFavorites(BookSearchRequest request, User user, Pageable pageable) {
 		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
-		List<BookFavorite> bookFavorites = bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks);
+		Page<BookFavorite> bookFavorites = bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks, pageable);
 		List<Book> books = bookFavorites.stream().map(BookFavorite::getBook).toList();
-		return books.stream().map(BookResponse::of).collect(Collectors.toList());
+		List<BookResponse> bookResponse = books.stream().map(BookResponse::of).toList();
+		Page<BookResponse> bookResponsePage = new PageImpl<>(bookResponse, pageable, books.size());
+		return new BookListResponse(bookResponsePage);
 	}
 }
