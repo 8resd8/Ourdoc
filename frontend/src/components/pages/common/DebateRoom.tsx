@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { OpenVidu, Session, Publisher } from 'openvidu-browser';
 import { useParams, useLocation } from 'react-router-dom';
 import { api } from '../../../services/api';
-import classes from './DabateRoom.module.css'; // CSS Module import
+import classes from './DabateRoom.module.css';
 
 const DebateRoom: React.FC = () => {
     // URL 파라미터 및 쿼리 파라미터 읽기
@@ -33,8 +33,7 @@ const DebateRoom: React.FC = () => {
     const subscribersRef = useRef<HTMLDivElement>(null);
     const OVRef = useRef<OpenVidu | null>(null);
 
-    // === subscribeToStream 헬퍼 함수 ===
-    // 이미 구독된 스트림에 대해 중복 호출하지 않도록 처리
+    // 이미 구독된 스트림에 대해 중복 호출하지 않도록 처리하는 헬퍼 함수
     const subscribeToStream = (stream: any, currentSession: Session) => {
         // 자신의 스트림이면 구독하지 않음
         if (stream.connection.connectionId === currentSession.connection.connectionId) return;
@@ -53,7 +52,20 @@ const DebateRoom: React.FC = () => {
         setUserCount((prev) => prev + 1);
     };
 
-    // === 토큰 발급 후 세션에 입장하는 함수 ===
+    // 누락된 스트림을 구독하기 위한 헬퍼 함수
+    const subscribeToMissingStreams = (currentSession: Session) => {
+        currentSession.remoteConnections.forEach((connection) => {
+            if (
+                connection.connectionId !== currentSession.connection.connectionId &&
+                connection.stream &&
+                !document.getElementById(`subscriber-${connection.stream.streamId}`)
+            ) {
+                subscribeToStream(connection.stream, currentSession);
+            }
+        });
+    };
+
+    // 백엔드 토큰 발급 후 세션에 입장하는 함수
     const joinSessionWithParams = async (
         roomNameParam: string,
         nicknameParam: string,
@@ -77,18 +89,33 @@ const DebateRoom: React.FC = () => {
         OVRef.current = OV;
         const mySession = OV.initSession();
 
-        // 새로운 스트림이 생성될 때마다 subscribeToStream 호출
+        // 새로운 스트림 생성 시 구독 처리
         mySession.on('streamCreated', (event: any) => {
             subscribeToStream(event.stream, mySession);
         });
 
-        // 원격 스트림 종료 시: 구독자 컨테이너 제거
+        // 원격 스트림 종료 시 구독자 컨테이너 제거
         mySession.on('streamDestroyed', (event: any) => {
             const subscriberContainer = document.getElementById(`subscriber-${event.stream.streamId}`);
             if (subscriberContainer && subscribersRef.current) {
                 subscribersRef.current.removeChild(subscriberContainer);
             }
             setUserCount((prev) => prev - 1);
+        });
+
+        // 기존 사용자: 새 사용자가 동기화를 요청하면 sync-response 신호 전송
+        mySession.on('signal:sync-request', (event: any) => {
+            if (mySession.connection.connectionId !== event.from.connectionId) {
+                mySession.signal({
+                    data: '',
+                    type: 'sync-response',
+                }).catch((error) => console.error('sync-response error:', error));
+            }
+        });
+
+        // 새 사용자: 기존 사용자로부터 sync-response 신호 수신 시 누락 스트림 재구독
+        mySession.on('signal:sync-response', (event: any) => {
+            subscribeToMissingStreams(mySession);
         });
 
         try {
@@ -108,12 +135,27 @@ const DebateRoom: React.FC = () => {
             setUserCount(1);
             setJoined(true);
 
-            // 이미 연결되어 있는 다른 참가자들의 스트림에 대해 구독
+            // 이미 연결된 참가자들의 스트림에 대해 즉시 구독
             mySession.remoteConnections.forEach((connection) => {
                 if (connection.stream) {
                     subscribeToStream(connection.stream, mySession);
                 }
             });
+
+            // 추가 구독 시도 및 동기화를 위한 signal 전송 (join 모드인 경우)
+            setTimeout(() => {
+                mySession.remoteConnections.forEach((connection) => {
+                    if (connection.stream) {
+                        subscribeToStream(connection.stream, mySession);
+                    }
+                });
+                if (mode === 'join') {
+                    mySession.signal({
+                        data: '',
+                        type: 'sync-request',
+                    }).catch((error) => console.error('sync-request error:', error));
+                }
+            }, 500);
         } catch (error) {
             console.error('세션 참가 중 오류 발생:', error);
             alert('세션 참가 중 오류가 발생했습니다.');
@@ -185,7 +227,9 @@ const DebateRoom: React.FC = () => {
 
     // 방 생성 모드에서만 공유하기 버튼
     const shareLink = () => {
-        const shareUrl = `${window.location.origin}/debate/${encodeURIComponent(createSessionName)}?autojoin=true`;
+        const shareUrl = `${window.location.origin}/debate/${encodeURIComponent(
+            createSessionName
+        )}?autojoin=true`;
         navigator.clipboard
             .writeText(shareUrl)
             .then(() => alert('링크 복사 완료'))
@@ -204,11 +248,7 @@ const DebateRoom: React.FC = () => {
         <div className={classes.container}>
             <header className={classes['header-container']}>
                 <h1 className={classes.header}>
-                    {joined
-                        ? joinMode === 'create'
-                            ? createSessionName
-                            : joinSessionId
-                        : 'Debate Room'}
+                    {joined ? (joinMode === 'create' ? createSessionName : joinSessionId) : 'Debate Room'}
                 </h1>
             </header>
 
