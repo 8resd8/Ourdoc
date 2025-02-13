@@ -17,6 +17,7 @@ import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.service.HomeworkService;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -51,18 +52,21 @@ public class HomeworkController {
 	}
 
 	@GetMapping("/teachers/homework/{homeworkId}")
-	public ResponseEntity<HomeworkDetailTeacher> getHomework(
+	public ResponseEntity<HomeworkDetailTeacher> getHomeworkTeacherDetail(
 		@PathVariable("homeworkId") long homeworkId,
 		@Login User user) {
 		HomeworkDetailTeacher response = homeworkService.getHomeworkDetailTeacher(homeworkId, user);
 		return ResponseEntity.ok(response);
 	}
 
-	// @GetMapping("/students/homework")
-	// public ResponseEntity<List<HomeworkResponseStudent>> getHomeworksStudent(@RequestBody BookSearchRequest request,
-	// 	@Login User user) {
-	// 	return ResponseEntity.ok(homeworkService.getHomeworkStudents(request, user));
-	// }
+	@GetMapping("/students/homework")
+	public ResponseEntity<HomeworkResponseStudent> getHomeworkStudentClass(
+		@ModelAttribute BookSearchRequest request,
+		@Login User user,
+		@PageableDefault(page = 0, size = 10) Pageable pageable) {
+		HomeworkResponseStudent response = homeworkService.getHomeworkStudentClass(request, user, pageable);
+		return ResponseEntity.ok(response);
+	}
 
 	@GetMapping("/students/homework/{homeworkId}")
 	public ResponseEntity<HomeworkDetailStudent> getHomeworkStudent(@PathVariable("homeworkId") long homeworkId,

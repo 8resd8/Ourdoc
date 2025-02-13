@@ -9,11 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
-import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDto;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
@@ -23,8 +21,8 @@ import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponseWithId;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
+import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportTeacherService;
-import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
 import com.ssafy.ourdoc.domain.classroom.service.ClassService;
@@ -36,8 +34,6 @@ import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
 import com.ssafy.ourdoc.global.common.enums.Active;
-import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
-import com.ssafy.ourdoc.global.common.enums.SubmitStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
@@ -60,6 +56,7 @@ public class HomeworkService {
 	private final StudentClassRepository studentClassRepository;
 	private final StudentService studentService;
 	private final ClassService classService;
+	private final BookReportStudentService bookReportStudentService;
 
 	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
@@ -117,30 +114,18 @@ public class HomeworkService {
 		return HomeworkDetailTeacher.of(homework, submitCount, bookReports);
 	}
 
-	// public List<HomeworkResponseStudent> getHomeworkStudents(BookSearchRequest request, User user) {
-	// 	List<SchoolClassDto> schoolClasses = studentService.getClassRoomsStudent(user.getId());
-	// 	List<HomeworkResponseStudent> responses = schoolClasses.stream()
-	// 		.map(schoolClass -> getHomeworkResponseStudent(request, user, schoolClass))
-	// 		.toList();
-	//
-	// 	return responses;
-	// }
+	public HomeworkResponseStudent getHomeworkStudentClass(BookSearchRequest request, User user, Pageable pageable) {
+		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 
-	private HomeworkResponseStudent getHomeworkResponseStudent(BookSearchRequest request, User user,
-		SchoolClassDto schoolClassDto, Pageable pageable) {
-		List<Homework> homeworks = homeworkRepository.findByClassIdAndSearchBook(schoolClassDto.id(),
-			request.title(), request.author(), request.publisher());
-		List<HomeworkDetailStudent> homeworkDetails = homeworks.stream()
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+		Page<Homework> homeworks = homeworkRepository.findByClassRoomAndBookIn(userClassRoom,
+			searchedBooks, pageable);
+
+		List<HomeworkDetailStudent> details = homeworks.stream()
 			.map(homework -> getHomeworkDetailStudent(homework.getId(), user))
 			.toList();
-
-		return new HomeworkResponseStudent(
-			schoolClassDto.schoolName(),
-			schoolClassDto.grade(),
-			schoolClassDto.classNumber(),
-			schoolClassDto.year(),
-			homeworkDetails
-		);
+		Page<HomeworkDetailStudent> content = new PageImpl<>(details, pageable, details.size());
+		return new HomeworkResponseStudent(content);
 	}
 
 	public HomeworkDetailStudent getHomeworkDetailStudent(Long homeworkId, User user) {
@@ -152,20 +137,9 @@ public class HomeworkService {
 			throw new IllegalArgumentException("해당 숙제에 해당하는 학급의 학생이 아닙니다.");
 		}
 
-		HomeworkDto homeworkDto = new HomeworkDto(BookResponse.of(homework.getBook()), homework.getCreatedAt());
-		List<BookReportHomeworkStudent> bookReports = bookReportRepository.bookReportsHomeworkStudents(homeworkId,
-				user.getId())
-			.stream()
-			.map(dto -> new BookReportHomeworkStudent(
-				dto.bookreportId(),
-				dto.createdAt(),
-				dto.homeworkId() != null ? SubmitStatus.제출 : SubmitStatus.미제출,
-				dto.approveTime() != null ? ApproveStatus.있음 : ApproveStatus.없음))
-			.toList();
-
-		return HomeworkDetailStudent.builder()
-			.homework(homeworkDto)
-			.bookreports(bookReports)
-			.build();
+		boolean submitStatus = false;
+		List<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
+			homeworkId, user.getId());
+		return HomeworkDetailStudent.of(homework, submitStatus, bookReports);
 	}
 }
