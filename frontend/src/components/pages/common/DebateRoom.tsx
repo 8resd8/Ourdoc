@@ -93,11 +93,35 @@ const DebateRoom: React.FC = () => {
             );
             const {token} = response.data;
 
-            // 발급받은 토큰으로 세션 연결 (clientData로 닉네임 전달)
             await mySession.connect(token, {clientData: nicknameParam});
             setSession(mySession);
             setUserCount(1);
             setJoined(true);
+
+// (1) remoteConnections 순회
+            mySession.remoteConnections.forEach((connection) => {
+                // (2) connection 안의 stream이 존재하는지 확인
+                if (connection.stream) {
+                    const stream = connection.stream;
+
+                    // (3) subscriberContainer DOM 생성
+                    const subscriberContainer = document.createElement('div');
+                    subscriberContainer.className = classes['subscriber-container'];
+                    subscriberContainer.id = `subscriber-${stream.streamId}`;
+
+                    // (4) 원하는 부모 컨테이너(subscribersRef)에 붙이기
+                    if (subscribersRef.current) {
+                        subscribersRef.current.appendChild(subscriberContainer);
+                    }
+
+                    // (5) mySession.subscribe()로 스트림 구독
+                    mySession.subscribe(stream, subscriberContainer);
+
+                    // (6) UI상 참가자 수 업데이트
+                    setUserCount((prev) => prev + 1);
+                }
+            });
+
         } catch (error) {
             console.error('세션 참가 중 오류 발생:', error);
             alert('세션 참가 중 오류가 발생했습니다.');
