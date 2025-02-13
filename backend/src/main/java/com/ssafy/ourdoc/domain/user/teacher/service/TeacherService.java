@@ -363,7 +363,7 @@ public class TeacherService {
 		TeacherClass newClass = teacherClassRepository.findLatestClass(user)
 			.orElseThrow(() -> new NoSuchElementException("새로 생성할 학급이 없습니다."));
 		if (newClass.getActive() == 활성) {
-			throw new NoSuchElementException("새로 생성할 학급이 없습니다.");
+			throw new IllegalArgumentException("이미 개설된 학급입니다.");
 		}
 
 		TeacherClass oldClass = teacherClassRepository.findByUserIdAndActive(user.getId(), 활성).orElse(null);
