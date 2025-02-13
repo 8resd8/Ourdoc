@@ -299,7 +299,7 @@ public class TeacherService {
 		em.flush();
 		em.clear();
 
-		// 학교 제외 정보 수정 (동적 쿼리로 수정해야 함)
+		// 학교 제외 정보 수정
 		teacherQueryRepository.updateTeacherProfile(user, request);
 		em.flush();
 		em.clear();
@@ -345,5 +345,22 @@ public class TeacherService {
 			.build();
 
 		teacherClassRepository.save(teacherClass);
+	}
+
+	// 학급 생성
+	public void createClass(User user) {
+
+		TeacherClass newClass = teacherClassRepository.findLatestClass(user)
+			.orElseThrow(() -> new NoSuchElementException("새로 생성할 학급이 없습니다."));
+		if (newClass.getActive() == 활성) {
+			throw new NoSuchElementException("새로 생성할 학급이 없습니다.");
+		}
+
+		TeacherClass oldClass = teacherClassRepository.findByUserIdAndActive(user.getId(), 활성).orElse(null);
+
+		newClass.updateActive();
+		if (oldClass != null) {
+			oldClass.updateActive();
+		}
 	}
 }
