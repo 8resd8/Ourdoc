@@ -29,7 +29,7 @@ spring:
           dialect: org.hibernate.dialect.MySQLDialect
           jdbc.batch_size: 100
       ddl-auto: validate
-      show-sql: true
+    show-sql: true
   config:
     import:
       - classpath:secret.yml
@@ -72,13 +72,3 @@ prod:
   QrUrl: ${prod.QrUrl}
   ChangeQrUrl: ${prod.ChangeQrUrl}
   excluded-paths: ${prod.excluded-paths}
-
-decorator:
-  datasource:
-    p6spy:
-      enable-logging: true
-
-p6spy:
-  config:
-    includeBindParameters: true
-    excludecategories: debug,batch,result
