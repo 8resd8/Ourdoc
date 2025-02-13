@@ -39,7 +39,7 @@ const Modal = ({ type, isOpen, onConfirm, onCancel }: ModalProps) => {
           </button>
           <button
             onClick={onConfirm}
-            className="w-[180px] h-[48px] rounded-[10px] bg-primary-500 text-white cursor-pointer"
+            className="w-[180px] h-[48px] rounded-[10px] bg-primary-500 text-gray-0 cursor-pointer"
           >
             네, 진행할래요
           </button>
