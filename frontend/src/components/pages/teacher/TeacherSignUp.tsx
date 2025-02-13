@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import classes from './TeacherSignUp.module.css';
 import InputField from '../../molecules/InputField';
 import Button from '../../atoms/Button';
@@ -11,9 +11,15 @@ import SignupIdField from '../../molecules/SignupIdField';
 import RadioField from '../../molecules/RadioField';
 import Modal from '../../commons/Modal';
 import UploadModal from '../../commons/UploadModal';
-import { signupTeacherApi } from '../../../services/usersService';
+import {
+  checkIdApi,
+  signupTeacherApi,
+  SignupTeacherRequest,
+} from '../../../services/usersService';
+import { notify } from '../../commons/Toast';
+import { useNavigate } from 'react-router-dom';
 
-interface signInRequestType {
+interface signUpRequestType {
   loginId: string;
   password: string;
   name: string;
@@ -22,13 +28,14 @@ interface signInRequestType {
   birth: string;
 }
 const TeacherSignUp = () => {
-  const [gender, setGender] = useState('남자');
+  const [gender, setGender] = useState('남');
   const handleGenderChange = (selectedGender: string) => {
     setGender(selectedGender);
-    setSignInRequest((prev) => ({ ...prev, gender: selectedGender }));
+    setSignUpRequest((prev) => ({ ...prev, gender: selectedGender }));
   };
-  console.log(gender);
-  const [signInRequest, setSignInRequest] = useState<signInRequestType>({
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [certificateFile, setCertificateFile] = useState<File | null>(null);
+  const [signUpRequest, setSignUpRequest] = useState<signUpRequestType>({
     loginId: '',
     password: '',
     name: '',
@@ -36,39 +43,29 @@ const TeacherSignUp = () => {
     phone: '',
     birth: '',
   });
-  console.log(signInRequest);
 
-  const handleInputChange = (id: string, value: string) => {
-    setSignInRequest((prev) => ({ ...prev, [id]: value }));
-  };
+  const router = useNavigate();
 
   const handleSignUp = async () => {
     try {
-      const certificateFile = new File(['temp'], 'certificate.png', {
-        type: 'image/png',
-      });
+      if (!certificateFile) {
+        alert('재직증명서를 업로드해주세요.');
+        return;
+      }
 
-      // JSON 데이터를 문자열로 변환
-      const teacherData = {
-        name: 'zz',
-        loginId: '1',
-        password: '1',
-        birth: '1',
-        gender: '1',
-        email: '1',
-        phone: '1',
+      const requestData = {
+        name: signUpRequest.name,
+        loginId: signUpRequest.loginId,
+        password: signUpRequest.password,
+        birth: signUpRequest.birth,
+        gender: gender,
+        email: signUpRequest.email,
+        phone: signUpRequest.phone,
+        // certificateFile: certificateFile,
       };
 
-      const formData = new FormData();
-      formData.append(
-        'request',
-        new Blob([JSON.stringify(teacherData)], { type: 'application/json' })
-      );
-      formData.append('certificateFile', certificateFile);
-
-      const response = await signupTeacherApi(formData);
-
-      console.log('회원가입 성공:', response);
+      await signupTeacherApi(requestData, certificateFile);
+      router('/pending'); // 승인대기 페이지로 이동
     } catch (error) {
       console.error('회원가입 실패:', error);
     }
@@ -92,13 +89,11 @@ const TeacherSignUp = () => {
       console.error('회원가입 실패:', error);
     }
   };
-  const handleUploadConfirm = async () => {
-    try {
-      await handleSignUp();
-      setIsModalOpen(false);
-    } catch (error) {
-      console.error('회원가입 실패:', error);
+  const handleUploadConfirm = (file: File | null) => {
+    if (file) {
+      setCertificateFile(file);
     }
+    setIsUploadModalOpen(false);
   };
 
   const handleCancel = () => {
@@ -115,6 +110,62 @@ const TeacherSignUp = () => {
     setBirthDate(newValue);
     handleInputChange('birth', newValue?.format('YYYY-MM-DD') || '');
   };
+
+  const [passwordValidate, setPasswordValidate] = useState<
+    'warning' | 'success' | 'danger' | ''
+  >('');
+  const [isIdChecked, setIsIdChecked] = useState(false);
+  const [passwordCheck, setPasswordCheck] = useState('');
+
+  const handleInputChange = (id: string, value: string) => {
+    console.log(id, value);
+
+    setSignUpRequest((prev) => ({ ...prev, [id]: value }));
+    if (id === 'loginId') {
+      setIsIdChecked(false);
+    }
+    if (id === 'passwordCheck') {
+      setPasswordCheck(value);
+      setPasswordValidate(
+        value === signUpRequest.password ? 'success' : 'danger'
+      );
+    }
+  };
+
+  const handleCheckDuplicateId = async () => {
+    try {
+      if (signUpRequest.loginId === '') {
+        notify({
+          type: 'error',
+          text: '아이디를 입력해주세요',
+        });
+        return;
+      }
+      const response = await checkIdApi({ loginId: signUpRequest.loginId });
+      if (response) {
+        notify({
+          type: 'error',
+          text: '중복된 아이디입니다.',
+        });
+      } else {
+        notify({
+          type: 'success',
+          text: '사용가능한 아이디입니다.',
+        });
+        setIsIdChecked(true);
+      }
+    } catch (error) {
+      console.error('아이디 중복 확인 실패:', error);
+    }
+  };
+
+  useEffect(() => {
+    const isValid =
+      Object.values(signUpRequest).every((value) => value !== '') &&
+      isIdChecked &&
+      passwordValidate === 'success';
+    setIsFormValid(isValid);
+  }, [signUpRequest, isIdChecked, passwordValidate]);
 
   return (
     <div className={classes.root}>
@@ -157,11 +208,13 @@ const TeacherSignUp = () => {
             label="아이디"
             placeholder="아이디를 입력해주세요"
             onChange={(value) => handleInputChange('loginId', value)}
-            isIdChecked={false}
+            isIdChecked={isIdChecked}
+            onCheckDuplicate={handleCheckDuplicateId}
           />
         </div>
         <div className={classes.input}>
           <InputField
+            inputType="password"
             validate=""
             id="password"
             label="비밀번호"
@@ -169,22 +222,21 @@ const TeacherSignUp = () => {
             onChange={(value) => handleInputChange('password', value)}
           />
         </div>
-        <div
-          className={`${classes.validate} mt-1 w-96 text-gray-800 caption-small`}
-        >
-          Success
-        </div>
+
         <div className={classes.input}>
           <InputField
-            validate="warning"
+            inputType="password"
+            validate={passwordValidate}
             id="passwordCheck"
             label="비밀번호 확인"
             placeholder="비밀번호를 한번 더 입력해주세요"
+            onChange={(value) => handleInputChange('passwordCheck', value)}
           />
         </div>
         <div className={classes.input}>
           <InputField
             validate=""
+            inputType="text"
             id="name"
             label="이름"
             placeholder="이름을 입력해주세요"
@@ -193,6 +245,7 @@ const TeacherSignUp = () => {
         </div>
         <div className={classes.input}>
           <InputField
+            inputType="text"
             validate=""
             id="email"
             label="이메일"
@@ -202,21 +255,16 @@ const TeacherSignUp = () => {
         </div>
         <div className={classes.input}>
           <InputField
+            inputType="text"
             validate=""
             id="phone"
             label="전화번호"
             placeholder="전화번호를 입력해주세요"
-            onChange={(value) => handleInputChange('email', value)}
+            onChange={(value) => handleInputChange('phone', value)}
           />
         </div>
         <div className={classes.input}>
           <Label label="생년월일" htmlFor="birth" />
-          {/* <InputField
-            id="birth"
-            label="생년월일"
-            placeholder="생년월일을 입력해주세요"
-            onChange={(value) => handleInputChange('password', value)}
-          /> */}
           <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ko">
             <DatePicker
               value={birthDate}
@@ -272,14 +320,28 @@ const TeacherSignUp = () => {
             type="filled"
             color="primary"
             title="회원가입"
+            disabled={!isFormValid}
             onClick={handleSignUpClick}
           />
         </div>
         <Modal
-          type="signup"
           isOpen={isModalOpen}
           onConfirm={handleSignUpConfirm}
           onCancel={handleCancel}
+          title={'입력하신 정보를 확인할게요.'}
+          body={
+            <div>
+              <div className="text-primary-500">
+                성룡 초등학교 1학년 3반 12번, 김미소님!
+              </div>
+              <div>생년월일은 2000년 4월 23일,</div>
+              <div>성별은 남자,</div>
+              <div>사용하시려는 아이디는 smile0423 입니다.</div>
+              <div className="mt-4 headline-small">회원가입을 진행할까요?</div>
+            </div>
+          }
+          confirmText={'네, 진행할래요'}
+          cancelText={'아니요, 다시할래요'}
         />
         <UploadModal
           isOpen={isUploadModalOpen}

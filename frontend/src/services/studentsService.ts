@@ -3,6 +3,7 @@ import { api } from '../services/api';
 // 인터페이스 정의
 export interface ChangeClassRequest {
   schoolName: string;
+  schoolId: number;
   grade: number;
   classNumber: number;
   studentNumber: number;
@@ -29,7 +30,7 @@ export interface UpdateStudentProfileRequest {
 export const changeStudentClassApi = async (
   data: ChangeClassRequest
 ): Promise<void> => {
-  const response = await api.post('/students/class', data);
+  const response = await api.post('/students/request', data);
   if (response.data.resultCode !== 200) {
     throw new Error(response.data.message);
   }

@@ -20,9 +20,15 @@ const { persistAtom } = recoilPersist({
 });
 
 // 현재 로그인한 사용자 상태
-export const currentUserState = atom<LoginResponse | null>({
+export const currentUserState = atom<LoginResponse>({
   key: 'currentUserState',
-  default: null,
+  default: {
+    id: '0',
+    name: '김미소',
+    role: '교사사',
+    profileImagePath: '/assets/images/profile.png',
+  },
+  effects_UNSTABLE: [persistAtom],
 });
 
 // 사용자 인증 상태

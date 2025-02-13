@@ -3,7 +3,7 @@ package com.ssafy.ourdoc.domain.user.teacher.controller;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,8 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.teacher.dto.QrResponseDto;
-import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentListResponse;
+import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileUpdateRequest;
 import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherSignupRequest;
@@ -73,13 +73,14 @@ public class TeacherController {
 
 	// 4. 본인 학급 학생 목록 조회
 	@GetMapping("/students/profile")
-	public StudentListResponse getStudentList(@Login User user, Pageable pageable) {
+	public StudentListResponse getStudentList(@Login User user,
+		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		return teacherService.getMyClassStudentList(user, pageable);
 	}
 
-	// 5. 소속 변경 승인 대기 학생 목록 조회
 	@GetMapping("/students/pending")
-	public Page<StudentPendingProfileDto> getPendingStudentList(@Login User user, Pageable pageable) {
+	public Page<StudentPendingProfileDto> getPendingStudentList(@Login User user,
+		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		return teacherService.getPendingStudentList(user, pageable);
 	}
 

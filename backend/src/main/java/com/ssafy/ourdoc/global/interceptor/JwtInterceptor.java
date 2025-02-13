@@ -11,9 +11,11 @@ import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtInterceptor implements HandlerInterceptor {
 
 	private final JwtUtil jwtUtil;
@@ -22,24 +24,20 @@ public class JwtInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
 		Exception {
-		// 테스트 코드에 영향 있음
-		// if (request.getMethod().equals("OPTIONS")) {
-		// 	return true;
-		// }
 
 		String accessToken = extractToken(request);
 
 		if (accessToken == null) {
+			log.warn("토큰문제 발생, Access token: null");
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Missing access token");
 			return false;
 		}
 
 		try {
-			// ✅ Access Token 검증
 			jwtUtil.validateToken(accessToken);
 			return true;
 		} catch (ExpiredJwtException e) {
-			// ✅ Access Token 만료 시 Refresh Token으로 자동 재발급
+			log.info("액세스토큰 만료, Refresh token으로 재발급");
 			return handleTokenRefresh(request, response);
 		} catch (Exception e) {
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid access token");
@@ -51,6 +49,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 		String refreshToken = extractRefreshToken(request);
 
 		if (refreshToken == null) {
+			log.warn("Refresh token: null");
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Missing refresh token");
 			return false;
 		}
@@ -60,18 +59,18 @@ public class JwtInterceptor implements HandlerInterceptor {
 			String userId = claims.getSubject();
 
 			if (!jwtRefreshService.isValidRefreshToken(userId, refreshToken)) {
+				log.warn("Invalid refresh token for user {}", userId);
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid refresh token");
 				return false;
 			}
 
-			// ✅ role이 없으면 기본값 "USER"로 설정
+			// Role이 없으면 기본값 "USER"로 설정
 			String role = claims.get("role", String.class);
 			if (role == null) {
 				role = "USER";  // 기본 역할 설정
 			}
 
-			System.out.println("[Interceptor] Creating new access token for user: " + userId + ", role: " + role);
-
+			log.info("Creating new access token for user: {} with role: {}", userId, role);
 			String newAccessToken = jwtUtil.createToken(userId, role);
 
 			if (newAccessToken == null) {
@@ -79,10 +78,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 				return false;
 			}
 
-			// // ✅ 새로운 Access Token 발급
-			// String newAccessToken = jwtUtil.createToken(userId, jwtUtil.getClaims(refreshToken).get("role", String.class));
-
-			// ✅ 새 Access Token을 응답 헤더에 추가
+			// 새 Access Token 응답 헤더에 추가
 			response.setHeader("Authorization", "Bearer " + newAccessToken);
 			return true;
 
@@ -94,7 +90,9 @@ public class JwtInterceptor implements HandlerInterceptor {
 
 	private String extractToken(HttpServletRequest request) {
 		String bearerToken = request.getHeader("Authorization");
-		return (bearerToken != null && bearerToken.startsWith("Bearer ")) ? bearerToken.substring(7) : null;
+		return (bearerToken != null && bearerToken.startsWith("Bearer "))
+			? bearerToken.substring(7)
+			: null;
 	}
 
 	private String extractRefreshToken(HttpServletRequest request) {

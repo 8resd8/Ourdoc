@@ -73,6 +73,29 @@ class ClassServiceTest {
 		teacherId = teacher.getId();
 	}
 
+	// @Test
+	// @DisplayName("학급 생성 성공")
+	// void createClass_Success() {
+	// 	Optional<Teacher> optionalTeacher = teacherRepository.findById(teacherId);
+	// 	assertThat(optionalTeacher).isNotEmpty();
+	//
+	// 	classService.createClass(user, request);
+	//
+	// 	Optional<ClassRoom> savedClassRoom = classRoomRepository.findByGradeAndClassNumberAndYear(
+	// 		request.grade(), request.classNumber(), Year.of(request.year()));
+	//
+	// 	assertThat(savedClassRoom).isNotEmpty();
+	// 	ClassRoom classRoom = savedClassRoom.get();
+	//
+	// 	assertThat(classRoom.getSchool().getSchoolName()).isEqualTo(request.schoolName());
+	// 	assertThat(classRoom.getGrade()).isEqualTo(request.grade());
+	// 	assertThat(classRoom.getClassNumber()).isEqualTo(request.classNumber());
+	// 	assertThat(classRoom.getYear().getValue()).isEqualTo(request.year());
+	//
+	// 	assertThat(teacherClassRepository.findByUserIdAndClassRoomId(teacher.getUser().getId(),
+	// 		classRoom.getId())).isPresent();
+	// }
+
 	@Test
 	@DisplayName("존재하지 않는 userId로 생성 시 실패")
 	void createClassWithInvalidTeacherId() {
@@ -81,4 +104,25 @@ class ClassServiceTest {
 		assertThatThrownBy(() -> classService.createClass(invalidUser, request))
 			.isInstanceOf(NoSuchElementException.class);
 	}
+
+	// @Test
+	// @DisplayName("이미 등록되어있는 학급 생성 시 예외 발생")
+	// void createClass_Fail_IfAlreadyExist() {
+	// 	// 학급을 미리 등록
+	// 	int grade = 1;
+	// 	int classNumber = 1;
+	// 	ClassRoom classRoom = ClassRoom.builder()
+	// 		.school(school)
+	// 		.grade(grade)
+	// 		.classNumber(classNumber)
+	// 		.year(Year.now())
+	// 		.build();
+	// 	classRoomRepository.save(classRoom);
+	//
+	// 	// 같은 요청으로 학급 생성 시도
+	// 	// CreateClassRequest request = new CreateClassRequest("테스트학교", "테스트주소", 2024, grade, classNumber);
+	//
+	// 	assertThatThrownBy(() -> classService.createClass(user, request))
+	// 		.isInstanceOf(IllegalArgumentException.class);
+	// }
 }

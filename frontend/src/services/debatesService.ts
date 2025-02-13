@@ -7,6 +7,7 @@ export interface DebateRoom {
   creatorName: string;
   maxPeople: number;
   currentPeople: number;
+  schoolName: string;
 }
 
 export interface CreateDebateRequest {

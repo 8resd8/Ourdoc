@@ -35,7 +35,7 @@ const RoomCard: React.FC<{
   );
 };
 
-const WebRtcBoard: React.FC = () => {
+const WebRtcBoard = () => {
   const rooms = Array(8).fill({
     title: '은혜로운 까치 토론방',
     school: '성룡 초등학교',
