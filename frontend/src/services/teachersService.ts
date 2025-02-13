@@ -61,6 +61,36 @@ export interface StudentAcademicInfo {
   academicRecords: Record<string, any>;
 }
 
+export interface PendingStudentProfile {
+  studentNumber: number;
+  name: string;
+  loginId: string;
+  birth: string;
+  gender: string;
+  createdAt: string;
+}
+
+export interface PendingStudentsResponse {
+  content: PendingStudentProfile[];
+  pageable: Pageable;
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}
+export interface Pageable {
+  pageNumber: number;
+  pageSize: number;
+  totalElements: number;
+  totalPages: number;
+  numberOfElements: number;
+  first: boolean;
+  last: boolean;
+}
+
 export interface School {
   schoolName: string;
   address: string;
@@ -96,7 +126,9 @@ export const generateSignupInviteCodeApi = async (
 export const generateChangeInviteCodeApi = async (
   teacherId: number
 ): Promise<QrResponse> => {
-  const response = await api.get<QrResponse>(`/teachers/${teacherId}/change/code`);
+  const response = await api.get<QrResponse>(
+    `/teachers/${teacherId}/change/code`
+  );
   return response.data;
 };
 
@@ -131,6 +163,18 @@ export const getStudentAcademicInfoApi = async (
   return response.data.student;
 };
 
+// 학급 가입 대기 학생 목록 조회
+export const getPendingStudentsListApi = async (data: {
+  page: number;
+  size: number;
+}): Promise<PendingStudentsResponse> => {
+  const response = await api.get('/teachers/students/pending', {
+    params: data,
+  });
+  console.log(response);
+  return response.data;
+};
+
 // 학생 정보 삭제
 export const deleteStudentApi = async (studentId: string): Promise<void> => {
   await api.delete(`/teachers/students/${studentId}/profile`);
@@ -145,12 +189,11 @@ export const updateStudentInfoApi = async (
 };
 
 // 교사 본인 정보 조회
-export const getTeacherProfileApi = async (): Promise<TeacherProfileResponse> => {
-  const response = await api.get<TeacherProfileResponse>(
-    `/teachers/profile`
-  );
-  return response.data;
-};
+export const getTeacherProfileApi =
+  async (): Promise<TeacherProfileResponse> => {
+    const response = await api.get<TeacherProfileResponse>(`/teachers/profile`);
+    return response.data;
+  };
 
 // 교사 본인 정보 수정
 export const updateTeacherProfileApi = async (

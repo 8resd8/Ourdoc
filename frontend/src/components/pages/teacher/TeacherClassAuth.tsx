@@ -1,86 +1,34 @@
+import { useEffect, useState } from 'react';
+import {
+  getPendingStudentsListApi,
+  PendingStudentProfile,
+} from '../../../services/teachersService';
+
 const TeacherClassAuth = () => {
-  const data = [
-    {
-      no: 1,
-      number: '8번',
-      name: '김미소',
-      id: 'usertest',
-      birthDate: '1999.01.10',
-      approved: false,
-    },
-    {
-      no: 2,
-      number: '1번',
-      name: '김미소',
-      id: '2024',
-      birthDate: '1999.01.10',
-      approved: true,
-    },
-    {
-      no: 3,
-      number: '1번',
-      name: '김미소',
-      id: '2024',
-      birthDate: '1999.01.10',
-      approved: true,
-    },
-    {
-      no: 4,
-      number: '1번',
-      name: '김미소',
-      id: '2024',
-      birthDate: '1999.01.10',
-      approved: true,
-    },
-    {
-      no: 5,
-      number: '1번',
-      name: '김미소',
-      id: '2024',
-      birthDate: '1999.01.10',
-      approved: true,
-    },
-    {
-      no: 6,
-      number: '1번',
-      name: '김미소',
-      id: '2024',
-      birthDate: '1999.01.10',
-      approved: true,
-    },
-    {
-      no: 7,
-      number: '1번',
-      name: '김미소',
-      id: '2024',
-      birthDate: '1999.01.10',
-      approved: true,
-    },
-    {
-      no: 8,
-      number: '1번',
-      name: '김미소',
-      id: '2024',
-      birthDate: '1999.01.10',
-      approved: true,
-    },
-    {
-      no: 9,
-      number: '1번',
-      name: '김미소',
-      id: '2024',
-      birthDate: '1999.01.10',
-      approved: true,
-    },
-    {
-      no: 10,
-      number: '1번',
-      name: '김미소',
-      id: '2024',
-      birthDate: '1999.01.10',
-      approved: true,
-    },
-  ];
+  const [currentPage, setCurrentPage] = useState(0);
+  const [students, setStudents] = useState<PendingStudentProfile[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const PAGE_SIZE = 10;
+  const fetchClassAuth = async (page = 0) => {
+    try {
+      const params = { size: PAGE_SIZE, page };
+      const response = await getPendingStudentsListApi(params);
+      setTotalPages(response.totalPages);
+      setStudents(response.content);
+      setCurrentPage(page);
+      console.log(response);
+    } catch (error: any) {
+      console.error('학급 인증 목록 조회 실패:', error);
+    }
+  };
+  const handlePageChange = (page: number) => {
+    if (page >= 0 && page < totalPages) {
+      fetchClassAuth(page);
+    }
+  };
+  useEffect(() => {
+    fetchClassAuth();
+  }, []);
 
   return (
     <div className="w-[1056px] m-auto p-24">
@@ -111,13 +59,17 @@ const TeacherClassAuth = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((row, index) => (
+          {students.map((row, index) => (
             <tr key={index} className="text-center">
-              <td className=" border-gray-200 px-4 py-2">{row.no}</td>
-              <td className=" border-gray-200 px-4 py-2">{row.number}</td>
+              <td className=" border-gray-200 px-4 py-2">
+                {index + 10 * currentPage + 1}
+              </td>
+              <td className=" border-gray-200 px-4 py-2">
+                {row.studentNumber}
+              </td>
               <td className=" border-gray-200 px-4 py-2">{row.name}</td>
-              <td className=" border-gray-200 px-4 py-2">{row.id}</td>
-              <td className=" border-gray-200 px-4 py-2">{row.birthDate}</td>
+              <td className=" border-gray-200 px-4 py-2">{row.loginId}</td>
+              <td className=" border-gray-200 px-4 py-2">{row.birth}</td>
               <td className=" border-gray-200 px-4 py-2">
                 <div className="flex space-x-2 justify-center">
                   <button className="text-system-success border border-system-success px-3 py-1 rounded body-small cursor-pointer">
@@ -133,23 +85,46 @@ const TeacherClassAuth = () => {
         </tbody>
       </table>
 
+      {/* 페이지네이션 */}
       <div className="flex justify-center items-center mt-8 space-x-2">
-        <button className="px-4 py-2  rounded-lg hover:bg-gray-100">
+        {/* 이전 페이지 버튼 */}
+        <button
+          className={`px-4 py-2 rounded-lg cursor-pointer ${
+            currentPage === 0
+              ? 'text-gray-400 cursor-not-allowed'
+              : 'hover:bg-gray-100'
+          }`}
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 0}
+        >
           &lt;
         </button>
-        <span className="px-4 py-2 text-gray-500 body-small rounded-lg ">
-          1
-        </span>
-        <span className="px-4 py-2 text-gray-500 body-small  rounded-lg ">
-          2
-        </span>
-        <span className="px-4 py-2 text-gray-500 body-small  rounded-lg hover:bg-gray-100">
-          3
-        </span>
-        <span className="px-4 py-2 text-gray-800 body-small rounded-lg hover:bg-gray-100">
-          4
-        </span>
-        <button className="px-4 py-2  rounded-lg hover:bg-gray-100">
+
+        {/* 페이지 번호 표시 */}
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            className={`px-4 py-2 body-small rounded-lg cursor-pointer ${
+              currentPage === index
+                ? 'bg-primary-500 text-white'
+                : 'hover:bg-gray-100 text-gray-500'
+            }`}
+            onClick={() => handlePageChange(index)}
+          >
+            {index + 1}
+          </button>
+        ))}
+
+        {/* 다음 페이지 버튼 */}
+        <button
+          className={`px-4 py-2 rounded-lg cursor-pointer ${
+            currentPage === totalPages - 1
+              ? 'text-gray-400 cursor-not-allowed'
+              : 'hover:bg-gray-100'
+          }`}
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages - 1}
+        >
           &gt;
         </button>
       </div>
