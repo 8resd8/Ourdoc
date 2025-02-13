@@ -14,7 +14,6 @@ import StudentReportDetail from '../components/pages/student/StudentReportDetail
 import StudentAllReportList from '../components/pages/student/StudentAllReportList';
 import StudentNoti from '../components/pages/student/StudentNoti';
 import StudentBookCategory from '../components/pages/student/StudentBookCategory';
-import StudentBookList from '../components/pages/student/StudentBookList';
 import StudentBookSearch from '../components/pages/student/StudentBookSearch';
 import StudentHomeWorkReportList from '../components/pages/student/StudentHomeWorkReportList';
 import StudentTrophy from '../components/pages/student/StudentTrophy';
@@ -22,7 +21,6 @@ import StudentHeader from '../components/commons/StudentHeader';
 
 // Teacher 컴포넌트
 import TeacherBookCategory from '../components/pages/teacher/TeacherBookCategory';
-import TeacherBookList from '../components/pages/teacher/TeacherBookList';
 import TeacherBookSearch from '../components/pages/teacher/TeacherBookSearch';
 import TeacherClassAuth from '../components/pages/teacher/TeacherClassAuth';
 import TeacherClassInfo from '../components/pages/teacher/TeacherClassInfo';
@@ -63,36 +61,32 @@ const Router = () => {
         {/* 학생 전용 라우트 */}
         <Route path="/student/*" element={<StudentHeader />}>
           <Route path="main" element={<StudentMain />} />
-          <Route path="signup" element={<StudentSignUp />} />
-          <Route path="mypage" element={<StudentMyPage />} />
-          <Route path="trophy" element={<StudentTrophy />} />
+          <Route path="noti" element={<StudentNoti />} />
+          <Route path="book/category" element={<StudentBookCategory />} />
+          <Route path="book/search" element={<StudentBookSearch />} />
+          <Route path="homework/list" element={<StudentHomeWorkReportList />} />
           <Route path="report/write" element={<StudentReportWrite />} />
           <Route path="report/detail/:id" element={<StudentReportDetail />} />
           <Route path="reports" element={<StudentAllReportList />} />
-          <Route path="noti" element={<StudentNoti />} />
-          <Route path="book/category" element={<StudentBookCategory />} />
-          <Route path="book/list" element={<StudentBookList />} />
-          <Route path="book/search" element={<StudentBookSearch />} />
-          <Route path="homework/list" element={<StudentHomeWorkReportList />} />
+          <Route path="trophy" element={<StudentTrophy />} />
+          <Route path="mypage" element={<StudentMyPage />} />
         </Route>
 
         {/* 교사 전용 라우트 */}
         <Route path="/teacher/*" element={<TeacherHeader />}>
           <Route path="main" element={<TeacherMain />} />
-          <Route path="signup" element={<TeacherSignUp />} />
-          <Route path="mypage" element={<TeacherMyPage />} />
-          <Route path="profile-update" element={<TeacherProfileUpdate />} />
-          <Route path="statistics" element={<TeacherStatistics />} />
+          <Route path="noti" element={<TeacherNoti />} />
+          <Route path="class-info" element={<TeacherClassInfo />} />
+          <Route path="student-info" element={<TeacherStudentInfo />} />
+          <Route path="class-auth" element={<TeacherClassAuth />} />
+          <Route path="book/category" element={<TeacherBookCategory />} />
+          <Route path="book/search" element={<TeacherBookSearch />} />
+          <Route path="homework/list" element={<TeacherHomeWorkReportList />} />
           <Route path="reports" element={<TeacherReportList />} />
           <Route path="report/:id" element={<TeacherReportDetail />} />
-          <Route path="homework/list" element={<TeacherHomeWorkReportList />} />
-          <Route path="student-info" element={<TeacherStudentInfo />} />
-          <Route path="noti" element={<TeacherNoti />} />
-          <Route path="class-auth" element={<TeacherClassAuth />} />
-          <Route path="class-info" element={<TeacherClassInfo />} />
-          <Route path="book/category" element={<TeacherBookCategory />} />
-          <Route path="book/list" element={<TeacherBookList />} />
-          <Route path="book/search" element={<TeacherBookSearch />} />
+          <Route path="statistics" element={<TeacherStatistics />} />
+          <Route path="mypage" element={<TeacherMyPage />} />
+          <Route path="profile-update" element={<TeacherProfileUpdate />} />
         </Route>
       </Route>
     </Routes>
