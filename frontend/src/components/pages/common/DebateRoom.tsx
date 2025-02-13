@@ -1,8 +1,10 @@
+// src/components/DebateRoom/DebateRoom.tsx
+
 import React, {useState, useEffect, useRef} from 'react';
 import {OpenVidu, Session, Publisher} from 'openvidu-browser';
 import {useParams, useLocation} from 'react-router-dom';
 import {api} from '../../../services/api';
-import './DabateRoom.css'; // 파일명이 DebateRoom.css 인지 확인하세요!
+import classes from './DabateRoom.module.css'; // <-- CSS Module import
 
 const DebateRoom: React.FC = () => {
     // URL 파라미터 및 쿼리 파라미터 읽기
@@ -15,8 +17,7 @@ const DebateRoom: React.FC = () => {
     const [createSessionName, setCreateSessionName] = useState<string>('');
     const [createNickname, setCreateNickname] = useState<string>('');
 
-    // [세션 ID로 입장 모드] 입력 상태
-    // URL에 sessionName이 있으면 초기값으로 설정 (ex. 공유 링크)
+    // [세션 ID로 입장 모드]
     const [joinSessionId, setJoinSessionId] = useState<string>(sessionName || '');
     const [joinNickname, setJoinNickname] = useState<string>('');
 
@@ -27,7 +28,6 @@ const DebateRoom: React.FC = () => {
     const [joined, setJoined] = useState<boolean>(false);
     const [isAudioActive, setIsAudioActive] = useState<boolean>(true);
     const [isVideoActive, setIsVideoActive] = useState<boolean>(true);
-    // 어느 모드로 입장했는지: 'create' (방 생성) 또는 'join' (세션 ID로 입장)
     const [joinMode, setJoinMode] = useState<'create' | 'join' | null>(null);
 
     // DOM Ref
@@ -35,7 +35,7 @@ const DebateRoom: React.FC = () => {
     const subscribersRef = useRef<HTMLDivElement>(null);
     const OVRef = useRef<OpenVidu | null>(null);
 
-    // 공통: 토큰 발급 후 세션에 입장하는 함수 (파라미터화)
+    // 공통: 토큰 발급 후 세션에 입장하는 함수
     const joinSessionWithParams = async (
         roomNameParam: string,
         nicknameParam: string,
@@ -62,8 +62,9 @@ const DebateRoom: React.FC = () => {
         // 원격 스트림 생성 시: 구독자 컨테이너 생성
         mySession.on('streamCreated', (event: any) => {
             const subscriberContainer = document.createElement('div');
+            // CSS Module 클래스 적용
+            subscriberContainer.className = classes['subscriber-container'];
             subscriberContainer.id = `subscriber-${event.stream.streamId}`;
-            subscriberContainer.className = 'subscriber-container';
             if (subscribersRef.current) {
                 subscribersRef.current.appendChild(subscriberContainer);
             }
@@ -92,11 +93,35 @@ const DebateRoom: React.FC = () => {
             );
             const {token} = response.data;
 
-            // 발급받은 토큰으로 세션 연결 (clientData로 닉네임 전달)
             await mySession.connect(token, {clientData: nicknameParam});
             setSession(mySession);
             setUserCount(1);
             setJoined(true);
+
+// (1) remoteConnections 순회
+            mySession.remoteConnections.forEach((connection) => {
+                // (2) connection 안의 stream이 존재하는지 확인
+                if (connection.stream) {
+                    const stream = connection.stream;
+
+                    // (3) subscriberContainer DOM 생성
+                    const subscriberContainer = document.createElement('div');
+                    subscriberContainer.className = classes['subscriber-container'];
+                    subscriberContainer.id = `subscriber-${stream.streamId}`;
+
+                    // (4) 원하는 부모 컨테이너(subscribersRef)에 붙이기
+                    if (subscribersRef.current) {
+                        subscribersRef.current.appendChild(subscriberContainer);
+                    }
+
+                    // (5) mySession.subscribe()로 스트림 구독
+                    mySession.subscribe(stream, subscriberContainer);
+
+                    // (6) UI상 참가자 수 업데이트
+                    setUserCount((prev) => prev + 1);
+                }
+            });
+
         } catch (error) {
             console.error('세션 참가 중 오류 발생:', error);
             alert('세션 참가 중 오류가 발생했습니다.');
@@ -113,15 +138,9 @@ const DebateRoom: React.FC = () => {
         joinSessionWithParams(joinSessionId, joinNickname, 'join');
     };
 
-    // publisher(카메라 화면) 초기화: 세션 입장 후 실행
+    // publisher 초기화: 세션 입장 후 실행
     useEffect(() => {
-        if (
-            joined &&
-            session &&
-            !publisher &&
-            publisherRef.current &&
-            OVRef.current
-        ) {
+        if (joined && session && !publisher && publisherRef.current && OVRef.current) {
             const publisherOptions = {
                 audioSource: undefined,
                 videoSource: undefined,
@@ -153,7 +172,9 @@ const DebateRoom: React.FC = () => {
 
     // 세션 종료 처리
     const leaveSession = () => {
-        if (session) session.disconnect();
+        if (session) {
+            session.disconnect();
+        }
         setSession(null);
         setPublisher(null);
         setUserCount(0);
@@ -170,18 +191,16 @@ const DebateRoom: React.FC = () => {
         };
     }, [session]);
 
-    // 방 생성 모드에서만, 공유하기 버튼: 공유 링크에 autojoin 파라미터 추가
+    // 방 생성 모드에서만, 공유하기 버튼
     const shareLink = () => {
-        const shareUrl = `${window.location.origin}/debate/${encodeURIComponent(
-            createSessionName
-        )}?autojoin=true`;
+        const shareUrl = `${window.location.origin}/debate/${encodeURIComponent(createSessionName)}?autojoin=true`;
         navigator.clipboard
             .writeText(shareUrl)
             .then(() => alert('링크 복사 완료'))
             .catch((err) => console.error('링크 복사 중 오류:', err));
     };
 
-    // autojoin: URL에 autojoin 파라미터가 있으면 [세션 ID로 입장] 모드로 자동 입장
+    // autojoin
     useEffect(() => {
         if (autoJoin && !joined && joinSessionId.trim() !== '') {
             const nicknameToUse = joinNickname.trim() !== '' ? joinNickname : 'Guest';
@@ -190,9 +209,9 @@ const DebateRoom: React.FC = () => {
     }, [autoJoin, joined, joinSessionId, joinNickname]);
 
     return (
-        <div className="container">
-            <header className="header-container">
-                <h1 className="header">
+        <div className={classes.container}>
+            <header className={classes['header-container']}>
+                <h1 className={classes.header}>
                     {joined
                         ? joinMode === 'create'
                             ? createSessionName
@@ -201,39 +220,45 @@ const DebateRoom: React.FC = () => {
                 </h1>
             </header>
 
-            {/* 입장 전 화면: 두 개의 분리된 폼 */}
+            {/* 입장 전 화면 */}
             {!joined && (
                 <>
                     {/* [방 생성 및 입장하기] */}
-                    <div className="card">
-                        <div className="card-header">
+                    <div className={classes.card}>
+                        <div className={classes['card-header']}>
                             <h2>방 생성 및 입장하기</h2>
                             <p>세션 이름과 닉네임을 입력하고 방을 생성하세요.</p>
                         </div>
-                        <div className="input-group">
+                        <div className={classes['input-group']}>
                             <input
                                 type="text"
                                 placeholder="세션 이름 입력"
                                 value={createSessionName}
                                 onChange={(e) => setCreateSessionName(e.target.value)}
-                                className="input"
+                                className={classes.input}
                             />
                         </div>
-                        <div className="input-group">
+                        <div className={classes['input-group']}>
                             <input
                                 type="text"
                                 placeholder="닉네임 입력"
                                 value={createNickname}
                                 onChange={(e) => setCreateNickname(e.target.value)}
-                                className="input"
+                                className={classes.input}
                             />
-                            <button onClick={joinAsCreator} className="button join-button">
+                            <button
+                                onClick={joinAsCreator}
+                                className={`${classes.button} ${classes['join-button']}`}
+                            >
                                 방 생성 및 입장
                             </button>
                         </div>
                         {createSessionName && (
-                            <div className="input-group">
-                                <button onClick={shareLink} className="button share-button">
+                            <div className={classes['input-group']}>
+                                <button
+                                    onClick={shareLink}
+                                    className={`${classes.button} ${classes['share-button']}`}
+                                >
                                     공유하기
                                 </button>
                             </div>
@@ -241,29 +266,32 @@ const DebateRoom: React.FC = () => {
                     </div>
 
                     {/* [방 세션ID로 입장하기] */}
-                    <div className="card">
-                        <div className="card-header">
+                    <div className={classes.card}>
+                        <div className={classes['card-header']}>
                             <h2>방 세션ID로 입장하기</h2>
                             <p>세션 ID와 닉네임을 입력하고 입장하세요.</p>
                         </div>
-                        <div className="input-group">
+                        <div className={classes['input-group']}>
                             <input
                                 type="text"
                                 placeholder="세션 ID 입력"
                                 value={joinSessionId}
                                 onChange={(e) => setJoinSessionId(e.target.value)}
-                                className="input"
+                                className={classes.input}
                             />
                         </div>
-                        <div className="input-group">
+                        <div className={classes['input-group']}>
                             <input
                                 type="text"
                                 placeholder="닉네임 입력"
                                 value={joinNickname}
                                 onChange={(e) => setJoinNickname(e.target.value)}
-                                className="input"
+                                className={classes.input}
                             />
-                            <button onClick={joinAsParticipant} className="button join-button">
+                            <button
+                                onClick={joinAsParticipant}
+                                className={`${classes.button} ${classes['join-button']}`}
+                            >
                                 입장하기
                             </button>
                         </div>
@@ -273,17 +301,15 @@ const DebateRoom: React.FC = () => {
 
             {/* 입장 후 화면 */}
             {joined && (
-                <div className="card">
-                    <div className="card-header">
+                <div className={classes.card}>
+                    <div className={classes['card-header']}>
                         <h2>참가자 수: {userCount}</h2>
                     </div>
-                    <div className="video-container">
-                        <div className="video-area">
-                            <div ref={publisherRef} className="publisher"></div>
-                        </div>
-                        <div ref={subscribersRef} className="subscribers-container"></div>
+                    <div className={classes['video-container']}>
+                        <div className={classes['video-area']} ref={publisherRef}></div>
+                        <div className={classes['subscribers-container']} ref={subscribersRef}></div>
                     </div>
-                    <div className="button-group">
+                    <div className={classes['button-group']}>
                         <button
                             onClick={() => {
                                 if (publisher) {
@@ -292,7 +318,7 @@ const DebateRoom: React.FC = () => {
                                     setIsAudioActive(newAudioStatus);
                                 }
                             }}
-                            className="button control-button"
+                            className={`${classes.button} ${classes['control-button']}`}
                         >
                             {isAudioActive ? '음소거' : '음소거 해제'}
                         </button>
@@ -304,15 +330,21 @@ const DebateRoom: React.FC = () => {
                                     setIsVideoActive(newVideoStatus);
                                 }
                             }}
-                            className="button control-button"
+                            className={`${classes.button} ${classes['control-button']}`}
                         >
                             {isVideoActive ? '비디오 끄기' : '비디오 켜기'}
                         </button>
-                        <button onClick={leaveSession} className="button leave-button">
+                        <button
+                            onClick={leaveSession}
+                            className={`${classes.button} ${classes['leave-button']}`}
+                        >
                             나가기
                         </button>
                         {joinMode === 'create' && (
-                            <button onClick={shareLink} className="button share-button">
+                            <button
+                                onClick={shareLink}
+                                className={`${classes.button} ${classes['share-button']}`}
+                            >
                                 공유하기
                             </button>
                         )}

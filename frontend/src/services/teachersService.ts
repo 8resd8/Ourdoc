@@ -33,10 +33,24 @@ export interface TeacherProfileUpdateRequest {
 }
 
 export interface StudentProfile {
-  id: string;
   name: string;
-  grade: string;
-  class: string;
+  loginId: string;
+  birth: string;
+  gender: string;
+  studentNumber: number;
+  certificateTime: string | null;
+  profileImagePath: string | null;
+}
+
+export interface StudentListResponse {
+  content: StudentProfile[];
+  pageable: object;
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  first: boolean;
+  size: number;
+  empty: boolean;
 }
 
 export interface StudentAcademicInfo {
@@ -97,9 +111,14 @@ export const updateStudentAffiliationApi = async (data: {
 };
 
 // 본인 반 학생 목록 조회
-export const getClassStudentListApi = async (): Promise<StudentProfile[]> => {
-  const response = await api.get('/teachers/students/profile');
-  console.log(response);
+export const getClassStudentListApi = async (data: {
+  page: number;
+  size: number;
+}): Promise<StudentListResponse> => {
+  const response = await api.get('/teachers/students/profile', {
+    params: data,
+  });
+  console.log(response.data.studentProfiles);
 
   return response.data.studentProfiles;
 };

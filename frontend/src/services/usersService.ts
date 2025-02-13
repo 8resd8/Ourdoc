@@ -13,7 +13,7 @@ export interface SignupTeacherRequest {
   gender: string;
   email: string;
   phone: string;
-  certificateFile: File;
+  // certificateFile: File;
 }
 
 export interface SignupStudentRequest {
@@ -44,6 +44,7 @@ export interface LoginResponse {
   classNumber?: number;
   studentNumber?: number;
   tempPassword?: string;
+  profileImagePath?: string;
 }
 
 export interface CheckIdRequest {
@@ -58,18 +59,25 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
-// 선생님 회원가입
 export const signupTeacherApi = async (
-  data: SignupTeacherRequest
+  requestData: SignupTeacherRequest,
+  certificateFile: File
 ): Promise<void> => {
   const formData = new FormData();
-  Object.keys(data).forEach((key) => {
-    if (key === 'certificateFile') {
-      formData.append(key, data[key as keyof SignupTeacherRequest] as File);
-    } else {
-      formData.append(key, data[key as keyof SignupTeacherRequest].toString());
-    }
-  });
+
+  formData.append(
+    'request',
+    new Blob([JSON.stringify(requestData)], { type: 'application/json' })
+  );
+
+  const fileType = certificateFile.type;
+  if (fileType === 'application/pdf') {
+    const pdfBlob = new Blob([certificateFile], { type: 'application/pdf' });
+    formData.append('certificateFile', pdfBlob, certificateFile.name);
+  } else {
+    formData.append('certificateFile', certificateFile);
+  }
+
   await multipartApi.post('/teachers/signup', formData);
 };
 
@@ -80,23 +88,28 @@ export const signupStudentApi = async (
   await api.post('/students/signup', data);
 };
 
-// 로그인
 export const signinApi = async (data: LoginRequest): Promise<LoginResponse> => {
   try {
     const response = await api.post<LoginResponse>('/users/signin', data);
     const accessToken = response.headers['authorization'];
+
     notify({
       type: 'info',
       text: '로그인 성공!',
     });
+
     if (accessToken) {
       setRecoil(accessTokenState, accessToken);
     }
 
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('로그인 실패:', error);
-    throw new Error('로그인에 실패했습니다. 다시 시도해주세요.');
+
+    // 서버에서 온 에러 메시지가 있다면 그대로 throw
+    throw error.response?.data?.message
+      ? new Error(error.response.data.message)
+      : new Error('로그인에 실패했습니다. 다시 시도해주세요.');
   }
 };
 

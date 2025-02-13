@@ -1,3 +1,5 @@
+/* src/components/DebateRoom/DebateRoom.module.css */
+
 /* container */
 .container {
     display: flex;
@@ -81,6 +83,11 @@
 
 .leave-button {
     background-color: #dc3545;
+    color: #fff;
+}
+
+.share-button {
+    background-color: #007bff;
     color: #fff;
 }
 

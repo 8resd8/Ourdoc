@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +27,8 @@ public class BookController {
 	private final BookService bookService;
 
 	@GetMapping
-	public ResponseEntity<BookListResponse> getBooks(@ModelAttribute BookSearchRequest request, @PageableDefault(page = 0, size = 10) Pageable pageable) {
+	public ResponseEntity<BookListResponse> getBooks(@ModelAttribute BookSearchRequest request,
+		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		BookListResponse books = bookService.searchBook(request, pageable);
 		return ResponseEntity.ok(books);
 	}

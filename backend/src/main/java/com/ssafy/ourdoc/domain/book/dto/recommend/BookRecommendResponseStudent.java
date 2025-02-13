@@ -1,11 +1,11 @@
 package com.ssafy.ourdoc.domain.book.dto.recommend;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import lombok.Builder;
 
 @Builder
 public record BookRecommendResponseStudent(
-	List<BookRecommendDetailStudent> recommend
+	Page<BookRecommendDetailStudent> recommend
 ) {
 }

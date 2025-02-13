@@ -3,6 +3,8 @@ package com.ssafy.ourdoc.domain.book.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
@@ -17,9 +19,9 @@ public interface BookRecommendRepository extends JpaRepository<BookRecommend, Lo
 
 	List<BookRecommend> findByClassRoom(ClassRoom classRoom);
 
-	List<BookRecommend> findByClassRoomAndBookIn(ClassRoom classRoom, List<Book> books);
+	Page<BookRecommend> findByClassRoomAndBookIn(ClassRoom classRoom, List<Book> books, Pageable pageable);
 
 	List<BookRecommend> findByClassRoomIn(List<ClassRoom> classRooms);
 
-	List<BookRecommend> findByClassRoomInAndBookIn(List<ClassRoom> classRooms, List<Book> books);
+	Page<BookRecommend> findByClassRoomInAndBookIn(List<ClassRoom> classRooms, List<Book> books, Pageable pageable);
 }
