@@ -87,25 +87,28 @@ public class HomeworkService {
 	public List<HomeworkResponseTeacher> getHomeworkTeachers(BookSearchRequest request, User user) {
 		List<SchoolClassDto> schoolClasses = teacherService.getClassRoomsTeacher(user.getId());
 		List<HomeworkResponseTeacher> responses = schoolClasses.stream()
-			.map(schoolClass -> {
-				List<Homework> homeworks = homeworkRepository.findByClassIdAndSearchBook(schoolClass.id(),
-					request.title(), request.author(), request.publisher());
-				List<HomeworkDetailTeacher> homeworkDetails = homeworks.stream()
-					.map(homework -> getHomeworkDetailTeacher(homework.getId(), user))
-					.toList();
-
-				return new HomeworkResponseTeacher(
-					schoolClass.schoolName(),
-					schoolClass.grade(),
-					schoolClass.classNumber(),
-					schoolClass.year(),
-					schoolClass.studentCount(),
-					homeworkDetails
-				);
-			})
+			.map(schoolClass -> getHomeworkResponseTeacher(request, user, schoolClass))
 			.toList();
 
 		return responses;
+	}
+
+	private HomeworkResponseTeacher getHomeworkResponseTeacher(BookSearchRequest request, User user,
+		SchoolClassDto schoolClassDto) {
+		List<Homework> homeworks = homeworkRepository.findByClassIdAndSearchBook(schoolClassDto.id(),
+			request.title(), request.author(), request.publisher());
+		List<HomeworkDetailTeacher> homeworkDetails = homeworks.stream()
+			.map(homework -> getHomeworkDetailTeacher(homework.getId(), user))
+			.toList();
+
+		return new HomeworkResponseTeacher(
+			schoolClassDto.schoolName(),
+			schoolClassDto.grade(),
+			schoolClassDto.classNumber(),
+			schoolClassDto.year(),
+			schoolClassDto.studentCount(),
+			homeworkDetails
+		);
 	}
 
 	public HomeworkDetailTeacher getHomeworkDetailTeacher(Long homeworkId, User user) {
@@ -129,24 +132,27 @@ public class HomeworkService {
 	public List<HomeworkResponseStudent> getHomeworkStudents(BookSearchRequest request, User user) {
 		List<SchoolClassDto> schoolClasses = studentService.getClassRoomsStudent(user.getId());
 		List<HomeworkResponseStudent> responses = schoolClasses.stream()
-			.map(schoolClass -> {
-				List<Homework> homeworks = homeworkRepository.findByClassIdAndSearchBook(schoolClass.id(),
-					request.title(), request.author(), request.publisher());
-				List<HomeworkDetailStudent> homeworkDetails = homeworks.stream()
-					.map(homework -> getHomeworkDetailStudent(homework.getId(), user))
-					.toList();
-
-				return new HomeworkResponseStudent(
-					schoolClass.schoolName(),
-					schoolClass.grade(),
-					schoolClass.classNumber(),
-					schoolClass.year(),
-					homeworkDetails
-				);
-			})
+			.map(schoolClass -> getHomeworkResponseStudent(request, user, schoolClass))
 			.toList();
 
 		return responses;
+	}
+
+	private HomeworkResponseStudent getHomeworkResponseStudent(BookSearchRequest request, User user,
+		SchoolClassDto schoolClassDto) {
+		List<Homework> homeworks = homeworkRepository.findByClassIdAndSearchBook(schoolClassDto.id(),
+			request.title(), request.author(), request.publisher());
+		List<HomeworkDetailStudent> homeworkDetails = homeworks.stream()
+			.map(homework -> getHomeworkDetailStudent(homework.getId(), user))
+			.toList();
+
+		return new HomeworkResponseStudent(
+			schoolClassDto.schoolName(),
+			schoolClassDto.grade(),
+			schoolClassDto.classNumber(),
+			schoolClassDto.year(),
+			homeworkDetails
+		);
 	}
 
 	public HomeworkDetailStudent getHomeworkDetailStudent(Long homeworkId, User user) {
