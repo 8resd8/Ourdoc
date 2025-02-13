@@ -39,6 +39,7 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserQueryRepository;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentSignupRequest;
+import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
@@ -57,6 +58,7 @@ import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherQueryRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.global.common.enums.EmploymentStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
@@ -153,9 +155,10 @@ public class TeacherService {
 		Long schoolId = classRoom.getSchool().getId();
 		int grade = classRoom.getGrade();
 		int classNumber = classRoom.getClassNumber();
+		Long classId = classRoom.getId();
 
 		// 3) QR에 담을 json 데이터
-		String QrLink = String.format(url, schoolName, schoolId, grade, classNumber);
+		String QrLink = String.format(url, schoolName, schoolId, grade, classNumber, classId);
 
 		// json 데이터의 한글이 깨지지 않도록 설정
 		Map<EncodeHintType, Object> hints = new HashMap<>();
@@ -211,28 +214,35 @@ public class TeacherService {
 		User studentUser = userRepository.findByLoginId(request.studentLoginId())
 			.orElseThrow(() -> new IllegalArgumentException("해당 학생을 찾을 수 없습니다."));
 
-		studentClassRepository.findByUserIdAndClassRoomIdAndAuthStatus(studentUser.getId(),
-				classId, 대기)
-			.orElseThrow(() -> new IllegalArgumentException("해당 학생의 소속 반 신청 정보를 찾을 수 없습니다."));
+		StudentClass studentClass = studentClassRepository.findByUserIdAndClassRoomIdAndStudentNumberAndActiveAndAuthStatus(studentUser.getId(),
+				classId, request.studentNumber(), 비활성, 대기)
+			.orElseThrow(() -> new IllegalArgumentException("학생의 해당 학급 신청 정보를 찾을 수 없습니다."));
 
 		if (studentRepository.findByUser(studentUser).getAuthStatus().equals(거절)) {
 			throw new IllegalArgumentException("학생 인증이 되지 않은 회원입니다.");
 		} else if (studentRepository.findByUser(studentUser).getAuthStatus().equals(대기)) {
 			changeAuthStatusOfStudent(request, studentUser);
 			changeAuthStatusOfStudentClass(request, studentUser, classId);
-		} else {
+		} else if (studentRepository.findByUser(studentUser).getAuthStatus().equals(승인)) {
+			changeOldStudentClass(studentUser);
 			changeAuthStatusOfStudentClass(request, studentUser, classId);
 		}
 
 		return "학생 소속 변경이 " + (request.isApproved() ? "승인" : "거절") + "되었습니다.";
 	}
 
+	private void changeOldStudentClass(User studentUser) {
+		StudentClass oldStudentClass = studentClassQueryRepository.findLatestStudentClass(studentUser)
+			.orElseThrow(() -> new NoSuchElementException("가장 최근에 소속된 학급이 없습니다."));
+		oldStudentClass.updateActive();
+	}
+
 	private void changeAuthStatusOfStudentClass(VerificateAffiliationChangeRequest request, User studentUser,
 		Long classId) {
 		if (request.isApproved()) {
-			studentClassQueryRepository.updateAuthStatusOfStudentClass(studentUser.getId(), classId, 승인);
+			studentClassQueryRepository.updateAuthStatusOfStudentClass(studentUser.getId(), classId, request.studentNumber(), 활성, 승인);
 		} else {
-			studentClassQueryRepository.updateAuthStatusOfStudentClass(studentUser.getId(), classId, 거절);
+			studentClassQueryRepository.updateAuthStatusOfStudentClass(studentUser.getId(), classId, request.studentNumber(), 비활성, 거절);
 		}
 	}
 
@@ -249,7 +259,7 @@ public class TeacherService {
 			.orElseThrow(() -> new IllegalArgumentException("활성화된 학급이 없습니다."))
 			.getClassRoom().getId();
 
-		return studentClassQueryRepository.findStudentsByClassIdAndActiveAndAuthStatus(classId, 활성, 대기, pageable);
+		return studentClassQueryRepository.findStudentsByClassIdAndActiveAndAuthStatus(classId, 비활성, 대기, pageable);
 	}
 
 	// 교사 본인 정보 조회
