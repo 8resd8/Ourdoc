@@ -119,20 +119,14 @@ const TeacherClassAuth = () => {
               <td className=" border-gray-200 px-4 py-2">{row.id}</td>
               <td className=" border-gray-200 px-4 py-2">{row.birthDate}</td>
               <td className=" border-gray-200 px-4 py-2">
-                {row.approved ? (
-                  <button className="text-system-success border border-system-success px-3 py-1 rounded body-small">
+                <div className="flex space-x-2 justify-center">
+                  <button className="text-system-success border border-system-success px-3 py-1 rounded body-small cursor-pointer">
                     승인
                   </button>
-                ) : (
-                  <div className="flex space-x-2 justify-center">
-                    <button className="text-system-success border border-system-success px-3 py-1 rounded body-small">
-                      승인
-                    </button>
-                    <button className="text-system-danger border border-system-danger px-3 py-1 rounded body-small">
-                      거절
-                    </button>
-                  </div>
-                )}
+                  <button className="text-system-danger border border-system-danger px-3 py-1 rounded body-small cursor-pointer">
+                    거절
+                  </button>
+                </div>
               </td>
             </tr>
           ))}
