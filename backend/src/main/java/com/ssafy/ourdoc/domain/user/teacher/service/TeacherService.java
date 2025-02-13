@@ -37,6 +37,7 @@ import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.repository.UserQueryRepository;
 import com.ssafy.ourdoc.domain.user.repository.UserRepository;
+import com.ssafy.ourdoc.domain.user.student.dto.StudentSignupRequest;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
@@ -82,6 +83,8 @@ public class TeacherService {
 	// 1. 교사 회원가입
 	public Long signup(TeacherSignupRequest request, MultipartFile certifiateFile) {
 
+		validateSignupRequest(request);
+
 		// 1) 중복 ID 체크
 		Optional<User> existingUser = userRepository.findByLoginId(request.loginId());
 		if (existingUser.isPresent()) {
@@ -119,6 +122,17 @@ public class TeacherService {
 		Teacher savedTeacher = teacherRepository.save(teacher);
 
 		return savedTeacher.getId();
+	}
+
+	private void validateSignupRequest(TeacherSignupRequest request) {
+		if (request == null || request.name() == null || request.name().isBlank()
+			|| request.loginId() == null || request.loginId().isBlank()
+			|| request.password() == null || request.password().isBlank()
+			|| request.birth() == null || request.gender() == null
+			|| request.email() == null || request.email().isBlank()
+			|| request.phone() == null || request.phone().isBlank()) {
+			throw new IllegalArgumentException("입력되지 않은 정보가 있습니다.");
+		}
 	}
 
 	// 2. QR 생성
