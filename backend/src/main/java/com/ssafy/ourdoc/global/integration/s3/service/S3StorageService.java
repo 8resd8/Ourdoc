@@ -23,10 +23,11 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 @RequiredArgsConstructor
 public class S3StorageService {
 
-	private static final Set<String> ALLOWED_EXTENSIONS = Stream.of("jpg", "jpeg", "png", "webp")
+	private static final Set<String> ALLOWED_EXTENSIONS = Stream.of("jpg", "jpeg", "png", "webp", "pdf")
 		.collect(Collectors.toSet());
 
-	private static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/jpeg", "image/png", "image/webp");
+	private static final Set<String> ALLOWED_MIME_TYPES = Set.of("image/jpeg", "image/png", "image/webp",
+		"application/pdf");
 
 	private final S3Client s3Client;
 
