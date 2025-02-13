@@ -1,12 +1,10 @@
 package com.ssafy.ourdoc.domain.book.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +14,6 @@ import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDto;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkPageable;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
@@ -92,27 +89,19 @@ public class HomeworkService {
 		homeworkRepository.delete(homework);
 	}
 
-	public HomeworkResponseTeacher getHomeworkTeachers(BookSearchRequest request, User user,
-		HomeworkPageable pageable) {
-		Pageable bookPageable = PageRequest.of(pageable.bookPage(), pageable.bookSize());
-		Pageable reportPageable = PageRequest.of(pageable.reportPage(), pageable.reportSize());
+	public HomeworkResponseTeacher getHomeworkTeacherClass(BookSearchRequest request, User user, Pageable pageable) {
+		ClassRoom userClassRoom = classService.getUserClassRoom(user);
+		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
 
-		List<SchoolClassDto> schoolClasses = teacherService.getClassRoomsTeacher(user.getId());
-		List<Homework> homeworks = new ArrayList<>();
-		schoolClasses.forEach(
-			schoolClassDto -> homeworks.addAll(homeworkRepository.findByClassRoomId(schoolClassDto.id())));
+		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+		Page<Homework> homeworks = homeworkRepository.findByClassRoomAndBookIn(userClassRoom,
+			searchedBooks, pageable);
 
-		int start = (int)bookPageable.getOffset();
-		int end = Math.min(start + bookPageable.getPageSize(), homeworks.size());
-
-		List<Homework> pagedHomeworks = homeworks.subList(start, end);
-
-		List<HomeworkDetailTeacher> homeworkDetailTeachers = pagedHomeworks.stream()
+		List<HomeworkDetailTeacher> details = homeworks.stream()
 			.map(homework -> getHomeworkDetailTeacher(homework.getId(), user))
 			.toList();
-		Page<HomeworkDetailTeacher> content = new PageImpl<>(homeworkDetailTeachers, bookPageable,
-			homeworks.size());
-		return new HomeworkResponseTeacher(content);
+		Page<HomeworkDetailTeacher> content = new PageImpl<>(details, pageable, details.size());
+		return new HomeworkResponseTeacher(studentCount, content);
 	}
 
 	public HomeworkDetailTeacher getHomeworkDetailTeacher(Long homeworkId, User user) {
@@ -121,16 +110,11 @@ public class HomeworkService {
 		if (!homework.getUser().equals(user)) {
 			throw new IllegalArgumentException("숙제를 생성한 교사가 아닙니다.");
 		}
-		List<ReportTeacherResponseWithId> bookreports = bookReportTeacherService.getReportTeacherHomeworkResponses(
-			homeworkId);
 
-		return HomeworkDetailTeacher.builder()
-			.id(homeworkId)
-			.book(BookResponse.of(homework.getBook()))
-			.createdAt(homework.getCreatedAt())
-			.submitCount(bookreports.size())
-			.bookreports(bookreports)
-			.build();
+		int submitCount = 0;
+		List<ReportTeacherResponseWithId> bookReports = bookReportTeacherService.getReportTeacherHomeworkResponses(
+			homeworkId);
+		return HomeworkDetailTeacher.of(homework, submitCount, bookReports);
 	}
 
 	// public List<HomeworkResponseStudent> getHomeworkStudents(BookSearchRequest request, User user) {
