@@ -1,8 +1,13 @@
 package com.ssafy.ourdoc.domain.book.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
@@ -11,6 +16,7 @@ import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDto;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkPageable;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseStudent;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
 import com.ssafy.ourdoc.domain.book.entity.Book;
@@ -24,6 +30,7 @@ import com.ssafy.ourdoc.domain.bookreport.service.BookReportTeacherService;
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
+import com.ssafy.ourdoc.domain.classroom.service.ClassService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
@@ -55,6 +62,7 @@ public class HomeworkService {
 	private final ClassRoomRepository classRoomRepository;
 	private final StudentClassRepository studentClassRepository;
 	private final StudentService studentService;
+	private final ClassService classService;
 
 	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
@@ -84,31 +92,27 @@ public class HomeworkService {
 		homeworkRepository.delete(homework);
 	}
 
-	public List<HomeworkResponseTeacher> getHomeworkTeachers(BookSearchRequest request, User user) {
+	public HomeworkResponseTeacher getHomeworkTeachers(BookSearchRequest request, User user,
+		HomeworkPageable pageable) {
+		Pageable bookPageable = PageRequest.of(pageable.bookPage(), pageable.bookSize());
+		Pageable reportPageable = PageRequest.of(pageable.reportPage(), pageable.reportSize());
+
 		List<SchoolClassDto> schoolClasses = teacherService.getClassRoomsTeacher(user.getId());
-		List<HomeworkResponseTeacher> responses = schoolClasses.stream()
-			.map(schoolClass -> getHomeworkResponseTeacher(request, user, schoolClass))
-			.toList();
+		List<Homework> homeworks = new ArrayList<>();
+		schoolClasses.forEach(
+			schoolClassDto -> homeworks.addAll(homeworkRepository.findByClassRoomId(schoolClassDto.id())));
 
-		return responses;
-	}
+		int start = (int)bookPageable.getOffset();
+		int end = Math.min(start + bookPageable.getPageSize(), homeworks.size());
 
-	private HomeworkResponseTeacher getHomeworkResponseTeacher(BookSearchRequest request, User user,
-		SchoolClassDto schoolClassDto) {
-		List<Homework> homeworks = homeworkRepository.findByClassIdAndSearchBook(schoolClassDto.id(),
-			request.title(), request.author(), request.publisher());
-		List<HomeworkDetailTeacher> homeworkDetails = homeworks.stream()
+		List<Homework> pagedHomeworks = homeworks.subList(start, end);
+
+		List<HomeworkDetailTeacher> homeworkDetailTeachers = pagedHomeworks.stream()
 			.map(homework -> getHomeworkDetailTeacher(homework.getId(), user))
 			.toList();
-
-		return new HomeworkResponseTeacher(
-			schoolClassDto.schoolName(),
-			schoolClassDto.grade(),
-			schoolClassDto.classNumber(),
-			schoolClassDto.year(),
-			schoolClassDto.studentCount(),
-			homeworkDetails
-		);
+		Page<HomeworkDetailTeacher> content = new PageImpl<>(homeworkDetailTeachers, bookPageable,
+			homeworks.size());
+		return new HomeworkResponseTeacher(content);
 	}
 
 	public HomeworkDetailTeacher getHomeworkDetailTeacher(Long homeworkId, User user) {
@@ -129,17 +133,17 @@ public class HomeworkService {
 			.build();
 	}
 
-	public List<HomeworkResponseStudent> getHomeworkStudents(BookSearchRequest request, User user) {
-		List<SchoolClassDto> schoolClasses = studentService.getClassRoomsStudent(user.getId());
-		List<HomeworkResponseStudent> responses = schoolClasses.stream()
-			.map(schoolClass -> getHomeworkResponseStudent(request, user, schoolClass))
-			.toList();
-
-		return responses;
-	}
+	// public List<HomeworkResponseStudent> getHomeworkStudents(BookSearchRequest request, User user) {
+	// 	List<SchoolClassDto> schoolClasses = studentService.getClassRoomsStudent(user.getId());
+	// 	List<HomeworkResponseStudent> responses = schoolClasses.stream()
+	// 		.map(schoolClass -> getHomeworkResponseStudent(request, user, schoolClass))
+	// 		.toList();
+	//
+	// 	return responses;
+	// }
 
 	private HomeworkResponseStudent getHomeworkResponseStudent(BookSearchRequest request, User user,
-		SchoolClassDto schoolClassDto) {
+		SchoolClassDto schoolClassDto, Pageable pageable) {
 		List<Homework> homeworks = homeworkRepository.findByClassIdAndSearchBook(schoolClassDto.id(),
 			request.title(), request.author(), request.publisher());
 		List<HomeworkDetailStudent> homeworkDetails = homeworks.stream()
