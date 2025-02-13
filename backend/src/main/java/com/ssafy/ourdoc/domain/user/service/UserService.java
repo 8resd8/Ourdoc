@@ -3,6 +3,8 @@ package com.ssafy.ourdoc.domain.user.service;
 import static com.ssafy.ourdoc.global.common.enums.EmploymentStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 
+import java.util.NoSuchElementException;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -97,6 +99,11 @@ public class UserService {
 	private ResponseEntity<StudentLoginDto> loginStudent(LoginRequest request, User user) {
 		Student student = studentRepository.findByUser(user);
 		StudentQueryDto search = studentQueryRepository.getStudentLoginDto(user.getId());
+
+		if (search == null) {
+			throw new NoSuchElementException("승인 대기 중입니다.");
+		}
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer " + getAccessToken(request));
 
