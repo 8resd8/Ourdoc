@@ -19,7 +19,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import com.ssafy.ourdoc.domain.book.dto.BookListResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
@@ -123,15 +128,17 @@ public class BookFavoriteServiceTest {
 		List<BookFavorite> mockBookFavorite = List.of(
 			new BookFavorite(book, user)
 		);
-
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<BookFavorite> mockBookFavoritePage = new PageImpl<>(mockBookFavorite, pageable, mockBookFavorite.size());
 		when(bookRepository.findBookList(request.title(), request.author(), request.publisher())).thenReturn(
 			searchedBooks);
-		when(bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks)).thenReturn(mockBookFavorite);
+		when(bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks, pageable)).thenReturn(
+			mockBookFavoritePage);
 
-		List<BookResponse> bookFavorites = bookFavoriteService.getBookFavorites(request, user);
+		BookListResponse bookFavorites = bookFavoriteService.getBookFavorites(request, user, pageable);
 
-		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks);
-		assertThat(bookFavorites).isEqualTo(List.of(BookResponse.of(book)));
+		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks, pageable);
+		assertThat(bookFavorites.book().getContent()).isEqualTo(List.of(BookResponse.of(book)));
 
 	}
 
@@ -142,15 +149,17 @@ public class BookFavoriteServiceTest {
 
 		List<Book> searchedBooks = List.of(book);
 		List<BookFavorite> mockBookFavorite = new ArrayList<>();
-
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<BookFavorite> mockBookFavoritePage = new PageImpl<>(mockBookFavorite, pageable, 0);
 		when(bookRepository.findBookList(request.title(), request.author(), request.publisher())).thenReturn(
 			searchedBooks);
-		when(bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks)).thenReturn(mockBookFavorite);
+		when(bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks, pageable)).thenReturn(
+			mockBookFavoritePage);
 
-		List<BookResponse> bookFavorites = bookFavoriteService.getBookFavorites(request, user);
+		BookListResponse bookFavorites = bookFavoriteService.getBookFavorites(request, user, pageable);
 
-		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks);
-		assertTrue(bookFavorites.isEmpty());
+		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks, pageable);
+		assertTrue(bookFavorites.book().getContent().isEmpty());
 	}
 
 	private void setBookId(Book book, Long id) throws Exception {
