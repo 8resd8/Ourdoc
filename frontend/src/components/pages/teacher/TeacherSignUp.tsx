@@ -276,10 +276,23 @@ const TeacherSignUp = () => {
           />
         </div>
         <Modal
-          type="signup"
           isOpen={isModalOpen}
           onConfirm={handleSignUpConfirm}
           onCancel={handleCancel}
+          title={'입력하신 정보를 확인할게요.'}
+          body={
+            <div>
+              <div className="text-primary-500">
+                성룡 초등학교 1학년 3반 12번, 김미소님!
+              </div>
+              <div>생년월일은 2000년 4월 23일,</div>
+              <div>성별은 남자,</div>
+              <div>사용하시려는 아이디는 smile0423 입니다.</div>
+              <div className="mt-4 headline-small">회원가입을 진행할까요?</div>
+            </div>
+          }
+          confirmText={'네, 진행할래요'}
+          cancelText={'아니요, 다시할래요'}
         />
         <UploadModal
           isOpen={isUploadModalOpen}

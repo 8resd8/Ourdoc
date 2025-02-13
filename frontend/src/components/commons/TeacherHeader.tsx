@@ -1,63 +1,129 @@
 import { useRecoilValue } from 'recoil';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { currentUserState } from '../../recoil';
 import Layout from '../../layouts/Layout';
+import { HeaderProfileButton } from './HeaderProfileButton';
+import { DropdownMenu } from '../molecules/DropdownMenu';
+import { signoutApi } from '../../services/usersService';
+import Modal from './Modal';
+const DEFAULT_PROFILE_IMAGE_PATH = '/assets/images/profile.png';
+
+const HeaderRouter = ({
+  path,
+  pageName,
+}: {
+  path: string;
+  pageName: string;
+}) => {
+  const location = useLocation();
+  const isActive = location.pathname === path;
+
+  return (
+    <li className="py-[18px]">
+      <Link
+        to={path}
+        className={`py-[18px] border-b-2 hover:border-primary-600 headline-medium hover:text-primary-600 hover:focus:text-primary-600 ${
+          isActive
+            ? 'border-primary-500 text-primary-500'
+            : 'border-transparent text-gray-700'
+        }`}
+      >
+        {pageName}
+      </Link>
+    </li>
+  );
+};
 
 const TeacherHeader = () => {
-  const userName = useRecoilValue(currentUserState)?.name;
+  const user = useRecoilValue(currentUserState);
+  const navigate = useNavigate();
+  const userName = user.name;
+  const userImage =
+    user.profileImagePath == '' || user.profileImagePath == null
+      ? DEFAULT_PROFILE_IMAGE_PATH
+      : user.profileImagePath;
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const logout = async () => {
+    try {
+      await signoutApi();
+      navigate('/');
+    } catch (error) {
+      console.error('로그아웃 중 오류가 발생했습니다:', error);
+    }
+  };
 
   return (
     <>
-      <header className="bg-gray-0 shadow-xxsmall">
-        <div className="container mx-auto flex justify-between items-center py-4 px-6">
-          <div className="flex items-center space-x-4">
-            <img
-              src="/assets/images/logo1.png"
-              alt="로고"
-              className="h-[70px]"
-            />
-          </div>
-
-          {/* 네비게이션 */}
-          <nav className="flex space-x-6">
-            <Link
-              to="/teacher/main"
-              className="body-medium headline-medium text-primary-500"
-            >
-              메인
-            </Link>
-            <Link
-              to="/teacher/class-info"
-              className="body-medium  headline-medium text-gray-800 "
-            >
-              학급
-            </Link>
-            <Link
-              to="/teacher/book/category"
-              className="body-medium  headline-medium text-gray-800 "
-            >
-              도서
-            </Link>
-            <Link
-              to="/teacher/reports"
-              className="body-medium  headline-medium text-gray-800 "
-            >
-              독서록
-            </Link>
-          </nav>
-
-          {/* 사용자 정보 */}
-          <div className="flex items-center space-x-4">
-            <button className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-300">
+      <Modal
+        isOpen={isModalOpen}
+        onConfirm={() => {
+          logout();
+          setIsModalOpen(false);
+        }}
+        onCancel={() => {
+          setIsModalOpen(false);
+        }}
+        title={'정말 로그아웃 할까요?'}
+        body={''}
+        confirmText={'네'}
+        cancelText={'아니요'}
+      />
+      <header>
+        <nav>
+          <div className="h-[110px] bg-gray-0 shadow-xxsmall flex flex-wrap justify-between items-center px-[80px]">
+            <Link to="/teacher/main">
               <img
-                src="/assets/images/profile.png" // 사용자 아이콘 경로
-                alt="사용자 아이콘"
-                className="w-6 h-6"
+                src="/assets/images/logo1.png"
+                alt="로고"
+                className="w-[140px]"
               />
-            </button>
-            <span className="body-medium text-gray-800">{userName} 님</span>
+            </Link>
+            <div className="flex items-center order-2 static">
+              <HeaderProfileButton
+                onClick={toggleDropdown}
+                name={userName}
+                imagePath={userImage}
+              />
+              {isDropdownOpen && (
+                <div className="absolute top-[90px] right-[80px]">
+                  <DropdownMenu
+                    list={[
+                      {
+                        text: '프로필 보기',
+                        onClick: () => {
+                          navigate('/teacher/mypage');
+                          setIsDropdownOpen(false);
+                        },
+                      },
+                      {
+                        text: '로그아웃',
+                        onClick: () => {
+                          setIsModalOpen(true);
+                          setIsDropdownOpen(false);
+                        },
+                      },
+                    ]}
+                  />
+                </div>
+              )}
+            </div>
+            <div className="h-full">
+              <ul className="flex flex-row h-full items-end space-x-[10px] lg:space-x-[60px] order-1">
+                <HeaderRouter path="/teacher/main" pageName="메인" />
+                <HeaderRouter path="/teacher/class-info" pageName="학급" />
+                <HeaderRouter path="/teacher/book/category" pageName="도서" />
+                <HeaderRouter path="/teacher/reports" pageName="독서록" />
+              </ul>
+            </div>
           </div>
-        </div>
+        </nav>
       </header>
       <Layout />
     </>

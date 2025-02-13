@@ -44,6 +44,7 @@ export interface LoginResponse {
   classNumber?: number;
   studentNumber?: number;
   tempPassword?: string;
+  profileImagePath?: string;
 }
 
 export interface CheckIdRequest {
