@@ -1,14 +1,6 @@
 package com.ssafy.ourdoc.domain.book.dto.homework;
 
-import java.time.Year;
-import java.util.List;
+import org.springframework.data.domain.Page;
 
-public record HomeworkResponseTeacher(
-	String schoolName,
-	int grade,
-	int classNumber,
-	Year year,
-	int studentCount,
-	List<HomeworkDetailTeacher> homework
-) {
+public record HomeworkResponseTeacher(Page<HomeworkDetailTeacher> homework) {
 }
