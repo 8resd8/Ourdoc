@@ -24,14 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TeacherClassController {
 
-	private final ClassService classService;
 	private final TeacherClassRoomService teacherClassRoomService;
-
-	@PostMapping("/class")
-	@ResponseStatus(HttpStatus.CREATED)
-	public void createClassRoom(@Login User user, @RequestBody CreateClassRequest request) {
-		classService.createClass(user, request);
-	}
 
 	// 해당 교사의 연도, 학교, 학년, 반 조회
 	@GetMapping("/classes")
