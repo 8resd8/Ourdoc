@@ -21,8 +21,8 @@ import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
+import com.ssafy.ourdoc.domain.classroom.service.ClassService;
 import com.ssafy.ourdoc.domain.user.entity.User;
-import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
@@ -42,8 +42,9 @@ public class BookRecommendService {
 	private final TeacherClassRepository teacherClassRepository;
 	private final StudentClassRepository studentClassRepository;
 	private final ClassRoomRepository classRoomRepository;
-	private final BookService bookService;
 	private final BookReportRepository bookReportRepository;
+	private final BookService bookService;
+	private final ClassService classService;
 
 	public void addBookRecommend(BookRequest request, User user) {
 		if (user.getUserType().equals(UserType.학생)) {
@@ -76,7 +77,7 @@ public class BookRecommendService {
 
 	public BookRecommendResponseTeacher getBookRecommendsTeacher(BookSearchRequest request, User user,
 		Pageable pageable) {
-		ClassRoom userClassRoom = getUserClassRoom(user);
+		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
 		int grade = userClassRoom.getGrade();
 		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
@@ -96,7 +97,7 @@ public class BookRecommendService {
 
 	public BookRecommendResponseTeacher getBookRecommendsTeacherClass(BookSearchRequest request, User user,
 		Pageable pageable) {
-		ClassRoom userClassRoom = getUserClassRoom(user);
+		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
 
 		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
@@ -113,7 +114,7 @@ public class BookRecommendService {
 
 	public BookRecommendResponseStudent getBookRecommendsStudent(BookSearchRequest request, User user,
 		Pageable pageable) {
-		ClassRoom userClassRoom = getUserClassRoom(user);
+		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
 		int grade = userClassRoom.getGrade();
 
@@ -132,7 +133,7 @@ public class BookRecommendService {
 
 	public BookRecommendResponseStudent getBookRecommendsStudentClass(BookSearchRequest request, User user,
 		Pageable pageable) {
-		ClassRoom userClassRoom = getUserClassRoom(user);
+		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 
 		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomAndBookIn(userClassRoom,
@@ -143,20 +144,6 @@ public class BookRecommendService {
 			.toList();
 		Page<BookRecommendDetailStudent> content = new PageImpl<>(details, pageable, details.size());
 		return new BookRecommendResponseStudent(content);
-	}
-
-	private ClassRoom getUserClassRoom(User user) {
-		if (user.getUserType().equals(UserType.학생)) {
-			return studentClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
-				.map(StudentClass::getClassRoom)
-				.orElseThrow(() -> new NoSuchElementException("활성 상태의 학생 학급 정보가 존재하지 않습니다."));
-		}
-		if (user.getUserType().equals(UserType.교사)) {
-			return teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
-				.map(TeacherClass::getClassRoom)
-				.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
-		}
-		throw new NoSuchElementException("현재 유효한 상태의 학급 정보가 없습니다.");
 	}
 
 	private BookRecommendDetailTeacher toBookRecommendDetailTeacher(BookRecommend bookRecommend, Long userId) {
