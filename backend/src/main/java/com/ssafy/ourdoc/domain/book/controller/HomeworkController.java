@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +41,7 @@ public class HomeworkController {
 	}
 
 	@GetMapping("/teachers/homework")
-	public ResponseEntity<List<HomeworkResponseTeacher>> getHomeworks(@RequestBody BookSearchRequest request,
+	public ResponseEntity<List<HomeworkResponseTeacher>> getHomeworks(@ModelAttribute BookSearchRequest request,
 		@Login User user) {
 		return ResponseEntity.ok(homeworkService.getHomeworkTeachers(request, user));
 	}

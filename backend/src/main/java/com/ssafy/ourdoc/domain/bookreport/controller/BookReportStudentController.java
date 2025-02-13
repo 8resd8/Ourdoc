@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,20 +55,20 @@ public class BookReportStudentController {
 	}
 
 	@GetMapping("/statistics")
-	public BookReportStatisticsResponse getBookReportStatistics(@Login User user, @RequestBody
-		BookReportStatisticsRequest request) {
+	public BookReportStatisticsResponse getBookReportStatistics(@Login User user, @ModelAttribute
+	BookReportStatisticsRequest request) {
 		return bookReportStudentService.getBookReportStatistics(user, request);
 	}
 
 	@GetMapping("/statistics/months")
 	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(@Login User user,
-		@RequestBody BookReportStatisticsRequest request) {
+		@ModelAttribute BookReportStatisticsRequest request) {
 		return bookReportStudentService.getMonthlyBookReportStatistics(user, request);
 	}
 
 	@GetMapping("/statistics/days")
 	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(@Login User user,
-		@RequestBody BookReportStatisticsRequest request) {
+		@ModelAttribute BookReportStatisticsRequest request) {
 		return bookReportStudentService.getDailyBookReportStatistics(user, request);
 	}
 
