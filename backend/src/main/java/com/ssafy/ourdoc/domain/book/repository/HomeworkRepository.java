@@ -3,6 +3,8 @@ package com.ssafy.ourdoc.domain.book.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
@@ -17,5 +19,5 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long>, Homew
 
 	List<Homework> findByClassRoomId(Long classRoomId);
 
-	List<Homework> findByClassRoomIdAndBookIn(Long classRoomId, List<Book> books);
+	Page<Homework> findByClassRoomAndBookIn(ClassRoom classRoom, List<Book> books, Pageable pageable);
 }
