@@ -99,4 +99,11 @@ public class TeacherController {
 		teacherService.updateTeacherProfile(user, profileImage, request);
 		return ResponseEntity.ok("교사 정보가 수정되었습니다.");
 	}
+
+	// 교사 학급 생성(활성화)
+	@PostMapping("class")
+	public ResponseEntity<String> createClass(@Login User user) {
+		teacherService.createClass(user);
+		return ResponseEntity.ok("학급이 생성되었습니다.");
+	}
 }
