@@ -55,7 +55,6 @@ export interface VerifyPasswordRequest {
 }
 
 export interface ChangePasswordRequest {
-  oldPassword: string;
   newPassword: string;
 }
 
@@ -151,10 +150,9 @@ export const verifyEmailCodeApi = async (
 
 // 비밀번호 변경
 export const changePasswordApi = async (
-  userId: string,
   data: ChangePasswordRequest
 ): Promise<void> => {
-  await api.put(`/users/${userId}/password`, data);
+  await api.patch(`/users/password`, data);
 };
 
 // 회원 탈퇴
