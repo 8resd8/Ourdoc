@@ -4,11 +4,13 @@ import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
 import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudent.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
+import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 import static com.ssafy.ourdoc.global.common.enums.Active.*;
 import static com.ssafy.ourdoc.global.common.enums.AuthStatus.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,8 +21,10 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.dto.InactiveStudentProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentProfileResponseDto;
+import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentPendingProfileDto;
 import com.ssafy.ourdoc.domain.user.teacher.dto.StudentProfileDto;
 import com.ssafy.ourdoc.global.common.enums.Active;
@@ -74,15 +78,18 @@ public class StudentClassQueryRepositoryImpl implements StudentClassQueryReposit
 	}
 
 	@Override
-	public long updateAuthStatusOfStudentClass(Long userId, Long classId, AuthStatus newStatus) {
+	public long updateAuthStatusOfStudentClass(Long userId, Long classId, Integer studentNumber, Active newActive, AuthStatus newStatus) {
 		return queryFactory
 			.update(studentClass)
+			.set(studentClass.active, newActive)
 			.set(studentClass.authStatus, newStatus)
 			.set(studentClass.certificateTime, Expressions.constant(LocalDateTime.now()))
 			.set(studentClass.updatedAt, Expressions.constant(LocalDateTime.now()))
 			.where(
 				studentClass.user.id.eq(userId),
 				studentClass.classRoom.id.eq(classId),
+				studentClass.studentNumber.eq(studentNumber),
+				studentClass.active.eq(비활성),
 				studentClass.authStatus.eq(대기)
 			)
 			.execute();
@@ -136,6 +143,16 @@ public class StudentClassQueryRepositoryImpl implements StudentClassQueryReposit
 			.from(user)
 			.where(user.id.eq(userid))
 			.fetchOne();
+	}
+
+	@Override
+	public Optional<StudentClass> findLatestStudentClass(User studentUser) {
+		return Optional.ofNullable(
+			queryFactory
+				.selectFrom(studentClass)
+				.where(studentClass.user.id.eq(studentUser.getId()), studentClass.active.eq(활성))
+				.fetchOne()
+		);
 	}
 
 	public Page<StudentPendingProfileDto> findStudentsByClassIdAndActiveAndAuthStatus(Long classId, Active active,
