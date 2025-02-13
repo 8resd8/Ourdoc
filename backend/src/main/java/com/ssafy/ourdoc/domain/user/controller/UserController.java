@@ -2,6 +2,7 @@ package com.ssafy.ourdoc.domain.user.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.ourdoc.domain.user.dto.CheckIdRequest;
 import com.ssafy.ourdoc.domain.user.dto.LoginRequest;
 import com.ssafy.ourdoc.domain.user.dto.LogoutResponse;
+import com.ssafy.ourdoc.domain.user.dto.request.ChangePasswordRequest;
 import com.ssafy.ourdoc.domain.user.dto.request.CheckPasswordRequest;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.service.UserService;
@@ -63,5 +65,11 @@ public class UserController {
 	public ResponseEntity<Boolean> verifyPassword(@Login User user, @RequestBody CheckPasswordRequest request) {
 		boolean isDuplicate = userService.verifyPassword(user, request);
 		return ResponseEntity.ok(isDuplicate);
+	}
+
+	// 5. 비밀번호 변경
+	@PatchMapping("/password")
+	public void updatePassword(@Login User user, @RequestBody ChangePasswordRequest request) {
+		userService.changePassword(user, request);
 	}
 }

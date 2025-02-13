@@ -56,6 +56,7 @@ public class StudentService {
 	// 1. 학생 회원가입
 	public Long signup(StudentSignupRequest request) {
 
+		validateSignupRequest(request);
 		ValidatedEntities validatedEntities = validateAndRetrieveEntities(request);
 
 		// User 엔티티 생성
@@ -91,6 +92,27 @@ public class StudentService {
 
 		return savedStudent.getId();
 	}
+
+	private void validateSignupRequest(StudentSignupRequest request) {
+		if (request == null || request.name() == null || request.name().isBlank()
+		|| request.loginId() == null || request.loginId().isBlank()
+		|| request.password() == null || request.password().isBlank()
+		|| request.schoolId() == null || request.grade() == null
+		|| request.classNumber() == null || request.studentNumber() == null
+		|| request.birth() == null || request.gender() == null) {
+			throw new IllegalArgumentException("입력되지 않은 정보가 있습니다.");
+		}
+		if (request.grade() <= 0 || request.grade() > 6) {
+			throw new IllegalArgumentException("학년은 1 ~ 6 사이의 값이어야 합니다.");
+		}
+		if (request.classNumber() <= 0) {
+			throw new IllegalArgumentException("반 번호는 1 이상이어야 합니다.");
+		}
+		if (request.studentNumber() <= 0) {
+			throw new IllegalArgumentException("학생 번호는 1 이상이어야 합니다.");
+		}
+	}
+
 
 	public ValidatedEntities validateAndRetrieveEntities(StudentSignupRequest request) {
 		// 1) 아이디 중복 체크
