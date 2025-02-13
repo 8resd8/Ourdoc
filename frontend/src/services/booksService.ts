@@ -141,12 +141,27 @@ export const getTeacherRecommendedBooksApi = async (): Promise<
 };
 
 // 학생 학년 추천 도서 목록 조회
-export const getStudentRecommendedBooksApi = async (): Promise<
+export const getStudentRecommendedBooksApi = async (params: BookQueryParams): Promise<
   RecommendedBook[]
 > => {
   try {
     const response = await api.get<RecommendedBook[]>(
-      '/books/students/recommend'
+      '/books/students/recommend/grades', { params }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching student recommended books:', error);
+    throw error;
+  }
+};
+
+// 학생 학급 추천 도서 목록 조회
+export const getClassStudentRecommendedBooksApi = async (params: BookQueryParams): Promise<
+  RecommendedBook[]
+> => {
+  try {
+    const response = await api.get<RecommendedBook[]>(
+      '/books/students/recommend/classes', { params }
     );
     return response.data;
   } catch (error) {
@@ -223,9 +238,9 @@ export const getTeacherHomeworkBookDetailApi = async (
 };
 
 // 학생 학급 숙제 도서 목록 조회
-export const getStudentHomeworkBooksApi = async (): Promise<Book[]> => {
+export const getStudentHomeworkBooksApi = async (params: BookQueryParams): Promise<Book[]> => {
   try {
-    const response = await api.get<Book[]>('/books/students/homework');
+    const response = await api.get<Book[]>('/books/students/homework', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching student homework books:', error);

@@ -36,6 +36,10 @@ export interface BookReportDetail {
   approveStatus: string;
 }
 
+export interface BookReportParams {
+  grade: number;
+}
+
 // 독서록 작성
 export const createBookReportApi = async (
   data: CreateBookReportRequest
@@ -59,9 +63,9 @@ export const getTeacherBookReportsApi = async (): Promise<BookReport[]> => {
 };
 
 // 학생 독서록 목록 조회
-export const getStudentBookReportsApi = async (): Promise<BookReport[]> => {
+export const getStudentBookReportsApi = async (params: BookReportParams): Promise<BookReport[]> => {
   const response = await api.get<{ bookReports: BookReport[] }>(
-    '/bookreports/students'
+    '/bookreports/students', { params }
   );
   return response.data.bookReports;
 };
