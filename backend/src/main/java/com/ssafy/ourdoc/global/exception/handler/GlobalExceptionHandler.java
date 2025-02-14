@@ -13,6 +13,7 @@ import com.ssafy.ourdoc.domain.notification.exception.SubscribeException;
 import com.ssafy.ourdoc.global.common.response.ErrorResponse;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
@@ -55,6 +56,12 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler
 	public ResponseEntity<ErrorResponse> handleMissingRequestException(HttpMessageNotReadableException ex,
+		HttpServletRequest request) {
+		return ErrorResponse.toResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
+	}
+
+	@ExceptionHandler
+	public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex,
 		HttpServletRequest request) {
 		return ErrorResponse.toResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), request.getRequestURI());
 	}
