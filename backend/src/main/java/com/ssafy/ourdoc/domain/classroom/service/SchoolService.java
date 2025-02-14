@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolResponse;
@@ -35,12 +37,15 @@ public class SchoolService {
 
 	private final SchoolRepository schoolRepository;
 
-	public List<SchoolResponse> searchSchoolName(String schoolName) {
-		List<School> schoolList = schoolRepository.findAllBySchoolNameContaining(schoolName);
+	public Page<SchoolResponse> searchSchoolName(String schoolName, Pageable pageable) {
+		Page<School> schoolPage = schoolRepository.findAllBySchoolNameContaining(schoolName, pageable);
 
-		return schoolList.stream()
-			.map(school -> new SchoolResponse(school.getSchoolName(), school.getAddress()))
-			.collect(Collectors.toList());
+		return schoolPage.map(school ->
+			new SchoolResponse(
+				school.getSchoolName(),
+				school.getAddress()
+			)
+		);
 	}
 
 	// 학교 API 검색

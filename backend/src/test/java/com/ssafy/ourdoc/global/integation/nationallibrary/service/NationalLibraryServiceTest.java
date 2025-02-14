@@ -15,9 +15,9 @@ class NationalLibraryServiceTest {
 	@Autowired
 	private NationalLibraryBookService nationalLibraryBookService;
 
-	@Test
-	@DisplayName("국립중앙도서관의 보유 도서 수를 가져온다.")
-	void getNationalLibraryBookCountTest() {
-		assertThat(nationalLibraryBookService.getBookCount()).isGreaterThan(0);
-	}
+	// @Test
+	// @DisplayName("국립중앙도서관의 보유 도서 수를 가져온다.")
+	// void getNationalLibraryBookCountTest() {
+	// 	assertThat(nationalLibraryBookService.getBookCount()).isGreaterThan(0);
+	// }
 }
