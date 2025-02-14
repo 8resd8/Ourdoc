@@ -50,8 +50,8 @@ public class BookReportStudentController {
 
 	@DeleteMapping("/{bookReportId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteBookReport(@PathVariable("bookReportId") Long bookReportId) {
-		bookReportStudentService.deleteBookReport(bookReportId);
+	public void deleteBookReport(@Login User user, @PathVariable("bookReportId") Long bookReportId) {
+		bookReportStudentService.deleteBookReport(user, bookReportId);
 	}
 
 	@GetMapping("/statistics")

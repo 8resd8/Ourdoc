@@ -83,6 +83,11 @@ public class BookReportStudentService {
 		return new BookReportListResponse(bookReportDtoPage);
 	}
 
+	public void deleteBookReport(User user, Long bookReportId) {
+		BookReport bookReport = bookReportRepository.findByBookReport(bookReportId, user.getId())
+			.orElseThrow(() -> new NoSuchElementException("본인의 독서록이 없습니다."));
+	}
+
 	public List<BookReportHomeworkStudent> getReportStudentHomeworkResponses(Long homeworkId, Long userId) {
 		List<BookReportHomeworkStudent> convertDto = bookReportRepository.bookReportsHomeworkStudents(homeworkId,
 				userId).stream()

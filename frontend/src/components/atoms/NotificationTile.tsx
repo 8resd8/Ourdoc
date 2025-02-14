@@ -7,9 +7,9 @@ export const NotificationTile = ({
   message: string;
   time: string;
 }) => (
-  <div className="self-stretch py-3 justify-start items-center gap-6 inline-flex">
-    <div className="grow shrink basis-0 h-6 justify-start items-center gap-6 flex">
-      <div className="w-[50px] text-center text-primary-500 body-medium">
+  <div className="self-stretch py-3 justify-start items-center gap-6 inline-flex hover:bg-primary-50 cursor-pointer">
+    <div className="grow shrink basis-0 h-6 justify-start items-center gap-6 flex px-2">
+      <div className="w-[50px] text-start text-primary-500 body-medium">
         {type}
       </div>
       <div className="grow shrink basis-0 h-6 justify-start items-center gap-3 flex">

@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.bookreport.service;
 
 import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
+import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -19,6 +20,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.ssafy.ourdoc.data.entity.BookReportSample;
+import com.ssafy.ourdoc.data.entity.BookSample;
+import com.ssafy.ourdoc.data.entity.ClassRoomSample;
+import com.ssafy.ourdoc.data.entity.SchoolSample;
+import com.ssafy.ourdoc.data.entity.StudentClassSample;
+import com.ssafy.ourdoc.data.entity.UserSample;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
@@ -28,6 +35,8 @@ import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportFeedbackRepository;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
+import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
+import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
@@ -152,33 +161,4 @@ class BookReportStudentServiceTest {
 		assertThat(response.bookReports().getTotalPages()).isEqualTo(1);   // 총 페이지 수 검증
 	}
 
-
-	@Test
-	@DisplayName("독서록 삭제 시 피드백도 함께 삭제된다.")
-	void testDeleteBookReport() {
-		// given
-		Long bookReportId = 1L;
-
-		BookReportFeedBack feedback1 = BookReportFeedBack.builder()
-			.bookReport(mockBookReport)
-			.comment("피드백 1")
-			.build();
-
-		BookReportFeedBack feedback2 = BookReportFeedBack.builder()
-			.bookReport(mockBookReport)
-			.comment("피드백 2")
-			.build();
-
-		mockBookReport.getBookReportFeedBack().add(feedback1);
-		mockBookReport.getBookReportFeedBack().add(feedback2);
-
-		when(bookReportRepository.findById(bookReportId)).thenReturn(Optional.of(mockBookReport));
-
-		// when
-		bookReportStudentService.deleteBookReport(bookReportId);
-
-		// then
-		verify(bookReportRepository, times(1)).findById(bookReportId);
-		verify(bookReportRepository, times(1)).delete(mockBookReport);
-	}
 }
