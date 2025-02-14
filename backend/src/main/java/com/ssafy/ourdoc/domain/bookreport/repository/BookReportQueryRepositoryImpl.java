@@ -23,7 +23,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -151,7 +150,8 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.join(bookReport.book, book)
 			.join(bookReport.homework, homework)
 			.where(
-				bookReport.homework.id.eq(homeworkId)
+				bookReport.homework.id.eq(homeworkId),
+				studentClass.active.eq(Active.활성)
 			).fetch();
 	}
 
