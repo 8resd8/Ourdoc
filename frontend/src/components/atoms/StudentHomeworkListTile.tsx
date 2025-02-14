@@ -1,4 +1,4 @@
-export const HomeworkListTile = ({
+export const StudentHomeworkListTile = ({
   no,
   title,
   date,
@@ -8,7 +8,7 @@ export const HomeworkListTile = ({
   no: number;
   title: string;
   date: string;
-  status: string;
+  status: boolean;
   onClick?: () => void;
 }) => (
   <div className="self-stretch px-6 py-3 justify-start items-center gap-[18px] inline-flex hover:bg-primary-50 cursor-pointer">
@@ -23,9 +23,12 @@ export const HomeworkListTile = ({
     <div className="w-[120px] text-center text-gray-800 body-medium">
       {date}
     </div>
-    <div className="w-[120px] text-center">
-      <span className="text-gray-800 headline-small">{status} </span>
-      <span className="text-gray-700 body-medium">/22명</span>
+    <div className="w-[120px] items-center justify-center inline-flex">
+      <div
+        className={`px-3 py-1 rounded-[5px] text-center body-small border justify-center items-center inline-flex ${status ? 'border-system-success text-system-success' : 'border-system-danger text-system-danger'}`}
+      >
+        {status ? '제출 완료' : '미제출'}
+      </div>
     </div>
   </div>
 );
