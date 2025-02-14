@@ -126,12 +126,27 @@ export const addTeacherRecommendedBookApi = async (
 };
 
 // 교사 학년 추천 도서 목록 조회
-export const getTeacherRecommendedBooksApi = async (): Promise<
+export const getTeacherRecommendedBooksApi = async (params: BookQueryParams): Promise<
   RecommendedBook[]
 > => {
   try {
     const response = await api.get<RecommendedBook[]>(
-      '/books/teachers/recommend'
+      '/books/teachers/recommend/grades', { params }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching teacher recommended books:', error);
+    throw error;
+  }
+};
+
+// 교사 학급 추천 도서 목록 조회
+export const getClassTeacherRecommendedBooksApi = async (params: BookQueryParams): Promise<
+  RecommendedBook[]
+> => {
+  try {
+    const response = await api.get<RecommendedBook[]>(
+      '/books/teachers/recommend/classes', { params }
     );
     return response.data;
   } catch (error) {
