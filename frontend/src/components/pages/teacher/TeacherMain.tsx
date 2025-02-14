@@ -15,7 +15,7 @@ const TeacherMain = () => {
       <div className="bottom-[40px] right-[40px] fixed xl:top-[165px] xl:right-[200px]">
         <DebateButton
           onClick={() => {
-            navigate('/debate/board');
+            navigate('/debate/room');
           }}
         />
       </div>
