@@ -9,7 +9,8 @@ public record BookReportDetailDto(
 	String author,
 	String publisher,
 	LocalDateTime createdAt,
-	String content,
+	String beforeContent,
+	String afterContent,
 	String aiComment,
 	String teacherComment,
 	LocalDateTime approveTime
