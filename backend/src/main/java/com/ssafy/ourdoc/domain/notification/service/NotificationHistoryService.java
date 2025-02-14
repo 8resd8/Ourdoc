@@ -17,6 +17,7 @@ import com.ssafy.ourdoc.domain.user.repository.UserRepository;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
+import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class NotificationHistoryService {
 
 	// 학생 -> 담당교사
 	public NotificationRecipient saveNotifyStudent(User studentUser, NotificationType type, String content) {
-		if (!studentUser.getUserType().equals(학생)) {
+		if (studentUser.getUserType() != UserType.학생) {
 			throw new ForbiddenException("학생만 알림을 보낼 수 있습니다.");
 		}
 
@@ -47,7 +48,7 @@ public class NotificationHistoryService {
 
 	// 교사 -> 학생
 	public NotificationRecipient saveNotifyTeacher(User teacherUser, Long studentClassId, String content) {
-		if (!teacherUser.getUserType().equals(교사)) {
+		if (teacherUser.getUserType() != UserType.교사) {
 			throw new IllegalArgumentException("교사만 알림을 보낼 수 있습니다.");
 		}
 
@@ -93,10 +94,10 @@ public class NotificationHistoryService {
 	}
 
 	private boolean isValidNotification(User sender, User recipient) {
-		if (sender.getUserType().equals(교사) && recipient.getUserType().equals(학생)) {
+		if (sender.getUserType() == 교사 && recipient.getUserType() == 학생) {
 			return true;  // 교사 -> 학생 알림전송
 		}
-		if (sender.getUserType().equals(학생) && recipient.getUserType().equals(교사)) {
+		if (sender.getUserType() == 학생 && recipient.getUserType() == 교사) {
 			return true;  // 학생 -> 교사 알림전송
 		}
 

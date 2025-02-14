@@ -47,14 +47,14 @@ public class BookRecommendService {
 	private final ClassService classService;
 
 	public void addBookRecommend(BookRequest request, User user) {
-		if (user.getUserType().equals(UserType.학생)) {
+		if (user.getUserType() == UserType.학생) {
 			throw new ForbiddenException("추천도서를 생성할 권한이 없습니다.");
 		}
 		Book book = bookService.findBookById(request.bookId());
 		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 			.map(TeacherClass::getClassRoom)
 			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
-		
+
 		if (bookRecommendRepository.existsByBookAndUserAndClassRoom(book, user, classRoom)) {
 			throw new IllegalArgumentException("이미 추천 도서로 등록했습니다.");
 		}
@@ -63,7 +63,7 @@ public class BookRecommendService {
 	}
 
 	public void deleteBookRecommend(BookRequest request, User user) {
-		if (user.getUserType().equals(UserType.학생)) {
+		if (user.getUserType() == UserType.학생) {
 			throw new ForbiddenException("추천도서를 삭제할 권한이 없습니다.");
 		}
 		Book book = bookService.findBookById(request.bookId());

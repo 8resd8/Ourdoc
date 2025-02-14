@@ -26,7 +26,6 @@ import com.ssafy.ourdoc.domain.user.student.repository.StudentQueryRepository;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherQueryRepository;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherRepository;
-import com.ssafy.ourdoc.global.common.enums.EmploymentStatus;
 import com.ssafy.ourdoc.global.config.JwtConfig;
 import com.ssafy.ourdoc.global.exception.UserFailedException;
 import com.ssafy.ourdoc.global.util.JwtBlacklistService;
@@ -117,7 +116,8 @@ public class UserService {
 		saveRefreshTokenAndSetCookie(user, headers);
 		String profileImagePath = user.getProfileImagePath() == null ? "" : user.getProfileImagePath();
 
-		AdminLoginDto response = new AdminLoginDto(user.getLoginId(), user.getName(), user.getUserType(), profileImagePath);
+		AdminLoginDto response = new AdminLoginDto(user.getLoginId(), user.getName(), user.getUserType(),
+			profileImagePath);
 
 		return ResponseEntity.ok().headers(headers).body(response);
 	}
@@ -136,7 +136,7 @@ public class UserService {
 			throw new UserFailedException("로그인 실패: 비밀번호가 틀렸습니다.");
 		}
 
-		if (!user.getUserType().equals(request.userType())) {
+		if (user.getUserType() != request.userType()) {
 			throw new UserFailedException("로그인 실패: 유저 타입이 일치하지 않습니다.");
 		}
 		return user;

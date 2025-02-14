@@ -53,7 +53,7 @@ public class HomeworkService {
 	private final BookReportStudentService bookReportStudentService;
 
 	public void addHomework(BookRequest request, User user) {
-		if (user.getUserType().equals(UserType.학생)) {
+		if (user.getUserType() == UserType.학생) {
 			throw new ForbiddenException("숙제도서를 생성할 권한이 없습니다.");
 		}
 		Book book = bookService.findBookById(request.bookId());
@@ -68,7 +68,7 @@ public class HomeworkService {
 	}
 
 	public void deleteHomework(BookRequest request, User user) {
-		if (user.getUserType().equals(UserType.학생)) {
+		if (user.getUserType() == UserType.학생) {
 			throw new ForbiddenException("숙제도서를 삭제할 권한이 없습니다.");
 		}
 		Book book = bookService.findBookById(request.bookId());

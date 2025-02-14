@@ -76,12 +76,12 @@ public class ClassService {
 	}
 
 	public ClassRoom getUserClassRoom(User user) {
-		if (user.getUserType().equals(UserType.학생)) {
+		if (user.getUserType() == UserType.학생) {
 			return studentClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 				.map(StudentClass::getClassRoom)
 				.orElseThrow(() -> new NoSuchElementException("활성 상태의 학생 학급 정보가 존재하지 않습니다."));
 		}
-		if (user.getUserType().equals(UserType.교사)) {
+		if (user.getUserType() == UserType.교사) {
 			return teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 				.map(TeacherClass::getClassRoom)
 				.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
