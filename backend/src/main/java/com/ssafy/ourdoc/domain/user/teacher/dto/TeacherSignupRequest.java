@@ -5,6 +5,7 @@ import java.sql.Date;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.Gender;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -29,7 +30,7 @@ public record TeacherSignupRequest(
 	@Size(max = 250, message = "{size.max}")
 	Gender gender,
 
-	@NotBlank(message = "{notblank}")
+	@Email(message = "{email}")
 	@Size(max = 250, message = "{size.max}")
 	String email,
 
