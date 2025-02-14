@@ -1,6 +1,6 @@
 package com.ssafy.ourdoc.domain.book.dto;
 
-import java.time.LocalDate;
+import java.time.Year;
 
 import lombok.Builder;
 
@@ -12,7 +12,7 @@ public record BookDetailDto(
 	String genre,
 	String description,
 	String publisher,
-	LocalDate publishTime,
+	Year publishYear,
 	String imageUrl
 ) {
 }
