@@ -13,7 +13,8 @@ public record BookReportDetailResponse(
 	String author,
 	String publisher,
 	LocalDateTime createdAt,
-	String content,
+	String beforeContent,
+	String afterContent,
 	String aiComment,
 	String teacherComment,
 	ApproveStatus approveStatus

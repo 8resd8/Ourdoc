@@ -36,13 +36,14 @@ public class BookReportService {
 		ApproveStatus approveStatus = (detailDto.approveTime() != null) ? 있음 : 없음;
 		String aiComment = detailDto.aiComment() == null ? "없음" : detailDto.aiComment();
 		String teacherComment = detailDto.teacherComment() == null ? "없음" : detailDto.teacherComment();
-		
+
 		return BookReportDetailResponse.builder()
 			.bookTitle(detailDto.bookTitle())
 			.author(detailDto.author())
 			.publisher(detailDto.publisher())
 			.createdAt(detailDto.createdAt())
-			.content(detailDto.content())
+			.beforeContent(detailDto.beforeContent())
+			.afterContent(detailDto.afterContent())
 			.aiComment(aiComment)
 			.teacherComment(teacherComment)
 			.approveStatus(approveStatus)

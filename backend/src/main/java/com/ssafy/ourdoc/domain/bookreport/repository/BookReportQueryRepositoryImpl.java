@@ -120,7 +120,8 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				bookReport.book.author,
 				bookReport.book.publisher,
 				bookReport.createdAt,
-				bookReport.afterContent.as("content"),
+				bookReport.beforeContent.as("beforeContent"),
+				bookReport.afterContent.as("AfterContent"),
 				aiFeedBack.comment.as("aiComment"),
 				teacherFeedBack.comment.as("teacherComment"),
 				bookReport.approveTime

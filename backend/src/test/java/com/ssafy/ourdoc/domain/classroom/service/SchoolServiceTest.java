@@ -9,6 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolResponse;
 import com.ssafy.ourdoc.domain.classroom.entity.School;
@@ -36,11 +38,12 @@ class SchoolServiceTest {
 
 	@Test
 	void searchDBSchoolName() {
-		List<School> school = schoolRepository.findAllBySchoolNameContaining("신중");
+		PageRequest pageRequest = PageRequest.of(0, 10);
+		Page<School> school = schoolRepository.findAllBySchoolNameContaining("신중", pageRequest);
 
 		assertThat(school).isNotNull();
-		assertThat(school.get(0).getSchoolName()).isEqualTo("서울신중초등학교");
-		assertThat(school.get(0).getAddress()).isEqualTo("서울특별시 서초구 남부순환로317길 15");
+		assertThat(school.getContent().get(0).getSchoolName()).isEqualTo("서울신중초등학교");
+		assertThat(school.getContent().get(0).getAddress()).isEqualTo("서울특별시 서초구 남부순환로317길 15");
 	}
 
 }
