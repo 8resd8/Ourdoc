@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import lombok.Builder;
 
 @Builder
-public record BookRecommendResponseStudent(
-	Page<BookRecommendDetailStudent> recommend
+public record BookRecommendStudentResponse(
+	Page<BookRecommendStudentDetail> recommends
 ) {
 }

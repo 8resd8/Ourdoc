@@ -1,7 +1,8 @@
 package com.ssafy.ourdoc.domain.book.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailStudent;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseStudent;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetail;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentResponse;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherDetail;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherResponse;
 import com.ssafy.ourdoc.domain.book.service.HomeworkService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
@@ -42,25 +43,33 @@ public class HomeworkController {
 	}
 
 	@GetMapping("/teachers/homework")
-	public ResponseEntity<List<HomeworkResponseTeacher>> getHomeworks(@ModelAttribute BookSearchRequest request,
-		@Login User user) {
-		return ResponseEntity.ok(homeworkService.getHomeworkTeachers(request, user));
+	public ResponseEntity<HomeworkTeacherResponse> getHomeworkTeacherClass(
+		@ModelAttribute BookSearchRequest request,
+		@Login User user,
+		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+		HomeworkTeacherResponse response = homeworkService.getHomeworkTeacherClass(request, user, pageable);
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/teachers/homework/{homeworkId}")
-	public ResponseEntity<HomeworkDetailTeacher> getHomework(@PathVariable("homeworkId") long homeworkId,
+	public ResponseEntity<HomeworkTeacherDetail> getHomeworkTeacherDetail(
+		@PathVariable("homeworkId") long homeworkId,
 		@Login User user) {
-		return ResponseEntity.ok(homeworkService.getHomeworkDetailTeacher(homeworkId, user));
+		HomeworkTeacherDetail response = homeworkService.getHomeworkDetailTeacher(homeworkId, user);
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/students/homework")
-	public ResponseEntity<List<HomeworkResponseStudent>> getHomeworksStudent(@RequestBody BookSearchRequest request,
-		@Login User user) {
-		return ResponseEntity.ok(homeworkService.getHomeworkStudents(request, user));
+	public ResponseEntity<HomeworkStudentResponse> getHomeworkStudentClass(
+		@ModelAttribute BookSearchRequest request,
+		@Login User user,
+		@PageableDefault(page = 0, size = 10) Pageable pageable) {
+		HomeworkStudentResponse response = homeworkService.getHomeworkStudentClass(request, user, pageable);
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/students/homework/{homeworkId}")
-	public ResponseEntity<HomeworkDetailStudent> getHomeworkStudent(@PathVariable("homeworkId") long homeworkId,
+	public ResponseEntity<HomeworkStudentDetail> getHomeworkStudent(@PathVariable("homeworkId") long homeworkId,
 		@Login User user) {
 		return ResponseEntity.ok(homeworkService.getHomeworkDetailStudent(homeworkId, user));
 	}

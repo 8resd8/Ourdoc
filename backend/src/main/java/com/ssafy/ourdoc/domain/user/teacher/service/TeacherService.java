@@ -140,7 +140,9 @@ public class TeacherService {
 	}
 
 	// 2. QR 생성
-	public QrResponseDto generateTeacherClassQr(Long teacherId, String url) {
+	public QrResponseDto generateTeacherClassQr(User user, String url) {
+		Long teacherId = teacherRepository.findByUser(user).getId();
+
 		// 1) 교사 조회
 		Teacher teacher = teacherRepository.findById(teacherId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 ID의 교사가 없습니다."));
