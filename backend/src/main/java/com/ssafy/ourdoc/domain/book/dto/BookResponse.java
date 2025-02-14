@@ -8,7 +8,7 @@ import lombok.Builder;
 
 @Builder
 public record BookResponse(
-	Long id,
+	Long bookId,
 	String title,
 	String author,
 	String genre,
@@ -18,7 +18,7 @@ public record BookResponse(
 ) {
 	public static BookResponse of(Book book) {
 		return BookResponse.builder()
-			.id(book.getId())
+			.bookId(book.getId())
 			.title(book.getTitle())
 			.author(book.getAuthor())
 			.genre(book.getGenre())
