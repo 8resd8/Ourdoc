@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 export enum TableAlignType {
   left,
@@ -6,7 +6,6 @@ export enum TableAlignType {
   right,
 }
 interface TableHeaderProps {
-  key?: React.Key;
   label: string;
   align?: TableAlignType;
   width?: number;
@@ -31,7 +30,6 @@ export const TableHeader = (props: TableHeaderProps) => {
 
   return (
     <div
-      key={props.key}
       className={`text-gray-800 body-medium ${align}`}
       style={{ width: props.width }}
     >
@@ -48,8 +46,8 @@ export const Table = ({
   datas: ReactNode[];
 }) => {
   return (
-    <div className="self-stretch h-auto flex flex-col items-center gap-3">
-      <div className="w-full h-12 px-6 py-3 border-b border-gray-700 flex items-center">
+    <div className="self-stretch h-auto flex flex-col items-center">
+      <div className="w-full h-12 px-6 py-3 border-b border-gray-700 flex items-center gap-[18px]">
         {headers.map((header, index) => (
           <TableHeader
             key={index}
@@ -59,7 +57,13 @@ export const Table = ({
           />
         ))}
       </div>
-      <div className="w-full flex flex-col">{datas}</div>
+      {datas.map((item, index) => {
+        return (
+          <div key={index} className="w-full flex flex-col">
+            {item}
+          </div>
+        );
+      })}
     </div>
   );
 };
