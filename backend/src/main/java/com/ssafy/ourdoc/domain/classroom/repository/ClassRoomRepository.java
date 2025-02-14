@@ -12,7 +12,5 @@ import com.ssafy.ourdoc.domain.classroom.entity.School;
 public interface ClassRoomRepository extends JpaRepository<ClassRoom, Long>, ClassRoomQueryRepository {
 	Optional<ClassRoom> findByGradeAndClassNumberAndYear(int grade, int classNumber, Year year);
 
-	Optional<ClassRoom> findBySchoolAndGradeAndClassNumber(School school, int grade, int classNumber);
-
-	Optional<List<ClassRoom>> findBySchoolAndGradeAndClassNumberAndYear(School school, Integer grade, Integer integer, Year year);
+	Optional<List<ClassRoom>> findBySchoolAndGradeAndClassNumberAndYear(School school, Integer grade, Integer classNumber, Year year);
 }

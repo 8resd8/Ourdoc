@@ -9,6 +9,7 @@ public record TeacherLoginDto(
 	UserType role,
 	String schoolName,
 	Long schoolId,
+	Long classId,
 	Integer grade,
 	Integer classNumber,
 	String profileImagePath

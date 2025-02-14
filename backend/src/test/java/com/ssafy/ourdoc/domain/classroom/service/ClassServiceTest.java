@@ -125,5 +125,4 @@ class ClassServiceTest {
 	// 	assertThatThrownBy(() -> classService.createClass(user, request))
 	// 		.isInstanceOf(IllegalArgumentException.class);
 	// }
-
 }
