@@ -54,7 +54,7 @@ public class BookRecommendService {
 		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 			.map(TeacherClass::getClassRoom)
 			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
-		;
+		
 		if (bookRecommendRepository.existsByBookAndUserAndClassRoom(book, user, classRoom)) {
 			throw new IllegalArgumentException("이미 추천 도서로 등록했습니다.");
 		}
