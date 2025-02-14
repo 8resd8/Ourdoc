@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@Validated
 @RequestMapping("/teachers")
 @RequiredArgsConstructor
 public class TeacherController {

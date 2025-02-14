@@ -1,11 +1,31 @@
 package com.ssafy.ourdoc.domain.user.student.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public record StudentAffiliationChangeRequest(
-	String schoolName,		// school 테이블
-	Long schoolId,			// school 테이블
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
+	String schoolName,
+
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
+	Long schoolId,
+
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
 	Long classId,
-	int grade,				// class 테이블
-	int classNumber,		// class 테이블
-	int studentNumber		// student_class 테이블
+
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
+	int grade,
+
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
+	int classNumber,
+
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
+	int studentNumber
 ) {
 }

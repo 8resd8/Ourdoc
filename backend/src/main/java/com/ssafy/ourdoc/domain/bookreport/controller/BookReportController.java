@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.bookreport.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import com.ssafy.ourdoc.domain.bookreport.service.BookReportService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/bookreports")
 public class BookReportController {

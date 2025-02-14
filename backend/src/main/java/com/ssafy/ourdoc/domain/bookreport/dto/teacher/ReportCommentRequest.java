@@ -1,4 +1,9 @@
 package com.ssafy.ourdoc.domain.bookreport.dto.teacher;
 
-public record ReportCommentRequest(String comment) {
+import jakarta.validation.constraints.Size;
+
+public record ReportCommentRequest(
+	@Size(max = 250, message = "{size.max}")
+	String comment
+) {
 }

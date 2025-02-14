@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.user.student.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@Validated
 @RequestMapping("/students")
 @RequiredArgsConstructor
 public class StudentController {
@@ -36,7 +38,8 @@ public class StudentController {
 
 	// 2. 학생 소속 변경 요청(학년 변경시)
 	@PostMapping("/request")
-	public ResponseEntity<String> studentAffiliationChange(@Login User user, @RequestBody StudentAffiliationChangeRequest request) {
+	public ResponseEntity<String> studentAffiliationChange(@Login User user,
+		@RequestBody StudentAffiliationChangeRequest request) {
 		studentService.requestStudentAffiliationChange(user, request);
 		return ResponseEntity.ok("학생 소속 변경 신청 완료");
 	}

@@ -5,16 +5,36 @@ import java.sql.Date;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.Gender;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public record TeacherSignupRequest(
-	// === User 엔티티 관련 필드 ===
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
 	String name,
+
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
 	String loginId,
+
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
 	String password,
+
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
 	Date birth,
+
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
 	Gender gender,
 
-	// === Teacher 엔티티 관련 필드 ===
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
 	String email,
+
+	@NotBlank(message = "{notblank}")
+	@Size(max = 250, message = "{size.max}")
 	String phone
 ) {
 }
