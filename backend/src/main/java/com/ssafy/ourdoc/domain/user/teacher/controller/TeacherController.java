@@ -50,16 +50,16 @@ public class TeacherController {
 	}
 
 	// 2. QR 생성(회원가입)
-	@GetMapping(value = "/{teacherId}/code")
-	public ResponseEntity<QrResponseDto> generateSignupCode(@PathVariable Long teacherId) {
-		QrResponseDto response = teacherService.generateTeacherClassQr(teacherId, prodQrUrl);
+	@GetMapping(value = "/code")
+	public ResponseEntity<QrResponseDto> generateSignupCode(@Login User user) {
+		QrResponseDto response = teacherService.generateTeacherClassQr(user, prodQrUrl);
 		return ResponseEntity.ok(response);
 	}
 
 	// QR 생성(단순 소속 변경)
-	@GetMapping("/{teacherId}/change/code")
-	public ResponseEntity<QrResponseDto> generateChangeCode(@PathVariable Long teacherId) {
-		QrResponseDto response = teacherService.generateTeacherClassQr(teacherId, prodChangeQrUrl);
+	@GetMapping("/change/code")
+	public ResponseEntity<QrResponseDto> generateChangeCode(@Login User user) {
+		QrResponseDto response = teacherService.generateTeacherClassQr(user, prodChangeQrUrl);
 		return ResponseEntity.ok(response);
 	}
 
