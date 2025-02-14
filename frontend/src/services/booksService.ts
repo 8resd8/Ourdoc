@@ -117,7 +117,7 @@ export const addTeacherRecommendedBookApi = async (
   bookId: number
 ): Promise<number> => {
   try {
-    const response = await api.post('/books/teachers/recommend', { bookId });
+    const response = await api.post('/books/teachers/recommend/classes', { bookId });
     return response.status;
   } catch (error) {
     console.error('Error adding teacher recommended book:', error);
@@ -185,12 +185,12 @@ export const getClassStudentRecommendedBooksApi = async (params: BookQueryParams
   }
 };
 
-// 학년 추천 도서 삭제
+// 학급 추천 도서 삭제
 export const removeTeacherRecommendedBookApi = async (
   bookId: number
 ): Promise<number> => {
   try {
-    const response = await api.delete('/books/teachers/recommend', {
+    const response = await api.delete('/books/teachers/recommend/classes', {
       data: { bookId },
     });
     return response.status;
