@@ -21,7 +21,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.book.dto.BookDetailDto;
-import com.ssafy.ourdoc.domain.book.dto.BookMostDto;
+import com.ssafy.ourdoc.domain.book.dto.most.BookMostDto;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.global.common.enums.Active;
 

@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.ssafy.ourdoc.domain.book.dto.BookMostDto;
+import com.ssafy.ourdoc.domain.book.dto.most.BookMostDto;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 
 public interface BookQueryRepository {

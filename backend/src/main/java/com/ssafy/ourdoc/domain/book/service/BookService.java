@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookListResponse;
-import com.ssafy.ourdoc.domain.book.dto.BookMostDto;
-import com.ssafy.ourdoc.domain.book.dto.BookMostResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
+import com.ssafy.ourdoc.domain.book.dto.most.BookMostDto;
+import com.ssafy.ourdoc.domain.book.dto.most.BookMostResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
