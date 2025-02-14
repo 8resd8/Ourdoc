@@ -5,9 +5,6 @@ import java.sql.Date;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.Gender;
 
-/**
- * 학생 회원가입 요청 DTO
- */
 public record StudentSignupRequest(
 	// === User 엔티티에 필요한 필드 ===
 	String name,
@@ -15,6 +12,7 @@ public record StudentSignupRequest(
 	String password,
 	String schoolName,
 	Long schoolId,
+	Long classId,
 	Integer grade,
 	Integer classNumber,
 	Integer studentNumber,

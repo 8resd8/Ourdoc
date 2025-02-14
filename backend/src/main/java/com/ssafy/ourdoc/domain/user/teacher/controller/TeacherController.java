@@ -86,10 +86,11 @@ public class TeacherController {
 
 	// 6. 교사 본인 정보 조회
 	@GetMapping("/profile")
-	public TeacherProfileResponseDto getTeacherProfile(@Login User user) {
+	public ResponseEntity<?> getTeacherProfile(@Login User user) {
 		return teacherService.getTeacherProfile(user);
 	}
 
+	// 교사 정보 수정
 	@PatchMapping("/profile")
 	public ResponseEntity<String> updateTeacherProfile(
 		@Login User user,
@@ -98,5 +99,12 @@ public class TeacherController {
 	) {
 		teacherService.updateTeacherProfile(user, profileImage, request);
 		return ResponseEntity.ok("교사 정보가 수정되었습니다.");
+	}
+
+	// 교사 학급 생성(활성화)
+	@PostMapping("/class")
+	public ResponseEntity<String> createClass(@Login User user) {
+		teacherService.createClass(user);
+		return ResponseEntity.ok("학급이 생성되었습니다.");
 	}
 }

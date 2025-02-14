@@ -48,6 +48,7 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 				TeacherQueryDto.class,
 				school.schoolName,
 				school.id,
+				classRoom.id,
 				classRoom.grade,
 				classRoom.classNumber
 			))
@@ -132,6 +133,7 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 		}
 
 		if (isUserUpdated) {
+			userUpdate.set(QUser.user.updatedAt, LocalDateTime.now());
 			userUpdate.execute();
 		}
 
@@ -150,6 +152,7 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 		}
 
 		if (isTeacherUpdated) {
+			teacherUpdate.set(teacher.updatedAt, LocalDateTime.now());
 			teacherUpdate.execute();
 		}
 	}

@@ -85,7 +85,7 @@ public class StudentService {
 			.user(savedUser)
 			.classRoom(validatedEntities.classRoom())
 			.studentNumber(request.studentNumber())
-			.active(활성)
+			.active(비활성)
 			.authStatus(대기)
 			.build();
 		studentClassRepository.save(studentClass);
@@ -97,7 +97,7 @@ public class StudentService {
 		if (request == null || request.name() == null || request.name().isBlank()
 		|| request.loginId() == null || request.loginId().isBlank()
 		|| request.password() == null || request.password().isBlank()
-		|| request.schoolId() == null || request.grade() == null
+		|| request.schoolId() == null || request.classId() == null || request.grade() == null
 		|| request.classNumber() == null || request.studentNumber() == null
 		|| request.birth() == null || request.gender() == null) {
 			throw new IllegalArgumentException("입력되지 않은 정보가 있습니다.");
@@ -127,23 +127,28 @@ public class StudentService {
 		School school = schoolRepository.findById(request.schoolId())
 			.orElseThrow(() -> new NoSuchElementException("해당 학교를 찾을 수 없습니다."));
 
-		// 4) 학년 및 반 정보 조회
-		ClassRoom classRoom = classRoomRepository.findBySchoolAndGradeAndClassNumber(
-			school, request.grade(), request.classNumber()
-		).orElseThrow(() -> new IllegalArgumentException("해당 학년 및 반 정보를 찾을 수 없습니다."));
+		// 4) 학급 정보 조회
+		ClassRoom classRoom = classRoomRepository.findById(request.classId())
+			.orElseThrow(() -> new IllegalArgumentException("해당 학급 정보를 찾을 수 없습니다."));
 
 		return new ValidatedEntities(encodedPassword, school, classRoom);
 	}
 
+	// 소속 변경 요청
 	public void requestStudentAffiliationChange(User user, StudentAffiliationChangeRequest request) {
 		ClassRoom classRoom = validateAffiliation(user, request);
+
+		if (studentClassRepository.findByUserIdAndClassRoomIdAndStudentNumberAndActiveAndAuthStatus(
+			user.getId(), classRoom.getId(), request.studentNumber(), 비활성, 대기).isPresent()) {
+			throw new IllegalArgumentException("해당 학급에 대한 승인 대기 중입니다.");
+		}
 
 		StudentClass newStudentClass = StudentClass.builder()
 			.user(user)
 			.classRoom(classRoom)
 			.studentNumber(request.studentNumber())
 			.authStatus(AuthStatus.대기)
-			.active(Active.활성) // 활성 상태로 추가
+			.active(Active.비활성)
 			.build();
 
 		studentClassRepository.save(newStudentClass);
@@ -154,10 +159,9 @@ public class StudentService {
 		School school = schoolRepository.findById(request.schoolId())
 			.orElseThrow(() -> new NoSuchElementException("해당 학교를 찾을 수 없습니다."));
 
-		// 학년 및 반 조회
-		ClassRoom classRoom = classRoomRepository.findBySchoolAndGradeAndClassNumber(
-				school, request.grade(), request.classNumber())
-			.orElseThrow(() -> new IllegalArgumentException("해당 학년 및 반 정보를 찾을 수 없습니다."));
+		// 학급 조회
+		ClassRoom classRoom = classRoomRepository.findById(request.classId())
+			.orElseThrow(() -> new IllegalArgumentException("해당 학급 정보를 찾을 수 없습니다."));
 
 		// 기존 학생 엔티티 조회
 		Student student = studentRepository.findByUser(user);

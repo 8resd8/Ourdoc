@@ -51,6 +51,7 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
 	public void updateProfileImage(User user, String profileImageUrl) {
 		queryFactory.update(QUser.user)
 			.set(QUser.user.profileImagePath, profileImageUrl)
+			.set(QUser.user.updatedAt, LocalDateTime.now())
 			.where(QUser.user.id.eq(user.getId()))
 			.execute();
 	}

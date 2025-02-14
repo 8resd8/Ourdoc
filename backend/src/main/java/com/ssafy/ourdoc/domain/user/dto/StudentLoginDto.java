@@ -9,6 +9,7 @@ public record StudentLoginDto(
 	UserType role,
 	String schoolName,
 	Long schoolId,
+	Long classId,
 	int grade,
 	int classNumber,
 	int studentNumber,

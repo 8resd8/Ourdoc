@@ -27,6 +27,7 @@ public class StudentQueryRepository {
 				StudentQueryDto.class,
 					school.schoolName,
 				school.id,
+				classRoom.id,
 				classRoom.grade,
 				classRoom.classNumber,
 				studentClass.studentNumber
