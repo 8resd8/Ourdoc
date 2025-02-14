@@ -1,6 +1,6 @@
 package com.ssafy.ourdoc.data.entity;
 
-import java.time.LocalDate;
+import java.time.Year;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
 
@@ -14,7 +14,7 @@ public class BookSample {
 	private static final String defaultGenre = "사회과학";
 	private static final String defaultDescription = "재밌는 수학";
 	private static final String defaultPublisher = "교육과학사";
-	private static final LocalDate defaultPublishTime = LocalDate.of(2020, 5, 13);
+	private static final Year defaultPublishYear = Year.of(2025);
 	private static final String defaultImageUrl = "https://www.nl.go.kr/seoji/fu/ecip/dbfiles/CIP_FILES_TBL/2020/04/28/9788925414874.jpg";
 
 	public static Book book() {
@@ -25,7 +25,7 @@ public class BookSample {
 			.genre(defaultGenre)
 			.description(defaultDescription)
 			.publisher(defaultPublisher)
-			.publishTime(defaultPublishTime)
+			.publishYear(defaultPublishYear)
 			.imageUrl(defaultImageUrl)
 			.build();
 	}
@@ -38,7 +38,7 @@ public class BookSample {
 			.genre(defaultGenre)
 			.description(defaultDescription)
 			.publisher(defaultPublisher)
-			.publishTime(defaultPublishTime)
+			.publishYear(defaultPublishYear)
 			.imageUrl(defaultImageUrl)
 			.build();
 	}
@@ -51,7 +51,7 @@ public class BookSample {
 			.genre(defaultGenre)
 			.description(defaultDescription)
 			.publisher(defaultPublisher)
-			.publishTime(defaultPublishTime)
+			.publishYear(defaultPublishYear)
 			.imageUrl(defaultImageUrl)
 			.build();
 	}

@@ -89,7 +89,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 					book.genre,
 					book.description,
 					book.publisher,
-					book.publishTime,
+					book.publishYear,
 					book.imageUrl
 				), bookReport.count().intValue()
 			)).from(book)
@@ -140,7 +140,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 					book.genre,
 					book.description,
 					book.publisher,
-					book.publishTime,
+					book.publishYear,
 					book.imageUrl
 				), bookReport.count().intValue()
 			)).from(book)

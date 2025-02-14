@@ -1,6 +1,6 @@
 package com.ssafy.ourdoc.global.integration.nationallibrary.dto;
 
-import java.time.LocalDate;
+import java.time.Year;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
 
@@ -11,7 +11,7 @@ public record NationalLibraryBookResponse(
 	String genre,
 	String description,
 	String publisher,
-	LocalDate publishTime,
+	Year publishYear,
 	String imageUrl
 ) {
 	public static Book toBookEntity(NationalLibraryBookResponse response) {
@@ -22,7 +22,7 @@ public record NationalLibraryBookResponse(
 			.genre(response.genre())
 			.description(response.description())
 			.publisher(response.publisher())
-			.publishTime(response.publishTime() != null ? response.publishTime() : null)
+			.publishYear(response.publishYear() != null ? response.publishYear() : null)
 			.imageUrl(response.imageUrl() != null ? response.imageUrl() : null)
 			.build();
 	}

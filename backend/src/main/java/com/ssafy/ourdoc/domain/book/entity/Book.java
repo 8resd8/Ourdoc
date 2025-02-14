@@ -1,6 +1,6 @@
 package com.ssafy.ourdoc.domain.book.entity;
 
-import java.time.LocalDate;
+import java.time.Year;
 
 import com.ssafy.ourdoc.global.common.entity.BaseTimeEntity;
 
@@ -41,22 +41,22 @@ public class Book extends BaseTimeEntity {
 	@Column(name = "publisher")
 	private String publisher;
 
-	@Column(name = "publish_time")
-	private LocalDate publishTime;
+	@Column(name = "publish_year")
+	private Year publishYear;
 
 	@Column(name = "image_url")
 	private String imageUrl;
 
 	@Builder
 	public Book(String isbn, String title, String author, String genre, String description, String publisher,
-		LocalDate publishTime, String imageUrl) {
+		Year publishYear, String imageUrl) {
 		this.isbn = isbn;
 		this.title = title;
 		this.author = author;
 		this.genre = genre;
 		this.description = description;
 		this.publisher = publisher;
-		this.publishTime = publishTime;
+		this.publishYear = publishYear;
 		this.imageUrl = imageUrl;
 	}
 }

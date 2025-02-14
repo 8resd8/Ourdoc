@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -165,7 +165,7 @@ public class ReadService {
 			String genre = bookObject.getJSONObject("kdcInfo").getString("ldesc");
 			String description = "";
 			String bookPublisher = bookObject.getString("publisher");
-			LocalDate publishTime = DateConvertor.convertDate(bookObject.getString("pubYear") + "0101");
+			Year publishYear = DateConvertor.convertYear(bookObject.getString("pubYear"));
 			String imageUrl = "";
 			if (bookObject.getString("coverYn").equals("Y")) {
 				imageUrl = bookObject.getString("coverUrl");
@@ -173,7 +173,7 @@ public class ReadService {
 
 			bookList.add(
 				new ReadBookResponse(isbn, bookTitle, bookAuthor, genre, description, bookPublisher,
-					publishTime, imageUrl));
+					publishYear, imageUrl));
 		}
 		return bookList;
 	}

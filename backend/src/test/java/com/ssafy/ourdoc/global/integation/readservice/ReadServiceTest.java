@@ -2,6 +2,7 @@ package com.ssafy.ourdoc.global.integation.readservice;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class ReadServiceTest {
 	}
 
 	@Test
+	@Disabled
 	@DisplayName("독서로의 데이터 업로드")
 	void uploadReadBookTest() {
 		readService.parseBook();

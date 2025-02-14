@@ -1,6 +1,6 @@
 package com.ssafy.ourdoc.domain.book.dto;
 
-import java.time.LocalDate;
+import java.time.Year;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
 
@@ -14,7 +14,7 @@ public record BookDetailResponse(
 	String genre,
 	String description,
 	String publisher,
-	LocalDate publishTime,
+	Year publishYear,
 	String imageUrl
 ) {
 	public static BookDetailResponse of(Book book, String description) {
@@ -24,7 +24,7 @@ public record BookDetailResponse(
 			.author(book.getAuthor())
 			.genre(book.getGenre())
 			.publisher(book.getPublisher())
-			.publishTime(book.getPublishTime())
+			.publishYear(book.getPublishYear())
 			.imageUrl(book.getImageUrl())
 			.description(description)
 			.build();
