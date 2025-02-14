@@ -6,6 +6,7 @@ import com.querydsl.core.annotations.QueryProjection;
 
 public record BookReportHomeworkStudentDto(
 	Long bookreportId,
+	String beforeContent,
 	LocalDateTime createdAt,
 	Long homeworkId,
 	LocalDateTime approveTime

@@ -90,9 +90,11 @@ public class BookReportStudentService {
 
 	public List<BookReportHomeworkStudent> getReportStudentHomeworkResponses(Long homeworkId, Long userId) {
 		List<BookReportHomeworkStudent> convertDto = bookReportRepository.bookReportsHomeworkStudents(homeworkId,
-				userId).stream()
+				userId)
+			.stream()
 			.map(dto -> new BookReportHomeworkStudent(
 				dto.bookreportId(),
+				dto.beforeContent(),
 				dto.createdAt(),
 				dto.homeworkId() != null ? SubmitStatus.제출 : SubmitStatus.미제출,
 				dto.approveTime() != null ? ApproveStatus.있음 : ApproveStatus.없음))
@@ -106,6 +108,7 @@ public class BookReportStudentService {
 				userId, pageable)
 			.map(dto -> new BookReportHomeworkStudent(
 				dto.bookreportId(),
+				dto.beforeContent(),
 				dto.createdAt(),
 				dto.homeworkId() != null ? SubmitStatus.제출 : SubmitStatus.미제출,
 				dto.approveTime() != null ? ApproveStatus.있음 : ApproveStatus.없음
