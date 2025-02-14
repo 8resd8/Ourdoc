@@ -1,6 +1,9 @@
-export const DebateButton = ({ onClick }: { onClick: Function }) => {
+export const DebateButton = ({ onClick }: { onClick: () => void }) => {
   return (
-    <div className="w-[88px] h-[88px] cursor-pointer bg-gray-0 rounded-[50px] shadow-small border border-secondary-500 flex-col justify-center items-center gap-1 inline-flex">
+    <div
+      onClick={onClick}
+      className="w-[88px] h-[88px] cursor-pointer bg-gray-0 rounded-[50px] shadow-small border border-secondary-500 flex-col justify-center items-center gap-1 inline-flex"
+    >
       <div data-svg-wrapper className="relative">
         <img src="/assets/images/book.png" className="h-[36px] w-[36px]" />
       </div>
