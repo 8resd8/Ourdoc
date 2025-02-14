@@ -88,7 +88,8 @@ dependencies {
     implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
 
     // 검증
-    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.1.1'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 
 }
 
