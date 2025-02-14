@@ -28,6 +28,10 @@ const DebateRoom: React.FC = () => {
     const [isVideoActive, setIsVideoActive] = useState<boolean>(true);
     const [joinMode, setJoinMode] = useState<'create' | 'join' | null>(null);
 
+    // 화면 공유 상태 추가
+    const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false);
+    const [screenPublisher, setScreenPublisher] = useState<Publisher | null>(null);
+
     // DOM Ref
     const publisherRef = useRef<HTMLDivElement>(null);
     const subscribersRef = useRef<HTMLDivElement>(null);
@@ -43,6 +47,11 @@ const DebateRoom: React.FC = () => {
         const subscriberContainer = document.createElement('div');
         subscriberContainer.className = classes['subscriber-container'];
         subscriberContainer.id = `subscriber-${stream.streamId}`;
+
+        // 클릭 시 확대/축소 기능 (CSS 클래스 토글)
+        subscriberContainer.addEventListener('click', () => {
+            subscriberContainer.classList.toggle(classes['enlarged']);
+        });
 
         if (subscribersRef.current) {
             subscribersRef.current.appendChild(subscriberContainer);
@@ -184,7 +193,7 @@ const DebateRoom: React.FC = () => {
                 resolution: '640x480',
             };
             const myPublisher = OVRef.current.initPublisher(
-                publisherRef.current,
+                publisherRef.current as HTMLElement,
                 publisherOptions,
                 (error) => {
                     if (error) {
@@ -203,6 +212,70 @@ const DebateRoom: React.FC = () => {
             session.publish(myPublisher);
         }
     }, [joined, session, publisher]);
+
+    // 화면 공유 토글 함수
+    const toggleScreenShare = async () => {
+        if (!session || !OVRef.current) return;
+
+        if (!isScreenSharing) {
+            // 화면 공유 시작
+            try {
+                const screenPub = OVRef.current.initPublisher(
+                    publisherRef.current as HTMLElement,
+                    {
+                        videoSource: 'screen', // 화면 공유를 위한 옵션
+                        publishAudio: true,
+                        publishVideo: true,
+                        mirror: false,
+                        resolution: '640x480',
+                    },
+                    (error) => {
+                        if (error) {
+                            console.error('화면 공유 publisher 생성 오류:', error);
+                            alert('화면 공유 시작에 실패했습니다.');
+                        }
+                    }
+                );
+
+                screenPub.on('accessAllowed', () => {
+                    console.log('화면 공유 권한 허용됨');
+                });
+                screenPub.on('accessDenied', () => {
+                    console.warn('화면 공유 권한 거부됨');
+                });
+                screenPub.on('streamDestroyed', (event: any) => {
+                    console.log('화면 공유가 중단되었습니다.');
+                    setIsScreenSharing(false);
+                    setScreenPublisher(null);
+                    // 카메라 publisher가 존재한다면 다시 publish
+                    if (publisher) {
+                        session.publish(publisher);
+                    }
+                });
+
+                // 기존 카메라 publisher unpublish
+                if (publisher) {
+                    session.unpublish(publisher);
+                }
+
+                session.publish(screenPub);
+                setScreenPublisher(screenPub);
+                setIsScreenSharing(true);
+            } catch (error) {
+                console.error('화면 공유 시작 오류:', error);
+            }
+        } else {
+            // 화면 공유 종료
+            if (screenPublisher) {
+                session.unpublish(screenPublisher);
+                setScreenPublisher(null);
+            }
+            if (publisher) {
+                session.publish(publisher);
+            }
+            setIsScreenSharing(false);
+        }
+    };
 
     // 세션 종료 처리
     const leaveSession = () => {
@@ -258,7 +331,9 @@ const DebateRoom: React.FC = () => {
                     {/* [방 생성 및 입장하기] */}
                     <div className={classes.card}>
                         <div className={classes['card-header']}>
-                            <h2><strong>방 개설자 전용 화면: 방 생성 및 입장하기</strong></h2>
+                            <h2>
+                                <strong>방 개설자 전용 화면: 방 생성 및 입장하기</strong>
+                            </h2>
                             <p>세션 이름과 닉네임을 입력하고 방을 생성하세요.</p>
                         </div>
                         <div className={classes['input-group']}>
@@ -300,7 +375,9 @@ const DebateRoom: React.FC = () => {
                     {/* [방 세션ID로 입장하기] */}
                     <div className={classes.card}>
                         <div className={classes['card-header']}>
-                            <h2><strong>초대받은 사용자 전용 화면</strong></h2>
+                            <h2>
+                                <strong>초대받은 사용자 전용 화면</strong>
+                            </h2>
                             <p>세션 ID와 닉네임을 입력하고 입장하세요.</p>
                         </div>
                         <div className={classes['input-group']}>
@@ -365,6 +442,12 @@ const DebateRoom: React.FC = () => {
                             className={`${classes.button} ${classes['control-button']}`}
                         >
                             {isVideoActive ? '비디오 끄기' : '비디오 켜기'}
+                        </button>
+                        <button
+                            onClick={toggleScreenShare}
+                            className={`${classes.button} ${classes['control-button']}`}
+                        >
+                            {isScreenSharing ? '화면 공유 중지' : '화면 공유'}
                         </button>
                         <button
                             onClick={leaveSession}

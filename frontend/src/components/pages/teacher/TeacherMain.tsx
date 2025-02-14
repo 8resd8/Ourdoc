@@ -1,5 +1,3 @@
-import { signoutApi } from '../../../services/usersService';
-import { useNavigate } from 'react-router';
 import { MonthlyReportChart } from '../../molecules/MonthlyReportChart';
 import { MonthlyReportListSection } from '../../molecules/MonthlyReportListSection';
 import { HomeworkListSection } from '../../molecules/HomeworkListSection';
@@ -7,31 +5,30 @@ import { NotificationSection } from '../../molecules/NotificationSection';
 import { RankingSection } from '../../molecules/RankingSection';
 import { MostReadBookSection } from '../../molecules/MostReadBookSection';
 import { DebateButton } from '../../atoms/DebateButton';
+import { useNavigate } from 'react-router-dom';
 
 const TeacherMain = () => {
   const navigate = useNavigate();
 
-  const logout = async () => {
-    try {
-      await signoutApi();
-      navigate('/');
-    } catch (error) {
-      console.error('로그아웃 중 오류가 발생했습니다:', error);
-    }
-  };
-
   return (
-    <div className="mx-auto p-4">
-      <div onClick={logout} className="cursor-pointer text-primary-500">
-        logout
+    <div className="flex w-[1064px] flex-col mx-auto py-[56px] space-y-[40px]">
+      <div className="bottom-[40px] right-[40px] fixed xl:top-[165px] xl:right-[200px]">
+        <DebateButton
+          onClick={() => {
+            navigate('/debate/room');
+          }}
+        />
       </div>
-      <DebateButton onClick={() => {}} />
-      <RankingSection />
-      <NotificationSection />
+      <div className="flex justify-between">
+        <RankingSection />
+        <NotificationSection />
+      </div>
       <HomeworkListSection />
-      <MonthlyReportChart />
-      <MonthlyReportListSection />
-      <div>
+      <div className="flex justify-between">
+        <MonthlyReportChart />
+        <MonthlyReportListSection />
+      </div>
+      <div className="flex justify-between">
         <MostReadBookSection title={'학년에서 가장 많이 읽은 책'} />
         <MostReadBookSection title={'반에서 가장 많이 읽은 책'} />
       </div>

@@ -102,7 +102,7 @@ public class HomeworkService {
 			throw new IllegalArgumentException("숙제를 생성한 교사가 아닙니다.");
 		}
 
-		int submitCount = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId);
+		int submitCount = bookReportRepository.countByHomeworkId(homeworkId);
 		List<ReportTeacherResponseWithId> bookReports = bookReportTeacherService.getReportTeacherHomeworkResponses(
 			homeworkId);
 		return HomeworkTeacherDetail.of(homework, submitCount, bookReports);
