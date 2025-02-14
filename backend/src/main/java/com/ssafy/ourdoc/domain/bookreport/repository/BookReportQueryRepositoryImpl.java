@@ -156,6 +156,34 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
+	public Page<ReportTeacherDtoWithId> bookReportsHomeworkPage(Long homeworkId, Pageable pageable) {
+		int total = bookReportsHomework(homeworkId).size();
+		List<ReportTeacherDtoWithId> content = queryFactory.select(new QReportTeacherDtoWithId(
+				bookReport.id,
+				studentClass.studentNumber,
+				user.name.as("studentName"),
+				bookReport.createdAt,
+				bookReport.approveTime
+			))
+			.from(bookReport)
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.user, user)
+			.join(studentClass.classRoom, classRoom)
+			.join(classRoom.school, school)
+			.join(bookReport.book, book)
+			.join(bookReport.homework, homework)
+			.where(
+				bookReport.homework.id.eq(homeworkId),
+				studentClass.active.eq(Active.활성)
+			)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		return new PageImpl<>(content, pageable, total);
+	}
+
+	@Override
 	public long myBookReportsCount(Long userId, int grade) {
 		return Optional.ofNullable(
 			queryFactory.select(bookReport.count())
