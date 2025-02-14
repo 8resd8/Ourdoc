@@ -1,7 +1,12 @@
-export const DebateButton = ({ onClick }: { onClick: () => void }) => {
+import { useNavigate } from 'react-router-dom';
+
+export const DebateButton = () => {
+  const navigate = useNavigate();
   return (
     <div
-      onClick={onClick}
+      onClick={() => {
+        navigate('debate/board');
+      }}
       className="w-[88px] h-[88px] cursor-pointer bg-gray-0 rounded-[50px] shadow-small border border-secondary-500 flex-col justify-center items-center gap-1 inline-flex"
     >
       <div data-svg-wrapper className="relative">

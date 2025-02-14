@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Button from '../../atoms/Button';
+import { DebateBoardButton } from '../../atoms/DebateBoardButton';
+import { PaginationButton } from '../../atoms/PagenationButton';
 
-const DebateBoard = () => {
+const TeacherDebateBoard = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
 
@@ -11,16 +13,53 @@ const DebateBoard = () => {
   const closeModal = () => setShowModal(false);
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen text-gray-0">
-      <h1 className="headline-medium font-bold mb-4">토론 게시판</h1>
-      <button
-        onClick={openModal}
-        className="bg-blue-500 hover:bg-blue-600 text-gray-0 px-4 py-2 rounded-lg shadow-xxsmall"
-      >
-        토론방 개설
-      </button>
-
-      {showModal && <CreateDebateRoom closeModal={closeModal} />}
+    <div className={'flex w-[846px] flex-col mx-auto py-[56px] space-y-[40px]'}>
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="headline-medium text-gray-800">독서토론 게시판</h1>
+        <Button
+          title={'방 만들기'}
+          type={'outlined'}
+          color={'primary'}
+          onClick={() => {}}
+          flexible
+        />
+      </div>
+      <div className="flex flex-wrap justify-between gap-4">
+        <DebateBoardButton
+          title={'은혜갚은 까치 토론방'}
+          school={'성룡'}
+          teacher={'김보라'}
+          currentCount={4}
+          maxCount={17}
+          date={'1시간 전'}
+          onClick={() => {}}
+        />
+        <DebateBoardButton
+          title={'은혜갚은 까치 토론방'}
+          school={'성룡'}
+          teacher={'김보라'}
+          currentCount={4}
+          maxCount={17}
+          date={'1시간 전'}
+          onClick={() => {}}
+        />
+        <DebateBoardButton
+          title={'은혜갚은 까치 토론방'}
+          school={'성룡'}
+          teacher={'김보라'}
+          currentCount={4}
+          maxCount={17}
+          date={'1시간 전'}
+          onClick={() => {}}
+        />
+      </div>
+      <PaginationButton
+        currentPage={1}
+        totalPages={3}
+        onPageChange={function (page: number): void {
+          throw new Error('Function not implemented.');
+        }}
+      />
     </div>
   );
 };
@@ -81,4 +120,4 @@ const CreateDebateRoom = ({ closeModal }: { closeModal: () => void }) => {
   );
 };
 
-export default DebateBoard;
+export default TeacherDebateBoard;
