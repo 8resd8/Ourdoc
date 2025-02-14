@@ -23,8 +23,10 @@ public interface BookReportQueryRepository {
 	List<ReportTeacherDtoWithId> bookReportsHomework(Long homeworkId);
 
 	Page<ReportTeacherDtoWithId> bookReportsHomeworkPage(Long homeworkId, Pageable pageable);
-	
+
 	List<BookReportHomeworkStudentDto> bookReportsHomeworkStudents(Long homeworkId, Long userId);
+
+	Page<BookReportHomeworkStudentDto> bookReportsHomeworkStudentsPage(Long homeworkId, Long userId, Pageable pageable);
 
 	long myBookReportsCount(Long userId, int grade);
 
