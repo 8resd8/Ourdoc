@@ -81,7 +81,7 @@ public class BookReportStudentService {
 	}
 
 	public void deleteBookReport(User user, Long bookReportId) {
-		BookReport bookReport = bookReportRepository.findByBookReportIdAndUserId(bookReportId, user.getId())
+		BookReport bookReport = bookReportRepository.findByBookReport(bookReportId, user.getId())
 			.orElseThrow(() -> new NoSuchElementException("본인의 독서록이 없습니다."));
 
 		if (bookReport.getApproveTime() != null) {
