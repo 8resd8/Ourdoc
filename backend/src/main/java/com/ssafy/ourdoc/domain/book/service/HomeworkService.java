@@ -117,10 +117,8 @@ public class HomeworkService {
 		}
 
 		int submitCount = bookReportRepository.countByHomeworkId(homeworkId);
-		List<ReportTeacherResponseWithId> bookReportsList = bookReportTeacherService.getReportTeacherHomeworkResponses(
-			homeworkId);
-		Page<ReportTeacherResponseWithId> bookReports = new PageImpl<>(bookReportsList, pageable,
-			bookReportsList.size());
+		Page<ReportTeacherResponseWithId> bookReports = bookReportTeacherService.getReportTeacherHomeworkPageResponses(
+			homeworkId, pageable);
 		return HomeworkTeacherDetailPage.of(homework, submitCount, bookReports);
 	}
 
