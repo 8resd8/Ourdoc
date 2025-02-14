@@ -1,3 +1,15 @@
+import { useState, useEffect } from 'react';
+import {
+  Book,
+  BookReport,
+  HomeworkDetail,
+  HomeworkItem,
+  PaginatedHomeworks,
+  getStudentHomeworkBookDetailApi,
+  getStudentHomeworkBooksApi,
+} from '../../../services/booksService';
+import { useLocation } from 'react-router-dom';
+
 const StudentHomeWorkReportList = () => {
   const bookInfo = {
     title: '어린왕자 (Le Petit Prince)',
@@ -8,32 +20,41 @@ const StudentHomeWorkReportList = () => {
     image: '/assets/images/bookImage.png', // 이미지 경로
   };
 
-  const tableData = [
-    {
-      no: 1,
-      content: '도서명도서명도서명도서명',
-      number: '8번',
-      studentName: '김현우',
-      submitDate: '5월 1일',
-      status: '완료',
-    },
-    {
-      no: 2,
-      content: '도서명도서명도서명도서명도서명도서명도서명도서명',
-      number: '8번',
-      studentName: '김현우',
-      submitDate: '5월 1일',
-      status: '완료',
-    },
-    {
-      no: 3,
-      content: '도서명도서명도서명도서명',
-      number: '8번',
-      studentName: '김현우',
-      submitDate: '5월 1일',
-      status: '미완료',
-    },
-  ];
+  const [reportList, setReportList] = useState<HomeworkItem[]>([]);
+  const [paginationInfo, setPaginationInfo] = useState<Omit<
+    PaginatedHomeworks,
+    'content'
+  > | null>(null);
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const homeworkId = queryParams.get('homeworkId');
+
+  const [homeworkDetail, setHomeworkDetail] = useState<HomeworkDetail | null>(
+    null
+  );
+  const [bookReports, setBookReports] = useState<BookReport[]>([]);
+
+  useEffect(() => {
+    const fetchHomeworkDetail = async () => {
+      try {
+        const data = await getStudentHomeworkBookDetailApi(Number(homeworkId));
+        setHomeworkDetail(data.book);
+        setBookReports(data.bookReports.content);
+      } catch (error) {
+        console.error('Error fetching homework detail:', error);
+      }
+    };
+
+    fetchHomeworkDetail();
+  }, [homeworkId]);
+  console.log('bookReports', bookReports);
+  console.log('detail', homeworkDetail);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  };
 
   return (
     <div className="w-[1200px] mx-auto mt-8">
@@ -86,13 +107,15 @@ const StudentHomeWorkReportList = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row, index) => (
+            {bookReports.map((row, index) => (
               <tr key={index} className={`${index % 2 === 0 ? '' : ''}`}>
-                <td className="px-4 py-2 text-center">{row.no}</td>
-                <td className="px-4 py-2 truncate">{row.content}</td>
-                <td className="px-4 py-2 text-center">{row.submitDate}</td>
+                <td className="px-4 py-2 text-center">{index + 1}</td>
+                <td className="px-4 py-2 truncate">{row.beforeContent}</td>
                 <td className="px-4 py-2 text-center">
-                  {row.status === '완료' ? (
+                  {formatDate(row.createdAt)}
+                </td>
+                <td className="px-4 py-2 text-center">
+                  {row.submitStatus === 'Y' ? (
                     <button className="body-small text-system-success border-system-success border w-[49px] h-[28px] rounded-[5px]">
                       완료
                     </button>
@@ -103,7 +126,7 @@ const StudentHomeWorkReportList = () => {
                   )}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {row.status === '완료' ? (
+                  {row.submitStatus === 'Y' ? (
                     <button className="body-small text-system-info border-system-info border w-[49px] h-[28px] rounded-[5px]">
                       제출
                     </button>

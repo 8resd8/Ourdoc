@@ -1,19 +1,120 @@
 import { api, multipartApi } from '../services/api';
 
 interface BookQueryParams {
+  size: number;
+  page: number;
   title: string;
   author: string;
   publisher: string;
 }
 
 export interface Book {
-  id: number;
+  bookId: number;
   title: string;
   author: string;
   genre: string;
   publisher: string;
-  publishTime: string;
+  publishYear: string;
   imageUrl: string;
+}
+
+export interface HomeworkBook {
+  id: number;
+  title: string;
+  author: string;
+  genre: string;
+  description: string;
+  publisher: string;
+  publishYear: string;
+  imageUrl: string;
+}
+
+export interface BookReport {
+  id: number;
+  beforeContent: string;
+  createdAt: string;
+  submitStatus: 'Y' | 'N';
+  approve: 'Y' | 'N';
+}
+
+export interface HomeworkDetail {
+  book: Book;
+  createAt: string;
+}
+export interface PaginatedBookReports {
+  content: BookReport[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      sorted: boolean;
+      unsorted: boolean;
+      empty: boolean;
+    };
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  sort: {
+    sorted: boolean;
+    unsorted: boolean;
+    empty: boolean;
+  };
+  number: number;
+  numberOfElements: number;
+  size: number;
+  empty: boolean;
+}
+
+// StudentHomeworkBookDetail 인터페이스 수정
+export interface StudentHomeworkBookDetail {
+  book: HomeworkDetail;
+  bookReports: PaginatedBookReports;
+}
+
+export interface HomeworkItem {
+  homeworkId: number;
+  book: Book;
+  createdAt: string;
+  submitStatus: boolean;
+  bookReports: any[];
+}
+
+export interface PaginatedHomeworks {
+  content: HomeworkItem[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      sorted: boolean;
+      empty: boolean;
+      unsorted: boolean;
+    };
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  size: number;
+  number: number;
+  sort: {
+    sorted: boolean;
+    empty: boolean;
+    unsorted: boolean;
+  };
+  numberOfElements: number;
+  empty: boolean;
+}
+
+export interface BookListResponse {
+  homeworks: PaginatedHomeworks;
 }
 
 interface BookDetail extends Book {
@@ -27,7 +128,7 @@ export interface FavoriteBook {
   author: string;
   genre: string;
   publisher: string;
-  publishTime: string;
+  publishYear: string;
   imageUrl: string;
 }
 
@@ -37,7 +138,7 @@ export interface RecommendedBook {
   title: string;
   author: string;
   publisher: string;
-  publishTime: string;
+  publishYear: string;
 }
 
 // 도서 목록 조회
@@ -126,12 +227,13 @@ export const addTeacherRecommendedBookApi = async (
 };
 
 // 교사 학년 추천 도서 목록 조회
-export const getTeacherRecommendedBooksApi = async (params: BookQueryParams): Promise<
-  RecommendedBook[]
-> => {
+export const getTeacherRecommendedBooksApi = async (
+  params: BookQueryParams
+): Promise<RecommendedBook[]> => {
   try {
     const response = await api.get<RecommendedBook[]>(
-      '/books/teachers/recommend/grades', { params }
+      '/books/teachers/recommend/grades',
+      { params }
     );
     return response.data;
   } catch (error) {
@@ -141,12 +243,13 @@ export const getTeacherRecommendedBooksApi = async (params: BookQueryParams): Pr
 };
 
 // 교사 학급 추천 도서 목록 조회
-export const getClassTeacherRecommendedBooksApi = async (params: BookQueryParams): Promise<
-  RecommendedBook[]
-> => {
+export const getClassTeacherRecommendedBooksApi = async (
+  params: BookQueryParams
+): Promise<RecommendedBook[]> => {
   try {
     const response = await api.get<RecommendedBook[]>(
-      '/books/teachers/recommend/classes', { params }
+      '/books/teachers/recommend/classes',
+      { params }
     );
     return response.data;
   } catch (error) {
@@ -156,12 +259,13 @@ export const getClassTeacherRecommendedBooksApi = async (params: BookQueryParams
 };
 
 // 학생 학년 추천 도서 목록 조회
-export const getStudentRecommendedBooksApi = async (params: BookQueryParams): Promise<
-  RecommendedBook[]
-> => {
+export const getStudentRecommendedBooksApi = async (
+  params: BookQueryParams
+): Promise<RecommendedBook[]> => {
   try {
     const response = await api.get<RecommendedBook[]>(
-      '/books/students/recommend/grades', { params }
+      '/books/students/recommend/grades',
+      { params }
     );
     return response.data;
   } catch (error) {
@@ -171,12 +275,13 @@ export const getStudentRecommendedBooksApi = async (params: BookQueryParams): Pr
 };
 
 // 학생 학급 추천 도서 목록 조회
-export const getClassStudentRecommendedBooksApi = async (params: BookQueryParams): Promise<
-  RecommendedBook[]
-> => {
+export const getClassStudentRecommendedBooksApi = async (
+  params: BookQueryParams
+): Promise<RecommendedBook[]> => {
   try {
     const response = await api.get<RecommendedBook[]>(
-      '/books/students/recommend/classes', { params }
+      '/books/students/recommend/classes',
+      { params }
     );
     return response.data;
   } catch (error) {
@@ -253,9 +358,16 @@ export const getTeacherHomeworkBookDetailApi = async (
 };
 
 // 학생 학급 숙제 도서 목록 조회
-export const getStudentHomeworkBooksApi = async (params: BookQueryParams): Promise<Book[]> => {
+export const getStudentHomeworkBooksApi = async (
+  params: BookQueryParams
+): Promise<BookListResponse> => {
   try {
-    const response = await api.get<Book[]>('/books/students/homework', { params });
+    const response = await api.get<BookListResponse>(
+      '/books/students/homework',
+      {
+        params: { ...params, page: params.page ?? 0, size: params.size ?? 10 },
+      }
+    );
     return response.data;
   } catch (error) {
     console.error('Error fetching student homework books:', error);
@@ -266,9 +378,9 @@ export const getStudentHomeworkBooksApi = async (params: BookQueryParams): Promi
 // 학생 학급 숙제 도서 상세 조회
 export const getStudentHomeworkBookDetailApi = async (
   homeworkId: number
-): Promise<BookDetail> => {
+): Promise<StudentHomeworkBookDetail> => {
   try {
-    const response = await api.get<BookDetail>(
+    const response = await api.get<StudentHomeworkBookDetail>(
       `/books/students/homework/${homeworkId}`
     );
     return response.data;
