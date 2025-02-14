@@ -51,6 +51,7 @@ aws:
 book:
   api-url: ${book.nl-api-url}
   cert-key: ${book.nl-cert-key}
+  read-url: ${book.read-url}
 
 logging:
   level:
