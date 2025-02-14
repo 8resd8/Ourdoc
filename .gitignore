@@ -173,3 +173,4 @@ src/main/generated
 backend/gradle/
 backend/src/main/resources/secret.yml
 backend/*.pem
+/backend/logs/ourdoc.log.2025-02-13.0.gz
