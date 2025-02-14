@@ -10,6 +10,17 @@ export interface DebateRoom {
   schoolName: string;
 }
 
+export interface DebateRoomResponse {
+  content: DebateRoom[];
+  pageable: object;
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+  first: boolean;
+  size: number;
+  empty: boolean;
+}
+
 export interface CreateDebateRequest {
   title: string;
   password: string;
@@ -30,8 +41,13 @@ export interface DebateRoomDetail extends DebateRoom {
 }
 
 // 독서 토론 방 목록 조회
-export const getDebatesApi = async (): Promise<DebateRoom[]> => {
-  const response = await api.get<DebateRoom[]>('/debates');
+export const getDebatesApi = async (data: {
+  page: number;
+  size: number;
+}): Promise<DebateRoom[]> => {
+  const response = await api.get<DebateRoom[]>('/debates', { params: data });
+  console.log(response);
+
   return response.data;
 };
 
