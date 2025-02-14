@@ -35,6 +35,7 @@ const StudentSignUp = () => {
   console.log('grade', grade);
   const classNumber = queryParams.get('classNumber');
   console.log('classNumber', classNumber);
+  const classId = queryParams.get('classId');
 
   const [signUpRequest, setSignUpRequest] = useState<SignupStudentRequest>({
     loginId: '',
@@ -47,6 +48,7 @@ const StudentSignUp = () => {
     schoolId: schoolId ? parseInt(schoolId) : 0,
     grade: grade ? parseInt(grade) : 0,
     classNumber: classNumber ? parseInt(classNumber) : 0,
+    classId: classId ? parseInt(classId) : 0,
   });
 
   const [isFormValid, setIsFormValid] = useState(false);

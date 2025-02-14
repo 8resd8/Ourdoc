@@ -8,8 +8,8 @@ export interface TemporaryPasswordResponse {
 }
 
 export interface QrResponse {
-  qrCode: String;
-  qrUrl: String;
+  qrImageBase64: String;
+  url: String;
 }
 
 export interface UpdateStudentInfoRequest {
@@ -115,30 +115,27 @@ export const issueTemporaryPasswordApi = async (
 };
 
 // 학생 초대 QR코드 발급(회원가입시)
-export const generateSignupInviteCodeApi = async (
-  teacherId: number
-): Promise<QrResponse> => {
-  const response = await api.get<QrResponse>(`/teachers/${teacherId}/code`);
+export const generateSignupInviteCodeApi = async (): Promise<QrResponse> => {
+  const response = await api.get(`/teachers/code`);
   return response.data;
 };
 
 // 학생 초대 QR코드 발급(학년변경시)
-export const generateChangeInviteCodeApi = async (
-  teacherId: number
-): Promise<QrResponse> => {
-  const response = await api.get<QrResponse>(
-    `/teachers/${teacherId}/change/code`
-  );
+export const generateChangeInviteCodeApi = async (): Promise<QrResponse> => {
+  const response = await api.get<QrResponse>(`/teachers/change/code`);
   return response.data;
 };
 
 // 학생 소속 입력 승인/거절
-export const updateStudentAffiliationApi = async (data: {
-  studentLoginId: string;
-  isApproved: boolean;
-}): Promise<void> => {
-  await api.patch(`/teachers/${data.studentLoginId}/verification`, {
-    isApproved: data.isApproved,
+export const updateStudentAffiliationApi = async (
+  studentLoginId: string,
+  studentNumber: number,
+  isApproved: boolean
+): Promise<void> => {
+  await api.patch(`/teachers/verification`, {
+    studentLoginId: studentLoginId,
+    studentNumber: studentNumber,
+    isApproved: isApproved,
   });
 };
 

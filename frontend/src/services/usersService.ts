@@ -27,6 +27,7 @@ export interface SignupStudentRequest {
   studentNumber: number;
   birth: string;
   gender: string;
+  classId: number;
 }
 
 export interface LoginRequest {
