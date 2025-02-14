@@ -1,16 +1,16 @@
 package com.ssafy.ourdoc.domain.user.teacher.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
 public record TeacherProfileUpdateRequest(
 	@Size(max = 250, message = "{size.max}")
 	String name,
-	
-	@Size(max = 250, message = "{size.max}")
 
 	@Size(max = 250, message = "{size.max}")
 	String loginId,
 
+	@Email(message = "{email}")
 	@Size(max = 250, message = "{size.max}")
 	String email,
 
