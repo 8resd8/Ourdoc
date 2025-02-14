@@ -80,9 +80,9 @@ public class BookReportStudentService {
 		return new BookReportListResponse(bookReportDtoPage);
 	}
 
-	public void deleteBookReport(Long bookReportId) {
-		BookReport bookReport = bookReportRepository.findById(bookReportId)
-			.orElseThrow(() -> new NoSuchElementException("지울 독서록이 없습니다."));
+	public void deleteBookReport(User user, Long bookReportId) {
+		BookReport bookReport = bookReportRepository.findByBookReportIdAndUserId(bookReportId, user.getId())
+			.orElseThrow(() -> new NoSuchElementException("본인의 독서록이 없습니다."));
 
 		if (bookReport.getApproveTime() != null) {
 			throw new IllegalArgumentException("승인이 된 독서록은 지울 수 없습니다.");
