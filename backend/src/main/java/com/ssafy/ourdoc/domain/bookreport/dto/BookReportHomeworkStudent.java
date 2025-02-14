@@ -7,6 +7,7 @@ import com.ssafy.ourdoc.global.common.enums.SubmitStatus;
 
 public record BookReportHomeworkStudent(
 	Long id,
+	String beforeContent,
 	LocalDateTime createdAt,
 	SubmitStatus submitStatus,
 	ApproveStatus approveStatus

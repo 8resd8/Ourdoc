@@ -274,6 +274,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	public List<BookReportHomeworkStudentDto> bookReportsHomeworkStudents(Long homeworkId, Long userId) {
 		return queryFactory.select(Projections.constructor(BookReportHomeworkStudentDto.class,
 					bookReport.id,
+					bookReport.beforeContent,
 					bookReport.createdAt,
 					bookReport.homework.id,
 					bookReport.approveTime
@@ -292,6 +293,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 		int total = bookReportsHomeworkStudents(homeworkId, userId).size();
 		List<BookReportHomeworkStudentDto> content = queryFactory.select(new QBookReportHomeworkStudentDto(
 				bookReport.id,
+				bookReport.beforeContent,
 				bookReport.createdAt,
 				bookReport.homework.id,
 				bookReport.approveTime
