@@ -36,6 +36,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportHomeworkStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
@@ -156,6 +157,34 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
+	public Page<ReportTeacherDtoWithId> bookReportsHomeworkPage(Long homeworkId, Pageable pageable) {
+		int total = bookReportsHomework(homeworkId).size();
+		List<ReportTeacherDtoWithId> content = queryFactory.select(new QReportTeacherDtoWithId(
+				bookReport.id,
+				studentClass.studentNumber,
+				user.name.as("studentName"),
+				bookReport.createdAt,
+				bookReport.approveTime
+			))
+			.from(bookReport)
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.user, user)
+			.join(studentClass.classRoom, classRoom)
+			.join(classRoom.school, school)
+			.join(bookReport.book, book)
+			.join(bookReport.homework, homework)
+			.where(
+				bookReport.homework.id.eq(homeworkId),
+				studentClass.active.eq(Active.활성)
+			)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		return new PageImpl<>(content, pageable, total);
+	}
+
+	@Override
 	public long myBookReportsCount(Long userId, int grade) {
 		return Optional.ofNullable(
 			queryFactory.select(bookReport.count())
@@ -254,6 +283,27 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.leftJoin(user).on(bookReport.studentClass.user.id.eq(user.id))
 			.where(bookReport.homework.id.eq(homeworkId), user.id.eq(userId))
 			.fetch();
+	}
+
+	@Override
+	public Page<BookReportHomeworkStudentDto> bookReportsHomeworkStudentsPage(Long homeworkId, Long userId,
+		Pageable pageable) {
+		int total = bookReportsHomeworkStudents(homeworkId, userId).size();
+		List<BookReportHomeworkStudentDto> content = queryFactory.select(new QBookReportHomeworkStudentDto(
+				bookReport.id,
+				bookReport.createdAt,
+				bookReport.homework.id,
+				bookReport.approveTime
+			))
+			.from(bookReport)
+			.leftJoin(homework).on(bookReport.book.id.eq(homework.book.id))
+			.leftJoin(user).on(bookReport.studentClass.user.id.eq(user.id))
+			.where(bookReport.homework.id.eq(homeworkId), user.id.eq(userId))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		return new PageImpl<>(content, pageable, total);
 	}
 
 	@Override

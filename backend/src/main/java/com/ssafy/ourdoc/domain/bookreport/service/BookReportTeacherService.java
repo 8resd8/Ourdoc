@@ -73,6 +73,19 @@ public class BookReportTeacherService {
 		return convertDto;
 	}
 
+	public Page<ReportTeacherResponseWithId> getReportTeacherHomeworkPageResponses(Long homeworkId, Pageable pageable) {
+		Page<ReportTeacherResponseWithId> pageDto = bookReportRepository.bookReportsHomeworkPage(homeworkId, pageable)
+			.map(dto -> new ReportTeacherResponseWithId(
+				dto.id(),
+				dto.studentNumber(),
+				dto.studentName(),
+				dto.createdAt(),
+				(dto.approveTime() == null) ? 있음 : 없음
+			));
+
+		return pageDto;
+	}
+
 	public void approveStamp(User user, Long bookReportId) {
 		BookReport bookReport = getBookReport(bookReportId);
 
