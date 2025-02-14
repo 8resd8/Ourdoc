@@ -13,6 +13,7 @@ import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetail;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentResponse;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherDetail;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherDetailPage;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
@@ -106,6 +107,21 @@ public class HomeworkService {
 		List<ReportTeacherResponseWithId> bookReports = bookReportTeacherService.getReportTeacherHomeworkResponses(
 			homeworkId);
 		return HomeworkTeacherDetail.of(homework, submitCount, bookReports);
+	}
+
+	public HomeworkTeacherDetailPage getHomeworkDetailTeacherPage(Long homeworkId, User user, Pageable pageable) {
+		Homework homework = homeworkRepository.findById(homeworkId)
+			.orElseThrow(() -> new NoSuchElementException("해당하는 숙제가 없습니다."));
+		if (!homework.getUser().equals(user)) {
+			throw new IllegalArgumentException("숙제를 생성한 교사가 아닙니다.");
+		}
+
+		int submitCount = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId);
+		List<ReportTeacherResponseWithId> bookReportsList = bookReportTeacherService.getReportTeacherHomeworkResponses(
+			homeworkId);
+		Page<ReportTeacherResponseWithId> bookReports = new PageImpl<>(bookReportsList, pageable,
+			bookReportsList.size());
+		return HomeworkTeacherDetailPage.of(homework, submitCount, bookReports);
 	}
 
 	public HomeworkStudentResponse getHomeworkStudentClass(BookSearchRequest request, User user, Pageable pageable) {
