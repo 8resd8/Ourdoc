@@ -10,16 +10,16 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 import lombok.Builder;
 
 @Builder
-public record HomeworkDetailStudent(
+public record HomeworkStudentDetail(
 	Long homeworkId,
 	BookResponse book,
 	LocalDateTime createdAt,
 	boolean submitStatus,
 	List<BookReportHomeworkStudent> bookReports
 ) {
-	public static HomeworkDetailStudent of(Homework homework, boolean submitStatus,
+	public static HomeworkStudentDetail of(Homework homework, boolean submitStatus,
 		List<BookReportHomeworkStudent> bookReports) {
-		return HomeworkDetailStudent.builder()
+		return HomeworkStudentDetail.builder()
 			.homeworkId(homework.getId())
 			.book(BookResponse.of(homework.getBook()))
 			.createdAt(homework.getCreatedAt())

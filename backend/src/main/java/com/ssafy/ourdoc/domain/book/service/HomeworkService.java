@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailStudent;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseStudent;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkResponseTeacher;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetail;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentResponse;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherDetail;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
@@ -80,7 +80,7 @@ public class HomeworkService {
 		homeworkRepository.delete(homework);
 	}
 
-	public HomeworkResponseTeacher getHomeworkTeacherClass(BookSearchRequest request, User user, Pageable pageable) {
+	public HomeworkTeacherResponse getHomeworkTeacherClass(BookSearchRequest request, User user, Pageable pageable) {
 		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
 
@@ -88,14 +88,14 @@ public class HomeworkService {
 		Page<Homework> homeworks = homeworkRepository.findByClassRoomAndBookIn(userClassRoom,
 			searchedBooks, pageable);
 
-		List<HomeworkDetailTeacher> details = homeworks.stream()
+		List<HomeworkTeacherDetail> details = homeworks.stream()
 			.map(homework -> getHomeworkDetailTeacher(homework.getId(), user))
 			.toList();
-		Page<HomeworkDetailTeacher> content = new PageImpl<>(details, pageable, homeworks.getTotalElements());
-		return new HomeworkResponseTeacher(studentCount, content);
+		Page<HomeworkTeacherDetail> content = new PageImpl<>(details, pageable, homeworks.getTotalElements());
+		return new HomeworkTeacherResponse(studentCount, content);
 	}
 
-	public HomeworkDetailTeacher getHomeworkDetailTeacher(Long homeworkId, User user) {
+	public HomeworkTeacherDetail getHomeworkDetailTeacher(Long homeworkId, User user) {
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new NoSuchElementException("해당하는 숙제가 없습니다."));
 		if (!homework.getUser().equals(user)) {
@@ -105,24 +105,24 @@ public class HomeworkService {
 		int submitCount = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId);
 		List<ReportTeacherResponseWithId> bookReports = bookReportTeacherService.getReportTeacherHomeworkResponses(
 			homeworkId);
-		return HomeworkDetailTeacher.of(homework, submitCount, bookReports);
+		return HomeworkTeacherDetail.of(homework, submitCount, bookReports);
 	}
 
-	public HomeworkResponseStudent getHomeworkStudentClass(BookSearchRequest request, User user, Pageable pageable) {
+	public HomeworkStudentResponse getHomeworkStudentClass(BookSearchRequest request, User user, Pageable pageable) {
 		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 
 		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		Page<Homework> homeworks = homeworkRepository.findByClassRoomAndBookIn(userClassRoom,
 			searchedBooks, pageable);
 
-		List<HomeworkDetailStudent> details = homeworks.stream()
+		List<HomeworkStudentDetail> details = homeworks.stream()
 			.map(homework -> getHomeworkDetailStudent(homework.getId(), user))
 			.toList();
-		Page<HomeworkDetailStudent> content = new PageImpl<>(details, pageable, homeworks.getTotalElements());
-		return new HomeworkResponseStudent(content);
+		Page<HomeworkStudentDetail> content = new PageImpl<>(details, pageable, homeworks.getTotalElements());
+		return new HomeworkStudentResponse(content);
 	}
 
-	public HomeworkDetailStudent getHomeworkDetailStudent(Long homeworkId, User user) {
+	public HomeworkStudentDetail getHomeworkDetailStudent(Long homeworkId, User user) {
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new NoSuchElementException("해당하는 숙제가 없습니다."));
 		ClassRoom classRoom = homework.getClassRoom();
@@ -134,6 +134,6 @@ public class HomeworkService {
 		boolean submitStatus = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId) > 0;
 		List<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
 			homeworkId, user.getId());
-		return HomeworkDetailStudent.of(homework, submitStatus, bookReports);
+		return HomeworkStudentDetail.of(homework, submitStatus, bookReports);
 	}
 }
