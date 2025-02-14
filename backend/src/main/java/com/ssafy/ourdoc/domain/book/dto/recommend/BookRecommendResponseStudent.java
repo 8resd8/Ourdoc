@@ -6,6 +6,6 @@ import lombok.Builder;
 
 @Builder
 public record BookRecommendResponseStudent(
-	Page<BookRecommendDetailStudent> recommend
+	Page<BookRecommendDetailStudent> recommends
 ) {
 }
