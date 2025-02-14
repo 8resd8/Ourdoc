@@ -27,6 +27,7 @@ export interface SignupStudentRequest {
   studentNumber: number;
   birth: string;
   gender: string;
+  classId: number;
 }
 
 export interface LoginRequest {
@@ -40,6 +41,8 @@ export interface LoginResponse {
   name: string;
   role: string;
   schoolName?: string;
+  schoolId?: number;
+  classId?: number;
   grade?: number;
   classNumber?: number;
   studentNumber?: number;
