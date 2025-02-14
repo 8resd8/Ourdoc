@@ -48,6 +48,11 @@ const DebateRoom: React.FC = () => {
         subscriberContainer.className = classes['subscriber-container'];
         subscriberContainer.id = `subscriber-${stream.streamId}`;
 
+        // 클릭 시 확대/축소 기능 (CSS 클래스 토글)
+        subscriberContainer.addEventListener('click', () => {
+            subscriberContainer.classList.toggle(classes['enlarged']);
+        });
+
         if (subscribersRef.current) {
             subscribersRef.current.appendChild(subscriberContainer);
         }
@@ -188,7 +193,7 @@ const DebateRoom: React.FC = () => {
                 resolution: '640x480',
             };
             const myPublisher = OVRef.current.initPublisher(
-                publisherRef.current,
+                publisherRef.current as HTMLElement,
                 publisherOptions,
                 (error) => {
                     if (error) {

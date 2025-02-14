@@ -152,3 +152,15 @@
     text-align: center;
     margin-top: 20px;
 }
+
+/* 확대된 영상 */
+.enlarged {
+    position: fixed;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    z-index: 1000;
+    background-color: black; /* 선택사항 */
+  }
+  
