@@ -101,7 +101,6 @@ const TeacherClassAuth = () => {
   const inviteNewStudent = async () => {
     try {
       const response = await generateSignupInviteCodeApi();
-      console.log(response);
       setQr(response.url as string);
       setUrl(response.qrImageBase64 as string);
       setIsModalOpen(true);
@@ -113,7 +112,9 @@ const TeacherClassAuth = () => {
   const inviteChangeStudent = async () => {
     try {
       const response = await generateChangeInviteCodeApi();
-      console.log(response);
+      setQr(response.url as string);
+      setUrl(response.qrImageBase64 as string);
+      setIsModalOpen(true);
     } catch (error) {
       console.error('소속 변경 초대 코드 발급 실패:', error);
     }
@@ -129,13 +130,13 @@ const TeacherClassAuth = () => {
         <div className="flex space-x-2">
           <button
             onClick={inviteNewStudent}
-            className="w-[123px] h-[50px] border border-secondary-500 text-secondary-500 body-medium rounded-[10px]"
+            className="cursor-pointer w-[123px] h-[50px] border border-secondary-500 text-secondary-500 body-medium rounded-[10px]"
           >
             신규 가입 초대
           </button>
           <button
             onClick={inviteChangeStudent}
-            className="w-[123px] h-[50px] border border-primary-500 text-primary-500 body-medium rounded-[10px]"
+            className="cursor-pointer w-[123px] h-[50px] border border-primary-500 text-primary-500 body-medium rounded-[10px]"
           >
             소속 변경 초대
           </button>
@@ -248,13 +249,14 @@ const TeacherClassAuth = () => {
               src={`data:image/jpeg;base64,${url}`}
               alt="QR Code"
             />
-            <CopyUrlButton url={qr} />
+            <div className="flex justify-end">
+              <CopyUrlButton url={qr} />
+            </div>
           </div>
         }
         confirmText={'다운로드'}
         cancelText={'닫기'}
       />
-      <img src={qr} />
     </div>
   );
 };

@@ -115,14 +115,8 @@ export const issueTemporaryPasswordApi = async (
 };
 
 // 학생 초대 QR코드 발급(회원가입시)
-<<<<<<< HEAD
-export const generateSignupInviteCodeApi = async (
-): Promise<QrResponse> => {
-  const response = await api.get<QrResponse>(`/teachers/code`);
-=======
 export const generateSignupInviteCodeApi = async (): Promise<QrResponse> => {
   const response = await api.get(`/teachers/code`);
->>>>>>> 2f580079bfa1ca7627bf6c4c0ea6482c0a0ff2eb
   return response.data;
 };
 
