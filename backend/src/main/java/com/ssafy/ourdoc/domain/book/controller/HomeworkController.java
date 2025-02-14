@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
-import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetail;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetailPage;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentResponse;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherDetailPage;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherResponse;
@@ -70,8 +70,11 @@ public class HomeworkController {
 	}
 
 	@GetMapping("/students/homework/{homeworkId}")
-	public ResponseEntity<HomeworkStudentDetail> getHomeworkStudent(@PathVariable("homeworkId") long homeworkId,
-		@Login User user) {
-		return ResponseEntity.ok(homeworkService.getHomeworkDetailStudent(homeworkId, user));
+	public ResponseEntity<HomeworkStudentDetailPage> getHomeworkStudent(
+		@PathVariable("homeworkId") long homeworkId,
+		@Login User user,
+		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+		HomeworkStudentDetailPage response = homeworkService.getHomeworkDetailStudentPage(homeworkId, user, pageable);
+		return ResponseEntity.ok(response);
 	}
 }

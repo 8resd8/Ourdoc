@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetail;
+import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetailPage;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentResponse;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherDetail;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherDetailPage;
@@ -149,5 +150,20 @@ public class HomeworkService {
 		List<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
 			homeworkId, user.getId());
 		return HomeworkStudentDetail.of(homework, submitStatus, bookReports);
+	}
+
+	public HomeworkStudentDetailPage getHomeworkDetailStudentPage(Long homeworkId, User user, Pageable pageable) {
+		Homework homework = homeworkRepository.findById(homeworkId)
+			.orElseThrow(() -> new NoSuchElementException("해당하는 숙제가 없습니다."));
+		ClassRoom classRoom = homework.getClassRoom();
+		StudentClass studentClass = studentClassRepository.findByUserAndClassRoom(user, classRoom);
+		if (studentClass == null) {
+			throw new IllegalArgumentException("해당 숙제에 해당하는 학급의 학생이 아닙니다.");
+		}
+
+		boolean submitStatus = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId) > 0;
+		Page<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkPageResponses(
+			homeworkId, user.getId(), pageable);
+		return HomeworkStudentDetailPage.of(homework, submitStatus, bookReports);
 	}
 }

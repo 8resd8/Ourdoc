@@ -100,6 +100,19 @@ public class BookReportStudentService {
 		return convertDto;
 	}
 
+	public Page<BookReportHomeworkStudent> getReportStudentHomeworkPageResponses(Long homeworkId, Long userId,
+		Pageable pageable) {
+		Page<BookReportHomeworkStudent> pageDto = bookReportRepository.bookReportsHomeworkStudentsPage(homeworkId,
+				userId, pageable)
+			.map(dto -> new BookReportHomeworkStudent(
+				dto.bookreportId(),
+				dto.createdAt(),
+				dto.homeworkId() != null ? SubmitStatus.제출 : SubmitStatus.미제출,
+				dto.approveTime() != null ? ApproveStatus.있음 : ApproveStatus.없음
+			));
+		return pageDto;
+	}
+
 	public void deleteBookReport(Long bookReportId) {
 		BookReport bookReport = bookReportRepository.findById(bookReportId)
 			.orElseThrow(() -> new NoSuchElementException("지울 독서록이 없습니다."));
@@ -130,5 +143,4 @@ public class BookReportStudentService {
 		BookReportStatisticsRequest request) {
 		return bookReportRepository.myDailyBookReportCount(user.getId(), request.grade(), request.month());
 	}
-
 }
