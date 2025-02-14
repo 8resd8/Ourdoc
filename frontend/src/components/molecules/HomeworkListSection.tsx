@@ -1,36 +1,40 @@
 import { HomeworkListTile } from '../atoms/HomeworkListTile';
+import { PlusButton } from '../atoms/PlusButton';
+import { Table, TableAlignType } from '../atoms/Table';
+
+const TABLE_HEADER = [
+  {
+    label: 'No',
+    width: 60,
+  },
+  {
+    label: '제목',
+    width: 332,
+    align: TableAlignType.left,
+  },
+  {
+    label: '지은이',
+  },
+  {
+    label: '출판사',
+  },
+  {
+    label: '출판 년도',
+  },
+  {
+    label: '제출 현황',
+  },
+];
 
 export const HomeworkListSection = () => {
   return (
     <div className="w-[1064px] h-[277px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
-      <div className="w-[1016px] justify-between items-start inline-flex">
+      <div className="self-stretch justify-between items-start inline-flex">
         <div className="text-gray-800 headline-medium">숙제 현황</div>
-        <div data-svg-wrapper className="relative">
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M12 5V19"
-              stroke="#25282B"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M5 12H19"
-              stroke="#25282B"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
+        <PlusButton onClick={() => {}} />
       </div>
-      <div className="self-stretch h-[191px] flex-col justify-start items-center gap-3 flex">
+      <Table headers={TABLE_HEADER} datas={[]} />
+      {/* <div className="self-stretch h-[191px] flex-col justify-start items-center gap-3 flex">
         <div className="self-stretch h-[191px] relative">
           <div className="w-[1016px] h-12 px-6 py-3 left-0 top-0 absolute border-b border-gray-900 justify-start items-center gap-[18px] inline-flex">
             <div className="w-[60px] text-center text-gray-800 body-medium">
@@ -71,7 +75,7 @@ export const HomeworkListSection = () => {
             />
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
