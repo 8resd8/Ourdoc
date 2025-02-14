@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record BookDetailDto(
-	Long id,
+	Long bookId,
 	String title,
 	String author,
 	String genre,

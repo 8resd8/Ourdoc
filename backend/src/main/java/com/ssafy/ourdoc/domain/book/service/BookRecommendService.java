@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
-import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailStudent;
-import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseStudent;
-import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseTeacher;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendStudentDetail;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendStudentResponse;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendTeacherDetail;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendTeacherResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
@@ -21,8 +21,8 @@ import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
+import com.ssafy.ourdoc.domain.classroom.service.ClassService;
 import com.ssafy.ourdoc.domain.user.entity.User;
-import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
@@ -42,18 +42,19 @@ public class BookRecommendService {
 	private final TeacherClassRepository teacherClassRepository;
 	private final StudentClassRepository studentClassRepository;
 	private final ClassRoomRepository classRoomRepository;
-	private final BookService bookService;
 	private final BookReportRepository bookReportRepository;
+	private final BookService bookService;
+	private final ClassService classService;
 
 	public void addBookRecommend(BookRequest request, User user) {
-		if (user.getUserType().equals(UserType.학생)) {
+		if (user.getUserType() == UserType.학생) {
 			throw new ForbiddenException("추천도서를 생성할 권한이 없습니다.");
 		}
 		Book book = bookService.findBookById(request.bookId());
 		ClassRoom classRoom = teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
 			.map(TeacherClass::getClassRoom)
 			.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
-		;
+
 		if (bookRecommendRepository.existsByBookAndUserAndClassRoom(book, user, classRoom)) {
 			throw new IllegalArgumentException("이미 추천 도서로 등록했습니다.");
 		}
@@ -62,7 +63,7 @@ public class BookRecommendService {
 	}
 
 	public void deleteBookRecommend(BookRequest request, User user) {
-		if (user.getUserType().equals(UserType.학생)) {
+		if (user.getUserType() == UserType.학생) {
 			throw new ForbiddenException("추천도서를 삭제할 권한이 없습니다.");
 		}
 		Book book = bookService.findBookById(request.bookId());
@@ -74,9 +75,9 @@ public class BookRecommendService {
 		bookRecommendRepository.delete(bookRecommend);
 	}
 
-	public BookRecommendResponseTeacher getBookRecommendsTeacher(BookSearchRequest request, User user,
+	public BookRecommendTeacherResponse getBookRecommendsTeacher(BookSearchRequest request, User user,
 		Pageable pageable) {
-		ClassRoom userClassRoom = getUserClassRoom(user);
+		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
 		int grade = userClassRoom.getGrade();
 		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
@@ -86,34 +87,34 @@ public class BookRecommendService {
 		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
 			searchedBooks, pageable);
 
-		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
+		List<BookRecommendTeacherDetail> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
 			.toList();
 
-		Page<BookRecommendDetailTeacher> content = new PageImpl<>(details, pageable, details.size());
-		return new BookRecommendResponseTeacher(studentCount, content);
+		Page<BookRecommendTeacherDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
+		return new BookRecommendTeacherResponse(studentCount, content);
 	}
 
-	public BookRecommendResponseTeacher getBookRecommendsTeacherClass(BookSearchRequest request, User user,
+	public BookRecommendTeacherResponse getBookRecommendsTeacherClass(BookSearchRequest request, User user,
 		Pageable pageable) {
-		ClassRoom userClassRoom = getUserClassRoom(user);
+		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
 
 		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomAndBookIn(userClassRoom,
 			searchedBooks, pageable);
 
-		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
+		List<BookRecommendTeacherDetail> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
 			.toList();
 
-		Page<BookRecommendDetailTeacher> content = new PageImpl<>(details, pageable, details.size());
-		return new BookRecommendResponseTeacher(studentCount, content);
+		Page<BookRecommendTeacherDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
+		return new BookRecommendTeacherResponse(studentCount, content);
 	}
 
-	public BookRecommendResponseStudent getBookRecommendsStudent(BookSearchRequest request, User user,
+	public BookRecommendStudentResponse getBookRecommendsStudent(BookSearchRequest request, User user,
 		Pageable pageable) {
-		ClassRoom userClassRoom = getUserClassRoom(user);
+		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
 		int grade = userClassRoom.getGrade();
 
@@ -122,52 +123,38 @@ public class BookRecommendService {
 		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
 			searchedBooks, pageable);
 
-		List<BookRecommendDetailStudent> details = bookRecommends.stream()
+		List<BookRecommendStudentDetail> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
 			.toList();
 
-		Page<BookRecommendDetailStudent> content = new PageImpl<>(details, pageable, details.size());
-		return new BookRecommendResponseStudent(content);
+		Page<BookRecommendStudentDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
+		return new BookRecommendStudentResponse(content);
 	}
 
-	public BookRecommendResponseStudent getBookRecommendsStudentClass(BookSearchRequest request, User user,
+	public BookRecommendStudentResponse getBookRecommendsStudentClass(BookSearchRequest request, User user,
 		Pageable pageable) {
-		ClassRoom userClassRoom = getUserClassRoom(user);
+		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 
 		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomAndBookIn(userClassRoom,
 			searchedBooks, pageable);
 
-		List<BookRecommendDetailStudent> details = bookRecommends.stream()
+		List<BookRecommendStudentDetail> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
 			.toList();
-		Page<BookRecommendDetailStudent> content = new PageImpl<>(details, pageable, details.size());
-		return new BookRecommendResponseStudent(content);
+		Page<BookRecommendStudentDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
+		return new BookRecommendStudentResponse(content);
 	}
 
-	private ClassRoom getUserClassRoom(User user) {
-		if (user.getUserType().equals(UserType.학생)) {
-			return studentClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
-				.map(StudentClass::getClassRoom)
-				.orElseThrow(() -> new NoSuchElementException("활성 상태의 학생 학급 정보가 존재하지 않습니다."));
-		}
-		if (user.getUserType().equals(UserType.교사)) {
-			return teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
-				.map(TeacherClass::getClassRoom)
-				.orElseThrow(() -> new NoSuchElementException("활성 상태의 교사 학급 정보가 존재하지 않습니다."));
-		}
-		throw new NoSuchElementException("현재 유효한 상태의 학급 정보가 없습니다.");
-	}
-
-	private BookRecommendDetailTeacher toBookRecommendDetailTeacher(BookRecommend bookRecommend, Long userId) {
+	private BookRecommendTeacherDetail toBookRecommendDetailTeacher(BookRecommend bookRecommend, Long userId) {
 		Long bookId = bookRecommend.getBook().getId();
 		int submitCount = bookReportRepository.countByUserIdAndBookId(userId, bookId);
-		return BookRecommendDetailTeacher.of(bookRecommend, submitCount);
+		return BookRecommendTeacherDetail.of(bookRecommend, submitCount);
 	}
 
-	private BookRecommendDetailStudent toBookRecommendDetailStudent(BookRecommend bookRecommend, Long userId) {
+	private BookRecommendStudentDetail toBookRecommendDetailStudent(BookRecommend bookRecommend, Long userId) {
 		Long bookId = bookRecommend.getBook().getId();
 		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(userId, bookId) > 0;
-		return BookRecommendDetailStudent.of(bookRecommend, submitStatus);
+		return BookRecommendStudentDetail.of(bookRecommend, submitStatus);
 	}
 }

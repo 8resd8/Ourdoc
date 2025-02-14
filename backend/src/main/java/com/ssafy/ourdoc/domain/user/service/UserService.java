@@ -148,7 +148,7 @@ public class UserService {
 			throw new UserFailedException("로그인 실패: 비밀번호가 틀렸습니다.");
 		}
 
-		if (!user.getUserType().equals(request.userType())) {
+		if (user.getUserType() != request.userType()) {
 			throw new UserFailedException("로그인 실패: 유저 타입이 일치하지 않습니다.");
 		}
 		return user;

@@ -18,6 +18,7 @@ import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
@@ -28,6 +29,8 @@ import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
+import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
+import com.ssafy.ourdoc.global.common.enums.SubmitStatus;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -78,6 +81,18 @@ public class BookReportStudentService {
 		Page<BookReportDto> bookReportDtoPage = new PageImpl<>(bookReportDtos, pageable,
 			bookReports.getTotalElements());
 		return new BookReportListResponse(bookReportDtoPage);
+	}
+
+	public List<BookReportHomeworkStudent> getReportStudentHomeworkResponses(Long homeworkId, Long userId) {
+		List<BookReportHomeworkStudent> convertDto = bookReportRepository.bookReportsHomeworkStudents(homeworkId,
+				userId).stream()
+			.map(dto -> new BookReportHomeworkStudent(
+				dto.bookreportId(),
+				dto.createdAt(),
+				dto.homeworkId() != null ? SubmitStatus.제출 : SubmitStatus.미제출,
+				dto.approveTime() != null ? ApproveStatus.있음 : ApproveStatus.없음))
+			.toList();
+		return convertDto;
 	}
 
 	public void deleteBookReport(Long bookReportId) {
