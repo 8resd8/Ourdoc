@@ -3,6 +3,9 @@ server:
     context-path: /api
 
 spring:
+  messages:
+    basename: messages
+    encoding: UTF-8
   ai:
     openai:
       api-key: ${spring-ai.gpt.api-key}

@@ -2,6 +2,7 @@ package com.ssafy.ourdoc.api.ocr;
 
 import static org.springframework.http.HttpStatus.*;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,7 @@ import com.ssafy.ourdoc.global.integration.ocr.service.OCRService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping("/ocr")
 public class OCRController {
