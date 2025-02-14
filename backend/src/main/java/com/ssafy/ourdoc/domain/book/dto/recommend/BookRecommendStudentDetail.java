@@ -8,16 +8,16 @@ import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import lombok.Builder;
 
 @Builder
-public record BookRecommendDetailTeacher(
+public record BookRecommendStudentDetail(
 	BookResponse book,
 	LocalDateTime createdAt,
-	int submitCount
+	boolean submitStatus
 ) {
-	public static BookRecommendDetailTeacher of(BookRecommend bookRecommend, int submitCount) {
-		return BookRecommendDetailTeacher.builder()
+	public static BookRecommendStudentDetail of(BookRecommend bookRecommend, boolean submitStatus) {
+		return BookRecommendStudentDetail.builder()
 			.book(BookResponse.of(bookRecommend.getBook()))
 			.createdAt(bookRecommend.getCreatedAt())
-			.submitCount(submitCount)
+			.submitStatus(submitStatus)
 			.build();
 	}
 }

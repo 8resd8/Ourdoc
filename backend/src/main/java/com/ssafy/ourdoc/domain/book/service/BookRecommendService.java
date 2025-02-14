@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
-import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailStudent;
-import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendDetailTeacher;
-import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseStudent;
-import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendResponseTeacher;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendStudentDetail;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendStudentResponse;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendTeacherDetail;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendTeacherResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
@@ -75,7 +75,7 @@ public class BookRecommendService {
 		bookRecommendRepository.delete(bookRecommend);
 	}
 
-	public BookRecommendResponseTeacher getBookRecommendsTeacher(BookSearchRequest request, User user,
+	public BookRecommendTeacherResponse getBookRecommendsTeacher(BookSearchRequest request, User user,
 		Pageable pageable) {
 		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
@@ -87,15 +87,15 @@ public class BookRecommendService {
 		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
 			searchedBooks, pageable);
 
-		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
+		List<BookRecommendTeacherDetail> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
 			.toList();
 
-		Page<BookRecommendDetailTeacher> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
-		return new BookRecommendResponseTeacher(studentCount, content);
+		Page<BookRecommendTeacherDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
+		return new BookRecommendTeacherResponse(studentCount, content);
 	}
 
-	public BookRecommendResponseTeacher getBookRecommendsTeacherClass(BookSearchRequest request, User user,
+	public BookRecommendTeacherResponse getBookRecommendsTeacherClass(BookSearchRequest request, User user,
 		Pageable pageable) {
 		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
@@ -104,15 +104,15 @@ public class BookRecommendService {
 		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomAndBookIn(userClassRoom,
 			searchedBooks, pageable);
 
-		List<BookRecommendDetailTeacher> details = bookRecommends.stream()
+		List<BookRecommendTeacherDetail> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
 			.toList();
 
-		Page<BookRecommendDetailTeacher> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
-		return new BookRecommendResponseTeacher(studentCount, content);
+		Page<BookRecommendTeacherDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
+		return new BookRecommendTeacherResponse(studentCount, content);
 	}
 
-	public BookRecommendResponseStudent getBookRecommendsStudent(BookSearchRequest request, User user,
+	public BookRecommendStudentResponse getBookRecommendsStudent(BookSearchRequest request, User user,
 		Pageable pageable) {
 		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
@@ -123,15 +123,15 @@ public class BookRecommendService {
 		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomInAndBookIn(sameGradeClass,
 			searchedBooks, pageable);
 
-		List<BookRecommendDetailStudent> details = bookRecommends.stream()
+		List<BookRecommendStudentDetail> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
 			.toList();
 
-		Page<BookRecommendDetailStudent> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
-		return new BookRecommendResponseStudent(content);
+		Page<BookRecommendStudentDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
+		return new BookRecommendStudentResponse(content);
 	}
 
-	public BookRecommendResponseStudent getBookRecommendsStudentClass(BookSearchRequest request, User user,
+	public BookRecommendStudentResponse getBookRecommendsStudentClass(BookSearchRequest request, User user,
 		Pageable pageable) {
 		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 
@@ -139,22 +139,22 @@ public class BookRecommendService {
 		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomAndBookIn(userClassRoom,
 			searchedBooks, pageable);
 
-		List<BookRecommendDetailStudent> details = bookRecommends.stream()
+		List<BookRecommendStudentDetail> details = bookRecommends.stream()
 			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
 			.toList();
-		Page<BookRecommendDetailStudent> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
-		return new BookRecommendResponseStudent(content);
+		Page<BookRecommendStudentDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
+		return new BookRecommendStudentResponse(content);
 	}
 
-	private BookRecommendDetailTeacher toBookRecommendDetailTeacher(BookRecommend bookRecommend, Long userId) {
+	private BookRecommendTeacherDetail toBookRecommendDetailTeacher(BookRecommend bookRecommend, Long userId) {
 		Long bookId = bookRecommend.getBook().getId();
 		int submitCount = bookReportRepository.countByUserIdAndBookId(userId, bookId);
-		return BookRecommendDetailTeacher.of(bookRecommend, submitCount);
+		return BookRecommendTeacherDetail.of(bookRecommend, submitCount);
 	}
 
-	private BookRecommendDetailStudent toBookRecommendDetailStudent(BookRecommend bookRecommend, Long userId) {
+	private BookRecommendStudentDetail toBookRecommendDetailStudent(BookRecommend bookRecommend, Long userId) {
 		Long bookId = bookRecommend.getBook().getId();
 		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(userId, bookId) > 0;
-		return BookRecommendDetailStudent.of(bookRecommend, submitStatus);
+		return BookRecommendStudentDetail.of(bookRecommend, submitStatus);
 	}
 }
