@@ -1,4 +1,26 @@
+import { useEffect, useState } from 'react';
+import {
+  BookReportDetail,
+  getBookReportDetailApi,
+} from '../../../services/bookReportsService';
+import { useParams } from 'react-router-dom';
+import { format } from 'prettier';
+import { DateFormat } from '../../../utils/DateFormat';
+
 const StudentReportDetail = () => {
+  const { id } = useParams();
+  const [report, setReport] = useState<BookReportDetail | null>(null);
+  const fetchReport = async () => {
+    if (id) {
+      const response = await getBookReportDetailApi(id);
+      setReport(response);
+      console.log(response);
+    }
+  };
+  useEffect(() => {
+    fetchReport();
+  }, []);
+
   return (
     <div className="">
       <div className="flex flex-row justify-center">
@@ -22,37 +44,31 @@ const StudentReportDetail = () => {
                 책제목
               </div>
               <div className="w-[530px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
-                은ㅇㅁㄹ
+                {report?.bookTitle}
               </div>
             </div>
             <div className="flex flex-row">
               <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
-                책제목
+                지은이
               </div>
               <div className="w-[130px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
-                김미소
+                {report?.author}
               </div>
               <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
                 출판사
               </div>
               <div className="w-[130px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
-                기므므
+                {report?.publisher}
               </div>
               <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
                 작성일
               </div>
               <div className="w-[130px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
-                2024.01.03
+                {report && DateFormat(report.createdAt, 'report')}
               </div>
             </div>
             <div className="w-[600px] h-[543px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-gray-800 report-font break-words overflow-auto">
-              {`2024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.03
-        2024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.03
-        2024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.03
-        2024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.03
-        2024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.03
-        2024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.03... 2024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.032024.01.03
-       `}
+              {report?.beforeContent}
             </div>
             <img
               src="/assets/images/goodStamp.png"
@@ -60,7 +76,7 @@ const StudentReportDetail = () => {
             />
           </div>
           <div className="flex justify-end">
-            <div className="inline-flex py-[12px] px-[16px] bg-system-danger rounded-[10px] justify-center items-center text-center text-gray-0 body-medium">
+            <div className="inline-flex py-[12px] px-[16px] mt-1 bg-system-danger rounded-[10px] justify-center items-center text-center text-gray-0 body-medium">
               삭제하기
             </div>
           </div>
@@ -70,7 +86,8 @@ const StudentReportDetail = () => {
             <div className="text-gray-800 body-small">AI 선생님 의견</div>
             <div className="w-[413px] h-[421px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
               <div className="w-[389px]">
-                <span className="text-gray-800 body-medium">
+                {report?.aiComment}
+                {/* <span className="text-gray-800 body-medium">
                   원문: 이 책은 나에게 많은 감동을 주었다. 주인공의 용기 있는
                   선택이 인상적이었고, 나도 그런 용기를 갖고 싶다고 생각했다.
                   <br />
@@ -95,7 +112,7 @@ const StudentReportDetail = () => {
                 </span>
                 <span className="text-gray-800 body-medium">
                   이런 방식으로 독서록을 다듬으면 더 좋은 글이 될 수 있어! 😊
-                </span>
+                </span> */}
               </div>
             </div>
           </div>
@@ -103,12 +120,13 @@ const StudentReportDetail = () => {
             <div className="text-gray-800 body-small">담임 선생님 의견</div>
             <div className="w-[413px] h-[126px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
               <div className="w-[389px]">
-                <span className="text-gray-800 body-medium">
+                {report?.teacherComment}
+                {/* <span className="text-gray-800 body-medium">
                   첨삭 전: 이 책은 나에게 많은 감동을 주었다. 첨삭 후: 이 책은
                   나에게 깊고 진한 감동을 안겨 주었다 첨삭 전: 이 책은 나에게
                   많은 감동을 주었다. 첨삭 후: 이 책은 나에게 깊고 진한 감동을
                   안겨 주었다
-                </span>
+                </span> */}
               </div>
             </div>
           </div>

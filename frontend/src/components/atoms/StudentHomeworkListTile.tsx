@@ -34,7 +34,7 @@ export const StudentHomeworkListTile = ({
         <div className="w-[332px] truncate text-gray-800 body-medium">
           {title}
         </div>
-        <div className="w-[120px] text-center text-gray-800 body-medium">
+        <div className="w-[120px] text-center text-gray-800 body-medium whitespace-nowrap overflow-hidden text-ellipsis">
           {author}
         </div>
         <div className="w-[120px] text-center text-gray-800 body-medium">

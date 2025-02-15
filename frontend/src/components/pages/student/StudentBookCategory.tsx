@@ -1,6 +1,60 @@
+import { useState, useEffect } from 'react';
+import {
+  Book,
+  HomeworkItem,
+  PaginatedHomeworks,
+  getStudentHomeworkBooksApi,
+} from '../../../services/booksService';
 import SelectVariants from '../../commons/SelectVariants';
+import { useNavigate } from 'react-router-dom';
 
 const StudentBookCategory = () => {
+  const param = {
+    page: 0,
+    size: 0,
+    title: '',
+    author: '',
+    publisher: '',
+  };
+  const navigate = useNavigate();
+  const [bookList, setBookList] = useState<HomeworkItem[]>([]);
+  const [paginationInfo, setPaginationInfo] = useState<Omit<
+    PaginatedHomeworks,
+    'content'
+  > | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const PAGE_SIZE = 10;
+
+  const fetchHomeworkList = async (page = 0) => {
+    try {
+      const response = await getStudentHomeworkBooksApi(param);
+      setBookList(response.homeworks.content);
+      console.log(response.homeworks.content);
+
+      const { content, ...paginationData } = response.homeworks;
+      console.log('숙제 목록:', response);
+
+      setPaginationInfo(paginationData);
+    } catch (error) {
+      console.error('숙제 목록 가져오기 실패:', error);
+    }
+  };
+  console.log(bookList);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 0 && page < totalPages) {
+      fetchHomeworkList(page);
+    }
+  };
+  useEffect(() => {
+    fetchHomeworkList(currentPage);
+  }, []);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  };
   return (
     <div className="w-[1200px] m-auto mt-8">
       {/* 검색 영역 */}
@@ -11,7 +65,7 @@ const StudentBookCategory = () => {
             className={`flex items-center  w-80  gap-2 h-[46px] overflow-hidden`}
           >
             <input
-              className={` w-full h-full pl-5 outline-none placeholder-gray-500 body-medium`}
+              className={`border-b border-gray-500 w-full h-full pl-5 outline-none placeholder-gray-500 body-medium`}
               placeholder="검색어를 입력해주세요."
               type="text"
             />
@@ -77,219 +131,84 @@ const StudentBookCategory = () => {
         </button>
       </div>
 
-      <div className="w-[1064px] h-[360px] justify-between items-start inline-flex">
-        <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
-          <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
-            <div className="w-[185px] h-[232px] relative">
-              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
-              <img
-                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
-                src="https://placehold.co/181x232"
-              />
-            </div>
-            <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
-                어린왕자
+      <div className="w-[1064px] flex flex-wrap justify-between items-start">
+        {bookList.map((book, index) => (
+          <div
+            key={index}
+            className="w-[185px] flex-col justify-start items-start gap-2 inline-flex mb-8"
+          >
+            <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
+              <div className="w-[185px] h-[232px] relative">
+                <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
+                <img
+                  className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
+                  src={book.book.imageUrl}
+                  alt={book.book.title}
+                />
+              </div>
+              <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
+                <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
+                  {book.book.title}
+                </div>
+              </div>
+              <div className="self-stretch h-12 text-gray-300 body-small">
+                {book.book.author} | {book.book.publisher}
               </div>
             </div>
-            <div className="self-stretch h-12 text-gray-300 body-small">
-              생텍쥐페리생텍쥐페리생텍쥐페리 지음 | 새옴
+            <div
+              onClick={() => {
+                navigate(`/student/report/write/${book.book.bookId}`);
+              }}
+              className="cursor-pointer self-stretch py-[4px] hover:bg-primary-200 bg-gray-0 rounded-[10px] border border-primary-500 justify-center items-center gap-2.5 inline-flex"
+            >
+              <button className="text-primary-500 body-medium cursor-pointer ">
+                숙제하기
+              </button>
             </div>
           </div>
-          <div className="self-stretch py-[4px] bg-gray-0 rounded-[10px] border border-primary-500 justify-center items-center gap-2.5 inline-flex">
-            <div className="text-primary-500 body-medium">숙제하기</div>
-          </div>
-        </div>
-        <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
-          <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
-            <div className="w-[185px] h-[232px] relative">
-              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
-              <img
-                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
-                src="https://placehold.co/181x232"
-              />
-            </div>
-            <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
-                어린왕자
-              </div>
-            </div>
-            <div className="self-stretch h-12 text-gray-300 body-small">
-              생텍쥐페리 지음 | 새옴
-            </div>
-          </div>
-          <div className="self-stretch py-[4px] bg-gray-0 rounded-[10px] border border-gray-500 justify-center items-center gap-2.5 inline-flex">
-            <div className="text-gray-500 body-medium">제출 완료</div>
-          </div>
-        </div>
-        <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
-          <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
-            <div className="w-[185px] h-[232px] relative">
-              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
-              <img
-                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
-                src="https://placehold.co/181x232"
-              />
-            </div>
-            <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
-                어린왕자
-              </div>
-            </div>
-            <div className="self-stretch h-12 text-gray-300 body-small">
-              생텍쥐페리 지음 | 새옴
-            </div>
-          </div>
-          <div className="self-stretch py-[4px] bg-gray-0 rounded-[10px] border border-system-danger justify-center items-center gap-2.5 inline-flex">
-            <div className="text-system-danger body-medium">관심 해제하기</div>
-          </div>
-        </div>
-        <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
-          <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
-            <div className="w-[185px] h-[232px] relative">
-              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
-              <img
-                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
-                src="https://placehold.co/181x232"
-              />
-            </div>
-            <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
-                어린왕자
-              </div>
-            </div>
-            <div className="self-stretch h-12 text-gray-300 body-small">
-              생텍쥐페리 지음 | 새옴
-            </div>
-          </div>
-        </div>
-        <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
-          <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
-            <div className="w-[185px] h-[232px] relative">
-              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
-              <img
-                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
-                src="https://placehold.co/181x232"
-              />
-            </div>
-            <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
-                어린왕자
-              </div>
-            </div>
-            <div className="self-stretch h-12 text-gray-300 body-small">
-              생텍쥐페리 지음 | 새옴
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
-      <div />
+      <div className="flex justify-center items-center mt-8 space-x-2">
+        {/* 이전 페이지 버튼 */}
+        <button
+          className={`px-4 py-2 rounded-lg cursor-pointer ${
+            currentPage === 0
+              ? 'text-gray-400 cursor-not-allowed'
+              : 'hover:bg-gray-100'
+          }`}
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 0}
+        >
+          &lt;
+        </button>
 
-      <div className="w-[1064px] h-[360px] justify-between items-start inline-flex">
-        <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
-          <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
-            <div className="w-[185px] h-[232px] relative">
-              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
-              <img
-                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
-                src="https://placehold.co/181x232"
-              />
-            </div>
-            <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
-                어린왕자
-              </div>
-            </div>
-            <div className="self-stretch h-12 text-gray-300 body-small">
-              생텍쥐페리생텍쥐페리생텍쥐페리 지음 | 새옴
-            </div>
-          </div>
-          <div className="self-stretch py-[4px] bg-gray-0 rounded-[10px] border border-primary-500 justify-center items-center gap-2.5 inline-flex">
-            <div className="text-primary-500 body-medium">숙제하기</div>
-          </div>
-        </div>
-        <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
-          <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
-            <div className="w-[185px] h-[232px] relative">
-              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
-              <img
-                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
-                src="https://placehold.co/181x232"
-              />
-            </div>
-            <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
-                어린왕자
-              </div>
-            </div>
-            <div className="self-stretch h-12 text-gray-300 body-small">
-              생텍쥐페리 지음 | 새옴
-            </div>
-          </div>
-          <div className="self-stretch py-[4px] bg-gray-0 rounded-[10px] border border-gray-500 justify-center items-center gap-2.5 inline-flex">
-            <div className="text-gray-500 body-medium">제출 완료</div>
-          </div>
-        </div>
-        <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
-          <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
-            <div className="w-[185px] h-[232px] relative">
-              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
-              <img
-                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
-                src="https://placehold.co/181x232"
-              />
-            </div>
-            <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
-                어린왕자
-              </div>
-            </div>
-            <div className="self-stretch h-12 text-gray-300 body-small">
-              생텍쥐페리 지음 | 새옴
-            </div>
-          </div>
-          <div className="self-stretch py-[4px] bg-gray-0 rounded-[10px] border border-system-danger justify-center items-center gap-2.5 inline-flex">
-            <div className="text-system-danger body-medium">관심 해제하기</div>
-          </div>
-        </div>
-        <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
-          <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
-            <div className="w-[185px] h-[232px] relative">
-              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
-              <img
-                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
-                src="https://placehold.co/181x232"
-              />
-            </div>
-            <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
-                어린왕자
-              </div>
-            </div>
-            <div className="self-stretch h-12 text-gray-300 body-small">
-              생텍쥐페리 지음 | 새옴
-            </div>
-          </div>
-        </div>
-        <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
-          <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
-            <div className="w-[185px] h-[232px] relative">
-              <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
-              <img
-                className="w-[181px] h-[232px] left-0 top-0 absolute rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"
-                src="https://placehold.co/181x232"
-              />
-            </div>
-            <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-              <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
-                어린왕자
-              </div>
-            </div>
-            <div className="self-stretch h-12 text-gray-300 body-small">
-              생텍쥐페리 지음 | 새옴
-            </div>
-          </div>
-        </div>
+        {/* 페이지 번호 표시 */}
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index}
+            className={`px-4 py-2 body-small rounded-lg cursor-pointer ${
+              currentPage === index
+                ? 'bg-primary-500 text-white'
+                : 'hover:bg-gray-100 text-gray-500'
+            }`}
+            onClick={() => handlePageChange(index)}
+          >
+            {index + 1}
+          </button>
+        ))}
+
+        {/* 다음 페이지 버튼 */}
+        <button
+          className={`px-4 py-2 rounded-lg cursor-pointer ${
+            currentPage === totalPages - 1
+              ? 'text-gray-400 cursor-not-allowed'
+              : 'hover:bg-gray-100'
+          }`}
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages - 1}
+        >
+          &gt;
+        </button>
       </div>
     </div>
   );

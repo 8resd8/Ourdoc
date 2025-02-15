@@ -13,7 +13,7 @@ const TeacherStudentInfo = () => {
     certificateTime,
   } = location.state || {};
   const studentGender = gender === '남' ? '♂' : '♀';
-  const date = DateFormat(certificateTime);
+  const date = DateFormat(certificateTime, '');
   return (
     <div className="flex  items-center flex-col  p-4 mt-[80px] ">
       <div className="flex w-[1100px] justify-items-center">
