@@ -67,7 +67,6 @@ public class BookReport extends BaseTimeEntity {
 	@OneToMany(mappedBy = "bookReport", fetch = FetchType.LAZY, cascade = {CascadeType.ALL, CascadeType.REMOVE})
 	private List<BookReportFeedBack> bookReportFeedBack = new ArrayList<>();
 
-
 	@Builder
 	public BookReport(StudentClass studentClass, Book book, Homework homework, String beforeContent,
 		String afterContent, OcrCheck ocrCheck, String imagePath) {
@@ -86,6 +85,14 @@ public class BookReport extends BaseTimeEntity {
 
 	public void saveAfterContent(String afterContent) {
 		this.afterContent = afterContent;
+	}
+
+	public void submitToHomework(Homework homework) {
+		this.homework = homework;
+	}
+
+	public void retrieveFromHomework() {
+		this.homework = null;
 	}
 }
 
