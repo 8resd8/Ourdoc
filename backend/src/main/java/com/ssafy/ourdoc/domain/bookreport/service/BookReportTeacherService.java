@@ -54,7 +54,7 @@ public class BookReportTeacherService {
 				dto.studentNumber(),
 				dto.studentName(),
 				dto.createdAt(),
-				(dto.approveTime() == null) ? 있음 : 없음
+				(dto.approveTime() != null) ? 있음 : 없음
 			));
 
 		return pageDto;
@@ -67,7 +67,7 @@ public class BookReportTeacherService {
 				dto.studentNumber(),
 				dto.studentName(),
 				dto.createdAt(),
-				(dto.approveTime() == null) ? 있음 : 없음
+				(dto.approveTime() != null) ? 있음 : 없음
 			))
 			.toList();
 		return convertDto;
@@ -80,7 +80,7 @@ public class BookReportTeacherService {
 				dto.studentNumber(),
 				dto.studentName(),
 				dto.createdAt(),
-				(dto.approveTime() == null) ? 있음 : 없음
+				(dto.approveTime() != null) ? 있음 : 없음
 			));
 
 		return pageDto;
