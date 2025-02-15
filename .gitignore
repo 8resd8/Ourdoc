@@ -173,3 +173,4 @@ src/main/generated
 backend/gradle/
 backend/src/main/resources/secret.yml
 backend/*.pem
+/backend/logs/*.gz
