@@ -25,6 +25,15 @@ export interface BookReport {
   approveStatus: string;
 }
 
+export interface MonthlyBookReport {
+  month: number;
+  count: number;
+}
+export interface DayReport {
+  date: Date;
+  bookCount: number;
+}
+
 export interface BookReportDetail {
   bookTitle: string;
   author: string;
@@ -63,9 +72,12 @@ export const getTeacherBookReportsApi = async (): Promise<BookReport[]> => {
 };
 
 // 학생 독서록 목록 조회
-export const getStudentBookReportsApi = async (params: BookReportParams): Promise<BookReport[]> => {
+export const getStudentBookReportsApi = async (
+  params: BookReportParams
+): Promise<BookReport[]> => {
   const response = await api.get<{ bookReports: BookReport[] }>(
-    '/bookreports/students', { params }
+    '/bookreports/students',
+    { params }
   );
   return response.data.bookReports;
 };

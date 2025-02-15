@@ -1,21 +1,44 @@
+import { useRecoilState } from 'recoil';
+import { selectedMonthState } from '../../recoil/atoms/chartMonthAtom';
+import { MonthlyBookReport } from '../../services/bookReportsService';
+import { MonthType } from '../../styles/monthType';
+import { ReportChartBar } from '../atoms/ReportChartBar';
+import { ReportChartMonthTile } from '../atoms/ReportChartMonthTile';
+
+//차트 상수
+const MAX_CHART_BAR_TOP = 34.03;
+const MIN_CHART_BAR_TOP = 241.97;
+const BAR_HEIGHT_PER_COUNT = 8.4;
+
+const getRandomCount = () => Math.floor(Math.random() * 100) + 1;
+
+export const mockMonthlyReport: MonthlyBookReport[] = Object.values(MonthType)
+  .filter((v) => typeof v === 'number')
+  .map((month) => ({
+    month: month as number,
+    count: getRandomCount(),
+  }));
+
 export const MonthlyReportChart = () => {
+  const monthList = Object.values(MonthType).filter(
+    (v) => typeof v === 'number'
+  );
+  const [selectedMonth, setSelectedMonth] = useRecoilState(selectedMonthState);
+
   return (
     <div className="w-[630px] h-[368px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
       <div className="text-gray-800 headline-medium">월별 독서록 개수</div>
+
       <div className="w-[582px] h-[276px] relative">
         <div className="w-[544.12px] h-[22.68px] px-6 left-[37.88px] top-[253.32px] absolute justify-between items-center inline-flex">
-          <div className="text-gray-800 body-medium">3월</div>
-          <div className="text-gray-800 body-medium">4월</div>
-          <div className="text-gray-800 body-medium">5월</div>
-          <div className="text-gray-800 body-medium">6월</div>
-          <div className="text-gray-800 body-medium">7월</div>
-          <div className="text-gray-800 body-medium">8월</div>
-          <div className="text-gray-800 body-medium">9월</div>
-          <div className="text-primary-500 body-medium">10월</div>
-          <div className="text-gray-800 body-medium">11월</div>
-          <div className="text-gray-800 body-medium">12월</div>
-          <div className="text-gray-800 body-medium">1월</div>
-          <div className="text-gray-800 body-medium">2월</div>
+          {monthList.map((month) => (
+            <ReportChartMonthTile
+              key={month}
+              month={month as number}
+              isActive={month === selectedMonth}
+              onClick={() => setSelectedMonth(month as number)}
+            />
+          ))}
         </div>
         <div className="w-[505.32px] h-[0px] left-[557.98px] top-[241.97px] absolute origin-top-left rotate-180 border border-gray-200"></div>
         <div className="w-[505.32px] h-[0px] left-[557.98px] top-[200.38px] absolute origin-top-left rotate-180 border border-gray-200"></div>
@@ -23,20 +46,23 @@ export const MonthlyReportChart = () => {
         <div className="w-[505.32px] h-[0px] left-[557.98px] top-[117.21px] absolute origin-top-left rotate-180 border border-gray-200"></div>
         <div className="w-[505.32px] h-[0px] left-[557.98px] top-[75.62px] absolute origin-top-left rotate-180 border border-gray-200"></div>
         <div className="w-[505.32px] h-[0px] left-[557.98px] top-[34.03px] absolute origin-top-left rotate-180 border border-gray-200"></div>
-
-        <div className="w-[22.17px] h-[94.52px] left-[60.05px] top-[147.45px] absolute bg-primary-500"></div>
-        <div className="left-[63.67px] top-[128.55px] absolute text-center text-primary-500 body-small">
-          12
+        {/* 월별 Bar */}
+        <div className="w-[544.12px] px-6 left-[37.88px] absolute justify-between items-end inline-flex">
+          {mockMonthlyReport
+            .filter((report) => report.count !== 0)
+            .map((report) => (
+              <ReportChartBar
+                key={report.month}
+                count={report.count}
+                top={Math.max(
+                  MAX_CHART_BAR_TOP,
+                  MIN_CHART_BAR_TOP - BAR_HEIGHT_PER_COUNT * report.count
+                )}
+                onClick={() => setSelectedMonth(report.month as number)}
+              />
+            ))}
         </div>
-        <div className="w-[22.17px] h-[94.52px] left-[186.61px] top-[147.45px] absolute bg-primary-500"></div>
-        <div className="w-[22.17px] h-[94.52px] left-[358.44px] top-[147.45px] absolute bg-primary-500"></div>
-        <div className="left-[190.23px] top-[128.55px] absolute text-center text-primary-500 body-small">
-          12
-        </div>
-        <div className="left-[362.06px] top-[128.55px] absolute text-center text-primary-500 body-small">
-          12
-        </div>
-        <div className="w-[52.66px] h-[276px] px-3 py-6 left-0 top-0 absolute flex-col justify-between items-end inline-flex">
+        <div className="h-[276px] px-3 py-6 left-0 top-0 absolute flex-col justify-between items-end inline-flex">
           <div className="text-right text-gray-800 body-medium">25권</div>
           <div className="text-right text-gray-800 body-medium">20권</div>
           <div className="text-right text-gray-800 body-medium">15권</div>

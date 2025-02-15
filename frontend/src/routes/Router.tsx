@@ -1,8 +1,11 @@
 import { Route, Routes } from 'react-router-dom';
 import Layout from '../layouts/Layout';
 import SignIn from '../components/pages/common/SignIn';
-import DebateBoard from '../components/pages/common/DebateBoard';
 import DebateRoom from '../components/pages/common/DebateRoom';
+import Test from '../components/pages/Test';
+import AuthLayout from '../layouts/AuthLayout';
+import Pending from '../components/molecules/Pending';
+import WebRtcBoard from '../components/pages/common/WebRtcBoard';
 
 // Student 컴포넌트
 import StudentSetUp from '../components/pages/student/StudentSetUp';
@@ -18,6 +21,7 @@ import StudentBookSearch from '../components/pages/student/StudentBookSearch';
 import StudentHomeWorkReportList from '../components/pages/student/StudentHomeWorkReportList';
 import StudentTrophy from '../components/pages/student/StudentTrophy';
 import StudentHeader from '../components/commons/StudentHeader';
+import StudentDebateBoard from '../components/pages/student/StudentDebateBoard';
 
 // Teacher 컴포넌트
 import TeacherBookCategory from '../components/pages/teacher/TeacherBookCategory';
@@ -34,11 +38,8 @@ import TeacherReportList from '../components/pages/teacher/TeacherReportList';
 import TeacherSignUp from '../components/pages/teacher/TeacherSignUp';
 import TeacherStatistics from '../components/pages/teacher/TeacherStatistics';
 import TeacherStudentInfo from '../components/pages/teacher/TeacherStudentInfo';
-import AuthLayout from '../layouts/AuthLayout';
-import Pending from '../components/molecules/Pending';
-import WebRtcBoard from '../components/pages/common/WebRtcBoard';
 import TeacherHeader from '../components/commons/TeacherHeader';
-import Test from '../components/pages/Test';
+import TeacherDebateBoard from '../components/pages/teacher/TeacherDebateBoard';
 
 const Router = () => {
   return (
@@ -55,13 +56,14 @@ const Router = () => {
       <Route element={<Layout />}>
         {/* 선생 학생 공통 라우트 */}
         {/* <Route path="/debate/board" element={<DebateBoard />} /> */}
-        <Route path="/debate/board" element={<WebRtcBoard />} />
+        <Route path="/webrtc/board" element={<WebRtcBoard />} />
         <Route path="/debate/room" element={<DebateRoom />} />
 
         {/* 학생 전용 라우트 */}
         <Route path="/student/*" element={<StudentHeader />}>
           <Route path="main" element={<StudentMain />} />
           <Route path="noti" element={<StudentNoti />} />
+          <Route path="main/debate/board" element={<StudentDebateBoard />} />
           <Route path="book/category" element={<StudentBookCategory />} />
           <Route path="book/search" element={<StudentBookSearch />} />
           <Route path="homework/list" element={<StudentHomeWorkReportList />} />
@@ -76,6 +78,7 @@ const Router = () => {
         <Route path="/teacher/*" element={<TeacherHeader />}>
           <Route path="main" element={<TeacherMain />} />
           <Route path="noti" element={<TeacherNoti />} />
+          <Route path="main/debate/board" element={<TeacherDebateBoard />} />
           <Route path="class-info" element={<TeacherClassInfo />} />
           <Route path="student-info" element={<TeacherStudentInfo />} />
           <Route path="class-auth" element={<TeacherClassAuth />} />
