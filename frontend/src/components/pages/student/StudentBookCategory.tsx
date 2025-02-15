@@ -3,7 +3,11 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { bookCategoryState } from '../../../recoil/atoms/bookCategoryAtom';
-import { HomeworkItem } from '../../../services/booksService';
+import {
+  getStudentHomeworkBooksApi,
+  HomeworkItem,
+  PaginatedHomeworks,
+} from '../../../services/booksService';
 import {
   BookCategoryExtension,
   BookCategoryType,
@@ -14,6 +18,7 @@ import { HomeWorkButton } from '../../atoms/HomeWorkButton';
 import SvgColor from '../../atoms/SvgColor';
 import SelectVariants from '../../commons/SelectVariants';
 import { book } from '../teacher/TeacherMain';
+import { useNavigate } from 'react-router-dom';
 
 const homeWorkBook = (id: number) => {
   return {
@@ -24,6 +29,7 @@ const homeWorkBook = (id: number) => {
     bookReports: [''],
   };
 };
+
 export const mockHomeWorkBooks: HomeworkItem[] = Array.from(
   { length: 12 },
   (_, index) => homeWorkBook(index)
@@ -60,6 +66,53 @@ const StudentBookCategory = () => {
         break;
     }
   }, [selectedCategory]);
+
+  const param = {
+    page: 0,
+    size: 0,
+    title: '',
+    author: '',
+    publisher: '',
+  };
+  const navigate = useNavigate();
+  const [bookList, setBookList] = useState<HomeworkItem[]>([]);
+  const [paginationInfo, setPaginationInfo] = useState<Omit<
+    PaginatedHomeworks,
+    'content'
+  > | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const PAGE_SIZE = 10;
+
+  const fetchHomeworkList = async (page = 0) => {
+    try {
+      const response = await getStudentHomeworkBooksApi(param);
+      setBookList(response.homeworks.content);
+      console.log(response.homeworks.content);
+
+      const { content, ...paginationData } = response.homeworks;
+      console.log('숙제 목록:', response);
+
+      setPaginationInfo(paginationData);
+    } catch (error) {
+      console.error('숙제 목록 가져오기 실패:', error);
+    }
+  };
+  console.log(bookList);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 0 && page < totalPages) {
+      fetchHomeworkList(page);
+    }
+  };
+  useEffect(() => {
+    fetchHomeworkList(currentPage);
+  }, []);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  };
 
   return (
     <div>
