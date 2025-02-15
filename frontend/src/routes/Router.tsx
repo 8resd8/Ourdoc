@@ -67,7 +67,7 @@ const Router = () => {
           <Route path="book/category" element={<StudentBookCategory />} />
           <Route path="book/search" element={<StudentBookSearch />} />
           <Route path="homework/list" element={<StudentHomeWorkReportList />} />
-          <Route path="report/write" element={<StudentReportWrite />} />
+          <Route path="report/write/:id" element={<StudentReportWrite />} />
           <Route path="report/detail/:id" element={<StudentReportDetail />} />
           <Route path="reports" element={<StudentAllReportList />} />
           <Route path="trophy" element={<StudentTrophy />} />

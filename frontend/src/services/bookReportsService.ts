@@ -39,6 +39,7 @@ export interface BookReportDetail {
   author: string;
   publisher: string;
   createdAt: string;
+  beforeContent: string;
   content: string;
   aiComment: string;
   teacherComment: string;

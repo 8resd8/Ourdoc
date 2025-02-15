@@ -55,7 +55,7 @@ const StudentHomeWorkReportList = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="w-[1200px] mx-auto mt-8">
+    <div className="w-[1200px] mx-auto mt-8 justify-items-center">
       {/* 숙제 도서 카드 */}
       <div className="flex flex-col justify-center mb-8">
         <div className="flex bg-gray-0 shadow-xxsmall rounded-lg p-6 w-[630px] h-[340px]">
@@ -87,7 +87,12 @@ const StudentHomeWorkReportList = () => {
           <button className="body-medium px-4 py-2 text-secondary-500 rounded-[10px]  border border-secondary-500">
             관심 등록
           </button>
-          <button className="body-medium px-4 py-2 text-gray-0 rounded-[10px] bg-primary-500 ">
+          <button
+            onClick={() => {
+              navigate(`/student/report/write/${homeworkDetail?.bookId}`);
+            }}
+            className="body-medium px-4 py-2 text-gray-0 rounded-[10px] bg-primary-500 "
+          >
             독서록 작성
           </button>
         </div>
