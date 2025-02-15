@@ -1,20 +1,29 @@
 import { useParams } from 'react-router-dom';
-import { createBookReportApi } from '../../../services/bookReportsService';
+import {
+  createBookReportApi,
+  saveAiFeedbackApi,
+} from '../../../services/bookReportsService';
 import Modal from '../../commons/Modal';
 import { useState } from 'react';
 import { convertHandToTextApi } from '../../../services/ocrSService';
 import { useRecoilValue } from 'recoil';
 import { currentUserState } from '../../../recoil';
+import {
+  getAIFeedbackApi,
+  getAISpellingApi,
+} from '../../../services/aiService';
 
 const StudentReportWrite = () => {
-  const { bookId } = useParams();
+  const { id } = useParams();
   const [reportContent, setReportContent] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [afterContent, setAfterContent] = useState('');
   const [ocrCheck, setOcrCheck] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  console.log(id);
 
   const param = {
-    bookId: bookId ? bookId : '',
+    bookId: id ? id : '',
     beforeContent: reportContent,
     imageUrl: '',
     ocrCheck: ocrCheck ? '사용' : '미사용',
@@ -23,10 +32,22 @@ const StudentReportWrite = () => {
   console.log(user);
 
   const writeReport = async () => {
-    const response = await createBookReportApi(param);
-    console.log(response);
+    try {
+      const write = createBookReportApi(param);
+      console.log(write);
+      const aiFeedback = getAIFeedbackApi({ content: reportContent });
+      console.log(aiFeedback);
+      const aiSpelling = await getAISpellingApi({ content: reportContent });
+      setAfterContent(aiSpelling.feedbackContent);
+      console.log(aiSpelling);
+
+      // const save = saveAiFeedbackApi({
+      //   bookReportId: '4',
+      //   afterContent: reportContent,
+      // });
+      // console.log(save);
+    } catch (error) {}
   };
-  console.log(reportContent);
 
   const handleOCR = async () => {
     if (selectedImage) {
