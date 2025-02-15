@@ -56,6 +56,22 @@ public class BookReportStudentController {
 		bookReportStudentService.deleteBookReport(user, bookReportId);
 	}
 
+	@PostMapping("/{bookReportId}/homework/{homeworkId}")
+	@ResponseStatus(HttpStatus.OK)
+	public void submitBookReportToHomework(@Login User user,
+		@PathVariable("bookReportId") Long bookReportId,
+		@PathVariable("homeworkId") Long homeworkId) {
+		bookReportStudentService.submitBookReportToHomework(user, bookReportId, homeworkId);
+	}
+
+	@DeleteMapping("/{bookReportId}/homework/{homeworkId}")
+	@ResponseStatus(HttpStatus.OK)
+	public void retrieveBookReportFromHomework(@Login User user,
+		@PathVariable("bookReportId") Long bookReportId,
+		@PathVariable("homeworkId") Long homeworkId) {
+		bookReportStudentService.retrieveBookReportFromHomework(user, bookReportId, homeworkId);
+	}
+
 	@GetMapping("/statistics")
 	public BookReportStatisticsResponse getBookReportStatistics(@Login User user, @ModelAttribute
 	BookReportStatisticsRequest request) {
