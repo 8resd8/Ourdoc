@@ -14,7 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
+import com.ssafy.ourdoc.domain.book.entity.Homework;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
+import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
@@ -25,6 +27,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
+import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
@@ -44,6 +47,7 @@ public class BookReportStudentService {
 	private final StudentClassRepository studentClassRepository;
 	private final BookRepository bookRepository;
 	private final NotificationService notificationService;
+	private final HomeworkRepository homeworkRepository;
 
 	public void saveBookReport(User user, BookReadLogRequest request) {
 		if (request.ocrCheck() == 사용 && (request.imageUrl() == null || request.imageUrl().trim().isEmpty())) {
@@ -114,6 +118,27 @@ public class BookReportStudentService {
 				dto.approveTime() != null ? ApproveStatus.있음 : ApproveStatus.없음
 			));
 		return pageDto;
+	}
+
+	public void submitBookReportToHomework(User user, Long bookReportId, Long homeworkId) {
+		BookReport bookReport = bookReportRepository.findById(bookReportId)
+			.orElseThrow(() -> new NoSuchElementException("숙제로 제출할 독서록이 없습니다."));
+		Homework homework = homeworkRepository.findById(homeworkId)
+			.orElseThrow(() -> new NoSuchElementException("해당하는 숙제가 없습니다."));
+
+		ClassRoom classRoom = homework.getClassRoom();
+		StudentClass studentClass = studentClassRepository.findByUserAndClassRoom(user, classRoom);
+		if (studentClass == null) {
+			throw new IllegalArgumentException("해당 숙제에 해당하는 학급의 학생이 아닙니다.");
+		}
+
+		int submitCount = bookReportRepository.countByHomeworkId(homeworkId);
+		if (bookReport.getHomework() != null || submitCount > 0) {
+			throw new IllegalArgumentException("숙제로 제출한 독서록이 이미 있습니다.");
+		}
+
+		bookReport.submitToHomework(homework);
+		bookReportRepository.save(bookReport);
 	}
 
 	public void deleteBookReport(Long bookReportId) {
