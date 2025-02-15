@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.book.controller;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
@@ -32,6 +34,7 @@ public class BookRecommendController {
 	private final BookRecommendService bookRecommendService;
 
 	@PostMapping("/teachers/recommend/classes")
+	@ResponseStatus(HttpStatus.CREATED)
 	public void addRecommend(@RequestBody BookRequest request, @Login User user) {
 		bookRecommendService.addBookRecommend(request, user);
 	}
