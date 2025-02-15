@@ -16,7 +16,7 @@ export const HomeWorkButton = ({ id, isSubmitted }: ButtonProps) => {
         justify-center 
         items-center 
         inline-flex 
-        ${isSubmitted ? '' : 'cursor-pointer'}
+        ${isSubmitted ? '' : 'cursor-pointer hover:brightness-80'}
         ${isSubmitted ? 'border-gray-500 text-gray-500' : 'border-primary-500 text-primary-500'}
         `}
     >

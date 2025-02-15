@@ -16,6 +16,8 @@ export const FavoriteBookButton = ({ id }: ButtonProps) => {
         body-medium 
         border 
         border-system-danger text-system-danger 
+        cursor-pointer 
+        hover:brightness-80
         `}
     >
       관심 해제하기

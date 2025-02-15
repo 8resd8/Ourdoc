@@ -5,9 +5,7 @@ import { NotificationSection } from '../../molecules/NotificationSection';
 import { RankingSection } from '../../molecules/RankingSection';
 import { MostReadBookSection } from '../../molecules/MostReadBookSection';
 import { DebateButton } from '../../atoms/DebateButton';
-import { useNavigate } from 'react-router-dom';
 import { Book } from '../../../services/booksService';
-import dayjs from 'dayjs';
 
 export const book: Book = {
   bookId: 1,
@@ -15,7 +13,7 @@ export const book: Book = {
   author: '생택쥐페리호',
   publisher: '새움',
   imageUrl: '/assets/images/bookImage.png',
-  publishYear: dayjs(new Date()).toString(),
+  publishYear: Date.now.toString(),
   genre: '문학',
 };
 
