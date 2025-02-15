@@ -141,6 +141,29 @@ public class BookReportStudentService {
 		bookReportRepository.save(bookReport);
 	}
 
+	public void retrieveBookReportFromHomework(User user, Long bookReportId, Long homeworkId) {
+		BookReport bookReport = bookReportRepository.findById(bookReportId)
+			.orElseThrow(() -> new NoSuchElementException("숙제에서 회수할 독서록이 없습니다."));
+		Homework homework = homeworkRepository.findById(homeworkId)
+			.orElseThrow(() -> new NoSuchElementException("해당하는 숙제가 없습니다."));
+
+		ClassRoom classRoom = homework.getClassRoom();
+		StudentClass studentClass = studentClassRepository.findByUserAndClassRoom(user, classRoom);
+		if (studentClass == null) {
+			throw new IllegalArgumentException("해당 숙제에 해당하는 학급의 학생이 아닙니다.");
+		}
+
+		if (bookReport.getHomework() != homework) {
+			throw new IllegalArgumentException("숙제로 제출한 독서록이 아닙니다.");
+		}
+		if (bookReport.getApproveTime() != null) {
+			throw new IllegalArgumentException("승인이 된 독서록은 숙제에서 회수할 수 없습니다.");
+		}
+		
+		bookReport.retrieveFromHomework();
+		bookReportRepository.save(bookReport);
+	}
+
 	public void deleteBookReport(Long bookReportId) {
 		BookReport bookReport = bookReportRepository.findById(bookReportId)
 			.orElseThrow(() -> new NoSuchElementException("지울 독서록이 없습니다."));
