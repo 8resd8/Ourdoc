@@ -29,7 +29,8 @@ public class AwardQueryRepositoryImpl implements AwardQueryRepository {
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<AwardDto> findAllAwardByUserId(Long userId) {
+	public List<AwardDto> findAllAwardByUserId(Long studentUserId) {
+		// 학생이 가진 상장 정보 조회
 		return queryFactory
 			.select(constructor(AwardDto.class,
 				award.id,
@@ -37,12 +38,12 @@ public class AwardQueryRepositoryImpl implements AwardQueryRepository {
 				award.title,
 				award.createdAt))
 			.from(award)
-			.where(userEq(userId))
+			.where(userEq(studentUserId))
 			.fetch();
 	}
 
-	private BooleanExpression userEq(Long userId) {
-		return award.user.id.eq(userId);
+	private BooleanExpression userEq(Long studentUserId) {
+		return award.user.id.eq(studentUserId);
 	}
 
 	@Override
