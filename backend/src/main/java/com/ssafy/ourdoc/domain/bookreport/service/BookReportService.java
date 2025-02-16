@@ -55,6 +55,8 @@ public class BookReportService {
 		BookReport bookReport = bookReportRepository.findById(request.bookReportId()).orElseThrow();
 		bookReport.saveAfterContent(request.afterContent());
 
+		bookReportRepository.flush();
+
 		BookReportFeedBack bookReportFeedBack = BookReportFeedBack.builder()
 			.bookReport(bookReport)
 			.type(인공지능)
