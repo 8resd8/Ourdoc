@@ -20,5 +20,5 @@ public class JoinRequest {
 	private String password;
 
 	@Size(max = 250, message = "{size.max}")
-	private Long roomId;
+	private String randomId;
 }

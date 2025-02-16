@@ -22,16 +22,11 @@ import lombok.RequiredArgsConstructor;
 public class OpenViduController {
 
 	private final OpenViduService openViduService;
-	private final DebateRoomRepository debateRoomRepository;
 
 	@PostMapping("/join")
 	public JoinResponse joinSession(@Login User user, @RequestBody JoinRequest joinRequest) {
-		// String randomId = UUID.randomUUID().toString();
-		String token = openViduService.getToken(joinRequest, user);
-		if (joinRequest.getRoomId() == null) {
-			return new JoinResponse(token, null);
-		}
-
-		return new JoinResponse(token, joinRequest.getRoomId());
+		String randomId = UUID.randomUUID().toString();
+		String token = openViduService.getToken(joinRequest, randomId, user);
+		return new JoinResponse(token, randomId);
 	}
 }
