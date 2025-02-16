@@ -12,7 +12,7 @@ import java.util.Optional;
 import com.ssafy.ourdoc.data.entity.UserSample;
 import com.ssafy.ourdoc.domain.award.dto.AwardDto;
 import com.ssafy.ourdoc.domain.award.dto.AwardListResponse;
-import com.ssafy.ourdoc.domain.award.dto.CreateAwardRequest;
+import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherCreateRequest;
 import com.ssafy.ourdoc.domain.award.entity.Award;
 import com.ssafy.ourdoc.domain.award.repository.AwardRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,6 +39,12 @@ class AwardServiceTest {
 
 	@InjectMocks
 	private AwardService awardService;
+
+	@InjectMocks
+	private AwardTeacherService awardTeacherService;
+
+	@InjectMocks
+	private AwardStudentService awardStudentService;
 
 	private Award award;
 	private User user;
@@ -57,13 +62,13 @@ class AwardServiceTest {
 	@Test
 	@DisplayName("상장 생성 테스트")
 	void createAward() {
-		CreateAwardRequest request = new CreateAwardRequest("우수상");
+		AwardTeacherCreateRequest request = new AwardTeacherCreateRequest("우수상");
 		MultipartFile mockFile = mock(MultipartFile.class);
 
 		when(s3StorageService.uploadFile(mockFile)).thenReturn("s3://bucket/award.png");
 		when(awardRepository.save(any(Award.class))).thenReturn(award);
 
-		awardService.createAward(user, request, mockFile);
+		awardTeacherService.createAward(user, request, mockFile);
 
 		verify(s3StorageService, times(1)).uploadFile(mockFile);
 		verify(awardRepository, times(1)).save(any(Award.class));
@@ -76,7 +81,7 @@ class AwardServiceTest {
 
 		when(awardRepository.findAllAwardByUserId(user.getId())).thenReturn(awardDtoList);
 
-		AwardListResponse response = awardService.getAllAwards(user);
+		AwardListResponse response = awardStudentService.getAllAwards(user);
 
 		assertThat(response.awards()).isNotEmpty();
 		assertThat(response.awards().get(0).title()).isEqualTo("우수상");
