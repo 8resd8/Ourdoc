@@ -4,9 +4,9 @@ import jakarta.validation.constraints.Size;
 
 public record BookReportStatisticsRequest(
 	@Size(max = 250, message = "{size.max}")
-	int grade,
+	Integer grade,
 
 	@Size(max = 250, message = "{size.max}")
-	int month
+	Integer month
 ) {
 }
