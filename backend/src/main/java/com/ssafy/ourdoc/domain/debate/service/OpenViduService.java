@@ -89,15 +89,12 @@ public class OpenViduService {
 					.password(request.getPassword())
 					.build();
 				roomRepository.save(roomUserCreate);
+				// 방 입장
 			} else if (request.getRandomId() != null) {
-				Room roomUserCreate = Room.builder()
-					.user(user)
-					.sessionId(request.getRandomId())
-					.title(request.getRoomName())
-					.maxPeople(10)
-					.password(request.getPassword())
-					.build();
-				roomRepository.save(roomUserCreate);
+				Room room = roomRepository.findByRandomId(request.getRandomId()).orElse(null);
+				if (!room.getPassword().equals(request.getPassword())) {
+					throw new IllegalArgumentException("비밀번호 틀림");
+				}
 			}
 
 			return jsonResponse.getString("id");
