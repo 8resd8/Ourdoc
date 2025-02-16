@@ -42,7 +42,7 @@ public class AwardQueryRepositoryImpl implements AwardQueryRepository {
 	}
 
 	private BooleanExpression userEq(Long userId) {
-		return award.id.eq(userId);
+		return award.user.id.eq(userId);
 	}
 
 	@Override
