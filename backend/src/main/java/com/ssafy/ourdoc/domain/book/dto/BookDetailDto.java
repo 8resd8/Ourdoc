@@ -13,7 +13,6 @@ public record BookDetailDto(
 	String description,
 	String publisher,
 	Year publishYear,
-	String imageUrl,
-	BookStatus bookStatus
+	String imageUrl
 ) {
 }
