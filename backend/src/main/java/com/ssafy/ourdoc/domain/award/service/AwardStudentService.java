@@ -4,17 +4,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ourdoc.domain.award.dto.AwardDto;
 import com.ssafy.ourdoc.domain.award.dto.AwardListResponse;
-import com.ssafy.ourdoc.domain.award.dto.CreateAwardRequest;
-import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherRequest;
-import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherResponse;
-import com.ssafy.ourdoc.domain.award.entity.Award;
 import com.ssafy.ourdoc.domain.award.repository.AwardRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
-import com.ssafy.ourdoc.global.integration.s3.service.S3StorageService;
 
 import lombok.RequiredArgsConstructor;
 

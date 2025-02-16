@@ -4,7 +4,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.ssafy.ourdoc.domain.award.dto.CreateAwardRequest;
+import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherCreateRequest;
 import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherRequest;
 import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherResponse;
 import com.ssafy.ourdoc.domain.award.service.AwardTeacherService;
@@ -38,7 +37,7 @@ public class AwardTeacherController {
 	// 상장 생성
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createAward(@Login User user, @RequestPart CreateAwardRequest request, @RequestPart(name = "awardImage") MultipartFile file) {
+	public void createAward(@Login User user, @RequestPart AwardTeacherCreateRequest request, @RequestPart(name = "awardImage") MultipartFile file) {
 		awardTeacherService.createAward(user, request, file);
 	}
 

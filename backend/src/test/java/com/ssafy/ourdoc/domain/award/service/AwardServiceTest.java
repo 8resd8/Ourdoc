@@ -12,7 +12,7 @@ import java.util.Optional;
 import com.ssafy.ourdoc.data.entity.UserSample;
 import com.ssafy.ourdoc.domain.award.dto.AwardDto;
 import com.ssafy.ourdoc.domain.award.dto.AwardListResponse;
-import com.ssafy.ourdoc.domain.award.dto.CreateAwardRequest;
+import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherCreateRequest;
 import com.ssafy.ourdoc.domain.award.entity.Award;
 import com.ssafy.ourdoc.domain.award.repository.AwardRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,7 +62,7 @@ class AwardServiceTest {
 	@Test
 	@DisplayName("상장 생성 테스트")
 	void createAward() {
-		CreateAwardRequest request = new CreateAwardRequest("우수상");
+		AwardTeacherCreateRequest request = new AwardTeacherCreateRequest("우수상");
 		MultipartFile mockFile = mock(MultipartFile.class);
 
 		when(s3StorageService.uploadFile(mockFile)).thenReturn("s3://bucket/award.png");
