@@ -71,7 +71,7 @@ public class OpenViduService {
 	 * randomId는 고유값
 	 */
 
-	public void newCreateSession(JoinRequest request, User user) {
+	public String newCreateSession(JoinRequest request, User user) {
 		String sessionId = openviduService.createSession();
 
 		Room room = Room.builder()
@@ -83,6 +83,8 @@ public class OpenViduService {
 			.build();
 
 		roomRepository.save(room);
+
+		return sessionId;
 	}
 
 
