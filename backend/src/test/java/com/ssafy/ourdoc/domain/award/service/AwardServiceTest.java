@@ -41,6 +41,12 @@ class AwardServiceTest {
 	@InjectMocks
 	private AwardService awardService;
 
+	@InjectMocks
+	private AwardTeacherService awardTeacherService;
+
+	@InjectMocks
+	private AwardStudentService awardStudentService;
+
 	private Award award;
 	private User user;
 
@@ -63,7 +69,7 @@ class AwardServiceTest {
 		when(s3StorageService.uploadFile(mockFile)).thenReturn("s3://bucket/award.png");
 		when(awardRepository.save(any(Award.class))).thenReturn(award);
 
-		awardService.createAward(user, request, mockFile);
+		awardTeacherService.createAward(user, request, mockFile);
 
 		verify(s3StorageService, times(1)).uploadFile(mockFile);
 		verify(awardRepository, times(1)).save(any(Award.class));
@@ -76,7 +82,7 @@ class AwardServiceTest {
 
 		when(awardRepository.findAllAwardByUserId(user.getId())).thenReturn(awardDtoList);
 
-		AwardListResponse response = awardService.getAllAwards(user);
+		AwardListResponse response = awardStudentService.getAllAwards(user);
 
 		assertThat(response.awards()).isNotEmpty();
 		assertThat(response.awards().get(0).title()).isEqualTo("우수상");

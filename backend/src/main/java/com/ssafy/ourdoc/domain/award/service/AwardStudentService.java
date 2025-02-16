@@ -1,9 +1,13 @@
 package com.ssafy.ourdoc.domain.award.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ssafy.ourdoc.domain.award.dto.AwardDto;
+import com.ssafy.ourdoc.domain.award.dto.AwardListResponse;
 import com.ssafy.ourdoc.domain.award.dto.CreateAwardRequest;
 import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherRequest;
 import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherResponse;
@@ -17,25 +21,14 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AwardTeacherService {
+public class AwardStudentService {
 
 	private final AwardRepository awardRepository;
-	private final S3StorageService s3StorageService;
 
-	// 상장 생성
-	public void createAward(User user, CreateAwardRequest request, MultipartFile file) {
-		String imagePath = s3StorageService.uploadFile(file);
+	// 학생 - 상장 전체조회
+	public AwardListResponse getAllAwards(User user) {
 
-		Award award = Award.builder()
-			.title(request.title())
-			.user(user)
-			.imagePath(imagePath)
-			.build();
-
-		awardRepository.save(award);
-	}
-
-	public AwardTeacherResponse getAwardTeachersClass(User user, AwardTeacherRequest request) {
-		return new AwardTeacherResponse(awardRepository.findTeacherClassAwards(user.getId(), request));
+		List<AwardDto> allAwards = awardRepository.findAllAwardByUserId(user.getId());
+		return new AwardListResponse(allAwards);
 	}
 }
