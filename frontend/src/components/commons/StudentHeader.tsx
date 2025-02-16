@@ -81,7 +81,7 @@ const StudentHeader = () => {
       <header>
         <nav>
           <div className="h-[110px] bg-gray-0 shadow-xxsmall flex flex-wrap justify-between items-center px-[80px]">
-            <Link to="/teacher/main">
+            <Link to="/student/main">
               <img
                 src="/assets/images/logo1.png"
                 alt="로고"

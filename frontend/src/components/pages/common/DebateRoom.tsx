@@ -1,9 +1,13 @@
 import { OpenVidu, Publisher, Session } from 'openvidu-browser';
 import { useEffect, useRef, useState } from 'react';
 import classes from './DabateRoom.module.css';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { getRecoil } from 'recoil-nexus';
+import { currentUserState, debatesState } from '../../../recoil';
+import { deleteDebateApi } from '../../../services/debatesService';
 
 export const DebateRoom = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const token = location.state.token;
   const publisherRef = useRef<HTMLDivElement>(null);
@@ -17,6 +21,8 @@ export const DebateRoom = () => {
   const [screenPublisher, setScreenPublisher] = useState<Publisher | null>(
     null
   );
+  const user = getRecoil(currentUserState);
+  const room = getRecoil(debatesState);
 
   // 이미 구독된 스트림에 대해 중복 호출하지 않도록 처리하는 헬퍼 함수
   const subscribeToStream = (stream: any, currentSession: Session) => {
@@ -194,11 +200,15 @@ export const DebateRoom = () => {
   const leaveSession = () => {
     if (session) {
       session.disconnect();
+      navigate(-1);
     }
     setSession(null);
     setPublisher(null);
     if (subscribersRef.current) {
       subscribersRef.current.innerHTML = '';
+    }
+    if (user.name == room?.creatorName) {
+      deleteDebateApi(room.roomId);
     }
   };
 
@@ -240,24 +250,33 @@ export const DebateRoom = () => {
     }
   }, [session, publisher]);
 
-  // 컴포넌트 언마운트 시 세션 종료
-  useEffect(() => {
-    return () => {
-      if (session) session.disconnect();
-    };
-  }, [session]);
+  // // 컴포넌트 언마운트 시 세션 종료
+  // useEffect(() => {
+  //   return () => {
+  //     if (session) session.disconnect();
+  //   };
+  // }, [session]);
 
   return (
-    <div className={classes.container}>
-      <div className={classes.card}>
-        <div className={classes['video-container']}>
-          <div className={classes['video-area']} ref={publisherRef}></div>
-          <div
-            className={classes['subscribers-container']}
-            ref={subscribersRef}
-          ></div>
+    <div className="flex flex-col items-center pt-20">
+      <div className="flex flex-row justify-between items-center gap-4">
+        <div className="headline-medium text-gray-800 w-[400px] truncate">
+          {room?.title}
         </div>
-        <div className={classes['button-group']}>
+        {'|'}
+        <div className="body-medium text-gray-800">
+          {room?.schoolName} {room?.creatorName}교사
+        </div>
+      </div>
+      <div className="flex flex-col items-center w-full gap-5">
+        <div className={classes['video-area']} ref={publisherRef}></div>
+        <div
+          className={classes['subscribers-container']}
+          ref={subscribersRef}
+        ></div>
+      </div>
+      <div className="flex flex-row gap-30 w-[650px] items-center justify-between">
+        <div className="flex flex-row gap-5 h-10">
           <button
             onClick={() => {
               if (publisher) {
@@ -266,9 +285,12 @@ export const DebateRoom = () => {
                 setIsAudioActive(newAudioStatus);
               }
             }}
-            className={`${classes.button} ${classes['control-button']}`}
+            className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
           >
-            {isAudioActive ? '음소거' : '음소거 해제'}
+            <img
+              src={`/assets/images/${isAudioActive ? 'mic_off' : 'mic_on'}.png`}
+            />
+            {isAudioActive ? '마이크 끄기' : '마이크 켜기'}
           </button>
           <button
             onClick={() => {
@@ -278,23 +300,27 @@ export const DebateRoom = () => {
                 setIsVideoActive(newVideoStatus);
               }
             }}
-            className={`${classes.button} ${classes['control-button']}`}
+            className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
           >
+            <img
+              src={`/assets/images/${isAudioActive ? 'video_off' : 'video_on'}.png`}
+            />
             {isVideoActive ? '비디오 끄기' : '비디오 켜기'}
           </button>
           <button
             onClick={toggleScreenShare}
-            className={`${classes.button} ${classes['control-button']}`}
+            className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
           >
             {isScreenSharing ? '화면 공유 중지' : '화면 공유'}
           </button>
-          <button
-            onClick={leaveSession}
-            className={`${classes.button} ${classes['leave-button']}`}
-          >
-            나가기
-          </button>
         </div>
+        <button
+          onClick={leaveSession}
+          className={`items-center caption-medium py-2 px-3 gap-2 flex flex-col  text-system-danger cursor-pointer hover:brightness-80`}
+        >
+          <img src={`/assets/images/exit.png`} />
+          나가기
+        </button>
       </div>
     </div>
   );

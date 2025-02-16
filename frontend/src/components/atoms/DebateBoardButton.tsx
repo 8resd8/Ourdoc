@@ -3,7 +3,8 @@ import { DebateRoom, enterDebateApi } from '../../services/debatesService';
 import { useEffect, useState } from 'react';
 import Modal from '../commons/Modal';
 import { detailDate } from '../../utils/DateFormat';
-
+import { debatesState } from '../../recoil';
+import { setRecoil } from 'recoil-nexus';
 interface RoomInformationProps {
   roomId: string;
   password: string;
@@ -21,6 +22,7 @@ export const DebateBoardButton = ({ room }: { room: DebateRoom }) => {
       roomId: room.roomId,
       password: '',
     });
+    setRecoil(debatesState, room);
   }, []);
 
   const enterRoom = async () => {
