@@ -21,6 +21,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportSaveResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
@@ -45,7 +46,7 @@ public class BookReportStudentService {
 	private final BookRepository bookRepository;
 	private final NotificationService notificationService;
 
-	public void saveBookReport(User user, BookReadLogRequest request) {
+	public BookReportSaveResponse saveBookReport(User user, BookReadLogRequest request) {
 		if (request.ocrCheck() == 사용 && (request.imageUrl() == null || request.imageUrl().trim().isEmpty())) {
 			throw new IllegalArgumentException("OCR 사용 시 imageURL 입력이 필요합니다.");
 		}
@@ -61,8 +62,9 @@ public class BookReportStudentService {
 			.imagePath(request.imageUrl())
 			.build();
 
-		bookReportRepository.save(bookReport);
+		BookReport saveBookReport = bookReportRepository.save(bookReport);
 		notificationService.sendNotifyStudentFromTeacher(user, 독서록); // 알림전송
+		return new BookReportSaveResponse(saveBookReport.getId());
 	}
 
 	public BookReportListResponse getBookReports(User user, int grade, Pageable pageable) {

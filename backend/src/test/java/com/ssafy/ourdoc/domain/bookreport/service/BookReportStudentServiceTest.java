@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.bookreport.service;
 import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
 import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.ssafy.ourdoc.data.entity.BookReportSample;
 import com.ssafy.ourdoc.data.entity.BookSample;
@@ -30,6 +32,7 @@ import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportSaveResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.FeedbackRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
@@ -105,20 +108,40 @@ class BookReportStudentServiceTest {
 		// given
 		BookReadLogRequest request = new BookReadLogRequest(1L, "독서 전 내용", "사용", OcrCheck.사용);
 
-		when(studentClassRepository.findStudentClassByUserId(mockUser.getId())).thenReturn(
-			Optional.of(mockStudentClass));
-		when(bookRepository.findById(request.bookId())).thenReturn(Optional.of(mockBook));
+		when(studentClassRepository.findStudentClassByUserId(mockUser.getId()))
+			.thenReturn(Optional.of(mockStudentClass));
+		when(bookRepository.findById(request.bookId()))
+			.thenReturn(Optional.of(mockBook));
 
-		// when
+		// Mock BookReport 객체 생성
+		BookReport mockBookReport = BookReport.builder()
+			.studentClass(mockStudentClass)
+			.book(mockBook)
+			.beforeContent(request.beforeContent())
+			.ocrCheck(request.ocrCheck())
+			.imagePath(request.imageUrl())
+			.build();
+
+		// save() 메서드 호출 시 ID를 포함한 BookReport 객체 반환 설정
+		ReflectionTestUtils.setField(mockBookReport, "id", 1L); // 테스트 환경에서 필드 수동 설정
+		when(bookReportRepository.save(any(BookReport.class))).thenReturn(mockBookReport);
+
 		doNothing().when(notificationService).sendNotifyStudentFromTeacher(any(User.class), any());
 
 		// when
-		bookReportStudentService.saveBookReport(mockUser, request);
+		BookReportSaveResponse response = bookReportStudentService.saveBookReport(mockUser, request);
 
 		// then
 		verify(bookReportRepository, times(1)).save(any(BookReport.class));
 		verify(notificationService, times(1)).sendNotifyStudentFromTeacher(mockUser, 독서록);
+
+		// 응답 값 검증
+		assertNotNull(response);
+		assertEquals(1L, response.bookReportId());
 	}
+
+
+
 
 	@Test
 	@DisplayName("독서록 피드백을 정상적으로 저장할 수 있다.")

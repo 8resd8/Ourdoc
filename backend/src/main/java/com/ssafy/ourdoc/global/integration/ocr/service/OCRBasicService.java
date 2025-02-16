@@ -33,7 +33,6 @@ public class OCRBasicService {
 	@Value("${ocr.secret-key}")
 	private String secretKey;
 
-	private final ChatModel chatModel;
 
 	public String OCRConvert(MultipartFile multipartFile) {
 		if (multipartFile == null || multipartFile.isEmpty()) {
