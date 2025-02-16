@@ -1,52 +1,41 @@
 import { useState, useEffect } from 'react';
 import {
-  Book,
   BookReport,
   HomeworkBook,
-  HomeworkItem,
-  PaginatedHomeworks,
+  addFavoriteBookApi,
   getStudentHomeworkBookDetailApi,
-  getStudentHomeworkBooksApi,
 } from '../../../services/booksService';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const StudentHomeWorkReportList = () => {
-  const bookInfo = {
-    title: '어린왕자 (Le Petit Prince)',
-    author: '앙투안 드 생텍쥐페리',
-    publisher: '새움',
-    genre: '문학',
-    year: 2022,
-    image: '/assets/images/bookImage.png', // 이미지 경로
-  };
-
-  const [paginationInfo, setPaginationInfo] = useState<Omit<
-    PaginatedHomeworks,
-    'content'
-  > | null>(null);
-
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const homeworkId = queryParams.get('homeworkId');
 
   const [homeworkDetail, setHomeworkBook] = useState<HomeworkBook | null>(null);
   const [bookReports, setBookReports] = useState<BookReport[]>([]);
-
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const PAGE_SIZE = 10;
+  const fetchHomeworkDetail = async (page = 0) => {
+    try {
+      const data = await getStudentHomeworkBookDetailApi(Number(homeworkId));
+      setHomeworkBook(data.book);
+      setBookReports(data.bookReports.content);
+      setTotalPages(data.bookReports.totalPages); // totalPages를 API 응답에 맞게 수정
+      setCurrentPage(page);
+    } catch (error) {
+      console.error('Error fetching homework detail:', error);
+    }
+  };
   useEffect(() => {
-    const fetchHomeworkDetail = async () => {
-      try {
-        const data = await getStudentHomeworkBookDetailApi(Number(homeworkId));
-        setHomeworkBook(data.book);
-        setBookReports(data.bookReports.content);
-      } catch (error) {
-        console.error('Error fetching homework detail:', error);
-      }
-    };
-
     fetchHomeworkDetail();
   }, [homeworkId]);
-  console.log('bookReports', bookReports);
-  console.log('detail', homeworkDetail);
+  const handlePageChange = (page: number) => {
+    if (page >= 0 && page < totalPages) {
+      fetchHomeworkDetail(page);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -54,14 +43,21 @@ const StudentHomeWorkReportList = () => {
   };
   const navigate = useNavigate();
 
+  const favoriteBook = async () => {
+    if (homeworkDetail) {
+      const response = await addFavoriteBookApi(homeworkDetail.bookId);
+      console.log(response);
+    }
+  };
+
   return (
     <div className="w-[1200px] mx-auto mt-8 justify-items-center">
       {/* 숙제 도서 카드 */}
       <div className="flex flex-col justify-center mb-8">
         <div className="flex bg-gray-0 shadow-xxsmall rounded-lg p-6 w-[630px] h-[340px]">
           <img
-            src={homeworkDetail?.imageUrl || bookInfo.image}
-            alt={bookInfo.title}
+            src={homeworkDetail?.imageUrl}
+            alt={homeworkDetail?.title}
             className="w-[190px] h-[282px] object-cover rounded-md mr-6"
           />
           <div className="">
@@ -84,14 +80,19 @@ const StudentHomeWorkReportList = () => {
         </div>
         {/* 버튼 섹션 */}
         <div className="flex justify-between space-x-4 mb-4  mt-4 w-[630px]">
-          <button className="body-medium px-4 py-2 text-secondary-500 rounded-[10px]  border border-secondary-500">
+          <button
+            onClick={favoriteBook}
+            className="cursor-pointer body-medium px-4 py-2 text-secondary-500 rounded-[10px]  border border-secondary-500"
+          >
             관심 등록
           </button>
           <button
             onClick={() => {
-              navigate(`/student/report/write/${homeworkDetail?.bookId}`);
+              navigate(
+                `/student/report/write/${homeworkDetail?.bookId}?homeworkId=${homeworkId}&title=${homeworkDetail?.title}&author=${homeworkDetail?.author}&publisher=${homeworkDetail?.publisher}`
+              );
             }}
-            className="body-medium px-4 py-2 text-gray-0 rounded-[10px] bg-primary-500 "
+            className="cursor-pointer body-medium px-4 py-2 text-gray-0 rounded-[10px] bg-primary-500 "
           >
             독서록 작성
           </button>
@@ -152,23 +153,46 @@ const StudentHomeWorkReportList = () => {
             ))}
           </tbody>
         </table>
+        {/* 페이지네이션 */}
         <div className="flex justify-center items-center mt-8 space-x-2">
-          <button className="px-4 py-2 rounded-lg hover:bg-gray-100">
+          {/* 이전 페이지 버튼 */}
+          <button
+            className={`px-4 py-2 rounded-lg cursor-pointer ${
+              currentPage === 0
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'hover:bg-gray-100'
+            }`}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 0}
+          >
             &lt;
           </button>
-          <span className="px-4 py-2 text-gray-500 body-small rounded-lg">
-            1
-          </span>
-          <span className="px-4 py-2 text-gray-500 body-small rounded-lg">
-            2
-          </span>
-          <span className="px-4 py-2 text-gray-500 body-small rounded-lg hover:bg-gray-100">
-            3
-          </span>
-          <span className="px-4 py-2 text-gray-800 body-small rounded-lg hover:bg-gray-100">
-            4
-          </span>
-          <button className="px-4 py-2 rounded-lg hover:bg-gray-100">
+
+          {/* 페이지 번호 표시 */}
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              className={`px-4 py-2 body-small rounded-lg cursor-pointer ${
+                currentPage === index
+                  ? 'bg-primary-500 text-white'
+                  : 'hover:bg-gray-100 text-gray-500'
+              }`}
+              onClick={() => handlePageChange(index)}
+            >
+              {index + 1}
+            </button>
+          ))}
+
+          {/* 다음 페이지 버튼 */}
+          <button
+            className={`px-4 py-2 rounded-lg cursor-pointer ${
+              currentPage === totalPages - 1
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'hover:bg-gray-100'
+            }`}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages - 1}
+          >
             &gt;
           </button>
         </div>
