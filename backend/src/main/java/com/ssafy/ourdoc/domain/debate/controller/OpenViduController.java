@@ -27,6 +27,7 @@ public class OpenViduController {
 	public JoinResponse joinSession(@Login User user, @RequestBody JoinRequest joinRequest) {
 		String randomId = UUID.randomUUID().toString();
 		String token = openViduService.getToken(joinRequest, randomId, user);
-		return new JoinResponse(token, randomId);
+
+		return new JoinResponse(token);
 	}
 }
