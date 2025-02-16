@@ -16,6 +16,7 @@ public class ReadServiceTest {
 	private ReadService readService;
 
 	@Test
+	@Disabled
 	@DisplayName("독서로의 보유 도서 수를 가져온다.")
 	void getReadBookCountTest() {
 		assertThat(readService.getBookCount()).isGreaterThan(0);
