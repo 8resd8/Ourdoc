@@ -20,12 +20,15 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.ssafy.ourdoc.data.entity.UserSample;
 import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookListResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
+import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
+import com.ssafy.ourdoc.domain.user.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 class BookServiceTest {
@@ -33,6 +36,9 @@ class BookServiceTest {
 	@Mock
 	private BookRepository bookRepository;
 
+	@Mock
+	private BookStatusMapper bookStatusMapper;
+	
 	@InjectMocks
 	private BookService bookService;
 
@@ -74,6 +80,7 @@ class BookServiceTest {
 	@Test
 	@DisplayName("책 제목 조회 테스트")
 	void searchBookByTitle() {
+		User user = UserSample.user();
 		BookSearchRequest request = new BookSearchRequest("홍길동전", "", "");
 		List<Book> mockBooks = List.of(
 			Book.builder().isbn("1234").title("홍길동전").author("허균").publisher("조선출판사").build(),
@@ -82,7 +89,7 @@ class BookServiceTest {
 		Pageable pageable = PageRequest.of(0, 10);
 		Page<Book> mockBookPage = new PageImpl<>(mockBooks, pageable, mockBooks.size());
 		when(bookRepository.findBookPage("홍길동전", "", "", pageable)).thenReturn(mockBookPage);
-		BookListResponse result = bookService.searchBook(request, pageable);
+		BookListResponse result = bookService.searchBook(user, request, pageable);
 		assertThat(result.book().getTotalElements()).isEqualTo(2);
 		result.book().forEach(book -> {
 			assertThat(book.title()).contains("홍길동전");
@@ -92,6 +99,7 @@ class BookServiceTest {
 	@Test
 	@DisplayName("책 제목과 출판사 조회 테스트")
 	void searchBookByTitleAndPublisher() {
+		User user = UserSample.user();
 		BookSearchRequest request = new BookSearchRequest("홍길동전", "", "고전문학사");
 		List<Book> mockBooks = List.of(
 			Book.builder().isbn("12345").title("홍길동전").author("허균").publisher("고전문학사").build()
@@ -99,7 +107,7 @@ class BookServiceTest {
 		Pageable pageable = PageRequest.of(0, 10);
 		Page<Book> mockBookPage = new PageImpl<>(mockBooks, pageable, mockBooks.size());
 		when(bookRepository.findBookPage("홍길동전", "", "고전문학사", pageable)).thenReturn(mockBookPage);
-		BookListResponse result = bookService.searchBook(request, pageable);
+		BookListResponse result = bookService.searchBook(user, request, pageable);
 		assertThat(result.book().getTotalElements()).isEqualTo(1);
 		BookResponse book = result.book().getContent().get(0);
 		assertThat(book.title()).isEqualTo("홍길동전");
@@ -109,8 +117,9 @@ class BookServiceTest {
 	@Test
 	@DisplayName("책 상세 조회 성공")
 	void getBookDetailSuccess() {
+		User user = UserSample.user();
 		when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
-		BookDetailResponse result = bookService.getBookDetail(1L);
+		BookDetailResponse result = bookService.getBookDetail(user, 1L);
 		assertThat(result).isNotNull();
 		assertThat(result.title()).isEqualTo("홍길동전");
 	}
@@ -118,7 +127,8 @@ class BookServiceTest {
 	@Test
 	@DisplayName("책 상세 조회 실패_책 없음")
 	void getBookDetailFail() {
-		assertThatThrownBy(() -> bookService.getBookDetail(999L)).isInstanceOf(NoSuchElementException.class)
+		User user = UserSample.user();
+		assertThatThrownBy(() -> bookService.getBookDetail(user, 999L)).isInstanceOf(NoSuchElementException.class)
 			.hasMessage("해당하는 ID의 도서가 없습니다.");
 	}
 

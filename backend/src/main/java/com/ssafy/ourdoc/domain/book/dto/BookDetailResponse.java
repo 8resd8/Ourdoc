@@ -15,9 +15,10 @@ public record BookDetailResponse(
 	String description,
 	String publisher,
 	Year publishYear,
-	String imageUrl
+	String imageUrl,
+	BookStatus bookStatus
 ) {
-	public static BookDetailResponse of(Book book, String description) {
+	public static BookDetailResponse of(Book book, String description, BookStatus bookStatus) {
 		return BookDetailResponse.builder()
 			.bookId(book.getId())
 			.title(book.getTitle())
@@ -27,6 +28,7 @@ public record BookDetailResponse(
 			.publishYear(book.getPublishYear())
 			.imageUrl(book.getImageUrl())
 			.description(description)
+			.bookStatus(bookStatus)
 			.build();
 	}
 }

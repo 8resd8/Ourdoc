@@ -29,15 +29,17 @@ public class BookController {
 	private final BookService bookService;
 
 	@GetMapping
-	public ResponseEntity<BookListResponse> getBooks(@ModelAttribute BookSearchRequest request,
+	public ResponseEntity<BookListResponse> getBooks(
+		@Login User user,
+		@ModelAttribute BookSearchRequest request,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
-		BookListResponse books = bookService.searchBook(request, pageable);
+		BookListResponse books = bookService.searchBook(user, request, pageable);
 		return ResponseEntity.ok(books);
 	}
 
 	@GetMapping("/{bookId}")
-	public ResponseEntity<BookDetailResponse> getBook(@PathVariable("bookId") Long bookId) {
-		BookDetailResponse book = bookService.getBookDetail(bookId);
+	public ResponseEntity<BookDetailResponse> getBook(@PathVariable("bookId") Long bookId, @Login User user) {
+		BookDetailResponse book = bookService.getBookDetail(user, bookId);
 		return ResponseEntity.ok(book);
 	}
 

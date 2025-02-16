@@ -32,6 +32,7 @@ import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
 import com.ssafy.ourdoc.domain.book.repository.BookFavoriteRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
+import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
 import com.ssafy.ourdoc.domain.user.entity.User;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,6 +46,9 @@ public class BookFavoriteServiceTest {
 
 	@Mock
 	private BookService bookService;
+
+	@Mock
+	private BookStatusMapper bookStatusMapper;
 
 	@InjectMocks
 	private BookFavoriteService bookFavoriteService;
@@ -138,7 +142,7 @@ public class BookFavoriteServiceTest {
 		BookListResponse bookFavorites = bookFavoriteService.getBookFavorites(request, user, pageable);
 
 		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks, pageable);
-		assertThat(bookFavorites.book().getContent()).isEqualTo(List.of(BookResponse.of(book)));
+		assertThat(bookFavorites.book().getContent()).isEqualTo(List.of(BookResponse.of(book, null)));
 
 	}
 

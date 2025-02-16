@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookStatus;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetail;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetailPage;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentResponse;
@@ -20,6 +21,7 @@ import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
+import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponseWithId;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
@@ -54,6 +56,7 @@ public class HomeworkService {
 	private final BookReportTeacherService bookReportTeacherService;
 	private final BookReportStudentService bookReportStudentService;
 	private final BookRecommendService bookRecommendService;
+	private final BookStatusMapper bookStatusMapper;
 
 	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType() == UserType.학생) {
@@ -110,7 +113,8 @@ public class HomeworkService {
 		int submitCount = bookReportRepository.countByHomeworkId(homeworkId);
 		List<ReportTeacherResponseWithId> bookReports = bookReportTeacherService.getReportTeacherHomeworkResponses(
 			homeworkId);
-		return HomeworkTeacherDetail.of(homework, submitCount, bookReports);
+		BookStatus bookStatus = bookStatusMapper.mapBookStatus(homework.getBook(), user);
+		return HomeworkTeacherDetail.of(homework, submitCount, bookReports, bookStatus);
 	}
 
 	public HomeworkTeacherDetailPage getHomeworkDetailTeacherPage(Long homeworkId, User user, Pageable pageable) {
@@ -123,7 +127,8 @@ public class HomeworkService {
 		int submitCount = bookReportRepository.countByHomeworkId(homeworkId);
 		Page<ReportTeacherResponseWithId> bookReports = bookReportTeacherService.getReportTeacherHomeworkPageResponses(
 			homeworkId, pageable);
-		return HomeworkTeacherDetailPage.of(homework, submitCount, bookReports);
+		BookStatus bookStatus = bookStatusMapper.mapBookStatus(homework.getBook(), user);
+		return HomeworkTeacherDetailPage.of(homework, submitCount, bookReports, bookStatus);
 	}
 
 	public HomeworkStudentResponse getHomeworkStudentClass(BookSearchRequest request, User user, Pageable pageable) {
@@ -152,7 +157,8 @@ public class HomeworkService {
 		boolean submitStatus = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId) > 0;
 		List<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
 			homeworkId, user.getId());
-		return HomeworkStudentDetail.of(homework, submitStatus, bookReports);
+		BookStatus bookStatus = bookStatusMapper.mapBookStatus(homework.getBook(), user);
+		return HomeworkStudentDetail.of(homework, submitStatus, bookReports, bookStatus);
 	}
 
 	public HomeworkStudentDetailPage getHomeworkDetailStudentPage(Long homeworkId, User user, Pageable pageable) {
@@ -168,6 +174,7 @@ public class HomeworkService {
 		boolean submitStatus = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId) > 0;
 		Page<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkPageResponses(
 			book.getId(), user.getId(), pageable);
-		return HomeworkStudentDetailPage.of(homework, submitStatus, bookReports);
+		BookStatus bookStatus = bookStatusMapper.mapBookStatus(homework.getBook(), user);
+		return HomeworkStudentDetailPage.of(homework, submitStatus, bookReports, bookStatus);
 	}
 }

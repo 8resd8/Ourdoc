@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookStatus;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 
@@ -18,10 +19,10 @@ public record HomeworkStudentDetail(
 	List<BookReportHomeworkStudent> bookReports
 ) {
 	public static HomeworkStudentDetail of(Homework homework, boolean submitStatus,
-		List<BookReportHomeworkStudent> bookReports) {
+		List<BookReportHomeworkStudent> bookReports, BookStatus bookStatus) {
 		return HomeworkStudentDetail.builder()
 			.homeworkId(homework.getId())
-			.book(BookResponse.of(homework.getBook()))
+			.book(BookResponse.of(homework.getBook(), bookStatus))
 			.createdAt(homework.getCreatedAt())
 			.submitStatus(submitStatus)
 			.bookReports(bookReports)

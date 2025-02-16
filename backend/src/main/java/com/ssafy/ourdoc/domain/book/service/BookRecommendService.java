@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookStatus;
 import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendStudentDetail;
 import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendStudentResponse;
 import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendTeacherDetail;
@@ -18,6 +19,7 @@ import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
+import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.classroom.repository.ClassRoomRepository;
@@ -45,6 +47,7 @@ public class BookRecommendService {
 	private final BookReportRepository bookReportRepository;
 	private final BookService bookService;
 	private final ClassService classService;
+	private final BookStatusMapper bookStatusMapper;
 
 	public void addBookRecommend(BookRequest request, User user) {
 		if (user.getUserType() == UserType.학생) {
@@ -88,7 +91,7 @@ public class BookRecommendService {
 			searchedBooks, pageable);
 
 		List<BookRecommendTeacherDetail> details = bookRecommends.stream()
-			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
+			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user))
 			.toList();
 
 		Page<BookRecommendTeacherDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
@@ -105,7 +108,7 @@ public class BookRecommendService {
 			searchedBooks, pageable);
 
 		List<BookRecommendTeacherDetail> details = bookRecommends.stream()
-			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user.getId()))
+			.map(bookRecommend -> toBookRecommendDetailTeacher(bookRecommend, user))
 			.toList();
 
 		Page<BookRecommendTeacherDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
@@ -124,7 +127,7 @@ public class BookRecommendService {
 			searchedBooks, pageable);
 
 		List<BookRecommendStudentDetail> details = bookRecommends.stream()
-			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
+			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user))
 			.toList();
 
 		Page<BookRecommendStudentDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
@@ -140,21 +143,23 @@ public class BookRecommendService {
 			searchedBooks, pageable);
 
 		List<BookRecommendStudentDetail> details = bookRecommends.stream()
-			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user.getId()))
+			.map(bookRecommend -> toBookRecommendDetailStudent(bookRecommend, user))
 			.toList();
 		Page<BookRecommendStudentDetail> content = new PageImpl<>(details, pageable, bookRecommends.getTotalElements());
 		return new BookRecommendStudentResponse(content);
 	}
 
-	private BookRecommendTeacherDetail toBookRecommendDetailTeacher(BookRecommend bookRecommend, Long userId) {
+	private BookRecommendTeacherDetail toBookRecommendDetailTeacher(BookRecommend bookRecommend, User user) {
 		Long bookId = bookRecommend.getBook().getId();
-		int submitCount = bookReportRepository.countByUserIdAndBookId(userId, bookId);
-		return BookRecommendTeacherDetail.of(bookRecommend, submitCount);
+		int submitCount = bookReportRepository.countByUserIdAndBookId(user.getId(), bookId);
+		BookStatus bookStatus = bookStatusMapper.mapBookStatus(bookRecommend.getBook(), user);
+		return BookRecommendTeacherDetail.of(bookRecommend, submitCount, bookStatus);
 	}
 
-	private BookRecommendStudentDetail toBookRecommendDetailStudent(BookRecommend bookRecommend, Long userId) {
+	private BookRecommendStudentDetail toBookRecommendDetailStudent(BookRecommend bookRecommend, User user) {
 		Long bookId = bookRecommend.getBook().getId();
-		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(userId, bookId) > 0;
-		return BookRecommendStudentDetail.of(bookRecommend, submitStatus);
+		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(user.getId(), bookId) > 0;
+		BookStatus bookStatus = bookStatusMapper.mapBookStatus(bookRecommend.getBook(), user);
+		return BookRecommendStudentDetail.of(bookRecommend, submitStatus, bookStatus);
 	}
 }
