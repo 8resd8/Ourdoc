@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.entity.Book;
@@ -49,7 +48,7 @@ public class NationalLibraryBookService {
 
 	private final BookRepository bookRepository;
 
-	@Scheduled(cron = "0 0 3 * * *")
+	// @Scheduled(cron = "0 0 3 * * *")
 	public void updateBookListFromNationalLibrary() {
 		List<NationalLibraryBookResponse> externalBooks = parseBook();
 		log.info("국립중앙도서관 도서 {} 개 수집 완료", externalBooks.size());

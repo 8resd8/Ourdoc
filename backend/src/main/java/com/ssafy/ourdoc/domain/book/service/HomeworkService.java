@@ -53,6 +53,7 @@ public class HomeworkService {
 	private final ClassService classService;
 	private final BookReportTeacherService bookReportTeacherService;
 	private final BookReportStudentService bookReportStudentService;
+	private final BookRecommendService bookRecommendService;
 
 	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType() == UserType.학생) {
@@ -67,6 +68,8 @@ public class HomeworkService {
 		}
 		Homework homework = Homework.builder().book(book).user(user).classRoom(classRoom).build();
 		homeworkRepository.save(homework);
+		// 추천 도서에도 추가
+		bookRecommendService.addBookRecommend(request, user);
 	}
 
 	public void deleteHomework(BookRequest request, User user) {
