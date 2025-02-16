@@ -79,7 +79,7 @@ export const updateDebateDetailApi = async (
 
 // 독서 토론 방 삭제
 export const deleteDebateApi = async (roomId: string): Promise<void> => {
-  await api.delete(`/debates/${roomId}`);
+  await api.delete(`/debates/teachers/${roomId}`);
 };
 
 // 독서 토론 방 입장
