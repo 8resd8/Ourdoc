@@ -1,5 +1,8 @@
 package com.ssafy.ourdoc.domain.debate.service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -93,6 +96,16 @@ public class DebateService {
 			.user(user)
 			.build();
 		debateRoomOnlineRepository.save(roomOnline);
+
+		String query = token.split("\\?")[1];
+		String[] params = query.split("&");
+
+		for (String param : params) {
+			if (param.startsWith("token=")) {
+				// "token=" 이후 값 추출
+				return URLDecoder.decode(param.split("=")[1], StandardCharsets.UTF_8);
+			}
+		}
 
 		return token;
 	}
