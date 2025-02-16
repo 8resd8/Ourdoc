@@ -125,15 +125,6 @@ public class OpenViduService {
 					.password(request.getPassword())
 					.build();
 				roomRepository.save(roomUserCreate);
-			} else if (request.getRandomId() != null) {
-				Room roomUserCreate = Room.builder()
-					.user(user)
-					.sessionId(request.getRandomId())
-					.title(request.getRoomName())
-					.maxPeople(10)
-					.password(request.getPassword())
-					.build();
-				roomRepository.save(roomUserCreate);
 			}
 
 			return jsonResponse.getString("id");
