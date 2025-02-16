@@ -4,21 +4,24 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-export default function StyledSelect() {
-  const [category, setCategory] = useState('도서명'); // 기본값: 도서명
+interface StyledSelectProps {
+  onCategoryChange: (category: string) => void;
+}
+
+export default function StyledSelect({ onCategoryChange }: StyledSelectProps) {
+  const [category, setCategory] = useState('도서명');
 
   const handleChange = (event: SelectChangeEvent) => {
-    setCategory(event.target.value);
+    const newCategory = event.target.value;
+    setCategory(newCategory);
+    onCategoryChange(newCategory);
   };
 
   return (
     <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
       <InputLabel
         id="demo-simple-select-standard-label"
-        sx={{
-          fontSize: '14px', // 라벨 글씨 크기
-          color: '#333', // 라벨 색상
-        }}
+        sx={{ fontSize: '14px', color: '#333' }}
       >
         분류
       </InputLabel>
@@ -29,17 +32,11 @@ export default function StyledSelect() {
         onChange={handleChange}
         label="분류"
         sx={{
-          fontSize: '15px', // 드롭다운 글씨 크기
-          color: '#555', // 드롭다운 텍스트 색상
-          '& .MuiSelect-icon': {
-            color: '#888', // 드롭다운 아이콘 색상
-          },
-          '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#ccc', // 테두리 색상
-          },
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#888', // 호버 시 테두리 색상
-          },
+          fontSize: '15px',
+          color: '#555',
+          '& .MuiSelect-icon': { color: '#888' },
+          '& .MuiOutlinedInput-notchedOutline': { borderColor: '#ccc' },
+          '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#888' },
         }}
       >
         <MenuItem value="도서명">도서명</MenuItem>
