@@ -8,6 +8,12 @@ interface BookQueryParams {
   publisher: string;
 }
 
+interface HomeworkDetailParams {
+  size: number;
+  page: number;
+  homeworkId: number;
+}
+
 export interface Book {
   bookId: number;
   title: string;
@@ -27,20 +33,16 @@ export interface HomeworkBook {
   publisher: string;
   publishYear: string;
   imageUrl: string;
+  bookStatus: any;
 }
 
 export interface BookReport {
   id: number;
   beforeContent: string;
   createdAt: string;
-  submitStatus: 'Y' | 'N';
-  approve: 'Y' | 'N';
+  submitStatus: '제출' | '미제출';
+  approveStatus: '있음' | '없음';
 }
-
-// export interface HomeworkDetail {
-//   book: Book;
-//   createAt: string;
-// }
 export interface PaginatedBookReports {
   content: BookReport[];
   pageable: {
@@ -69,7 +71,34 @@ export interface PaginatedBookReports {
   size: number;
   empty: boolean;
 }
-
+export interface PaginatedBook {
+  book: any;
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      sorted: boolean;
+      unsorted: boolean;
+      empty: boolean;
+    };
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  sort: {
+    sorted: boolean;
+    unsorted: boolean;
+    empty: boolean;
+  };
+  number: number;
+  numberOfElements: number;
+  size: number;
+  empty: boolean;
+}
 export interface StudentHomeworkBookDetail {
   book: HomeworkBook;
   bookReports: PaginatedBookReports;
@@ -141,9 +170,9 @@ export interface RecommendedBook {
 }
 
 // 도서 목록 조회
-export const getBooksApi = async (params: BookQueryParams): Promise<Book[]> => {
+export const getBooksApi = async (params: BookQueryParams) => {
   try {
-    const response = await api.get<Book[]>('/books', { params });
+    const response = await api.get<PaginatedBook>('/books', { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching books:', error);
@@ -376,11 +405,13 @@ export const getStudentHomeworkBooksApi = async (
 
 // 학생 학급 숙제 도서 상세 조회
 export const getStudentHomeworkBookDetailApi = async (
-  homeworkId: number
+  // homeworkId:
+  params: HomeworkDetailParams
 ): Promise<StudentHomeworkBookDetail> => {
   try {
     const response = await api.get<StudentHomeworkBookDetail>(
-      `/books/students/homework/${homeworkId}`
+      `/books/students/homework/${params.homeworkId}`,
+      { params: { page: params.page, size: params.size } }
     );
     return response.data;
   } catch (error) {

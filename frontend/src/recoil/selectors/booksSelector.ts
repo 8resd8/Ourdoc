@@ -29,7 +29,13 @@ export const booksSelector = selector({
   key: 'booksSelector',
   get: async ({ get }) => {
     try {
-      const books = await getBooksApi({ title: '', author: '', publisher: '' });
+      const books = await getBooksApi({
+        title: '',
+        author: '',
+        publisher: '',
+        size: 0,
+        page: 0,
+      });
       return books;
     } catch (error) {
       console.error('도서 목록 불러오기 실패:', error);
@@ -47,6 +53,8 @@ export const nationalLibraryBooksSelector = selector({
         title: '',
         author: '',
         publisher: '',
+        size: 0,
+        page: 0,
       });
       return books;
     } catch (error) {
