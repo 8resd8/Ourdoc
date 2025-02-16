@@ -21,7 +21,6 @@ const TeacherClassInfo = () => {
       const params = { size: PAGE_SIZE, page };
       const response: StudentListResponse =
         await getClassStudentListApi(params);
-      console.log('API response:', response);
 
       setStudents(response.content);
       setTotalPages(response.totalPages); // totalPages를 API 응답에 맞게 수정
