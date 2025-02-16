@@ -9,14 +9,12 @@ import Router from './routes/Router';
 import Toast from './components/commons/Toast';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <RecoilRoot>
-      <RecoilNexus />
-      <BrowserRouter>
-        <Toast />
-        {/* <ResponseInterceptor /> */}
-        <Router />
-      </BrowserRouter>
-    </RecoilRoot>
-  </StrictMode>
+  <RecoilRoot>
+    <RecoilNexus />
+    <BrowserRouter>
+      <Toast />
+      {/* <ResponseInterceptor /> */}
+      <Router />
+    </BrowserRouter>
+  </RecoilRoot>
 );

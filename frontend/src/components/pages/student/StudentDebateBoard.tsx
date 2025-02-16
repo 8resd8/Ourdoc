@@ -1,96 +1,54 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Button from '../../atoms/Button';
+import { useEffect, useState } from 'react';
+import { DebateBoardButton } from '../../atoms/DebateBoardButton';
+import { PaginationButton } from '../../atoms/PagenationButton';
+import { DebateRoom, getDebatesApi } from '../../../services/debatesService';
+
+const PAGE_SIZE = 10;
 
 const StudentDebateBoard = () => {
-  const navigate = useNavigate();
-  const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [debateRooms, setDebateRooms] = useState<DebateRoom[]>([]);
 
-  const openModal = () => setShowModal(true);
-  const closeModal = () => setShowModal(false);
-
-  return (
-    <div className="p-6 bg-gray-100 min-h-screen text-gray-0">
-      <h1 className="headline-medium font-bold mb-4">토론 게시판</h1>
-      <button
-        onClick={openModal}
-        className="bg-blue-500 hover:bg-blue-600 text-gray-0 px-4 py-2 rounded-lg shadow-xxsmall"
-      >
-        토론방 개설
-      </button>
-
-      {showModal && <CreateDebateRoom closeModal={closeModal} />}
-    </div>
-  );
-};
-
-const CreateDebateRoom = ({ closeModal }: { closeModal: () => void }) => {
-  const [roomTitle, setRoomTitle] = useState('');
-  const navigate = useNavigate();
-
-  const createRoom = async () => {
-    if (!roomTitle) {
-      alert('방 제목을 입력해주세요.');
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        'http://localhost:8080/api/openvidu/create',
-        {
-          sessionName: roomTitle,
-          role: 'teacher',
-        }
-      );
-
-      navigate(`http://localhost:8080/debate/${response.data.sessionId}`);
-    } catch (error) {
-      alert('방을 생성할 수 없습니다.');
+  const onPageChange = (pageNumber: number) => {
+    if (pageNumber >= 0 && pageNumber < totalPages) {
+      fetchDebateRooms(pageNumber);
     }
   };
 
+  const fetchDebateRooms = async (page = 0) => {
+    try {
+      const params = { size: PAGE_SIZE, page };
+      const response = await getDebatesApi(params);
+
+      setDebateRooms(response.content);
+      setTotalPages(response.totalPages);
+      setCurrentPage(page);
+    } catch (error) {
+      setDebateRooms([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchDebateRooms();
+  }, []);
+
   return (
     <div className={'flex w-[846px] flex-col mx-auto py-[56px] space-y-[40px]'}>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-10">
         <h1 className="headline-medium text-gray-800">독서토론 게시판</h1>
-        <Button
-          title={'방 만들기'}
-          type={'outlined'}
-          color={'primary'}
-          onClick={() => {}}
-          flexible
-        />
       </div>
+      <div className="flex flex-wrap justify-between gap-4">
+        {debateRooms.map((room, index) => {
+          return <DebateBoardButton key={index} room={room} />;
+        })}
+      </div>
+      <PaginationButton
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
     </div>
-
-    // <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-    //   <div className="bg-gray-0 p-6 rounded-lg shadow-small w-96">
-    //     <h2 className="headline-medium font-semibold mb-4">토론방 개설</h2>
-
-    //     <input
-    //       type="text"
-    //       placeholder="방 제목 입력"
-    //       value={roomTitle}
-    //       onChange={(e) => setRoomTitle(e.target.value)}
-    //       className="w-full px-3 py-2 border border-gray-300 rounded-md mb-4"
-    //     />
-    //     <div className="flex justify-end gap-2">
-    //       <button
-    //         onClick={createRoom}
-    //         className="bg-green-500 hover:bg-green-600 text-gray-0 px-4 py-2 rounded-lg"
-    //       >
-    //         방 만들기
-    //       </button>
-    //       <button
-    //         onClick={closeModal}
-    //         className="bg-red-500 hover:bg-red-600 text-gray-0 px-4 py-2 rounded-lg"
-    //       >
-    //         취소
-    //       </button>
-    //     </div>
-    //   </div>
-    // </div>
   );
 };
 

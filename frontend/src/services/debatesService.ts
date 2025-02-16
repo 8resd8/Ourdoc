@@ -3,11 +3,13 @@ import { api } from '../services/api';
 // 인터페이스 정의
 export interface DebateRoom {
   roomId: string;
+  sessionId: string;
   title: string;
   creatorName: string;
   maxPeople: number;
   currentPeople: number;
   schoolName: string;
+  createdAt: string;
 }
 
 export interface DebateRoomResponse {
@@ -22,9 +24,8 @@ export interface DebateRoomResponse {
 }
 
 export interface CreateDebateRequest {
-  title: string;
+  roomName: string;
   password: string;
-  maxPeople: number;
 }
 
 export interface EnterDebateRequest {
@@ -44,9 +45,10 @@ export interface DebateRoomDetail extends DebateRoom {
 export const getDebatesApi = async (data: {
   page: number;
   size: number;
-}): Promise<DebateRoom[]> => {
-  const response = await api.get<DebateRoom[]>('/debates', { params: data });
-  console.log(response);
+}): Promise<DebateRoomResponse> => {
+  const response = await api.get<DebateRoomResponse>('/debates', {
+    params: data,
+  });
 
   return response.data;
 };
@@ -54,8 +56,9 @@ export const getDebatesApi = async (data: {
 // 독서 토론 방 생성
 export const createDebateApi = async (
   data: CreateDebateRequest
-): Promise<void> => {
-  await api.post('/debates', data);
+): Promise<string> => {
+  const response = await api.post('/openvidu/new-join', data);
+  return response.data;
 };
 
 // 독서 토론 방 정보 조회
@@ -84,8 +87,8 @@ export const enterDebateApi = async (
   roomId: string,
   data: EnterDebateRequest
 ): Promise<string> => {
-  const response = await api.post(`/debates/${roomId}/connection`, data);
-  return response.data.token;
+  const response = await api.post(`/openvidu/${roomId}/connection`, data);
+  return response.data;
 };
 
 // 독서 토론 방 퇴장
