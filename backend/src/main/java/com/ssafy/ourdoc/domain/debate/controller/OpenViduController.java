@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.openvidu.JoinRequest;
 import com.ssafy.ourdoc.domain.debate.dto.openvidu.JoinResponse;
+import com.ssafy.ourdoc.domain.debate.dto.openvidu.JoinTestRequest;
+import com.ssafy.ourdoc.domain.debate.dto.openvidu.JoinTestResponse;
 import com.ssafy.ourdoc.domain.debate.service.DebateService;
 import com.ssafy.ourdoc.domain.debate.service.OpenViduService;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -30,7 +32,6 @@ public class OpenViduController {
 
 	private final OpenViduService openViduService;
 	private final DebateService debateService;
-
 	private final OpenviduService openviduService;
 
 
@@ -38,8 +39,14 @@ public class OpenViduController {
 	public JoinResponse joinSession(@Login User user, @RequestBody JoinRequest joinRequest) {
 		String randomId = UUID.randomUUID().toString();
 		String token = openViduService.getToken(joinRequest, randomId, user);
+		return new JoinResponse(token, randomId);
+	}
 
-		return new JoinResponse(token);
+	@PostMapping("/test")
+	public JoinTestResponse testJoinSession(@RequestBody JoinTestRequest joinRequest) {
+		String randomId = UUID.randomUUID().toString();
+		String token = openViduService.getToken(joinRequest.getSessionName());
+		return new JoinTestResponse(token);
 	}
 
 
