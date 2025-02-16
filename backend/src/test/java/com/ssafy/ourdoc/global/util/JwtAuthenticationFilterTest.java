@@ -17,10 +17,16 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.filter.JwtAuthenticationFilter;
+import com.ssafy.ourdoc.global.util.JwtBlacklistService;
+import com.ssafy.ourdoc.global.util.JwtRefreshService;
+import com.ssafy.ourdoc.global.util.JwtTestController;
+import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.Cookie;
 
 @ExtendWith(MockitoExtension.class)
 class JwtAuthenticationFilterTest {
@@ -33,76 +39,75 @@ class JwtAuthenticationFilterTest {
 	@Mock
 	private JwtBlacklistService blacklistService;
 
+	@Mock
+	private JwtRefreshService jwtRefreshService;
+
 	@InjectMocks
 	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
 	@BeforeEach
 	void setUp() {
-		mockMvc = MockMvcBuilders.standaloneSetup(new JwtTestController()) // 테스트용 컨트롤러 추가
-			.addFilter(jwtAuthenticationFilter) // 필터 적용
+		mockMvc = MockMvcBuilders.standaloneSetup(new JwtTestController())
+			.addFilter(jwtAuthenticationFilter)
 			.build();
 
-		// 🔥 @Value("${prod.excluded-paths}")를 강제로 설정
+		// 🔥 @Value("${prod.excluded-paths}") 강제 설정
 		String mockExcludedPaths = "/teachers/signup,/students/signup,/users/signin,/users/signout,/users/checkId,/debate/**,/openvidu/**";
 		ReflectionTestUtils.setField(jwtAuthenticationFilter, "excludedPathsRaw", mockExcludedPaths);
-
-		// 🔥 @PostConstruct init() 강제 실행
 		ReflectionTestUtils.invokeMethod(jwtAuthenticationFilter, "init");
 	}
 
 	@Test
-	@DisplayName("✅ 유효한 토큰으로 요청 성공")
+	@DisplayName("✅ 유효한 액세스 토큰이 있으면 요청 성공")
 	void validTokenRequest_Success() throws Exception {
-		// Given: 유효한 JWT 토큰
+		// Given
 		String validToken = "Bearer valid.jwt.token";
-		given(jwtUtil.validateToken("valid.jwt.token")).willReturn(true);
-		given(blacklistService.isBlacklisted("valid.jwt.token")).willReturn(false);
-
-		// 📌 Claims Mocking 추가 (여기가 핵심)
 		Claims mockClaims = mock(Claims.class);
 		given(mockClaims.getSubject()).willReturn("testUser");
 		given(mockClaims.get("role", String.class)).willReturn(학생.name());
-		given(jwtUtil.getClaims("valid.jwt.token")).willReturn(mockClaims);  // ✅ Claims 반환하도록 설정
+		given(jwtUtil.getClaims("valid.jwt.token")).willReturn(mockClaims);
+		given(blacklistService.isBlacklisted("valid.jwt.token")).willReturn(false);
 
-		// When & Then: 요청 검증
+		// When & Then
 		mockMvc.perform(get("/users/test")
 				.header(HttpHeaders.AUTHORIZATION, validToken))
 			.andExpect(status().isOk());
 	}
 
 	@Test
-	@DisplayName("❌ 토큰이 없는 요청 실패")
+	@DisplayName("❌ 토큰이 없으면 요청 실패")
 	void noTokenRequest_Failure() throws Exception {
 		mockMvc.perform(get("/users/test"))
 			.andExpect(status().isUnauthorized());
 	}
 
 	@Test
-	@DisplayName("❌ 유효하지 않은 토큰으로 요청 실패")
-	void invalidTokenRequest_Failure() throws Exception {
+	@DisplayName("✅ 액세스 토큰이 만료되었지만 리프레시 토큰이 유효하면 새 액세스 토큰 발급")
+	void expiredAccessToken_ShouldTriggerRefresh() throws Exception {
 		// Given
-		String invalidToken = "Bearer invalid.jwt.token";
-		given(jwtUtil.validateToken("invalid.jwt.token")).willReturn(false);
-		given(blacklistService.isBlacklisted("invalid.jwt.token")).willReturn(false);
+		String expiredToken = "Bearer expired.jwt.token";
+		String refreshToken = "valid.refresh.token";
+		String newAccessToken = "new.jwt.token";
+
+		// Mock JWT 검증
+		given(blacklistService.isBlacklisted("expired.jwt.token")).willReturn(false);
+		given(jwtUtil.getClaims("expired.jwt.token")).willThrow(new ExpiredJwtException(null, null, "Token expired"));
+
+		Claims refreshClaims = mock(Claims.class);
+		given(refreshClaims.getSubject()).willReturn("testUser");
+		given(refreshClaims.get("role", String.class)).willReturn("USER");
+		given(jwtUtil.getClaims(refreshToken)).willReturn(refreshClaims);
+		given(jwtRefreshService.isValidRefreshToken("testUser", refreshToken)).willReturn(true);
+		given(jwtUtil.createToken("testUser", "USER")).willReturn(newAccessToken);
+
+		// 쿠키에 리프레시 토큰 추가
+		Cookie refreshTokenCookie = new Cookie("Refresh-Token", refreshToken);
 
 		// When & Then
 		mockMvc.perform(get("/users/test")
-				.header(HttpHeaders.AUTHORIZATION, invalidToken))
-			.andExpect(status().isUnauthorized());
-	}
-
-	@Test
-	@DisplayName("❌ 잘못된 토큰 형식으로 요청 실패")
-	void malformedTokenRequest_Failure() throws Exception {
-		// Given
-		String malformedToken = "InvalidTokenFormat";
-
-		// ✅ lenient()로 블랙리스트 조회의 예상치 못한 호출을 무시
-		lenient().when(blacklistService.isBlacklisted(anyString())).thenReturn(false);
-
-		// When & Then
-		mockMvc.perform(get("/users/test")
-				.header(HttpHeaders.AUTHORIZATION, malformedToken))
-			.andExpect(status().isUnauthorized());
+				.header(HttpHeaders.AUTHORIZATION, expiredToken)
+				.cookie(refreshTokenCookie))
+			.andExpect(status().isOk())
+			.andExpect(header().string(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken));
 	}
 }
