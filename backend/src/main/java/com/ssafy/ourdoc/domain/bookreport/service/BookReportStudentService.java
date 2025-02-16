@@ -61,6 +61,7 @@ public class BookReportStudentService {
 		BookReport bookReport = BookReport.builder()
 			.studentClass(studentClass)
 			.book(book)
+			.homework(findHomeworkById(request))
 			.beforeContent(request.beforeContent())
 			.ocrCheck(request.ocrCheck())
 			.imagePath(request.imageUrl())
@@ -69,6 +70,13 @@ public class BookReportStudentService {
 		BookReport saveBookReport = bookReportRepository.save(bookReport);
 		notificationService.sendNotifyStudentFromTeacher(user, 독서록); // 알림전송
 		return new BookReportSaveResponse(saveBookReport.getId());
+	}
+
+	private Homework findHomeworkById(BookReadLogRequest request) {
+		if (request.homeworkId() == null) {
+			return null;
+		}
+		return homeworkRepository.findById(request.homeworkId()).orElse(null);
 	}
 
 	public BookReportListResponse getBookReports(User user, int grade, Pageable pageable) {

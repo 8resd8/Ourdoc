@@ -10,6 +10,9 @@ public record BookReadLogRequest(
 	@Size(max = 250, message = "{size.max}")
 	Long bookId,
 
+	@Size(max = 250, message = "{size.max}")
+	Long homeworkId,
+
 	@NotBlank(message = "{notblank}")
 	@Size(max = 3000, message = "{size.max}")
 	String beforeContent,

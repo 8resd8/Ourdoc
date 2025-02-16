@@ -72,7 +72,10 @@ public class BookReport extends BaseTimeEntity {
 		String afterContent, OcrCheck ocrCheck, String imagePath) {
 		this.studentClass = studentClass;
 		this.book = book;
-		this.homework = homework;
+		// 독서록 저장 시 숙제도서면 추가
+		if (homework != null) {
+			this.homework = homework;
+		}
 		this.beforeContent = beforeContent;
 		this.afterContent = afterContent;
 		this.ocrCheck = ocrCheck;
