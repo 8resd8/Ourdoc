@@ -1,17 +1,19 @@
 package com.ssafy.ourdoc.domain.debate.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.client.HttpClientErrorException;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Optional;
 
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import com.ssafy.ourdoc.domain.debate.dto.openvidu.JoinRequest;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
@@ -52,9 +54,9 @@ public class OpenViduService {
 	 * @param user
 	 * @return 해당 세션에 대한 토큰
 	 */
-	public String getToken(JoinRequest joinRequest, User user) {
+	public String getToken(JoinRequest joinRequest, String randomId, User user) {
 		// 1. 세션 생성 (없으면 생성, 이미 있으면 기존 세션 사용)
-		String sessionId = createSession(joinRequest, user);
+		String sessionId = createSession(joinRequest, randomId, user);
 		// 2. 토큰 생성
 		return createToken(sessionId);
 	}
@@ -64,20 +66,21 @@ public class OpenViduService {
 	 * customSessionId를 이용해 고유한 세션명을 지정
 	 * randomId는 고유값
 	 */
-	private String createSession(JoinRequest request, User user) {
+
+	private String createSession(JoinRequest request, String randomId, User user) {
 		// request.randomId가 있으면 입장
 
 		String url = OPENVIDU_URL + "/openvidu/api/sessions";
 		HttpHeaders headers = createHeaders();
 		JSONObject body = new JSONObject();
-		body.put("customSessionId", request.getRoomId());
+		body.put("customSessionId", request.getRandomId());
 		HttpEntity<String> requestEntity = new HttpEntity<>(body.toString(), headers);
 		try {
 			ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 			JSONObject jsonResponse = new JSONObject(response.getBody());
 
 			// request.randomId가 없으면 방 생성
-			if (request.getRoomId() == null) {
+			if (request.getRandomId() == null) {
 				Room roomUserCreate = Room.builder()
 					.user(user)
 					.title(request.getRoomName())
@@ -85,21 +88,14 @@ public class OpenViduService {
 					.password(request.getPassword())
 					.build();
 				roomRepository.save(roomUserCreate);
-
-
 			}
-			// // 이미 만들어진 방이 있다는 것
-			// else if (request.getRandomId() != null) {
-			// 	Room findRoom = roomRepository.findByRandomId(request.getRandomId()).orElse(null);
-			// 	return findRoom.getSessionId();
-			// }
 
 			return jsonResponse.getString("id");
 		} catch (HttpClientErrorException e) {
 			// 409 Conflict인 경우 세션이 이미 존재하는 것으로 간주하여 randomId 반환
-			if (e.getStatusCode() == HttpStatus.CONFLICT || request.getRoomId() != null) {
+			if (e.getStatusCode() == HttpStatus.CONFLICT || request.getRandomId() != null) {
 				// return randomId;
-				return String.valueOf(request.getRoomId());
+				return request.getRandomId();
 			} else {
 				throw e;
 			}
