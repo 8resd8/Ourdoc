@@ -16,6 +16,7 @@ import com.ssafy.ourdoc.domain.book.dto.most.BookMostDto;
 import com.ssafy.ourdoc.domain.book.dto.most.BookMostResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
+import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
 import com.ssafy.ourdoc.domain.user.entity.User;
 
 import groovy.util.logging.Slf4j;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 @Slf4j
 public class BookService {
 	private final BookRepository bookRepository;
+	private final BookStatusMapper bookStatusMapper;
 
 	public void registerBook(Book book) {
 		if (bookRepository.findByIsbn(book.getIsbn()).isPresent()) {
@@ -40,19 +42,19 @@ public class BookService {
 		bookRepository.saveAll(books);
 	}
 
-	public BookListResponse searchBook(BookSearchRequest request, Pageable pageable) {
+	public BookListResponse searchBook(User user, BookSearchRequest request, Pageable pageable) {
 		Page<Book> books = bookRepository.findBookPage(request.title(), request.author(), request.publisher(),
 			pageable);
 		List<BookResponse> bookResponse = books.stream()
-			.map(BookResponse::of)
+			.map(book -> BookResponse.of(book, bookStatusMapper.mapBookStatus(book, user)))
 			.toList();
 		Page<BookResponse> bookResponsePage = new PageImpl<>(bookResponse, pageable, books.getTotalElements());
 		return new BookListResponse(bookResponsePage);
 	}
 
-	public BookDetailResponse getBookDetail(Long id) {
+	public BookDetailResponse getBookDetail(User user, Long id) {
 		Book book = findBookById(id);
-		return BookDetailResponse.of(book, book.getDescription());
+		return BookDetailResponse.of(book, book.getDescription(), bookStatusMapper.mapBookStatus(book, user));
 	}
 
 	public Book findBookById(Long id) {
