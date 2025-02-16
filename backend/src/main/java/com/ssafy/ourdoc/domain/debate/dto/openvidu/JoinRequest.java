@@ -14,9 +14,11 @@ import lombok.Setter;
 public class JoinRequest {
 	@NotBlank(message = "{notblank}")
 	@Size(max = 250, message = "{size.max}")
-	private String sessionName;
+	private String roomName;
 
-	@NotBlank(message = "{notblank}")
 	@Size(max = 250, message = "{size.max}")
-	private String nickname;
+	private String password;
+
+	@Size(max = 250, message = "{size.max}")
+	private String randomId;
 }
