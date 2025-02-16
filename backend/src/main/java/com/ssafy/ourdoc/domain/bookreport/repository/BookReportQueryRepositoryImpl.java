@@ -388,7 +388,12 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			));
 
 		List<BookReportMonthlyStatisticsDto> monthlyReports = new ArrayList<>();
-		for (int m = 1; m <= 12; m++) {
+		for (int m = 3; m <= 12; m++) {
+			int count = reportCountByMonth.getOrDefault(m, 0L).intValue();
+			monthlyReports.add(new BookReportMonthlyStatisticsDto(m, count));
+		}
+
+		for (int m = 1; m <= 2; m++) {
 			int count = reportCountByMonth.getOrDefault(m, 0L).intValue();
 			monthlyReports.add(new BookReportMonthlyStatisticsDto(m, count));
 		}
