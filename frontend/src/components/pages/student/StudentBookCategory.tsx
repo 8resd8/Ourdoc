@@ -20,10 +20,10 @@ import SelectVariants from '../../commons/SelectVariants';
 import { book } from '../teacher/TeacherMain';
 import { useNavigate } from 'react-router-dom';
 
-const homeWorkBook = (id: number) => {
+const homeWorkBook = (id: number): HomeworkItem => {
   return {
     homeworkId: id,
-    book: book,
+    book: { ...book, description: '' },
     createdAt: dayjs(new Date()).toString(),
     submitStatus: id % 2 === 0,
     bookReports: [''],
@@ -143,19 +143,19 @@ const StudentBookCategory = () => {
         </div>
 
         {/* 숙제 도서 제목 */}
-        <h2 className="headline-large text-center mb-[36px] mt-[72px]">
+        <h2 className="headline-large text-center mb-[36px] mt-[44px]">
           {BookCategoryExtension[selectedCategory as BookCategoryType]?.korean}{' '}
           도서
         </h2>
         {/* 카테고리 버튼 */}
-        <div className="flex justify-center space-x-4 mb-[34px]">
+        <div className="flex justify-center space-x-8 mb-[36px]">
           {Object.values(BookCategoryType).map((type) => {
             const isSelected = selectedCategory === type;
 
             return (
               <button
                 key={type}
-                className={`flex flex-col items-center px-4 py-2 bg-gray-0 rounded-[15px] shadow-xxsmall cursor-pointer transition-colors
+                className={`flex flex-col items-center px-4 py-1 bg-gray-0 rounded-[15px] shadow-xxsmall cursor-pointer transition-colors
                 ${isSelected ? 'bg-white text-primary-500' : 'bg-gray-0 text-gray-700'}
                 ${!isSelected ? 'hover:border-primary-400 group' : ''}
               `}
@@ -170,7 +170,7 @@ const StudentBookCategory = () => {
                 `}
                 />
                 <span
-                  className={`transition-colors 
+                  className={`transition-colors caption-medium
                   ${isSelected ? 'text-primary-500' : 'text-gray-700'} ${!isSelected ? 'group-hover:text-primary-400' : ''}`}
                 >
                   {BookCategoryExtension[type as BookCategoryType]?.korean}
