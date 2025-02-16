@@ -22,7 +22,7 @@ const StudentMain = () => {
       </div>
       <div className="flex justify-between">
         <TrophySummarySection />
-        <NotificationSection />
+        <NotificationSection isStudent />
       </div>
       <StudentMainHomeworkListSection />
       <FavoriteBookListSection />

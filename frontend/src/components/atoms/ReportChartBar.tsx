@@ -19,14 +19,16 @@ export const ReportChartBar = ({ count, top, onClick }: BarProps) => {
           height: `${Math.min(MAX_CHART_BAR_HEIGHT, BAR_HEIGHT_PER_COUNT * count)}px`,
         }}
       />
-      <div
-        className={`w-[22.17px] absolute text-center text-primary-500 body-small group-hover:text-primary-300`}
-        style={{
-          top: `${top - 18.9}px`,
-        }}
-      >
-        {count}
-      </div>
+      {count != 0 && (
+        <div
+          className={`w-[22.17px] absolute text-center text-primary-500 body-small group-hover:text-primary-300`}
+          style={{
+            top: `${top - 18.9}px`,
+          }}
+        >
+          {count}
+        </div>
+      )}
     </div>
   );
 };

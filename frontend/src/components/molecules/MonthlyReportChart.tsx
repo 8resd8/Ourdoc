@@ -10,16 +10,11 @@ const MAX_CHART_BAR_TOP = 34.03;
 const MIN_CHART_BAR_TOP = 241.97;
 const BAR_HEIGHT_PER_COUNT = 8.4;
 
-const getRandomCount = () => Math.floor(Math.random() * 100) + 1;
-
-export const mockMonthlyReport: MonthlyBookReport[] = Object.values(MonthType)
-  .filter((v) => typeof v === 'number')
-  .map((month) => ({
-    month: month as number,
-    count: getRandomCount(),
-  }));
-
-export const MonthlyReportChart = () => {
+export const MonthlyReportChart = ({
+  mockMonthlyReport,
+}: {
+  mockMonthlyReport: MonthlyBookReport[];
+}) => {
   const monthList = Object.values(MonthType).filter(
     (v) => typeof v === 'number'
   );
@@ -48,19 +43,17 @@ export const MonthlyReportChart = () => {
         <div className="w-[505.32px] h-[0px] left-[557.98px] top-[34.03px] absolute origin-top-left rotate-180 border border-gray-200"></div>
         {/* 월별 Bar */}
         <div className="w-[544.12px] px-6 left-[37.88px] absolute justify-between items-end inline-flex">
-          {mockMonthlyReport
-            .filter((report) => report.count !== 0)
-            .map((report) => (
-              <ReportChartBar
-                key={report.month}
-                count={report.count}
-                top={Math.max(
-                  MAX_CHART_BAR_TOP,
-                  MIN_CHART_BAR_TOP - BAR_HEIGHT_PER_COUNT * report.count
-                )}
-                onClick={() => setSelectedMonth(report.month as number)}
-              />
-            ))}
+          {mockMonthlyReport.map((report) => (
+            <ReportChartBar
+              key={report.month}
+              count={report.readCount}
+              top={Math.max(
+                MAX_CHART_BAR_TOP,
+                MIN_CHART_BAR_TOP - BAR_HEIGHT_PER_COUNT * report.readCount
+              )}
+              onClick={() => setSelectedMonth(report.month as number)}
+            />
+          ))}
         </div>
         <div className="h-[276px] px-3 py-6 left-0 top-0 absolute flex-col justify-between items-end inline-flex">
           <div className="text-right text-gray-800 body-medium">25권</div>

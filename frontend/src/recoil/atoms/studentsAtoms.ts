@@ -12,3 +12,9 @@ export const studentChangeClassState = atom<boolean>({
   key: 'studentChangeClassState',
   default: false,
 });
+
+// 학생 소속 변경 요청 상태
+export const studentGradeState = atom<number>({
+  key: 'studentGradeState',
+  default: 1,
+});

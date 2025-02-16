@@ -1,24 +1,77 @@
-export const NotificationDetailTile = () => {
-  const type = '독서록';
-  const body =
-    '안녕 클레오파트라 세상에서안녕 클레오파트라 세상에서안녕 클레오파트라안녕 클레오파트라 세상에서안녕 클레오파트라 세상에서안녕 클레오파트라';
-  const writer = '클레오파트라';
-  const date = '2시간전';
-  const isRead = true;
+import { useState } from 'react';
+import { Notification } from '../../services/notificationsService';
+import { detailDate } from '../../utils/DateFormat';
+import Modal from '../commons/Modal';
+
+export const NotificationDetailTile = ({
+  notification,
+}: {
+  notification: Notification;
+}) => {
+  const [modal, setmodal] = useState(false);
+
   return (
-    <div className="w-[846px] self-stretch p-[24px] justify-between items-center inline-flex hover:bg-primary-50 cursor-pointer">
-      <div className="text-center text-primary-500 body-medium">{type}</div>
-      <div className="w-[589px] flex-col justify-start items-end gap-3 inline-flex">
-        <div
-          className={`self-stretch ${isRead ? 'body-medium-bold' : 'body-medium'} text-gray-800 truncate`}
-        >
-          {body}
+    <>
+      <Modal
+        isOpen={modal}
+        title={''}
+        body={
+          <div className="flex flex-col gap-8 pb-8">
+            <div className="self-stretch h-12 flex-col justify-start items-end flex">
+              <div className="self-stretch justify-start items-center gap-[11px] inline-flex">
+                <div className="text-center text-gray-700 body-medium">
+                  보낸 사람
+                </div>
+                <div className="text-center text-gray-800 body-medium">
+                  {notification.senderName}
+                </div>
+              </div>
+              <div className="self-stretch justify-start items-center gap-[11px] inline-flex">
+                <div className="text-center text-gray-700 body-medium">
+                  보낸 날짜
+                </div>
+                <div className="text-center text-gray-800 body-medium">
+                  {detailDate(notification.createdAt)}
+                </div>
+              </div>
+            </div>
+            <div className="self-stretch h-[124px] flex-col justify-start items-start gap-6 flex">
+              <div className="self-stretch text-gray-800 body-medium text-start">
+                {notification.content}
+              </div>
+            </div>
+          </div>
+        }
+        confirmText={'확인'}
+        cancelText={'닫기'}
+        onConfirm={function (): void {
+          setmodal(false);
+        }}
+        onCancel={function (): void {
+          setmodal(false);
+        }}
+      />
+      <div
+        onClick={() => setmodal(true)}
+        className="w-[846px] self-stretch p-[24px] justify-between items-center inline-flex hover:bg-primary-50 cursor-pointer"
+      >
+        <div className="text-center text-primary-500 body-medium">
+          {notification.type}
         </div>
-        <div className="self-stretch text-gray-800 caption-medium truncate">
-          {writer}
+        <div className="w-[589px] flex-col justify-start items-end gap-3 inline-flex">
+          <div
+            className={`self-stretch ${true ? 'body-medium-bold' : 'body-medium'} text-gray-800 truncate`}
+          >
+            {notification.content}
+          </div>
+          <div className="self-stretch text-gray-800 caption-medium truncate">
+            {notification.senderName}
+          </div>
+        </div>
+        <div className="text-center text-[#4e4e4e] body-medium">
+          {detailDate(notification.createdAt)}
         </div>
       </div>
-      <div className="text-center text-[#4e4e4e] body-medium">{date}</div>
-    </div>
+    </>
   );
 };

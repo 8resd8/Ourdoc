@@ -56,10 +56,13 @@ export const getNotificationsApi = async (params: {
   page?: number;
   size?: number;
 }): Promise<NotificationPageable> => {
-  const response = await api.get<NotificationPageable>('/notifications', {
-    params,
-  });
-  return response.data;
+  const response = await api.get<{ notifications: NotificationPageable }>(
+    '/notifications',
+    {
+      params,
+    }
+  );
+  return response.data.notifications;
 };
 
 // 알림 상세 조회
