@@ -22,6 +22,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportSaveResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
@@ -40,8 +41,8 @@ public class BookReportStudentController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createBookReportStudent(@Login User user, @RequestBody BookReadLogRequest request) {
-		bookReportStudentService.saveBookReport(user, request);
+	public BookReportSaveResponse createBookReportStudent(@Login User user, @RequestBody BookReadLogRequest request) {
+		return bookReportStudentService.saveBookReport(user, request);
 	}
 
 	@GetMapping
