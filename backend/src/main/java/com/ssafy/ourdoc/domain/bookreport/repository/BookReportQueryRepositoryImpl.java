@@ -271,7 +271,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public List<BookReportHomeworkStudentDto> bookReportsHomeworkStudents(Long homeworkId, Long userId) {
+	public List<BookReportHomeworkStudentDto> bookReportsHomeworkStudents(Long bookId, Long userId) {
 		return queryFactory.select(Projections.constructor(BookReportHomeworkStudentDto.class,
 					bookReport.id,
 					bookReport.beforeContent,
@@ -283,14 +283,14 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.from(bookReport)
 			.leftJoin(homework).on(bookReport.book.id.eq(homework.book.id))
 			.leftJoin(user).on(bookReport.studentClass.user.id.eq(user.id))
-			.where(bookReport.homework.id.eq(homeworkId), user.id.eq(userId))
+			.where(bookReport.book.id.eq(bookId), user.id.eq(userId))
 			.fetch();
 	}
 
 	@Override
-	public Page<BookReportHomeworkStudentDto> bookReportsHomeworkStudentsPage(Long homeworkId, Long userId,
+	public Page<BookReportHomeworkStudentDto> bookReportsHomeworkStudentsPage(Long bookId, Long userId,
 		Pageable pageable) {
-		int total = bookReportsHomeworkStudents(homeworkId, userId).size();
+		int total = bookReportsHomeworkStudents(bookId, userId).size();
 		List<BookReportHomeworkStudentDto> content = queryFactory.select(new QBookReportHomeworkStudentDto(
 				bookReport.id,
 				bookReport.beforeContent,
@@ -301,7 +301,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.from(bookReport)
 			.leftJoin(homework).on(bookReport.book.id.eq(homework.book.id))
 			.leftJoin(user).on(bookReport.studentClass.user.id.eq(user.id))
-			.where(bookReport.homework.id.eq(homeworkId), user.id.eq(userId))
+			.where(bookReport.book.id.eq(bookId), user.id.eq(userId))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
