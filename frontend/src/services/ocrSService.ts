@@ -2,7 +2,9 @@ import { api, multipartApi } from '../services/api';
 
 // OCR 변환 API 요청 인터페이스
 export interface HandOCRResponse {
-  afterContent: string;
+  enhancerContent: string;
+  ocrImagePath: string;
+  originContent: string;
 }
 
 // OCR 변환 API 호출 함수

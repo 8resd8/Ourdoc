@@ -96,10 +96,10 @@ export const signinApi = async (data: LoginRequest): Promise<LoginResponse> => {
     const response = await api.post<LoginResponse>('/users/signin', data);
     const accessToken = response.headers['authorization'];
 
-    notify({
-      type: 'info',
-      text: '로그인 성공!',
-    });
+    // notify({
+    //   type: 'info',
+    //   text: '로그인 성공!',
+    // });
 
     if (accessToken) {
       setRecoil(accessTokenState, accessToken);

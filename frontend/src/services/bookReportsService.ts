@@ -6,6 +6,7 @@ export interface CreateBookReportRequest {
   beforeContent: string;
   imageUrl: string;
   ocrCheck: string;
+  homeworkId: string | null;
 }
 
 export interface AiFeedbackRequest {
@@ -53,8 +54,9 @@ export interface BookReportParams {
 // 독서록 작성
 export const createBookReportApi = async (
   data: CreateBookReportRequest
-): Promise<void> => {
-  await api.post('/bookreports/students', data);
+): Promise<string> => {
+  const response = await api.post('/bookreports/students', data);
+  return response.data.bookReportId;
 };
 
 // 독서록 작성 AI 피드백 저장
