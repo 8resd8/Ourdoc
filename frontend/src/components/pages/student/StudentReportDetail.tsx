@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import {
   BookReportDetail,
+  deleteBookReportApi,
   getBookReportDetailApi,
 } from '../../../services/bookReportsService';
 import { useParams } from 'react-router-dom';
 import { format } from 'prettier';
 import { DateFormat } from '../../../utils/DateFormat';
+import { useRecoilValue } from 'recoil';
+import { currentUserState } from '../../../recoil';
 
 const StudentReportDetail = () => {
   const { id } = useParams();
@@ -17,9 +20,15 @@ const StudentReportDetail = () => {
       console.log(response);
     }
   };
+
+  const deleteReport = async () => {
+    const response = await deleteBookReportApi(Number(id));
+    console.log(response);
+  };
   useEffect(() => {
     fetchReport();
   }, []);
+  const user = useRecoilValue(currentUserState);
 
   return (
     <div className="">
@@ -37,7 +46,8 @@ const StudentReportDetail = () => {
               />
             </div>
             <div className="text-end text-gray-800 report-font">
-              성룡 초등학교 3학년 1반 7번
+              {user.schoolName} {user.grade}학년 {user.classNumber}반{' '}
+              {user.studentNumber}번
             </div>
             <div className="flex flex-row">
               <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
@@ -76,7 +86,10 @@ const StudentReportDetail = () => {
             />
           </div>
           <div className="flex justify-end">
-            <div className="inline-flex py-[12px] px-[16px] mt-1 bg-system-danger rounded-[10px] justify-center items-center text-center text-gray-0 body-medium">
+            <div
+              onClick={deleteReport}
+              className="cursor-pointer inline-flex py-[12px] px-[16px] mt-1 bg-system-danger rounded-[10px] justify-center items-center text-center text-gray-0 body-medium"
+            >
               삭제하기
             </div>
           </div>
@@ -85,49 +98,13 @@ const StudentReportDetail = () => {
           <div>
             <div className="text-gray-800 body-small">AI 선생님 의견</div>
             <div className="w-[413px] h-[421px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
-              <div className="w-[389px]">
-                {report?.aiComment}
-                {/* <span className="text-gray-800 body-medium">
-                  원문: 이 책은 나에게 많은 감동을 주었다. 주인공의 용기 있는
-                  선택이 인상적이었고, 나도 그런 용기를 갖고 싶다고 생각했다.
-                  <br />
-                  첨삭 후: 이 책은 나에게 깊은 감동을 주었다. 특히, 주인공이
-                  어려운 상황에서도 용기 있는 선택을 하는 모습이 인상적이었다.
-                  나 역시 그런 용기를 기르고 싶다고 느꼈다.
-                  <br />
-                  첨삭 포인트:
-                  <br />
-                </span>
-                <span className="text-gray-800 body-medium">
-                  더 구체적인 표현 → "많은 감동" → "깊은 감동"
-                  <br />
-                  문장 자연스럽게 다듬기 → "주인공의 용기 있는 선택이
-                  인상적이었고"를 "특히, 주인공이 어려운 상황에서도 용기 있는
-                  선택을 하는 모습이 인상적이었다"로 수정해 문장이 더 매끄럽고
-                  명확해짐.
-                  <br />
-                  개인적인 감상 강조 → "갖고 싶다고 생각했다" → "기르고 싶다고
-                  느꼈다"로 바꿔 감정이 더 잘 전달됨.
-                  <br />
-                </span>
-                <span className="text-gray-800 body-medium">
-                  이런 방식으로 독서록을 다듬으면 더 좋은 글이 될 수 있어! 😊
-                </span> */}
-              </div>
+              <div className="w-[389px]">{report?.aiComment}</div>
             </div>
           </div>
           <div>
             <div className="text-gray-800 body-small">담임 선생님 의견</div>
             <div className="w-[413px] h-[126px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
-              <div className="w-[389px]">
-                {report?.teacherComment}
-                {/* <span className="text-gray-800 body-medium">
-                  첨삭 전: 이 책은 나에게 많은 감동을 주었다. 첨삭 후: 이 책은
-                  나에게 깊고 진한 감동을 안겨 주었다 첨삭 전: 이 책은 나에게
-                  많은 감동을 주었다. 첨삭 후: 이 책은 나에게 깊고 진한 감동을
-                  안겨 주었다
-                </span> */}
-              </div>
+              <div className="w-[389px]">{report?.teacherComment}</div>
             </div>
           </div>
         </div>
