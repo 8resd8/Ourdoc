@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 
 public interface DebateRoomRepository extends JpaRepository<Room, Long>, DebateRoomQueryRepository {
-	Page<Room> findByEndAtIsNull(Pageable pageable);
+	Page<Room> findByEndAtIsNullOrderByCreatedAtDesc(Pageable pageable);
 
 	@Query("select r from Room r where r.sessionId = :randomId")
 	Optional<Room> findByRandomId(@Param("randomId") String randomId);
