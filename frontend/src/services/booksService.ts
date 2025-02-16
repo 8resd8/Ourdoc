@@ -218,7 +218,7 @@ export const addFavoriteBookApi = async (bookId: number): Promise<number> => {
 };
 
 // 사용자 관심 도서 목록 조회
-export const getFavoriteBooksApi = async (): Promise<FavoriteBook[]> => {
+export const getFavoriteBooksApi = async (): Promise<any> => {
   try {
     const response = await api.get<FavoriteBook[]>('/books/favorite');
     return response.data;
