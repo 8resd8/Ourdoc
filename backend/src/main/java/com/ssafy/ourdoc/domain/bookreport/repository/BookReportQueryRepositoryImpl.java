@@ -490,7 +490,8 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				studentClass.studentNumber,
 				studentClass.user.name,
 				bookReport.count().intValue(),
-				Expressions.constant(0)
+				Expressions.constant(0),
+				studentClass.user.profileImagePath
 			)).from(studentClass)
 			.join(studentClass.classRoom, classRoom)
 			.leftJoin(bookReport)

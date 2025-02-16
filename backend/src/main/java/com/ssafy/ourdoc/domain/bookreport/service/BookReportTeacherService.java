@@ -28,9 +28,6 @@ import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
-import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
-import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
-import com.ssafy.ourdoc.global.common.enums.Active;
 
 import lombok.RequiredArgsConstructor;
 
@@ -148,7 +145,7 @@ public class BookReportTeacherService {
 			long readCount = rankDto.readCount();
 			totalCount += readCount;
 			if (rank < 4) {
-				podiumList.add(new BookReportRankDto(rankDto.studentNumber(), rankDto.name(), (int)readCount, rank));
+				podiumList.add(new BookReportRankDto(rankDto.studentNumber(), rankDto.name(), (int)readCount, rank, rankDto.profileImagePath()));
 			}
 		}
 
