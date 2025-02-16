@@ -4,6 +4,7 @@ import {
   HomeworkBook,
   addFavoriteBookApi,
   getStudentHomeworkBookDetailApi,
+  removeFavoriteBookApi,
 } from '../../../services/booksService';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -16,14 +17,25 @@ const StudentHomeWorkReportList = () => {
   const [bookReports, setBookReports] = useState<BookReport[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const [favorite, setFavorite] = useState(false);
+  const [recommend, setRecommend] = useState(false);
+  const [homework, setHomework] = useState(false);
   const PAGE_SIZE = 10;
   const fetchHomeworkDetail = async (page = 0) => {
     try {
-      const data = await getStudentHomeworkBookDetailApi(Number(homeworkId));
+      const params = {
+        page: page,
+        size: PAGE_SIZE,
+        homeworkId: Number(homeworkId),
+      };
+      const data = await getStudentHomeworkBookDetailApi(params);
       setHomeworkBook(data.book);
+      setFavorite(data.book.bookStatus.favorite);
+      setRecommend(data.book.bookStatus.favorite);
       setBookReports(data.bookReports.content);
-      setTotalPages(data.bookReports.totalPages); // totalPages를 API 응답에 맞게 수정
+      setTotalPages(data.bookReports.totalPages);
       setCurrentPage(page);
+      console.log(data);
     } catch (error) {
       console.error('Error fetching homework detail:', error);
     }
@@ -47,6 +59,14 @@ const StudentHomeWorkReportList = () => {
     if (homeworkDetail) {
       const response = await addFavoriteBookApi(homeworkDetail.bookId);
       console.log(response);
+      fetchHomeworkDetail();
+    }
+  };
+  const favoriteCancel = async () => {
+    if (homeworkDetail) {
+      const response = await removeFavoriteBookApi(homeworkDetail.bookId);
+      console.log(response);
+      fetchHomeworkDetail();
     }
   };
 
@@ -60,32 +80,41 @@ const StudentHomeWorkReportList = () => {
             alt={homeworkDetail?.title}
             className="w-[190px] h-[282px] object-cover rounded-md mr-6"
           />
-          <div className="">
+          <div className="mt-12">
             <h2 className="headline-medium font-bold mb-4">
               {homeworkDetail?.title}
             </h2>
-            <p className="body-medium text-gray-700 mb-2">
+            <p className="body-medium text-gray-700 mb-4">
               저자: {homeworkDetail?.author}
             </p>
-            <p className="body-medium text-gray-700 mb-2">
+            <p className="body-medium text-gray-700 mb-4">
               출판사: {homeworkDetail?.publisher}
             </p>
-            <p className="body-medium text-gray-700 mb-2">
+            <p className="body-medium text-gray-700 mb-4">
               장르: {homeworkDetail?.genre}
             </p>
-            <p className="body-medium text-gray-700 mb-2">
+            <p className="body-medium text-gray-700">
               출판년도: {homeworkDetail?.publishYear}
             </p>
           </div>
         </div>
         {/* 버튼 섹션 */}
-        <div className="flex justify-between space-x-4 mb-4  mt-4 w-[630px]">
-          <button
-            onClick={favoriteBook}
-            className="cursor-pointer body-medium px-4 py-2 text-secondary-500 rounded-[10px]  border border-secondary-500"
-          >
-            관심 등록
-          </button>
+        <div className="flex space-x-4 mb-4 justify-between mt-4 w-[630px]">
+          {favorite ? (
+            <button
+              onClick={favoriteCancel}
+              className="cursor-pointer body-medium px-4 py-2 text-gray-500 rounded-[10px]  border border-gray-500"
+            >
+              관심 해제
+            </button>
+          ) : (
+            <button
+              onClick={favoriteBook}
+              className="cursor-pointer body-medium px-4 py-2 text-secondary-500 rounded-[10px]  border border-secondary-500"
+            >
+              관심 등록
+            </button>
+          )}
           <button
             onClick={() => {
               navigate(
@@ -128,7 +157,7 @@ const StudentHomeWorkReportList = () => {
                   {formatDate(row.createdAt)}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {row.submitStatus === 'Y' ? (
+                  {row.approveStatus === '있음' ? (
                     <button className="body-small text-system-success border-system-success border w-[49px] h-[28px] rounded-[5px]">
                       완료
                     </button>
@@ -139,14 +168,16 @@ const StudentHomeWorkReportList = () => {
                   )}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {row.submitStatus === 'Y' ? (
-                    <button className="body-small text-system-info border-system-info border w-[49px] h-[28px] rounded-[5px]">
-                      제출
+                  {row.submitStatus === '미제출' ? (
+                    <button className="body-small text-system-info border-system-info border w-[60px] h-[28px] rounded-[5px]">
+                      제출하기
+                    </button>
+                  ) : row.submitStatus === '제출' ? (
+                    <button className="body-small border border-gra-300 text-gray-300 w-[60px] h-[28px] rounded-[5px]">
+                      제출완료
                     </button>
                   ) : (
-                    <button className="body-small border border-gra-300 text-gray-300 w-[49px] h-[28px] rounded-[5px]">
-                      미제출
-                    </button>
+                    ''
                   )}
                 </td>
               </tr>
