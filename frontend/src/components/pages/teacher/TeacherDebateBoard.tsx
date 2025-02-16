@@ -1,25 +1,33 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Button from '../../atoms/Button';
 import { DebateBoardButton } from '../../atoms/DebateBoardButton';
 import { PaginationButton } from '../../atoms/PagenationButton';
-import { DebateRoom, getDebatesApi } from '../../../services/debatesService';
+import {
+  createDebateApi,
+  DebateRoom,
+  getDebatesApi,
+} from '../../../services/debatesService';
 import Modal from '../../commons/Modal';
+import { useNavigate } from 'react-router-dom';
 
 const PAGE_SIZE = 10;
 
 interface RoomInformationProps {
-  title?: string;
-  password?: string;
+  title: string;
+  password: string;
 }
 
 const TeacherDebateBoard = () => {
   const navigate = useNavigate();
+
   const [showModal, setShowModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [roomInformation, setRoomInformation] =
-    useState<RoomInformationProps>();
+  const [debateRooms, setDebateRooms] = useState<DebateRoom[]>([]);
+  const [roomInformation, setRoomInformation] = useState<RoomInformationProps>({
+    title: '',
+    password: '',
+  });
 
   const onPageChange = (pageNumber: number) => {
     if (pageNumber >= 0 && pageNumber < totalPages) {
@@ -30,29 +38,41 @@ const TeacherDebateBoard = () => {
   const fetchDebateRooms = async (page = 0) => {
     try {
       const params = { size: PAGE_SIZE, page };
-      // await getDebatesApi(params);
+      const response = await getDebatesApi(params);
 
-      // setStudents(response.content);
-      // setTotalPages(response.totalPages); // totalPages를 API 응답에 맞게 수정
+      setDebateRooms(response.content);
+      setTotalPages(response.totalPages);
       setCurrentPage(page);
     } catch (error) {
-      // setStudents([]);
+      setDebateRooms([]);
     }
   };
 
-  const createDebateRoom = () => {
-    // try {
-    //   const response = await api.post(
-    //     'http://localhost:8080/api/openvidu/create',
-    //     {
-    //       sessionName: roomTitle,
-    //       role: 'teacher',
-    //     }
-    //   );
-    //   navigate(`http://localhost:8080/debate/${response.data.sessionId}`);
-    // } catch (error) {
-    //   alert('방을 생성할 수 없습니다.');
-    // }
+  const createDebateRoom = async () => {
+    if (!roomInformation.title.trim()) {
+      alert('방 제목을 입력해주세요.');
+      return;
+    }
+    if (!roomInformation.password.trim()) {
+      alert('비밀번호를 입력해주세요.');
+      return;
+    }
+    try {
+      // 백엔드에 방 생성 요청
+      const response = await createDebateApi({
+        roomName: roomInformation.title,
+        password: roomInformation.password,
+      });
+
+      alert(`"${roomInformation.title}" 방이 생성되었습니다.`);
+
+      navigate('/debate/room', { state: { token: response } });
+    } catch (error) {
+      console.error('방 생성 중 오류 발생:', error);
+      alert('방 생성 중 오류가 발생했습니다.');
+    }
+
+    setShowModal(false);
   };
 
   useEffect(() => {
@@ -102,12 +122,11 @@ const TeacherDebateBoard = () => {
         cancelText={'취소'}
         onConfirm={() => {
           createDebateRoom();
-          setShowModal(false);
-          setRoomInformation(undefined);
+          setRoomInformation({ title: '', password: '' });
         }}
         onCancel={() => {
           setShowModal(false);
-          setRoomInformation(undefined);
+          setRoomInformation({ title: '', password: '' });
         }}
       />
       <div className="flex justify-between items-center mb-10">
@@ -123,30 +142,9 @@ const TeacherDebateBoard = () => {
         />
       </div>
       <div className="flex flex-wrap justify-between gap-4">
-        <DebateBoardButton
-          title={'은혜갚은 까치 토론방'}
-          school={'성룡'}
-          teacher={'김보라'}
-          currentCount={4}
-          maxCount={17}
-          date={'1시간 전'}
-        />
-        <DebateBoardButton
-          title={'은혜갚은 까치 토론방'}
-          school={'성룡'}
-          teacher={'김보라'}
-          currentCount={4}
-          maxCount={17}
-          date={'1시간 전'}
-        />
-        <DebateBoardButton
-          title={'은혜갚은 까치 토론방'}
-          school={'성룡'}
-          teacher={'김보라'}
-          currentCount={4}
-          maxCount={17}
-          date={'1시간 전'}
-        />
+        {debateRooms.map((room, index) => {
+          return <DebateBoardButton key={index} room={room} />;
+        })}
       </div>
       <PaginationButton
         currentPage={currentPage}
