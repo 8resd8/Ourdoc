@@ -28,6 +28,9 @@ import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
+import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
+import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
+import com.ssafy.ourdoc.global.common.enums.Active;
 
 import lombok.RequiredArgsConstructor;
 
@@ -114,7 +117,7 @@ public class BookReportTeacherService {
 
 	public void deleteComment(Long bookReportId) {
 		BookReportFeedBack bookReportFeedBack = getTeacherReportFeedBack(bookReportId);
-		bookReportFeedBack.updateTeacherComment(null);
+		bookReportFeedbackRepository.delete(bookReportFeedBack);
 	}
 
 	private BookReport getBookReport(Long bookReportId) {

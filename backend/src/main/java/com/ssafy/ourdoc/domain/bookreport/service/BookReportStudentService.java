@@ -102,8 +102,8 @@ public class BookReportStudentService {
 			.orElseThrow(() -> new NoSuchElementException("본인의 독서록이 없습니다."));
 	}
 
-	public List<BookReportHomeworkStudent> getReportStudentHomeworkResponses(Long homeworkId, Long userId) {
-		List<BookReportHomeworkStudent> convertDto = bookReportRepository.bookReportsHomeworkStudents(homeworkId,
+	public List<BookReportHomeworkStudent> getReportStudentHomeworkResponses(Long bookId, Long userId) {
+		List<BookReportHomeworkStudent> convertDto = bookReportRepository.bookReportsHomeworkStudents(bookId,
 				userId)
 			.stream()
 			.map(dto -> new BookReportHomeworkStudent(
@@ -116,9 +116,9 @@ public class BookReportStudentService {
 		return convertDto;
 	}
 
-	public Page<BookReportHomeworkStudent> getReportStudentHomeworkPageResponses(Long homeworkId, Long userId,
+	public Page<BookReportHomeworkStudent> getReportStudentHomeworkPageResponses(Long bookId, Long userId,
 		Pageable pageable) {
-		Page<BookReportHomeworkStudent> pageDto = bookReportRepository.bookReportsHomeworkStudentsPage(homeworkId,
+		Page<BookReportHomeworkStudent> pageDto = bookReportRepository.bookReportsHomeworkStudentsPage(bookId,
 				userId, pageable)
 			.map(dto -> new BookReportHomeworkStudent(
 				dto.bookreportId(),
@@ -169,7 +169,7 @@ public class BookReportStudentService {
 		if (bookReport.getApproveTime() != null) {
 			throw new IllegalArgumentException("승인이 된 독서록은 숙제에서 회수할 수 없습니다.");
 		}
-		
+
 		bookReport.retrieveFromHomework();
 		bookReportRepository.save(bookReport);
 	}

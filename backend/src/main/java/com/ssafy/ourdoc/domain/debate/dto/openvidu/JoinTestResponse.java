@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class JoinResponse {
+public class JoinTestResponse {
 	private String token;
-	private String randomId;
 }

@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import Layout from '../layouts/Layout';
 import SignIn from '../components/pages/common/SignIn';
-import DebateRoom from '../components/pages/common/DebateRoom';
+import SampleDebateRoom from '../components/pages/common/SampleDebateRoom';
 import Test from '../components/pages/Test';
 import AuthLayout from '../layouts/AuthLayout';
 import Pending from '../components/molecules/Pending';
@@ -40,6 +40,7 @@ import TeacherStatistics from '../components/pages/teacher/TeacherStatistics';
 import TeacherStudentInfo from '../components/pages/teacher/TeacherStudentInfo';
 import TeacherHeader from '../components/commons/TeacherHeader';
 import TeacherDebateBoard from '../components/pages/teacher/TeacherDebateBoard';
+import { DebateRoom } from '../components/pages/common/DebateRoom';
 
 const Router = () => {
   return (
@@ -57,6 +58,7 @@ const Router = () => {
         {/* 선생 학생 공통 라우트 */}
         {/* <Route path="/debate/board" element={<DebateBoard />} /> */}
         <Route path="/webrtc/board" element={<WebRtcBoard />} />
+        <Route path="/sample/debate/room" element={<SampleDebateRoom />} />
         <Route path="/debate/room" element={<DebateRoom />} />
 
         {/* 학생 전용 라우트 */}

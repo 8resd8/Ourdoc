@@ -1,0 +1,166 @@
+/* src/components/DebateRoom/DebateRoom.module.css */
+
+/* container */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+/* header 영역 */
+.header-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* 카드 스타일 */
+.card {
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 입력창 및 그룹 */
+.input-group {
+    display: flex;
+    justify-content: center;
+}
+
+.input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 60%;
+    margin-right: 10px;
+}
+
+/* 버튼 기본 스타일 */
+.button {
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    margin-right: 10px;
+}
+
+.button:hover {
+    transform: scale(1.05);
+}
+
+/* 버튼 별 색상 */
+.join-button {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.control-button {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.leave-button {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.share-button {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* 비디오 영역(전체) */
+.video-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+}
+
+/* Publisher(내 카메라) 영역 */
+.video-area {
+    width: 100%;
+    max-width: 640px;
+    aspect-ratio: 16/9;       /* 16:9 비율 유지 */
+    background-color: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+/* Publisher 내부 video 태그가 꽉 차도록 */
+.video-area video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;        /* 영역에 맞춰 비율 유지 */
+}
+
+/* 구독자 영상 영역 (Grid 레이아웃) */
+.subscribers-container {
+    display: grid;
+    /* 화면 크기에 따라 300px 최소 크기를 가지는 칸을 여러 개 생성 */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 10px;
+    width: 100%;
+    max-width: 800px;  /* 카드와 동일한 최대 너비 */
+}
+
+/* 개별 구독자 컨테이너 */
+.subscriber-container {
+    aspect-ratio: 16/9;       /* 16:9 비율 유지 */
+    background-color: #000;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 구독자 비디오가 컨테이너를 꽉 채우도록 설정 */
+.subscriber-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 버튼 그룹 */
+.button-group {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* 확대된 영상 */
+.enlarged {
+    position: fixed;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%;
+    z-index: 1000;
+    background-color: black; /* 선택사항 */
+  }
+  
