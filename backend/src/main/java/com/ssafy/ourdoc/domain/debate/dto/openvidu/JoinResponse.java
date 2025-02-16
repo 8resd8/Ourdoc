@@ -11,5 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class JoinResponse {
 	private String token;
-	private String randomId;
+	private Long roomId;
 }

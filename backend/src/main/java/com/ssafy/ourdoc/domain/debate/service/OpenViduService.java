@@ -47,14 +47,14 @@ public class OpenViduService {
 	/**
 	 * 세션 생성 및 토큰 발급 처리
 	 *
-	 * @param roomName  클라이언트가 요청한 방 이름명
-	 * @param sessionId
+	 // * @param roomName  클라이언트가 요청한 방 이름명
+	 // * @param sessionId
 	 * @param user
 	 * @return 해당 세션에 대한 토큰
 	 */
-	public String getToken(JoinRequest joinRequest, String randomId, User user) {
+	public String getToken(JoinRequest joinRequest, User user) {
 		// 1. 세션 생성 (없으면 생성, 이미 있으면 기존 세션 사용)
-		String sessionId = createSession(joinRequest, randomId, user);
+		String sessionId = createSession(joinRequest, user);
 		// 2. 토큰 생성
 		return createToken(sessionId);
 	}
@@ -64,23 +64,22 @@ public class OpenViduService {
 	 * customSessionId를 이용해 고유한 세션명을 지정
 	 * randomId는 고유값
 	 */
-	private String createSession(JoinRequest request, String randomId, User user) {
+	private String createSession(JoinRequest request, User user) {
 		// request.randomId가 있으면 입장
 
 		String url = OPENVIDU_URL + "/openvidu/api/sessions";
 		HttpHeaders headers = createHeaders();
 		JSONObject body = new JSONObject();
-		body.put("customSessionId", randomId);
+		body.put("customSessionId", request.getRoomId());
 		HttpEntity<String> requestEntity = new HttpEntity<>(body.toString(), headers);
 		try {
 			ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 			JSONObject jsonResponse = new JSONObject(response.getBody());
 
 			// request.randomId가 없으면 방 생성
-			if (request.getRandomId() == null) {
+			if (request.getRoomId() == null) {
 				Room roomUserCreate = Room.builder()
 					.user(user)
-					.sessionId(randomId)
 					.title(request.getRoomName())
 					.maxPeople(10)
 					.password(request.getPassword())
@@ -98,9 +97,9 @@ public class OpenViduService {
 			return jsonResponse.getString("id");
 		} catch (HttpClientErrorException e) {
 			// 409 Conflict인 경우 세션이 이미 존재하는 것으로 간주하여 randomId 반환
-			if (e.getStatusCode() == HttpStatus.CONFLICT || request.getRandomId() != null) {
+			if (e.getStatusCode() == HttpStatus.CONFLICT || request.getRoomId() != null) {
 				// return randomId;
-				return request.getRandomId();
+				return String.valueOf(request.getRoomId());
 			} else {
 				throw e;
 			}
@@ -110,11 +109,11 @@ public class OpenViduService {
 	/**
 	 * OpenVidu 서버에 토큰 생성 요청
 	 */
-	private String createToken(String roomName) {
+	private String createToken(String sessionId) {
 		String url = OPENVIDU_URL + "/openvidu/api/tokens";
 		HttpHeaders headers = createHeaders();
 		JSONObject body = new JSONObject();
-		body.put("session", roomName);
+		body.put("session", sessionId);
 		HttpEntity<String> requestEntity = new HttpEntity<>(body.toString(), headers);
 		ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
 		JSONObject jsonResponse = new JSONObject(response.getBody());
