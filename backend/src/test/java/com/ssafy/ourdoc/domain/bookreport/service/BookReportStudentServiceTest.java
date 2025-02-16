@@ -1,7 +1,6 @@
 package com.ssafy.ourdoc.domain.bookreport.service;
 
 import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
-import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,12 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.ssafy.ourdoc.data.entity.BookReportSample;
-import com.ssafy.ourdoc.data.entity.BookSample;
-import com.ssafy.ourdoc.data.entity.ClassRoomSample;
-import com.ssafy.ourdoc.data.entity.SchoolSample;
-import com.ssafy.ourdoc.data.entity.StudentClassSample;
-import com.ssafy.ourdoc.data.entity.UserSample;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
@@ -38,8 +31,6 @@ import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportFeedbackRepository;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
-import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
-import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
@@ -106,7 +97,7 @@ class BookReportStudentServiceTest {
 	@DisplayName("독서록을 정상적으로 저장할 수 있다.")
 	void testSaveBookReport() {
 		// given
-		BookReadLogRequest request = new BookReadLogRequest(1L, "독서 전 내용", "사용", OcrCheck.사용);
+		BookReadLogRequest request = new BookReadLogRequest(1L, null, "독서 전 내용", "사용", OcrCheck.사용);
 
 		when(studentClassRepository.findStudentClassByUserId(mockUser.getId()))
 			.thenReturn(Optional.of(mockStudentClass));
@@ -118,6 +109,7 @@ class BookReportStudentServiceTest {
 			.studentClass(mockStudentClass)
 			.book(mockBook)
 			.beforeContent(request.beforeContent())
+			.homework(null)
 			.ocrCheck(request.ocrCheck())
 			.imagePath(request.imageUrl())
 			.build();
@@ -139,8 +131,6 @@ class BookReportStudentServiceTest {
 		assertNotNull(response);
 		assertEquals(1L, response.bookReportId());
 	}
-
-
 
 
 	@Test
