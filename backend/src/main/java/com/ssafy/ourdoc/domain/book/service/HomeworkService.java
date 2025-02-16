@@ -164,9 +164,10 @@ public class HomeworkService {
 			throw new IllegalArgumentException("해당 숙제에 해당하는 학급의 학생이 아닙니다.");
 		}
 
+		Book book = homework.getBook();
 		boolean submitStatus = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId) > 0;
 		Page<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkPageResponses(
-			homeworkId, user.getId(), pageable);
+			book.getId(), user.getId(), pageable);
 		return HomeworkStudentDetailPage.of(homework, submitStatus, bookReports);
 	}
 }
