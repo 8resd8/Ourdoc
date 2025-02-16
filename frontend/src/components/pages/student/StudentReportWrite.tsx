@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   createBookReportApi,
   saveAiFeedbackApi,
@@ -12,40 +12,45 @@ import {
   getAIFeedbackApi,
   getAISpellingApi,
 } from '../../../services/aiService';
+import { DateFormat } from '../../../utils/DateFormat';
 
 const StudentReportWrite = () => {
+  const queryParams = new URLSearchParams(location.search);
+  const homeworkId = queryParams.get('homeworkId');
+  const author = queryParams.get('author');
+  const title = queryParams.get('title');
+  const publisher = queryParams.get('publisher');
+
   const { id } = useParams();
   const [reportContent, setReportContent] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [afterContent, setAfterContent] = useState('');
   const [ocrCheck, setOcrCheck] = useState(false);
+  const [ocrImagePath, setOcrImagePath] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  console.log(id);
 
   const param = {
     bookId: id ? id : '',
     beforeContent: reportContent,
-    imageUrl: '',
+    imageUrl: ocrImagePath,
     ocrCheck: ocrCheck ? '사용' : '미사용',
+    homeworkId: homeworkId,
   };
   const user = useRecoilValue(currentUserState);
-  console.log(user);
-
+  const navigate = useNavigate();
   const writeReport = async () => {
     try {
-      const write = createBookReportApi(param);
-      console.log(write);
-      const aiFeedback = getAIFeedbackApi({ content: reportContent });
-      console.log(aiFeedback);
+      const write = await createBookReportApi(param);
+
+      const aiFeedback = await getAIFeedbackApi({ content: reportContent });
       const aiSpelling = await getAISpellingApi({ content: reportContent });
       setAfterContent(aiSpelling.feedbackContent);
-      console.log(aiSpelling);
 
-      // const save = saveAiFeedbackApi({
-      //   bookReportId: '4',
-      //   afterContent: reportContent,
-      // });
-      // console.log(save);
+      const save = saveAiFeedbackApi({
+        bookReportId: write,
+        afterContent: aiFeedback.feedbackContent,
+      });
+      navigate('/student/main');
     } catch (error) {}
   };
 
@@ -53,7 +58,8 @@ const StudentReportWrite = () => {
     if (selectedImage) {
       try {
         const response = await convertHandToTextApi(selectedImage);
-        setReportContent(response.afterContent);
+        setReportContent(response.enhancerContent);
+        setOcrImagePath(response.ocrImagePath);
         setIsModalOpen(false);
         setOcrCheck(true);
       } catch (error) {
@@ -68,6 +74,7 @@ const StudentReportWrite = () => {
     }
   };
 
+  const today = new Date().toISOString();
   return (
     <div className="flex flex-row justify-center">
       <div className="flex flex-col w-[600px]">
@@ -91,7 +98,7 @@ const StudentReportWrite = () => {
               책제목
             </div>
             <div className="w-[530px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
-              은ㅇㅁㄹ
+              {title}
             </div>
           </div>
           <div className="flex flex-row">
@@ -99,19 +106,19 @@ const StudentReportWrite = () => {
               지은이
             </div>
             <div className="w-[130px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
-              김미소
+              {author}
             </div>
             <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
               출판사
             </div>
             <div className="w-[130px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
-              기므므
+              {publisher}
             </div>
             <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
               작성일
             </div>
             <div className="w-[130px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
-              2024.01.03
+              {DateFormat(today, 'report')}
             </div>
           </div>
           <div className="w-[600px] h-[543px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-gray-800 report-font break-words overflow-auto">
@@ -122,9 +129,9 @@ const StudentReportWrite = () => {
               onChange={(e) => setReportContent(e.target.value)}
             />
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-4 gap-2">
             <div
-              className="inline-flex py-[12px] w-[305px] border border-secondary-500 bg-gray-0 rounded-[10px] justify-center items-center text-center text-secondary-500 body-medium cursor-pointer"
+              className="inline-flex py-[12px] pw-[2px] w-[305px] border border-secondary-500 bg-gray-0 rounded-[10px] justify-center items-center text-center text-secondary-500 body-medium cursor-pointer"
               onClick={() => setIsModalOpen(true)}
             >
               사진 업로드
@@ -141,7 +148,9 @@ const StudentReportWrite = () => {
           isOpen={isModalOpen}
           onConfirm={handleOCR}
           onCancel={() => setIsModalOpen(false)}
-          title={'독서록을 업로드 할까요?'}
+          title={
+            '업로드 시 작성중이던 독서록이 사라져요. 독서록 업로드를 진행할까요?'
+          }
           body={
             <div>
               <input
