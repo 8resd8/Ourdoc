@@ -16,6 +16,7 @@ export interface Book {
   publisher: string;
   publishYear: string;
   imageUrl: string;
+  bookStatus?: BookStatus;
 }
 
 export interface HomeworkBook {
@@ -121,14 +122,38 @@ interface BookDetail extends Book {
 }
 
 export interface FavoriteBook {
-  id: number;
-  isbn: string;
-  title: string;
-  author: string;
-  genre: string;
-  publisher: string;
-  publishYear: string;
-  imageUrl: string;
+  content: Book[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  number: number;
+  sort: Sort;
+  numberOfElements: number;
+  size: number;
+  empty: boolean;
+}
+
+export interface BookStatus {
+  favorite: boolean;
+  recommend: boolean;
+  homework: boolean;
+}
+
+export interface Pageable {
+  pageNumber: number;
+  pageSize: number;
+  sort: Sort;
+  offset: number;
+  paged: boolean;
+  unpaged: boolean;
+}
+
+export interface Sort {
+  sorted: boolean;
+  unsorted: boolean;
+  empty: boolean;
 }
 
 export interface RecommendedBook {
@@ -189,10 +214,11 @@ export const addFavoriteBookApi = async (bookId: number): Promise<number> => {
 };
 
 // 사용자 관심 도서 목록 조회
-export const getFavoriteBooksApi = async (): Promise<FavoriteBook[]> => {
+export const getFavoriteBooksApi = async (): Promise<FavoriteBook> => {
   try {
-    const response = await api.get<FavoriteBook[]>('/books/favorite');
-    return response.data;
+    const response = await api.get<{ book: FavoriteBook }>('/books/favorite');
+
+    return response.data.book;
   } catch (error) {
     console.error('Error fetching favorite books:', error);
     throw error;
