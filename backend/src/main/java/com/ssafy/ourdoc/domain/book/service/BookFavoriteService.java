@@ -15,6 +15,7 @@ import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
 import com.ssafy.ourdoc.domain.book.repository.BookFavoriteRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
+import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
 import com.ssafy.ourdoc.domain.user.entity.User;
 
 import groovy.util.logging.Slf4j;
@@ -29,6 +30,7 @@ public class BookFavoriteService {
 	private final BookRepository bookRepository;
 	private final BookFavoriteRepository bookFavoriteRepository;
 	private final BookService bookService;
+	private final BookStatusMapper bookStatusMapper;
 
 	public void addBookFavorite(BookRequest request, User user) {
 		Book book = bookService.findBookById(request.bookId());
@@ -50,7 +52,9 @@ public class BookFavoriteService {
 		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
 		Page<BookFavorite> bookFavorites = bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks, pageable);
 		List<Book> books = bookFavorites.stream().map(BookFavorite::getBook).toList();
-		List<BookResponse> bookResponse = books.stream().map(BookResponse::of).toList();
+		List<BookResponse> bookResponse = books.stream()
+			.map(book -> BookResponse.of(book, bookStatusMapper.mapBookStatus(book, user)))
+			.toList();
 		Page<BookResponse> bookResponsePage = new PageImpl<>(bookResponse, pageable, books.size());
 		return new BookListResponse(bookResponsePage);
 	}
