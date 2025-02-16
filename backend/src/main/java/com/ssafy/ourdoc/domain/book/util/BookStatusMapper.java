@@ -24,9 +24,9 @@ public class BookStatusMapper {
 
 	public BookStatus mapBookStatus(Book book, User user) {
 		ClassRoom classRoom = classService.getUserClassRoom(user);
-		boolean isFavorite = bookFavoriteRepository.findByBookAndUser(book, user).isPresent();
+		boolean isFavorite = bookFavoriteRepository.existsByBookAndUser(book, user);
 		boolean isRecommend = bookRecommendRepository.existsByBookAndUserAndClassRoom(book, user, classRoom);
-		boolean isHomework = homeworkRepository.existsByBookAndUserAndClassRoom(book, user, classRoom);
+		boolean isHomework = homeworkRepository.existsByBookAndClassRoom(book, classRoom);
 
 		return new BookStatus(isFavorite, isRecommend, isHomework);
 	}
