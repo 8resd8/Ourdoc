@@ -75,6 +75,12 @@ export interface MostReadBook {
   };
 }
 
+export interface ReportStatistics {
+  averageReadCount: number;
+  bestReadCount: number;
+  readCount: number;
+}
+
 // 독서록 작성
 export const createBookReportApi = async (
   data: CreateBookReportRequest
@@ -192,5 +198,55 @@ export const classDailyReportApi = async ({
 // 학년/학급 많이 읽은 책 조회
 export const mostReadApi = async (): Promise<MostReadBook> => {
   const response = await api.get<MostReadBook>(`/books/teachers/mostread`);
+  return response.data;
+};
+
+// 학생 월별 독서록 통계 조회
+export const studentMonthlyReportApi = async ({
+  grade,
+}: {
+  grade: number;
+}): Promise<MonthlyBookReport[]> => {
+  const response = await api.get<MonthlyBookReport[]>(
+    `/bookreports/students/statistics/months`,
+    { params: { grade } }
+  );
+
+  return response.data;
+};
+
+// 학생 일별 독서록 통계 조회
+export const studentDailyReportApi = async ({
+  month,
+  grade,
+}: {
+  month: number;
+  grade: number;
+}): Promise<DayReport[]> => {
+  const response = await api.get<DayReport[]>(
+    `/bookreports/students/statistics/days`,
+    {
+      params: {
+        month,
+        grade,
+      },
+    }
+  );
+  return response.data;
+};
+
+// 학생 독서록 통계 조회
+export const studentReportStatisticsApi = async ({
+  grade,
+}: {
+  grade: number;
+}): Promise<ReportStatistics> => {
+  const response = await api.get<ReportStatistics>(
+    `/bookreports/students/statistics`,
+    {
+      params: { grade },
+    }
+  );
+
   return response.data;
 };

@@ -101,7 +101,7 @@ const StudentHeader = () => {
                       {
                         text: '프로필 보기',
                         onClick: () => {
-                          navigate('/teacher/mypage');
+                          navigate('/student/mypage');
                           setIsDropdownOpen(false);
                         },
                       },

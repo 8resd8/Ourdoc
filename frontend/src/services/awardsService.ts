@@ -41,3 +41,9 @@ export const createAwardApi = async (
 
   await multipartApi.post('/awards', formData);
 };
+
+// 학생 상장 목록 조회
+export const getStudentAwardsListApi = async (): Promise<AwardDetail[]> => {
+  const response = await api.get<AwardsListResponse>('/students/awards');
+  return response.data.awards;
+};
