@@ -18,6 +18,7 @@ import com.ssafy.ourdoc.domain.debate.service.DebateService;
 import com.ssafy.ourdoc.domain.debate.service.OpenViduService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
+import com.ssafy.ourdoc.global.integration.openvidu.service.OpenviduService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,8 @@ public class OpenViduController {
 
 	private final OpenViduService openViduService;
 	private final DebateService debateService;
+
+	private final OpenviduService openviduService;
 
 
 	@PostMapping("/join")
@@ -42,8 +45,10 @@ public class OpenViduController {
 
 	@PostMapping("/new-join")
 	@ResponseStatus(HttpStatus.OK)
-	public void newJoinSession(@Login User user, @RequestBody JoinRequest joinRequest) {
-		openViduService.newCreateSession(joinRequest, user);
+	public String newJoinSession(@Login User user, @RequestBody JoinRequest joinRequest) {
+		String sessionId = openViduService.newCreateSession(joinRequest, user);
+
+		return openviduService.generateToken(sessionId);
 	}
 
 	@PostMapping("/{roomId}/connection")
