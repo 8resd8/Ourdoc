@@ -43,7 +43,8 @@ public class DebateService {
 				room.getUser().getName(),
 				room.getMaxPeople(),
 				currentPeople,
-				schoolName
+				schoolName,
+				room.getCreatedAt()
 			);
 		});
 	}
