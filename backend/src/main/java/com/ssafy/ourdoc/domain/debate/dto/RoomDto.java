@@ -9,6 +9,7 @@ public record RoomDto(
 	int maxPeople,
 	Long currentPeople,
 	String schoolName,
-	LocalDateTime createdAt
+	LocalDateTime createdAt,
+	String sessionId
 ) {
 }
