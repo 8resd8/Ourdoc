@@ -24,6 +24,6 @@
 .buttonContainer {
   display: flex;
   gap: 12px;
-  justify-content: center;
+  justify-content: space-between;
   margin-top: 32px;
 }

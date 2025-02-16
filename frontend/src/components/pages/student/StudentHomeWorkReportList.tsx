@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import {
   Book,
   BookReport,
-  HomeworkDetail,
+  HomeworkBook,
   HomeworkItem,
   PaginatedHomeworks,
   getStudentHomeworkBookDetailApi,
   getStudentHomeworkBooksApi,
 } from '../../../services/booksService';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const StudentHomeWorkReportList = () => {
   const bookInfo = {
@@ -20,7 +20,6 @@ const StudentHomeWorkReportList = () => {
     image: '/assets/images/bookImage.png', // 이미지 경로
   };
 
-  const [reportList, setReportList] = useState<HomeworkItem[]>([]);
   const [paginationInfo, setPaginationInfo] = useState<Omit<
     PaginatedHomeworks,
     'content'
@@ -30,16 +29,14 @@ const StudentHomeWorkReportList = () => {
   const queryParams = new URLSearchParams(location.search);
   const homeworkId = queryParams.get('homeworkId');
 
-  const [homeworkDetail, setHomeworkDetail] = useState<HomeworkDetail | null>(
-    null
-  );
+  const [homeworkDetail, setHomeworkBook] = useState<HomeworkBook | null>(null);
   const [bookReports, setBookReports] = useState<BookReport[]>([]);
 
   useEffect(() => {
     const fetchHomeworkDetail = async () => {
       try {
         const data = await getStudentHomeworkBookDetailApi(Number(homeworkId));
-        setHomeworkDetail(data.book);
+        setHomeworkBook(data.book);
         setBookReports(data.bookReports.content);
       } catch (error) {
         console.error('Error fetching homework detail:', error);
@@ -55,30 +52,33 @@ const StudentHomeWorkReportList = () => {
     const date = new Date(dateString);
     return `${date.getMonth() + 1}월 ${date.getDate()}일`;
   };
+  const navigate = useNavigate();
 
   return (
-    <div className="w-[1200px] mx-auto mt-8">
+    <div className="w-[1200px] mx-auto mt-8 justify-items-center">
       {/* 숙제 도서 카드 */}
       <div className="flex flex-col justify-center mb-8">
         <div className="flex bg-gray-0 shadow-xxsmall rounded-lg p-6 w-[630px] h-[340px]">
           <img
-            src={bookInfo.image}
+            src={homeworkDetail?.imageUrl || bookInfo.image}
             alt={bookInfo.title}
             className="w-[190px] h-[282px] object-cover rounded-md mr-6"
           />
           <div className="">
-            <h2 className="headline-medium font-bold mb-4">{bookInfo.title}</h2>
+            <h2 className="headline-medium font-bold mb-4">
+              {homeworkDetail?.title}
+            </h2>
             <p className="body-medium text-gray-700 mb-2">
-              저자: {bookInfo.author}
+              저자: {homeworkDetail?.author}
             </p>
             <p className="body-medium text-gray-700 mb-2">
-              출판사: {bookInfo.publisher}
+              출판사: {homeworkDetail?.publisher}
             </p>
             <p className="body-medium text-gray-700 mb-2">
-              장르: {bookInfo.genre}
+              장르: {homeworkDetail?.genre}
             </p>
             <p className="body-medium text-gray-700 mb-2">
-              출판년도: {bookInfo.year}
+              출판년도: {homeworkDetail?.publishYear}
             </p>
           </div>
         </div>
@@ -87,7 +87,12 @@ const StudentHomeWorkReportList = () => {
           <button className="body-medium px-4 py-2 text-secondary-500 rounded-[10px]  border border-secondary-500">
             관심 등록
           </button>
-          <button className="body-medium px-4 py-2 text-gray-0 rounded-[10px] bg-primary-500 ">
+          <button
+            onClick={() => {
+              navigate(`/student/report/write/${homeworkDetail?.bookId}`);
+            }}
+            className="body-medium px-4 py-2 text-gray-0 rounded-[10px] bg-primary-500 "
+          >
             독서록 작성
           </button>
         </div>
@@ -96,7 +101,7 @@ const StudentHomeWorkReportList = () => {
       {/* 제출한 독서록 리스트 테이블 */}
       <div className="w-full flex flex-col items-center">
         {/* 테이블 */}
-        <table className="w-[868px] mb-6">
+        <table className="w-[868px] mb-6 table-fixed">
           <thead>
             <tr className="">
               <th className="px-4 py-2 border-b border-gray-200">No</th>
@@ -110,8 +115,15 @@ const StudentHomeWorkReportList = () => {
             {bookReports.map((row, index) => (
               <tr key={index} className={`${index % 2 === 0 ? '' : ''}`}>
                 <td className="px-4 py-2 text-center">{index + 1}</td>
-                <td className="px-4 py-2 truncate">{row.beforeContent}</td>
-                <td className="px-4 py-2 text-center">
+                <td
+                  onClick={() => {
+                    navigate(`/student/report/detail/${row.id}`);
+                  }}
+                  className="px-4 py-2 truncate cursor-pointer"
+                >
+                  {row.beforeContent}
+                </td>
+                <td className="px-4 py-2 text-center ">
                   {formatDate(row.createdAt)}
                 </td>
                 <td className="px-4 py-2 text-center">

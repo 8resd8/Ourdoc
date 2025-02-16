@@ -12,23 +12,26 @@ const DEFAULT_PROFILE_IMAGE_PATH = '/assets/images/profile.png';
 const HeaderRouter = ({
   path,
   pageName,
+  imagePath,
 }: {
   path: string;
   pageName: string;
+  imagePath: string;
 }) => {
   const location = useLocation();
   const isActive = location.pathname === path;
 
   return (
-    <li className="py-[18px]">
+    <li>
       <Link
         to={path}
-        className={`py-[18px] border-b-2 hover:border-primary-600 headline-medium hover:text-primary-600 hover:focus:text-primary-600 ${
+        className={`flex flex-col body-medium items-center pb-1 border-b-2 hover:border-primary-400 headline-medium hover:text-primary-400 hover:focus:text-primary-400 ${
           isActive
             ? 'border-primary-500 text-primary-500'
             : 'border-transparent text-gray-700'
         }`}
       >
+        <img src={imagePath} className=" mb-3 w-12 h-12" />
         {pageName}
       </Link>
     </li>
@@ -92,7 +95,7 @@ const StudentHeader = () => {
                 imagePath={userImage}
               />
               {isDropdownOpen && (
-                <div className="absolute top-[90px] right-[80px]">
+                <div className="absolute top-[90px] right-[80px] z-200">
                   <DropdownMenu
                     list={[
                       {
@@ -116,10 +119,26 @@ const StudentHeader = () => {
             </div>
             <div className="h-full">
               <ul className="flex flex-row h-full items-end space-x-[10px] lg:space-x-[60px] order-1">
-                <HeaderRouter path="/student/main" pageName="메인" />
-                <HeaderRouter path="/student/book/category" pageName="도서" />
-                <HeaderRouter path="/student/reports" pageName="독서록" />
-                <HeaderRouter path="/student/trophy" pageName="내 성취도" />
+                <HeaderRouter
+                  path="/student/main"
+                  pageName="메인"
+                  imagePath="/assets/images/Star.png"
+                />
+                <HeaderRouter
+                  path="/student/book/category"
+                  pageName="도서"
+                  imagePath="/assets/images/Books.png"
+                />
+                <HeaderRouter
+                  path="/student/reports"
+                  pageName="독서록"
+                  imagePath="/assets/images/Report.png"
+                />
+                <HeaderRouter
+                  path="/student/trophy"
+                  pageName="내 성취도"
+                  imagePath="/assets/images/Trophy.png"
+                />
               </ul>
             </div>
           </div>

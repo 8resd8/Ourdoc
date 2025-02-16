@@ -19,7 +19,7 @@ export interface Book {
 }
 
 export interface HomeworkBook {
-  id: number;
+  bookId: number;
   title: string;
   author: string;
   genre: string;
@@ -37,10 +37,10 @@ export interface BookReport {
   approve: 'Y' | 'N';
 }
 
-export interface HomeworkDetail {
-  book: Book;
-  createAt: string;
-}
+// export interface HomeworkDetail {
+//   book: Book;
+//   createAt: string;
+// }
 export interface PaginatedBookReports {
   content: BookReport[];
   pageable: {
@@ -70,15 +70,14 @@ export interface PaginatedBookReports {
   empty: boolean;
 }
 
-// StudentHomeworkBookDetail 인터페이스 수정
 export interface StudentHomeworkBookDetail {
-  book: HomeworkDetail;
+  book: HomeworkBook;
   bookReports: PaginatedBookReports;
 }
 
 export interface HomeworkItem {
   homeworkId: number;
-  book: Book;
+  book: HomeworkBook;
   createdAt: string;
   submitStatus: boolean;
   bookReports: any[];

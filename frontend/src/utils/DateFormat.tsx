@@ -1,4 +1,4 @@
-export const DateFormat = (isoDate: string): string => {
+export const DateFormat = (isoDate: string, type: string): string => {
   if (!isoDate) return '';
 
   const date = new Date(isoDate);
@@ -7,6 +7,8 @@ export const DateFormat = (isoDate: string): string => {
   const year = date.getFullYear();
   const month = date.getMonth() + 1; // 월은 0부터 시작
   const day = date.getDate();
-
+  if (type == 'report') {
+    return `${year}.${month}.${day}`;
+  }
   return `${year}년 ${month}월 ${day}일`;
 };

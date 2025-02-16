@@ -6,10 +6,20 @@ interface PropsType {
   color: 'primary' | 'secondary';
   onClick?: () => void;
   disabled?: boolean;
+  flexible?: boolean;
 }
 
-const Button = ({ type, title, color, onClick, disabled }: PropsType) => {
-  const baseStyle = `${classes.btn} rounded-[10px]`;
+const Button = ({
+  type,
+  title,
+  color,
+  onClick,
+  disabled,
+  flexible,
+}: PropsType) => {
+  const baseStyle = flexible
+    ? `inline-flex px-4 py-3 justify-center items-center rounded-[10px] cursor-pointer hover:brightness-80`
+    : `${classes.btn} rounded-[10px] cursor-pointer hover:brightness-80`;
   const filledStyle =
     color === 'primary'
       ? 'bg-primary-500 text-gray-0'

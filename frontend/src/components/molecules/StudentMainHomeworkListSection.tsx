@@ -35,7 +35,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const StudentMainHomeworkListSection = () => {
   const param = {
-    page: 1,
+    page: 0,
     size: 3,
     title: '',
     author: '',
@@ -52,6 +52,8 @@ export const StudentMainHomeworkListSection = () => {
       const response = await getStudentHomeworkBooksApi(param);
       setHomeworkList(response.homeworks.content);
       const { content, ...paginationData } = response.homeworks;
+      console.log('숙제 목록:', response.homeworks);
+
       setPaginationInfo(paginationData);
     } catch (error) {
       console.error('숙제 목록 가져오기 실패:', error);

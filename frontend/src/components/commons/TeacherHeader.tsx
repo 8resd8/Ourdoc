@@ -23,7 +23,7 @@ const HeaderRouter = ({
     <li className="py-[18px]">
       <Link
         to={path}
-        className={`py-[18px] border-b-2 hover:border-primary-600 headline-medium hover:text-primary-600 hover:focus:text-primary-600 ${
+        className={`py-[18px] border-b-2 hover:border-primary-400 headline-medium hover:text-primary-400 hover:focus:text-primary-400 ${
           isActive
             ? 'border-primary-500 text-primary-500'
             : 'border-transparent text-gray-700'
@@ -92,7 +92,7 @@ const TeacherHeader = () => {
                 imagePath={userImage}
               />
               {isDropdownOpen && (
-                <div className="absolute top-[90px] right-[80px]">
+                <div className="absolute top-[90px] right-[80px] z-200">
                   <DropdownMenu
                     list={[
                       {

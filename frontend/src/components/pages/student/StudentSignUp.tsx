@@ -229,7 +229,7 @@ const StudentSignUp = () => {
             <DatePicker
               value={birthDate}
               onChange={handleBirthDateChange}
-              format="YYYY-MM-DD"
+              format="YYYY년 M월 D일"
               views={['year', 'month', 'day']}
               openTo="year"
               slotProps={{
@@ -271,7 +271,7 @@ const StudentSignUp = () => {
           <Button
             title="회원가입"
             onClick={handleSignUpClick}
-            disabled={!isFormValid}
+            // disabled={!isFormValid}
             type={'filled'}
             color={'primary'}
           />
@@ -284,11 +284,15 @@ const StudentSignUp = () => {
           body={
             <div>
               <div className="text-primary-500">
-                성룡 초등학교 1학년 3반 12번, 김미소님!
+                {signUpRequest.schoolName} {signUpRequest.grade}
+                학년 {signUpRequest.classNumber}반{signUpRequest.studentNumber}
+                번,
+                {signUpRequest.name}
+                님!
               </div>
-              <div>생년월일은 2000년 4월 23일,</div>
-              <div>성별은 남자,</div>
-              <div>사용하시려는 아이디는 smile0423 입니다.</div>
+              <div>생년월일은 {signUpRequest.birth},</div>
+              <div>성별은 {signUpRequest.gender},</div>
+              <div>사용하시려는 아이디는 {signUpRequest.loginId} 입니다.</div>
               <div className="mt-4 headline-small">회원가입을 진행할까요?</div>
             </div>
           }
