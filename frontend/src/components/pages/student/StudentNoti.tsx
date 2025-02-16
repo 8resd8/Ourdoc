@@ -1,17 +1,57 @@
+import { useState, useEffect } from 'react';
+import {
+  NotificationPageable,
+  getNotificationsApi,
+} from '../../../services/notificationsService';
 import { NotificationDetailTile } from '../../atoms/NotificationDetailTile';
-import classes from './StudentNoti.module.css';
+import { AddDivider } from '../../../utils/AddDivder';
+import { PaginationButton } from '../../atoms/PagenationButton';
 
 const StudentNoti = () => {
+  const [notifications, setnotifications] = useState<NotificationPageable>();
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchData = async (page = 0) => {
+    try {
+      const params = { size: 5, page };
+      const response = await getNotificationsApi(params);
+
+      setnotifications(response);
+      setTotalPages(response.totalPages);
+      setCurrentPage(page);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const onPageChange = (pageNumber: number) => {
+    if (pageNumber >= 0 && pageNumber < totalPages) {
+      fetchData(pageNumber);
+    }
+  };
   return (
-    <div className={`${classes.root} mx-auto p-4`}>
+    <div className={'flex w-[846px] flex-col mx-auto py-[56px] space-y-[40px]'}>
       <div className="flex justify-between items-center mb-6">
         <h1 className="headline-medium text-gray-800">알림함</h1>
       </div>
-      <NotificationDetailTile />
-      <NotificationDetailTile />
-      <NotificationDetailTile />
-      <NotificationDetailTile />
-      <NotificationDetailTile />
+      <AddDivider
+        itemList={
+          notifications
+            ? notifications?.content.map((item, index) => (
+                <NotificationDetailTile key={index} notification={item} />
+              ))
+            : []
+        }
+      />
+
+      <PaginationButton
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };
