@@ -4,6 +4,7 @@ public record BookReportRankDto(
 	int studentNumber,
 	String name,
 	int readCount,
-	int rank
+	int rank,
+	String profileImagePath
 ) {
 }
