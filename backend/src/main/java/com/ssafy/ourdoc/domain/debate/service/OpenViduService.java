@@ -19,12 +19,15 @@ import com.ssafy.ourdoc.domain.debate.dto.openvidu.JoinRequest;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 import com.ssafy.ourdoc.domain.debate.repository.DebateRoomRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.global.integration.openvidu.service.OpenviduService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class OpenViduService {
 	@Value("${openvidu.url}")
 	private String OPENVIDU_URL;
@@ -34,6 +37,7 @@ public class OpenViduService {
 	private RestTemplate restTemplate = new RestTemplate();
 
 	private final DebateRoomRepository roomRepository;
+	private final OpenviduService openviduService;
 
 	// 기본 인증 헤더 생성 (Basic Auth)
 	private HttpHeaders createHeaders() {
@@ -67,9 +71,24 @@ public class OpenViduService {
 	 * randomId는 고유값
 	 */
 
+	public void newCreateSession(JoinRequest request, User user) {
+		String sessionId = openviduService.createSession();
+
+		Room room = Room.builder()
+			.sessionId(sessionId)
+			.user(user)
+			.title(request.getRoomName())
+			.password(request.getPassword())
+			.maxPeople(10)
+			.build();
+
+		roomRepository.save(room);
+	}
+
+
+
 	private String createSession(JoinRequest request, String randomId, User user) {
 		// request.randomId가 있으면 입장
-
 		String url = OPENVIDU_URL + "/openvidu/api/sessions";
 		HttpHeaders headers = createHeaders();
 		JSONObject body = new JSONObject();
@@ -99,7 +118,7 @@ public class OpenViduService {
 
 			return jsonResponse.getString("id");
 		} catch (HttpClientErrorException e) {
-			// 409 Conflict인 경우 세션이 이미 존재하는 것으로 간주하여 randomId 반환
+			// 409 Conflict인 경우 세션이 이미 존재하는 것으로 간주하여 randomId 반환, 방이 이미 존재하는 경우
 			if (e.getStatusCode() == HttpStatus.CONFLICT || request.getRandomId() != null) {
 				// return randomId;
 				return request.getRandomId();
