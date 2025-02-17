@@ -6,7 +6,7 @@ import { getRecoil } from 'recoil-nexus';
 import { currentUserState, debatesState } from '../../../recoil';
 import { deleteDebateApi } from '../../../services/debatesService';
 
-export const DebateRoom = () => {
+const DebateRoom = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const token = location.state.token;
@@ -325,3 +325,5 @@ export const DebateRoom = () => {
     </div>
   );
 };
+
+export default DebateRoom;

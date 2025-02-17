@@ -1,4 +1,4 @@
-import { api, multipartApi } from '../services/api';
+import { api } from '../services/api';
 
 interface BookQueryParams {
   size: number;
@@ -194,6 +194,32 @@ export interface RecommendedBook {
   publishYear: string;
 }
 
+export interface BookCategoryParams {
+  page: number;
+  size: number;
+}
+export interface BookCategoryBookProps {
+  content: BookCategoryContents[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  sort: Sort;
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+
+export interface BookCategoryContents {
+  homeworkId: number;
+  book: Book;
+  createdAt: Date;
+  submitStatus: boolean;
+  bookReports: BookReport[];
+}
+
 // 도서 목록 조회
 export const getBooksApi = async (params: BookQueryParams) => {
   try {
@@ -243,13 +269,17 @@ export const addFavoriteBookApi = async (bookId: number): Promise<number> => {
 };
 
 // 사용자 관심 도서 목록 조회
-export const getFavoriteBooksApi = async (): Promise<FavoriteBook> => {
+export const getFavoriteBooksApi = async (
+  params: BookCategoryParams
+): Promise<BookCategoryBookProps> => {
   try {
-    const response = await api.get<{ book: FavoriteBook }>('/books/favorite');
-
+    const response = await api.get<{ book: BookCategoryBookProps }>(
+      '/books/favorite',
+      { params }
+    );
     return response.data.book;
   } catch (error) {
-    console.error('Error fetching favorite books:', error);
+    console.error('Error fetching student recommended books:', error);
     throw error;
   }
 };
@@ -316,14 +346,14 @@ export const getClassTeacherRecommendedBooksApi = async (
 
 // 학생 학년 추천 도서 목록 조회
 export const getStudentRecommendedBooksApi = async (
-  params: BookQueryParams
-): Promise<RecommendedBook[]> => {
+  params: BookCategoryParams
+): Promise<BookCategoryBookProps> => {
   try {
-    const response = await api.get<RecommendedBook[]>(
+    const response = await api.get<{ recommends: BookCategoryBookProps }>(
       '/books/students/recommend/grades',
       { params }
     );
-    return response.data;
+    return response.data.recommends;
   } catch (error) {
     console.error('Error fetching student recommended books:', error);
     throw error;
@@ -332,14 +362,14 @@ export const getStudentRecommendedBooksApi = async (
 
 // 학생 학급 추천 도서 목록 조회
 export const getClassStudentRecommendedBooksApi = async (
-  params: BookQueryParams
-): Promise<RecommendedBook[]> => {
+  params: BookCategoryParams
+): Promise<BookCategoryBookProps> => {
   try {
-    const response = await api.get<RecommendedBook[]>(
+    const response = await api.get<{ recommends: BookCategoryBookProps }>(
       '/books/students/recommend/classes',
       { params }
     );
-    return response.data;
+    return response.data.recommends;
   } catch (error) {
     console.error('Error fetching student recommended books:', error);
     throw error;
@@ -415,16 +445,13 @@ export const getTeacherHomeworkBookDetailApi = async (
 
 // 학생 학급 숙제 도서 목록 조회
 export const getStudentHomeworkBooksApi = async (
-  params: BookQueryParams
-): Promise<BookListResponse> => {
+  params: BookCategoryParams
+): Promise<BookCategoryBookProps> => {
   try {
-    const response = await api.get<BookListResponse>(
-      '/books/students/homework',
-      {
-        params: { ...params, page: params.page ?? 0, size: params.size ?? 10 },
-      }
-    );
-    return response.data;
+    const response = await api.get<{
+      homeworks: BookCategoryBookProps;
+    }>('/books/students/homework', { params });
+    return response.data.homeworks;
   } catch (error) {
     console.error('Error fetching student homework books:', error);
     throw error;
