@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookStatus;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudent;
 
 import lombok.Builder;
 
@@ -17,10 +17,10 @@ public record HomeworkStudentDetailPage(
 	BookResponse book,
 	LocalDateTime createdAt,
 	boolean homeworkSubmitStatus,
-	Page<BookReportHomeworkStudent> bookReports
+	Page<BookReportStudent> bookReports
 ) {
 	public static HomeworkStudentDetailPage of(Homework homework, boolean submitStatus,
-		Page<BookReportHomeworkStudent> bookReports, BookStatus bookStatus) {
+		Page<BookReportStudent> bookReports, BookStatus bookStatus) {
 		return HomeworkStudentDetailPage.builder()
 			.homeworkId(homework.getId())
 			.book(BookResponse.of(homework.getBook(), bookStatus))

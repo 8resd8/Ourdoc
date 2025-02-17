@@ -8,15 +8,21 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.domain.book.dto.BookDetailResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookListResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookStatus;
+import com.ssafy.ourdoc.domain.book.dto.BookStudentDetailResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookTeacherDetailResponse;
 import com.ssafy.ourdoc.domain.book.dto.most.BookMostDto;
 import com.ssafy.ourdoc.domain.book.dto.most.BookMostResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudent;
+import com.ssafy.ourdoc.domain.bookreport.dto.teacher.BookReportTeacher;
+import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
+import com.ssafy.ourdoc.domain.bookreport.service.BookReportTeacherService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 
 import groovy.util.logging.Slf4j;
@@ -30,6 +36,8 @@ import lombok.RequiredArgsConstructor;
 public class BookService {
 	private final BookRepository bookRepository;
 	private final BookStatusMapper bookStatusMapper;
+	private final BookReportTeacherService bookReportTeacherService;
+	private final BookReportStudentService bookReportStudentService;
 
 	public void registerBook(Book book) {
 		if (bookRepository.findByIsbn(book.getIsbn()).isPresent()) {
@@ -52,9 +60,20 @@ public class BookService {
 		return new BookListResponse(bookResponsePage);
 	}
 
-	public BookDetailResponse getBookDetail(User user, Long id) {
+	public BookTeacherDetailResponse getBookDetailTeacher(User user, Long id, Pageable pageable) {
 		Book book = findBookById(id);
-		return BookDetailResponse.of(book, book.getDescription(), bookStatusMapper.mapBookStatus(book, user));
+		Page<BookReportTeacher> bookReports = bookReportTeacherService.getReportTeacherPageResponses(book.getId(),
+			pageable);
+		BookStatus bookStatus = bookStatusMapper.mapBookStatus(book, user);
+		return BookTeacherDetailResponse.of(book, bookStatus, bookReports);
+	}
+
+	public BookStudentDetailResponse getBookDetailStudent(User user, Long id, Pageable pageable) {
+		Book book = findBookById(id);
+		Page<BookReportStudent> bookReports = bookReportStudentService.getReportStudentHomeworkPageResponses(
+			book.getId(), user.getId(), pageable);
+		BookStatus bookStatus = bookStatusMapper.mapBookStatus(book, user);
+		return BookStudentDetailResponse.of(book, bookStatus, bookReports);
 	}
 
 	public Book findBookById(Long id) {

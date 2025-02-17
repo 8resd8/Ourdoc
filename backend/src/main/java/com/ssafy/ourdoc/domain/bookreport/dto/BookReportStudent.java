@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
 import com.ssafy.ourdoc.global.common.enums.SubmitStatus;
 
-public record BookReportHomeworkStudent(
+public record BookReportStudent(
 	Long id,
 	String beforeContent,
 	LocalDateTime createdAt,

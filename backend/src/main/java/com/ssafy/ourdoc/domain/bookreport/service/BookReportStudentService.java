@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.ourdoc.domain.award.repository.AwardRepository;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
@@ -20,16 +21,15 @@ import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportLatestAiFeedbackResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportSaveResponse;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStampResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudent;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportStatisticRepository;
@@ -55,6 +55,7 @@ public class BookReportStudentService {
 	private final NotificationService notificationService;
 	private final HomeworkRepository homeworkRepository;
 	private final BookReportStatisticRepository bookReportStatisticRepository;
+	private final AwardRepository awardRepository;
 
 	public BookReportSaveResponse saveBookReport(User user, BookReadLogRequest request) {
 		if (request.ocrCheck() == 사용 && (request.imageUrl() == null || request.imageUrl().trim().isEmpty())) {
@@ -103,11 +104,11 @@ public class BookReportStudentService {
 		return new BookReportListResponse(bookReportDtoPage);
 	}
 
-	public List<BookReportHomeworkStudent> getReportStudentHomeworkResponses(Long bookId, Long userId) {
-		List<BookReportHomeworkStudent> convertDto = bookReportRepository.bookReportsHomeworkStudents(bookId,
+	public List<BookReportStudent> getReportStudentHomeworkResponses(Long bookId, Long userId) {
+		List<BookReportStudent> convertDto = bookReportRepository.bookReportsHomeworkStudents(bookId,
 				userId)
 			.stream()
-			.map(dto -> new BookReportHomeworkStudent(
+			.map(dto -> new BookReportStudent(
 				dto.bookreportId(),
 				dto.beforeContent(),
 				dto.createdAt(),
@@ -117,11 +118,11 @@ public class BookReportStudentService {
 		return convertDto;
 	}
 
-	public Page<BookReportHomeworkStudent> getReportStudentHomeworkPageResponses(Long bookId, Long userId,
+	public Page<BookReportStudent> getReportStudentHomeworkPageResponses(Long bookId, Long userId,
 		Pageable pageable) {
-		Page<BookReportHomeworkStudent> pageDto = bookReportRepository.bookReportsHomeworkStudentsPage(bookId,
+		Page<BookReportStudent> pageDto = bookReportRepository.bookReportsHomeworkStudentsPage(bookId,
 				userId, pageable)
-			.map(dto -> new BookReportHomeworkStudent(
+			.map(dto -> new BookReportStudent(
 				dto.bookreportId(),
 				dto.beforeContent(),
 				dto.createdAt(),
@@ -212,10 +213,10 @@ public class BookReportStudentService {
 		int myRank = 0;
 		int idx = 0;
 		int prevCount = -1;
-		int readCount = 0;
+		int readCount;
 		for (BookReportMyRankDto rankDto : rankList) {
 			idx++;
-			readCount = rankDto.stampCount();
+			readCount = rankDto.readCount();
 			if (readCount != prevCount) {
 				rank = idx;
 				prevCount = readCount;
@@ -225,13 +226,9 @@ public class BookReportStudentService {
 			}
 		}
 
-		int stampCount = bookReportStatisticRepository.myStampCount(user.getId());
+		int stampCount = awardRepository.getStampCount(user.getId());
 
 		return new BookReportMyRankResponse(idx, stampCount, myRank);
-	}
-
-	public BookReportStampResponse getStampCount(User user) {
-		return new BookReportStampResponse(bookReportStatisticRepository.myStampCount(user.getId()));
 	}
 
 	public BookReportLatestAiFeedbackResponse getLatestAiFeedback(User user) {

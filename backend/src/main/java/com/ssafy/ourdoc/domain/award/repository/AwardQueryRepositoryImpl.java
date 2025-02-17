@@ -2,8 +2,8 @@ package com.ssafy.ourdoc.domain.award.repository;
 
 import static com.querydsl.core.types.Projections.*;
 import static com.ssafy.ourdoc.domain.award.entity.QAward.*;
+import static com.ssafy.ourdoc.domain.bookreport.entity.QBookReport.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
-import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
@@ -20,8 +20,7 @@ import com.ssafy.ourdoc.domain.award.dto.AwardDto;
 import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherDto;
 import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherRequest;
 import com.ssafy.ourdoc.domain.user.entity.QUser;
-import com.ssafy.ourdoc.domain.user.entity.User;
-import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
+import com.ssafy.ourdoc.global.common.enums.Active;
 
 import lombok.RequiredArgsConstructor;
 
@@ -90,6 +89,35 @@ public class AwardQueryRepositoryImpl implements AwardQueryRepository {
 				, buildWhereCondition(teacherUserId, request)
 			)
 			.fetch();
+	}
+
+	@Override
+	public int getStampCount(Long userId) {
+		Long studentClassId = queryFactory
+			.select(studentClass.id)
+			.from(studentClass)
+			.where(
+				studentClass.user.id.eq(userId),
+				studentClass.active.eq(Active.활성)
+			).fetchOne();
+
+		return Optional.ofNullable(queryFactory
+			.select(bookReport.count().intValue())
+			.from(bookReport)
+			.where(
+				bookReport.studentClass.id.eq(studentClassId),
+				bookReport.approveTime.isNotNull()
+			)
+			.fetchOne()).orElse(0);
+	}
+
+	@Override
+	public int getAwardCount(Long userId) {
+		return Optional.ofNullable(queryFactory
+			.select(award.count().intValue())
+			.from(award)
+			.where(award.user.id.eq(userId))
+			.fetchOne()).orElse(0);
 	}
 
 	private BooleanBuilder buildWhereCondition(Long teacherUserId, AwardTeacherRequest request) {

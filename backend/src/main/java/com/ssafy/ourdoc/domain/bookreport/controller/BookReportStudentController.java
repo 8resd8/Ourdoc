@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,7 +24,6 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportSaveResponse;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStampResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
@@ -100,11 +98,6 @@ public class BookReportStudentController {
 	@GetMapping("/rank")
 	public BookReportMyRankResponse getBookReportRank(@Login User user) {
 		return bookReportStudentService.getBookReportRank(user);
-	}
-
-	@GetMapping("/stamp")
-	public BookReportStampResponse getStampCount(@Login User user) {
-		return bookReportStudentService.getStampCount(user);
 	}
 
 	@GetMapping("/feedback/ai/recent")

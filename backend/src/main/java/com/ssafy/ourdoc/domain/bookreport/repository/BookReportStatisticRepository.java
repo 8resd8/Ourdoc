@@ -326,25 +326,6 @@ public class BookReportStatisticRepository {
 			.fetch();
 	}
 
-	public int myStampCount(Long userId) {
-		Long studentClassId = queryFactory
-			.select(studentClass.id)
-			.from(studentClass)
-			.where(
-				studentClass.user.id.eq(userId),
-				studentClass.active.eq(Active.활성)
-			).fetchOne();
-
-		return Optional.ofNullable(queryFactory
-			.select(bookReport.count().intValue())
-			.from(bookReport)
-			.where(
-				bookReport.studentClass.id.eq(studentClassId),
-				bookReport.approveTime.isNotNull()
-			)
-			.fetchOne()).orElse(0);
-	}
-
 	public String getLatestAiFeedback(Long userId) {
 		Long studentClassId = queryFactory
 			.select(studentClass.id)

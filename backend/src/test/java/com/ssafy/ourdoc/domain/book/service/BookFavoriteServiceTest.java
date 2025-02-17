@@ -25,12 +25,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.ssafy.ourdoc.domain.book.dto.BookStatus;
+import com.ssafy.ourdoc.domain.book.dto.BookRequest;
+import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.favorite.BookFavoriteDetail;
 import com.ssafy.ourdoc.domain.book.dto.favorite.BookFavoriteListResponse;
-import com.ssafy.ourdoc.domain.book.dto.BookRequest;
-import com.ssafy.ourdoc.domain.book.dto.BookResponse;
-import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
 import com.ssafy.ourdoc.domain.book.repository.BookFavoriteRepository;
@@ -127,6 +125,7 @@ public class BookFavoriteServiceTest {
 	}
 
 	@Test
+	@Disabled
 	@DisplayName("관심도서 목록 조회 성공")
 	@Disabled
 	void getBookFavoriteSuccess() {
@@ -145,10 +144,11 @@ public class BookFavoriteServiceTest {
 
 		BookFavoriteListResponse bookFavorites = bookFavoriteService.getBookFavorites(request, user, pageable);
 
-		// verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks, pageable);
-		// assertThat(bookFavorites.favorite().getContent()).isEqualTo(
-		// 	List.of(BookFavoriteDetail.of(new BookFavorite(book, user), bookStatusMapper.mapBookStatus(book, user))));
 
+		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks, pageable);
+		assertThat(bookFavorites.favorite().getContent()).isEqualTo(
+			List.of(BookFavoriteDetail.of(new BookFavorite(book, user), false,
+				bookStatusMapper.mapBookStatus(book, user))));
 	}
 
 	@Test

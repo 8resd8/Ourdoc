@@ -44,9 +44,13 @@ export const HomeworkListSection = () => {
                 publisher={data.book.publisher}
                 publishYear={data.book.publishYear}
                 date={DateFormat(data.book.createdAt, '')}
-                status={data.book.homeworkSubmitCount}
+                status={data.homeworkSubmitCount}
                 studentCount={studentCount}
-                onClick={() => {}}
+                onClick={() => {
+                  navigate(
+                    `/teacher/homework/list/?homeworkId=${data.homeworkId}`
+                  );
+                }}
               />
             </div>
           )),
