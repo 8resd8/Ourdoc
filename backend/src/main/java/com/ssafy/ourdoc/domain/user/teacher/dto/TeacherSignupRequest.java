@@ -35,7 +35,7 @@ public record TeacherSignupRequest(
 	String email,
 
 	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
+	@Size(max = 250, message = "{size.max}") // 정규식 필요
 	String phone
 ) {
 }

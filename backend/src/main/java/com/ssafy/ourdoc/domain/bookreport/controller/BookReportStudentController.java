@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportLatestAiFeedbackResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankResponse;
@@ -35,7 +36,6 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/bookreports/students")
 public class BookReportStudentController {
@@ -44,7 +44,8 @@ public class BookReportStudentController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public BookReportSaveResponse createBookReportStudent(@Login User user, @RequestBody BookReadLogRequest request) {
+	public BookReportSaveResponse createBookReportStudent(@Login User user,
+		@RequestBody BookReadLogRequest request) {
 		return bookReportStudentService.saveBookReport(user, request);
 	}
 
@@ -103,6 +104,11 @@ public class BookReportStudentController {
 	@GetMapping("/stamp")
 	public BookReportStampResponse getStampCount(@Login User user) {
 		return bookReportStudentService.getStampCount(user);
+	}
+
+	@GetMapping("/feedback/ai/recent")
+	public BookReportLatestAiFeedbackResponse getLatestAiFeedback(@Login User user) {
+		return bookReportStudentService.getLatestAiFeedback(user);
 	}
 
 }

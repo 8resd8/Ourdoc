@@ -69,12 +69,17 @@ export const StudentMainHomeworkListSection = () => {
     const date = new Date(dateString);
     return `${date.getMonth() + 1}월 ${date.getDate()}일`;
   };
+  const navigate = useNavigate();
 
   return (
     <div className="w-[1064px] h-[277px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
       <div className="self-stretch justify-between items-start inline-flex">
         <div className="text-gray-800 headline-medium">숙제</div>
-        <PlusButton onClick={() => {}} />
+        <PlusButton
+          onClick={() => {
+            navigate('/student/book/category');
+          }}
+        />
       </div>
       <Table
         headers={TABLE_HEADER}
@@ -87,7 +92,7 @@ export const StudentMainHomeworkListSection = () => {
             author={homework.book.author}
             publisher={homework.book.publisher}
             date={formatDate(homework.createdAt)}
-            status={homework.submitStatus}
+            homeworkSubmitStatus={homework.homeworkSubmitStatus}
           />
         ))}
       />

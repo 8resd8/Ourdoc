@@ -7,12 +7,13 @@ export interface CreateBookReportRequest {
   beforeContent: string;
   imageUrl: string;
   ocrCheck: string;
-  homeworkId: string | null;
+  // homeworkId: string | null;
 }
 
 export interface AiFeedbackRequest {
   bookReportId: string;
-  afterContent: string;
+  feedbackContent: string;
+  spellingContent: string;
 }
 
 export interface TeacherCommentRequest {

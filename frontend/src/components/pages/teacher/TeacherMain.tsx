@@ -41,9 +41,6 @@ const TeacherMain = () => {
     const fetchData = async () => {
       const classReportRank = await classReportRankApi();
       const classMonthlyReport = await classMonthlyReportApi();
-      const teacherHomework = await getTeacherHomeworkBooksApi();
-      console.log(teacherHomework);
-
       const mostRead = await mostReadApi();
       setclassReportRank(classReportRank);
       setclassMonthlyReport(classMonthlyReport);

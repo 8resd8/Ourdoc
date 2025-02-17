@@ -9,7 +9,7 @@ export const RankingSection = ({ data }: { data?: ClassReportRank }) => {
           <span className="text-gray-800 headline-medium">
             우리반 독서 랭킹{' '}
           </span>
-          <span className="text-gray-500 headline-small">{`총 ${data?.totalReadCount}권`}</span>
+          <span className="text-gray-500 headline-small">{`총 ${data ? data.totalReadCount : 0}권`}</span>
         </div>
       </div>
       <div className="self-stretch grow shrink basis-0 px-6 justify-between items-center inline-flex">

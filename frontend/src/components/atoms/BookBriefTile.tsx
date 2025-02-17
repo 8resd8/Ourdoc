@@ -16,11 +16,11 @@ export const BookBriefTile = ({ book }: BookBriefProps) => {
           />
         </div>
         <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-          <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small">
+          <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small truncate">
             {book.title}
           </div>
         </div>
-        <div className="self-stretch h-12 text-gray-300 body-small">
+        <div className="self-stretch h-12 text-gray-300 body-small truncate">
           {book.author} <br />
           지음 | {book.publisher}
         </div>

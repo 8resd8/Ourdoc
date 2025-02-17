@@ -25,7 +25,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
@@ -64,7 +63,8 @@ public class UserController {
 
 	// 4. 비밀번호 일치 확인
 	@PostMapping("/password/verification")
-	public ResponseEntity<Boolean> verifyPassword(@Login User user, @RequestBody CheckPasswordRequest request) {
+	public ResponseEntity<Boolean> verifyPassword(@Login User user,
+		@RequestBody CheckPasswordRequest request) {
 		boolean isDuplicate = userService.verifyPassword(user, request);
 		return ResponseEntity.ok(isDuplicate);
 	}

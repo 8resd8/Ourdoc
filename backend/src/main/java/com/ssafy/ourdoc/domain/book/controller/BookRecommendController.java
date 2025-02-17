@@ -28,7 +28,6 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/books")
 public class BookRecommendController {
@@ -47,7 +46,8 @@ public class BookRecommendController {
 	}
 
 	@GetMapping("/teachers/recommend/grades")
-	public ResponseEntity<BookRecommendTeacherResponse> getRecommendTeacher(@ModelAttribute BookSearchRequest request,
+	public ResponseEntity<BookRecommendTeacherResponse> getRecommendTeacher(
+		@ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		BookRecommendTeacherResponse response = bookRecommendService.getBookRecommendsTeacher(request, user, pageable);
@@ -55,7 +55,8 @@ public class BookRecommendController {
 	}
 
 	@GetMapping("/students/recommend/grades")
-	public ResponseEntity<BookRecommendStudentResponse> getRecommendStudent(@ModelAttribute BookSearchRequest request,
+	public ResponseEntity<BookRecommendStudentResponse> getRecommendStudent(
+		@ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		BookRecommendStudentResponse response = bookRecommendService.getBookRecommendsStudent(request, user, pageable);

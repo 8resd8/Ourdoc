@@ -4,7 +4,7 @@ export const StudentHomeworkListTile = ({
   no,
   title,
   date,
-  status,
+  homeworkSubmitStatus,
   publisher,
   author,
   homeworkId,
@@ -16,7 +16,7 @@ export const StudentHomeworkListTile = ({
   date: string;
   publisher: string;
   author: string;
-  status: boolean;
+  homeworkSubmitStatus: boolean;
   onClick?: () => void;
 }) => {
   const navigate = useNavigate();
@@ -45,9 +45,9 @@ export const StudentHomeworkListTile = ({
         </div>
         <div className="w-[120px] items-center justify-center inline-flex">
           <div
-            className={`px-3 py-1 rounded-[5px] text-center body-small border justify-center items-center inline-flex ${status ? 'border-system-success text-system-success' : 'border-system-danger text-system-danger'}`}
+            className={`px-3 py-1 rounded-[5px] text-center body-small border justify-center items-center inline-flex ${homeworkSubmitStatus ? 'border-system-success text-system-success' : 'border-system-danger text-system-danger'}`}
           >
-            {status ? '제출 완료' : '미제출'}
+            {homeworkSubmitStatus ? '제출 완료' : '미제출'}
           </div>
         </div>
       </div>

@@ -20,7 +20,6 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequestMapping("/admin")
 @RequiredArgsConstructor
 public class AdminController {
@@ -34,7 +33,8 @@ public class AdminController {
 	}
 
 	@PatchMapping("/verification")
-	public ResponseEntity<String> verifyTeacher(@Login User user, @RequestBody TeacherVerificationRequest request) {
+	public ResponseEntity<String> verifyTeacher(@Login User user,
+		@RequestBody TeacherVerificationRequest request) {
 		String response = adminService.verifyTeacher(user, request);
 		return ResponseEntity.ok(response);
 	}

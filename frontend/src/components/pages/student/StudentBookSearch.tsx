@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Book, getBooksApi } from '../../../services/booksService';
 import SelectVariants from '../../commons/SelectVariants';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { PaginationButton } from '../../atoms/PagenationButton';
 import { AddDivider } from '../../../utils/AddDivder';
 
@@ -53,6 +53,8 @@ const StudentBookSearch = () => {
     fetchBook();
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="w-full m-auto mt-8">
       <div className="flex items-center justify-center mb-6">
@@ -101,7 +103,13 @@ const StudentBookSearch = () => {
         <div className="justify-items-center">
           {AddDivider({
             itemList: book.map((book: Book, index: number) => (
-              <div key={index} className={`flex w-[850px] h-[240px] mt-3`}>
+              <div
+                onClick={() =>
+                  navigate(`/student/book/report/list/?bookId=${book.bookId}`)
+                }
+                key={index}
+                className={`flex w-[850px] h-[240px] mt-3`}
+              >
                 <img
                   src={book.imageUrl}
                   alt={book.title}

@@ -23,6 +23,8 @@ export interface Book {
   publishYear: string;
   imageUrl: string;
   bookStatus?: BookStatus;
+  createdAt: string;
+  homeworkSubmitCount: number;
 }
 
 export interface HomeworkBook {
@@ -35,6 +37,7 @@ export interface HomeworkBook {
   publishYear: string;
   imageUrl: string;
   bookStatus: any;
+  homeworks: any;
 }
 
 export interface BookReport {
@@ -218,7 +221,34 @@ export interface BookCategoryContents {
   homeworkId: number;
   book: Book;
   createdAt: string;
-  submitStatus: boolean;
+  homeworkSubmitStatus: boolean;
+  bookReports: BookReport[];
+}
+
+export interface TeacherHomeworkBooks {
+  studentCount: number;
+  homeworks: Homeworks;
+}
+
+export interface Homeworks {
+  content: HomeworkContent[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  sort: Sort;
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+
+export interface HomeworkContent {
+  homeworkId: number;
+  book: Book;
+  createdAt: Date;
+  submitCount: number;
   bookReports: BookReport[];
 }
 
@@ -275,11 +305,12 @@ export const getFavoriteBooksApi = async (
   params: BookCategoryParams
 ): Promise<BookCategoryBookProps> => {
   try {
-    const response = await api.get<{ book: BookCategoryBookProps }>(
+    const response = await api.get<{ favorite: BookCategoryBookProps }>(
       '/books/favorite',
       { params }
     );
-    return response.data.book;
+
+    return response.data.favorite;
   } catch (error) {
     console.error('Error fetching student recommended books:', error);
     throw error;
@@ -292,6 +323,7 @@ export const removeFavoriteBookApi = async (
 ): Promise<number> => {
   try {
     const response = await api.delete('/books/favorite', { data: { bookId } });
+
     return response.status;
   } catch (error) {
     console.error('Error removing favorite book:', error);
@@ -420,15 +452,23 @@ export const removeHomeworkBookApi = async (
 };
 
 // 교사 학급 숙제 도서 목록 조회
-export const getTeacherHomeworkBooksApi = async (): Promise<Book[]> => {
-  try {
-    const response = await api.get<Book[]>('/books/teachers/homework');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching teacher homework books:', error);
-    throw error;
-  }
-};
+export const getTeacherHomeworkBooksApi =
+  async (): Promise<TeacherHomeworkBooks> => {
+    try {
+      const response = await api.get<TeacherHomeworkBooks>(
+        '/books/teachers/homework',
+        {
+          params: { size: 3, page: 0 },
+        }
+      );
+      console.log(response);
+
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching teacher homework books:', error);
+      throw error;
+    }
+  };
 
 // 교사 학급 숙제 도서 상세 조회
 export const getTeacherHomeworkBookDetailApi = async (

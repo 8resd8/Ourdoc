@@ -1,18 +1,13 @@
-import { Divider, Grid2, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { bookCategoryState } from '../../../recoil/atoms/bookCategoryAtom';
 import {
-  Book,
   BookCategoryContents,
   BookCategoryParams,
-  getBooksApi,
   getClassStudentRecommendedBooksApi,
   getFavoriteBooksApi,
   getStudentHomeworkBooksApi,
   getStudentRecommendedBooksApi,
-  HomeworkItem,
-  PaginatedHomeworks,
 } from '../../../services/booksService';
 import {
   BookCategoryExtension,
@@ -64,6 +59,8 @@ const StudentBookCategory = () => {
       }
 
       setBooks(response.content);
+      setTotalPages(response.totalPages);
+      setCurrentPage(page);
     } catch (error) {
       console.error('도서 목록 가져오기 실패:', error);
     }
@@ -85,11 +82,13 @@ const StudentBookCategory = () => {
     fetchBooks(0);
   }, [selectedCategory]);
 
-  console.log(books);
+  useEffect(() => {
+    setSelectedCategory(BookCategoryType.HomeWork);
+  }, []);
 
   return (
-    <div>
-      <div className="w-[1200px] m-auto mt-8">
+    <div className="flex flex-col items-center pb-10">
+      <div className="w-[1064px] m-auto mt-8">
         {/* 검색 영역 */}
         <div className="flex items-center justify-center mb-6">
           <div className="flex items-center space-x-4">
@@ -166,41 +165,33 @@ const StudentBookCategory = () => {
         </div>
       </div>
 
-      <Divider
-        className="border-gray-200"
-        sx={{ width: '100vw', mb: '36px' }}
-      />
-      <div className="w-[1200px] m-auto mb-[100px]">
-        <Grid2 container spacing={'40px'} rowSpacing={'34.75px'}>
-          {books.map((item, index) => (
-            <Grid2
-              key={index}
-              size={{ xs: 12 / 5 }}
-              display="flex"
-              justifyContent="center"
-            >
-              <Stack>
-                <BookBriefTile book={item.book} />
-                {selectedCategory === BookCategoryType.HomeWork ? (
-                  <HomeWorkButton
-                    id={item.homeworkId}
-                    isSubmitted={item.submitStatus}
-                  />
-                ) : selectedCategory === BookCategoryType.Favorite ? (
-                  <FavoriteBookButton id={item.homeworkId} />
-                ) : (
-                  <></>
-                )}
-              </Stack>
-            </Grid2>
-          ))}
-        </Grid2>
-        <PaginationButton
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={onPageChange}
-        />
+      <div className="w-full border-b border-gray-200 mb-9" />
+
+      <div className="w-[1064px] grid grid-cols-5 gap-6">
+        {books.map((item, index) => (
+          <div key={index} className="flex flex-col self-stretch items-center">
+            <BookBriefTile book={item.book} />
+            {selectedCategory === BookCategoryType.HomeWork ? (
+              <HomeWorkButton
+                id={item.homeworkId}
+                isSubmitted={item.submitStatus}
+              />
+            ) : selectedCategory === BookCategoryType.Favorite ? (
+              <FavoriteBookButton
+                id={item.book.bookId}
+                updateData={() => {
+                  fetchBooks();
+                }}
+              />
+            ) : null}
+          </div>
+        ))}
       </div>
+      <PaginationButton
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
     </div>
   );
 };

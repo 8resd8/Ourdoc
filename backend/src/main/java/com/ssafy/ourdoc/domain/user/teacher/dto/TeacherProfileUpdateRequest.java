@@ -1,6 +1,8 @@
 package com.ssafy.ourdoc.domain.user.teacher.dto;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record TeacherProfileUpdateRequest(
@@ -20,13 +22,13 @@ public record TeacherProfileUpdateRequest(
 	@Size(max = 250, message = "{size.max}")
 	Long schoolId,
 
-	@Size(max = 250, message = "{size.max}")
+	@Max(value = 250, message = "{length.max}")
 	Integer year,
 
-	@Size(max = 250, message = "{size.max}")
+	@Max(value = 250, message = "{length.max}")
 	Integer grade,
 
-	@Size(max = 250, message = "{size.max}")
+	@Max(value = 250, message = "{length.max}")
 	Integer classNumber
 ) {
 }

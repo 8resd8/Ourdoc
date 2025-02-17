@@ -31,7 +31,6 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/bookreports/teachers")
 public class BookReportTeacherController {
@@ -39,7 +38,8 @@ public class BookReportTeacherController {
 	private final BookReportTeacherService bookReportTeacherService;
 
 	@GetMapping
-	public ReportTeacherListResponse getBookReportList(@Login User user, @ModelAttribute ReportTeacherRequest request,
+	public ReportTeacherListResponse getBookReportList(@Login User user,
+		@ModelAttribute ReportTeacherRequest request,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		return bookReportTeacherService.getBookReports(user, request, pageable);
 	}

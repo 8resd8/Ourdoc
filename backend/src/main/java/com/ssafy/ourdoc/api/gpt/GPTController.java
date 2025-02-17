@@ -17,7 +17,6 @@ import com.ssafy.ourdoc.global.integration.gpt.service.AIFeedbackService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/ai")
 public class GPTController {

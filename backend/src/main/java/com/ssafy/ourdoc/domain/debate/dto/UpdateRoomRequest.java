@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.debate.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record UpdateRoomRequest(
@@ -9,7 +11,8 @@ public record UpdateRoomRequest(
 	@Size(max = 250, message = "{size.max}")
 	String password,
 
-	@Size(max = 250, message = "{size.max}")
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
 	Integer maxPeople
 ) {
 }

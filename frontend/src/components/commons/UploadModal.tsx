@@ -50,10 +50,12 @@ const UploadModal = ({ isOpen, onConfirm, onCancel }: ModalProps) => {
             className="hidden"
           />
           <img src="../assets/images/fileImage.png" />
-          {/* {selectedFile && (
-            <div className="body-medium text-gray-600">{selectedFile.name}</div>
-          )} */}
         </div>
+        {selectedFile && (
+          <div className="body-medium text-gray-600 text-center mt-3">
+            {selectedFile.name}
+          </div>
+        )}
         <div className={classes.buttonContainer}>
           <button
             onClick={onCancel}
