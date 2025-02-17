@@ -18,6 +18,7 @@ import {
 } from '../../../services/usersService';
 import { notify } from '../../commons/Toast';
 import { useNavigate } from 'react-router-dom';
+import { DateFormat } from '../../../utils/DateFormat';
 
 interface signUpRequestType {
   loginId: string;
@@ -331,12 +332,35 @@ const TeacherSignUp = () => {
           title={'입력하신 정보를 확인할게요.'}
           body={
             <div>
-              <div className="text-primary-500">
-                성룡 초등학교 1학년 3반 12번, 김미소님!
+              <div>
+                <span className="text-primary-500">{signUpRequest.name}</span>
+                <span>님!</span>
               </div>
-              <div>생년월일은 2000년 4월 23일,</div>
-              <div>성별은 남자,</div>
-              <div>사용하시려는 아이디는 smile0423 입니다.</div>
+              <div>
+                생년월일은{' '}
+                <span className="text-primary-500">
+                  {DateFormat(signUpRequest.birth, '')}
+                </span>
+                ,
+              </div>
+              <div>
+                성별은 <span className="text-primary-500">{gender}자</span>,
+              </div>
+              <div>
+                이메일은{' '}
+                <span className="text-primary-500">{signUpRequest.email}</span>,
+              </div>
+              <div>
+                전화번호는{' '}
+                <span className="text-primary-500">{signUpRequest.phone}</span>,
+              </div>
+              <div>
+                사용하시려는 아이디는{' '}
+                <span className="text-primary-500">
+                  {signUpRequest.loginId}
+                </span>{' '}
+                입니다.
+              </div>
               <div className="mt-4 headline-small">회원가입을 진행할까요?</div>
             </div>
           }

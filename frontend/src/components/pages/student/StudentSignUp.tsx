@@ -17,6 +17,7 @@ import RadioField from '../../molecules/RadioField';
 import Modal from '../../commons/Modal';
 import { notify } from '../../commons/Toast';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { DateFormat } from '../../../utils/DateFormat';
 
 const StudentSignUp = () => {
   const [gender, setGender] = useState('남');
@@ -290,9 +291,27 @@ const StudentSignUp = () => {
                 {signUpRequest.name}
                 님!
               </div>
-              <div>생년월일은 {signUpRequest.birth},</div>
-              <div>성별은 {signUpRequest.gender},</div>
-              <div>사용하시려는 아이디는 {signUpRequest.loginId} 입니다.</div>
+              <div>
+                생년월일은{' '}
+                <span className="text-primary-500">
+                  {DateFormat(signUpRequest.birth, '')}
+                </span>
+                ,
+              </div>
+              <div>
+                성별은{' '}
+                <span className="text-primary-500">
+                  {signUpRequest.gender}자
+                </span>
+                ,
+              </div>
+              <div>
+                사용하시려는 아이디는{' '}
+                <span className="text-primary-500">
+                  {signUpRequest.loginId}
+                </span>{' '}
+                입니다.
+              </div>
               <div className="mt-4 headline-small">회원가입을 진행할까요?</div>
             </div>
           }
