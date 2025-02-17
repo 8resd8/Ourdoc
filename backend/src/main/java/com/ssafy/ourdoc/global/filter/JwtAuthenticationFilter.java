@@ -93,9 +93,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			String newAccessToken = handleTokenRefresh(request, response);
 
 			if (newAccessToken != null) {
-				request.setAttribute("Authorization", "Bearer " + newAccessToken);
-				filterChain.doFilter(request, response);
+				log.info("새로운 액세스 토큰 발급 성공: {}", newAccessToken);
+				response.setHeader("Authorization", "Bearer " + newAccessToken);
+
+				response.setStatus(HttpServletResponse.SC_OK);
 			} else {
+				log.warn("새로운 액세스 토큰 발급 실패, 유효하지 않은 리프레시 토큰");
 				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid refresh token");
 			}
 		} catch (JwtException e) {

@@ -147,7 +147,6 @@ export const getClassStudentListApi = async (data: {
   const response = await api.get('/teachers/students/profile', {
     params: data,
   });
-  console.log(response.data.studentProfiles);
 
   return response.data.studentProfiles;
 };
@@ -168,7 +167,6 @@ export const getPendingStudentsListApi = async (data: {
   const response = await api.get('/teachers/students/pending', {
     params: data,
   });
-  console.log(response);
   return response.data;
 };
 

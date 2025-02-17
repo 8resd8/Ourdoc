@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.domain.award.repository;
 import static com.querydsl.core.types.Projections.*;
 import static com.ssafy.ourdoc.domain.award.entity.QAward.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
+import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
@@ -19,6 +20,8 @@ import com.ssafy.ourdoc.domain.award.dto.AwardDto;
 import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherDto;
 import com.ssafy.ourdoc.domain.award.dto.teacher.AwardTeacherRequest;
 import com.ssafy.ourdoc.domain.user.entity.QUser;
+import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 
 import lombok.RequiredArgsConstructor;
 
@@ -60,10 +63,12 @@ public class AwardQueryRepositoryImpl implements AwardQueryRepository {
 	}
 
 	@Override
-	public List<AwardTeacherDto> findTeacherClassAwards(Long teacherUserId, AwardTeacherRequest request) {
+	public List<AwardTeacherDto> findTeacherClassAwards(Long teacherUserId, AwardTeacherRequest request,
+		Long studentUserId) {
 		// 교사가 소속한 반의 모든 학생들의 상장 조회
 		QUser teacherUser = new QUser("teacherUser"); // 교사 User
 		QUser studentUser = new QUser("studentUser"); // 학생 User
+
 		return queryFactory
 			.select(Projections.constructor(
 				AwardTeacherDto.class,
@@ -75,10 +80,15 @@ public class AwardQueryRepositoryImpl implements AwardQueryRepository {
 			.from(teacherClass)
 			.join(teacherClass.user, teacherUser)
 			.join(teacherClass.classRoom, classRoom)
-			.join(studentClass.classRoom, classRoom)
+
+			.join(studentClass).on(studentClass.classRoom.eq(classRoom))
 			.join(studentClass.user, studentUser)
-			.join(award.user, studentUser)
-			.where(buildWhereCondition(teacherUserId, request))
+			.join(award).on(award.user.eq(studentUser))
+			.where(
+				teacherUser.id.eq(teacherUserId)
+				, studentUserId == null ? null : studentUser.id.eq(studentUserId)
+				, buildWhereCondition(teacherUserId, request)
+			)
 			.fetch();
 	}
 

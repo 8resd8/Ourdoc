@@ -47,3 +47,24 @@ export const getStudentAwardsListApi = async (): Promise<AwardDetail[]> => {
   const response = await api.get<AwardsListResponse>('/students/awards');
   return response.data.awards;
 };
+
+// 교사 본인 반 학생 상장 조회
+export const getTeacherStudentAwardsApi = async ({
+  studentLoginId,
+  classId,
+}: {
+  studentLoginId?: number;
+  classId: number;
+}): Promise<AwardDetail[]> => {
+  const response = await api.get<{ studentAwards: AwardDetail[] }>(
+    '/teachers/awards',
+    {
+      params: {
+        studentLoginId,
+        classId,
+      },
+    }
+  );
+
+  return response.data.studentAwards;
+};

@@ -24,6 +24,7 @@ const TABLE_HEADER = [
 
 import { useEffect, useState } from 'react';
 import {
+  BookCategoryContents,
   getStudentHomeworkBooksApi,
   HomeworkItem,
   PaginatedHomeworks,
@@ -41,7 +42,7 @@ export const StudentMainHomeworkListSection = () => {
     author: '',
     publisher: '',
   };
-  const [homeworkList, setHomeworkList] = useState<HomeworkItem[]>([]);
+  const [homeworkList, setHomeworkList] = useState<BookCategoryContents[]>([]);
   const [paginationInfo, setPaginationInfo] = useState<Omit<
     PaginatedHomeworks,
     'content'
@@ -50,9 +51,9 @@ export const StudentMainHomeworkListSection = () => {
   const fetchHomeworkList = async () => {
     try {
       const response = await getStudentHomeworkBooksApi(param);
-      setHomeworkList(response.homeworks.content);
-      const { content, ...paginationData } = response.homeworks;
-      console.log('숙제 목록:', response.homeworks);
+      setHomeworkList(response.content);
+      const { content, ...paginationData } = response;
+      console.log('숙제 목록:', response);
 
       setPaginationInfo(paginationData);
     } catch (error) {

@@ -7,6 +7,7 @@ import {
   removeFavoriteBookApi,
 } from '../../../services/booksService';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { studentSubmitHomeworkReportApi } from '../../../services/bookReportsService';
 
 const StudentHomeWorkReportList = () => {
   const location = useLocation();
@@ -20,6 +21,7 @@ const StudentHomeWorkReportList = () => {
   const [favorite, setFavorite] = useState(false);
   const [recommend, setRecommend] = useState(false);
   const [homework, setHomework] = useState(false);
+  const [submitHomework, setSubmitHomework] = useState(false);
   const PAGE_SIZE = 10;
   const fetchHomeworkDetail = async (page = 0) => {
     try {
@@ -35,11 +37,13 @@ const StudentHomeWorkReportList = () => {
       setBookReports(data.bookReports.content);
       setTotalPages(data.bookReports.totalPages);
       setCurrentPage(page);
+      setSubmitHomework(data.homeworkSubmitStatus);
       console.log(data);
     } catch (error) {
       console.error('Error fetching homework detail:', error);
     }
   };
+
   useEffect(() => {
     fetchHomeworkDetail();
   }, [homeworkId]);
@@ -68,6 +72,17 @@ const StudentHomeWorkReportList = () => {
       console.log(response);
       fetchHomeworkDetail();
     }
+  };
+
+  const submitHomeworkHandle = async (
+    bookreportId: number,
+    homeworkId: number
+  ) => {
+    const response = await studentSubmitHomeworkReportApi(
+      bookreportId,
+      homeworkId
+    );
+    console.log(response);
   };
 
   return (
@@ -157,7 +172,7 @@ const StudentHomeWorkReportList = () => {
                   {formatDate(row.createdAt)}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {row.approveStatus === '있음' ? (
+                  {row.bookReportApproveStatus === '있음' ? (
                     <button className="body-small text-system-success border-system-success border w-[49px] h-[28px] rounded-[5px]">
                       완료
                     </button>
@@ -168,16 +183,23 @@ const StudentHomeWorkReportList = () => {
                   )}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {row.submitStatus === '미제출' ? (
-                    <button className="body-small text-system-info border-system-info border w-[60px] h-[28px] rounded-[5px]">
+                  {submitHomework === false ? (
+                    <button
+                      onClick={() =>
+                        submitHomeworkHandle(Number(row.id), Number(homeworkId))
+                      }
+                      className="body-small text-system-info border-system-info border w-[60px] h-[28px] rounded-[5px]"
+                    >
                       제출하기
                     </button>
-                  ) : row.submitStatus === '제출' ? (
-                    <button className="body-small border border-gra-300 text-gray-300 w-[60px] h-[28px] rounded-[5px]">
-                      제출완료
+                  ) : row.homeworkSubmitStatus === '제출' ? (
+                    <button className="body-small border text-system-info border-system-info w-[60px] h-[28px] rounded-[5px]">
+                      제출
                     </button>
                   ) : (
-                    ''
+                    <button className="body-small border border-gray-300 text-gray-300 w-[60px] h-[28px] rounded-[5px]">
+                      미제출
+                    </button>
                   )}
                 </td>
               </tr>

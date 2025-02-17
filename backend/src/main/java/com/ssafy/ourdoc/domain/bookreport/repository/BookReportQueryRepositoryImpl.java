@@ -146,7 +146,8 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public Page<ReportTeacherDtoWithId> bookReportsHomeworkPage(Long homeworkId, Pageable pageable) {
+	public Page<ReportTeacherDtoWithId> bookReportsHomeworkPage(Long homeworkId, String approveStatus,
+		Pageable pageable) {
 		int total = bookReportsHomework(homeworkId).size();
 		List<ReportTeacherDtoWithId> content = queryFactory.select(new QReportTeacherDtoWithId(
 				bookReport.id,
@@ -164,7 +165,8 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.join(bookReport.homework, homework)
 			.where(
 				bookReport.homework.id.eq(homeworkId),
-				studentClass.active.eq(Active.활성)
+				studentClass.active.eq(Active.활성),
+				eqApproveStatus(approveStatus)
 			)
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
@@ -228,5 +230,42 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	private BooleanExpression eqSchoolName(String schoolName) {
 		return (schoolName != null && !schoolName.isEmpty())
 			? school.schoolName.eq(schoolName) : null;
+	}
+
+	private LocalDateTime startDate(int year) {
+		return YearMonth.of(year, 3).atDay(1).atStartOfDay();
+	}
+
+	private LocalDateTime startDate(int year, int month) {
+		return YearMonth.of(month <= 2 ? year + 1 : year, month).atDay(1).atStartOfDay();
+	}
+
+	private LocalDateTime endDate(int year) {
+		return YearMonth.of(year + 1, 2).atEndOfMonth().atTime(23, 59, 59);
+	}
+
+	private LocalDateTime endDate(int year, int month) {
+		return YearMonth.of(month <= 2 ? year + 1 : year, month).atEndOfMonth().atTime(23, 59, 59);
+	}
+
+	private final NumberExpression<Integer> monthExpression = Expressions.numberTemplate(
+		Integer.class, "function('MONTH', {0})", bookReport.createdAt
+	);
+
+	private final NumberExpression<Integer> dayExpression = Expressions.numberTemplate(
+		Integer.class, "function('DAY', {0})", bookReport.createdAt
+	);
+
+	private BooleanExpression eqApproveStatus(String approveStatus) {
+		if (approveStatus == null || approveStatus.isEmpty()) {
+			return null;
+		}
+		if (approveStatus.equals("Y")) {
+			return bookReport.approveTime.isNotNull();
+		}
+		if (approveStatus.equals("N")) {
+			return bookReport.approveTime.isNull();
+		}
+		return null;
 	}
 }

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -60,8 +61,10 @@ public class HomeworkController {
 	public ResponseEntity<HomeworkTeacherDetailPage> getHomeworkTeacherDetail(
 		@PathVariable("homeworkId") long homeworkId,
 		@Login User user,
+		@RequestParam(name = "approveStatus", required = false) String approveStatus,
 		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-		HomeworkTeacherDetailPage response = homeworkService.getHomeworkDetailTeacherPage(homeworkId, user, pageable);
+		HomeworkTeacherDetailPage response = homeworkService.getHomeworkDetailTeacherPage(homeworkId, user,
+			approveStatus, pageable);
 		return ResponseEntity.ok(response);
 	}
 

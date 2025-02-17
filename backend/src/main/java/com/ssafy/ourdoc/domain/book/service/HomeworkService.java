@@ -19,6 +19,7 @@ import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherDetailPage;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
+import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
 import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
@@ -57,6 +58,7 @@ public class HomeworkService {
 	private final BookReportStudentService bookReportStudentService;
 	private final BookRecommendService bookRecommendService;
 	private final BookStatusMapper bookStatusMapper;
+	private final BookRecommendRepository bookRecommendRepository;
 
 	public void addHomework(BookRequest request, User user) {
 		if (user.getUserType() == UserType.학생) {
@@ -71,8 +73,11 @@ public class HomeworkService {
 		}
 		Homework homework = Homework.builder().book(book).user(user).classRoom(classRoom).build();
 		homeworkRepository.save(homework);
+		homeworkRepository.flush();
 		// 추천 도서에도 추가
-		bookRecommendService.addBookRecommend(request, user);
+		if (!bookRecommendRepository.existsByBookAndUserAndClassRoom(book, user, classRoom)) {
+			bookRecommendService.addBookRecommend(request, user);
+		}
 	}
 
 	public void deleteHomework(BookRequest request, User user) {
@@ -117,7 +122,8 @@ public class HomeworkService {
 		return HomeworkTeacherDetail.of(homework, submitCount, bookReports, bookStatus);
 	}
 
-	public HomeworkTeacherDetailPage getHomeworkDetailTeacherPage(Long homeworkId, User user, Pageable pageable) {
+	public HomeworkTeacherDetailPage getHomeworkDetailTeacherPage(Long homeworkId, User user, String approveStatus,
+		Pageable pageable) {
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new NoSuchElementException("해당하는 숙제가 없습니다."));
 		if (!homework.getUser().equals(user)) {
@@ -126,7 +132,7 @@ public class HomeworkService {
 
 		int submitCount = bookReportRepository.countByHomeworkId(homeworkId);
 		Page<ReportTeacherResponseWithId> bookReports = bookReportTeacherService.getReportTeacherHomeworkPageResponses(
-			homeworkId, pageable);
+			homeworkId, approveStatus, pageable);
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(homework.getBook(), user);
 		return HomeworkTeacherDetailPage.of(homework, submitCount, bookReports, bookStatus);
 	}

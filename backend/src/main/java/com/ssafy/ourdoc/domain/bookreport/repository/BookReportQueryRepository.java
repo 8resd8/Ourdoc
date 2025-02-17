@@ -19,7 +19,7 @@ public interface BookReportQueryRepository {
 
 	List<ReportTeacherDtoWithId> bookReportsHomework(Long homeworkId);
 
-	Page<ReportTeacherDtoWithId> bookReportsHomeworkPage(Long homeworkId, Pageable pageable);
+	Page<ReportTeacherDtoWithId> bookReportsHomeworkPage(Long homeworkId, String approveStatus, Pageable pageable);
 
 	List<BookReportHomeworkStudentDto> bookReportsHomeworkStudents(Long bookId, Long userId);
 

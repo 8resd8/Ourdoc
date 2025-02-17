@@ -46,7 +46,7 @@ export interface BookReportDetail {
   content: string;
   aiComment: string;
   teacherComment: string;
-  approveStatus: string;
+  bookReportApproveStatus: string;
 }
 
 export interface BookReportParams {
@@ -129,7 +129,7 @@ export const getBookReportDetailApi = async (
 export const deleteBookReportApi = async (
   bookReportId: number
 ): Promise<void> => {
-  await api.delete(`/bookreports/${bookReportId}`);
+  await api.delete(`/bookreports/students/${bookReportId}`);
 };
 
 // 학생 독서록 승인
@@ -249,4 +249,14 @@ export const studentReportStatisticsApi = async ({
   );
 
   return response.data;
+};
+
+// 학생이 독서록을 숙제로 제출
+export const studentSubmitHomeworkReportApi = async (
+  bookreportId: number,
+  homeworkId: number
+): Promise<void> => {
+  await api.post(
+    `/bookreports/students/${bookreportId}/homework/${homeworkId}`
+  );
 };

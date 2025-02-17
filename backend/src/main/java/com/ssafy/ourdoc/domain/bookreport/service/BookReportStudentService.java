@@ -103,11 +103,6 @@ public class BookReportStudentService {
 		return new BookReportListResponse(bookReportDtoPage);
 	}
 
-	public void deleteBookReport(User user, Long bookReportId) {
-		BookReport bookReport = bookReportRepository.findByBookReport(bookReportId, user.getId())
-			.orElseThrow(() -> new NoSuchElementException("본인의 독서록이 없습니다."));
-	}
-
 	public List<BookReportHomeworkStudent> getReportStudentHomeworkResponses(Long bookId, Long userId) {
 		List<BookReportHomeworkStudent> convertDto = bookReportRepository.bookReportsHomeworkStudents(bookId,
 				userId)
@@ -148,7 +143,7 @@ public class BookReportStudentService {
 			throw new IllegalArgumentException("해당 숙제에 해당하는 학급의 학생이 아닙니다.");
 		}
 
-		int submitCount = bookReportRepository.countByHomeworkId(homeworkId);
+		int submitCount = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId);
 		if (bookReport.getHomework() != null || submitCount > 0) {
 			throw new IllegalArgumentException("숙제로 제출한 독서록이 이미 있습니다.");
 		}
@@ -180,9 +175,9 @@ public class BookReportStudentService {
 		bookReportRepository.save(bookReport);
 	}
 
-	public void deleteBookReport(Long bookReportId) {
-		BookReport bookReport = bookReportRepository.findById(bookReportId)
-			.orElseThrow(() -> new NoSuchElementException("지울 독서록이 없습니다."));
+	public void deleteBookReport(User user, Long bookReportId) {
+		BookReport bookReport = bookReportRepository.findByBookReport(bookReportId, user.getId())
+			.orElseThrow(() -> new NoSuchElementException("본인의 독서록이 없습니다."));
 
 		if (bookReport.getApproveTime() != null) {
 			throw new IllegalArgumentException("승인이 된 독서록은 지울 수 없습니다.");

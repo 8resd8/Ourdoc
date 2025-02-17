@@ -46,21 +46,21 @@ public class BookReportService {
 			.afterContent(detailDto.afterContent())
 			.aiComment(aiComment)
 			.teacherComment(teacherComment)
-			.approveStatus(approveStatus)
+			.bookReportApproveStatus(approveStatus)
 			.build();
 	}
 
 	// 작성한 독서록 기반 AI 피드백 받은것 처리
 	public void saveBookReportFeedback(FeedbackRequest request) {
 		BookReport bookReport = bookReportRepository.findById(request.bookReportId()).orElseThrow();
-		bookReport.saveAfterContent(request.afterContent());
+		bookReport.saveAfterContent(request.spellingContent());
 
 		bookReportRepository.flush();
 
 		BookReportFeedBack bookReportFeedBack = BookReportFeedBack.builder()
 			.bookReport(bookReport)
 			.type(인공지능)
-			.comment(request.afterContent())
+			.comment(request.feedbackContent())
 			.build();
 
 		feedbackRepository.save(bookReportFeedBack);
