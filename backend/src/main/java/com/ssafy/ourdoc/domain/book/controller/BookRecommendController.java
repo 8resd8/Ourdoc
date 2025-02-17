@@ -25,6 +25,7 @@ import com.ssafy.ourdoc.domain.book.service.BookRecommendService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,18 +37,18 @@ public class BookRecommendController {
 
 	@PostMapping("/teachers/recommend/classes")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void addRecommend(@RequestBody BookRequest request, @Login User user) {
+	public void addRecommend(@Valid @RequestBody BookRequest request, @Login User user) {
 		bookRecommendService.addBookRecommend(request, user);
 	}
 
 	@DeleteMapping("/teachers/recommend/classes")
-	public void deleteRecommend(@RequestBody BookRequest request, @Login User user) {
+	public void deleteRecommend(@Valid @RequestBody BookRequest request, @Login User user) {
 		bookRecommendService.deleteBookRecommend(request, user);
 	}
 
 	@GetMapping("/teachers/recommend/grades")
 	public ResponseEntity<BookRecommendTeacherResponse> getRecommendTeacher(
-		@ModelAttribute BookSearchRequest request,
+		@Valid @ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		BookRecommendTeacherResponse response = bookRecommendService.getBookRecommendsTeacher(request, user, pageable);
@@ -56,7 +57,7 @@ public class BookRecommendController {
 
 	@GetMapping("/students/recommend/grades")
 	public ResponseEntity<BookRecommendStudentResponse> getRecommendStudent(
-		@ModelAttribute BookSearchRequest request,
+		@Valid @ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		BookRecommendStudentResponse response = bookRecommendService.getBookRecommendsStudent(request, user, pageable);
@@ -65,7 +66,7 @@ public class BookRecommendController {
 
 	@GetMapping("/teachers/recommend/classes")
 	public ResponseEntity<BookRecommendTeacherResponse> getRecommendTeacherClass(
-		@ModelAttribute BookSearchRequest request,
+		@Valid @ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		BookRecommendTeacherResponse response = bookRecommendService.getBookRecommendsTeacherClass(request, user,
@@ -75,7 +76,7 @@ public class BookRecommendController {
 
 	@GetMapping("/students/recommend/classes")
 	public ResponseEntity<BookRecommendStudentResponse> getRecommendStudentClass(
-		@ModelAttribute BookSearchRequest request,
+		@Valid @ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		BookRecommendStudentResponse response = bookRecommendService.getBookRecommendsStudentClass(request, user,

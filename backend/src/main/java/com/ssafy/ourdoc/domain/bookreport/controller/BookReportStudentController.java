@@ -33,6 +33,7 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.CheckOwner;
 import com.ssafy.ourdoc.global.annotation.Login;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -45,7 +46,7 @@ public class BookReportStudentController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public BookReportSaveResponse createBookReportStudent(@Login User user,
-		@RequestBody BookReadLogRequest request) {
+		@Valid @RequestBody BookReadLogRequest request) {
 		return bookReportStudentService.saveBookReport(user, request);
 	}
 
@@ -79,20 +80,20 @@ public class BookReportStudentController {
 	}
 
 	@GetMapping("/statistics")
-	public BookReportStatisticsResponse getBookReportStatistics(@Login User user, @ModelAttribute
+	public BookReportStatisticsResponse getBookReportStatistics(@Login User user, @Valid @ModelAttribute
 	BookReportStatisticsRequest request) {
 		return bookReportStudentService.getBookReportStatistics(user, request);
 	}
 
 	@GetMapping("/statistics/months")
 	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(@Login User user,
-		@ModelAttribute BookReportStatisticsRequest request) {
+		@Valid @ModelAttribute BookReportStatisticsRequest request) {
 		return bookReportStudentService.getMonthlyBookReportStatistics(user, request);
 	}
 
 	@GetMapping("/statistics/days")
 	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(@Login User user,
-		@ModelAttribute BookReportStatisticsRequest request) {
+		@Valid @ModelAttribute BookReportStatisticsRequest request) {
 		return bookReportStudentService.getDailyBookReportStatistics(user, request);
 	}
 

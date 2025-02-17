@@ -2,11 +2,15 @@ package com.ssafy.ourdoc.domain.user.student.dto;
 
 import java.sql.Date;
 
+import com.ssafy.ourdoc.global.annotation.EnumValid;
 import com.ssafy.ourdoc.global.common.enums.Gender;
 
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record StudentSignupRequest(
@@ -27,30 +31,32 @@ public record StudentSignupRequest(
 	String schoolName,
 
 	@NotNull(message = "{notblank}")
-	@Max(value = 250, message = "{length.max}")
+	@Positive(message = "{positive}")
 	Long schoolId,
 
 	@NotNull(message = "{notblank}")
-	@Max(value = 250, message = "{length.max}")
+	@Positive(message = "{positive}")
 	Long classId,
 
 	@NotNull(message = "{notblank}")
-	@Max(value = 250, message = "{length.max}")
+	@Min(value = 1, message = "{size.min}")
+	@Max(value = 20, message = "{size.max}")
 	Integer grade,
 
 	@NotNull(message = "{notblank}")
-	@Max(value = 250, message = "{length.max}")
+	@Min(value = 1, message = "{size.min}")
+	@Max(value = 250, message = "{size.max}")
 	Integer classNumber,
 
 	@NotNull(message = "{notblank}")
-	@Max(value = 250, message = "{length.max}")
+	@Min(value = 1, message = "{size.min}")
+	@Max(value = 250, message = "{size.max}")
 	Integer studentNumber,
 
-	@Size(max = 250, message = "{size.max}")
+	@Past(message = "{past}")
 	Date birth,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
+	@EnumValid(enumClass = Gender.class, message = "{not.enum}")
 	Gender gender
 ) {
 }

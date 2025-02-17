@@ -1,8 +1,6 @@
 package com.ssafy.ourdoc.domain.bookreport.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +16,7 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.CheckOwner;
 import com.ssafy.ourdoc.global.annotation.Login;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -36,7 +35,7 @@ public class BookReportController {
 
 	@PostMapping("/feedback")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createBookReportFeedback(@RequestBody FeedbackRequest request) {
+	public void createBookReportFeedback(@Valid @RequestBody FeedbackRequest request) {
 		bookReportService.saveBookReportFeedback(request);
 	}
 

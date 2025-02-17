@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +24,7 @@ import com.ssafy.ourdoc.domain.user.teacher.dto.VerificateAffiliationChangeReque
 import com.ssafy.ourdoc.domain.user.teacher.service.TeacherService;
 import com.ssafy.ourdoc.global.annotation.Login;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -42,7 +42,7 @@ public class TeacherController {
 
 	// 1. 교사 회원가입
 	@PostMapping("/signup")
-	public ResponseEntity<String> signup(@RequestPart TeacherSignupRequest request,
+	public ResponseEntity<String> signup(@Valid @RequestPart TeacherSignupRequest request,
 		@RequestPart MultipartFile certificateFile) {
 		teacherService.signup(request, certificateFile);
 		return ResponseEntity.ok("교사 회원가입 완료.");
@@ -65,7 +65,7 @@ public class TeacherController {
 	// 3. 학생 소속 변경 승인/거부
 	@PatchMapping("/verification")
 	public ResponseEntity<String> verificateAffiliationChange(@Login User user,
-		@RequestBody VerificateAffiliationChangeRequest request) {
+		@Valid @RequestBody VerificateAffiliationChangeRequest request) {
 		String response = teacherService.verificateAffiliationChange(user, request);
 		return ResponseEntity.ok(response);
 	}
@@ -94,7 +94,7 @@ public class TeacherController {
 	public ResponseEntity<String> updateTeacherProfile(
 		@Login User user,
 		@RequestPart(required = false) MultipartFile profileImage,
-		@RequestPart TeacherProfileUpdateRequest request
+		@Valid @RequestPart TeacherProfileUpdateRequest request
 	) {
 		teacherService.updateTeacherProfile(user, profileImage, request);
 		return ResponseEntity.ok("교사 정보가 수정되었습니다.");

@@ -2,7 +2,6 @@ package com.ssafy.ourdoc.domain.user.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,11 +16,11 @@ import com.ssafy.ourdoc.domain.user.dto.request.CheckPasswordRequest;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.service.UserService;
 import com.ssafy.ourdoc.global.annotation.Login;
-import com.ssafy.ourdoc.global.util.JwtRefreshService;
 import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,13 +33,13 @@ public class UserController {
 
 	// 1. 사용자 로그인
 	@PostMapping("/signin")
-	public ResponseEntity<?> Login(@RequestBody LoginRequest request) {
+	public ResponseEntity<?> Login(@Valid @RequestBody LoginRequest request) {
 		return userService.login(request);
 	}
 
 	// 2. ID 중복 체크
 	@PostMapping("/checkId")
-	public ResponseEntity<Boolean> checkDuplicateLoginId(@RequestBody CheckIdRequest request) {
+	public ResponseEntity<Boolean> checkDuplicateLoginId(@Valid @RequestBody CheckIdRequest request) {
 		boolean isDuplicate = userService.isLoginIdDuplicate(request);
 		return ResponseEntity.ok(isDuplicate);
 	}
@@ -64,14 +63,14 @@ public class UserController {
 	// 4. 비밀번호 일치 확인
 	@PostMapping("/password/verification")
 	public ResponseEntity<Boolean> verifyPassword(@Login User user,
-		@RequestBody CheckPasswordRequest request) {
+		@Valid @RequestBody CheckPasswordRequest request) {
 		boolean isDuplicate = userService.verifyPassword(user, request);
 		return ResponseEntity.ok(isDuplicate);
 	}
 
 	// 5. 비밀번호 변경
 	@PatchMapping("/password")
-	public void updatePassword(@Login User user, @RequestBody ChangePasswordRequest request) {
+	public void updatePassword(@Login User user, @Valid @RequestBody ChangePasswordRequest request) {
 		userService.changePassword(user, request);
 	}
 }

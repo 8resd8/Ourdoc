@@ -25,6 +25,7 @@ import com.ssafy.ourdoc.domain.debate.service.DebateService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -42,13 +43,13 @@ public class DebateController {
 
 	@PostMapping("/teachers")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createDebateRoom(@Login User user, @RequestBody CreateRoomRequest request) {
+	public void createDebateRoom(@Login User user, @Valid @RequestBody CreateRoomRequest request) {
 		debateService.createDebateRoom(user, request);
 	}
 
 	@PostMapping("/{roomId}/connection")
 	public ResponseEntity<String> joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId,
-		@RequestBody JoinRoomRequest request) {
+		@Valid @RequestBody JoinRoomRequest request) {
 		String token = debateService.joinDebateRoom(user, roomId, request);
 		return ResponseEntity.ok(token);
 	}
@@ -68,7 +69,7 @@ public class DebateController {
 
 	@PatchMapping("/teachers/{roomId}")
 	@ResponseStatus(HttpStatus.OK)
-	public void updateDebateRoom(@Login User user, @PathVariable("roomId") Long roomId, UpdateRoomRequest request) {
+	public void updateDebateRoom(@Login User user, @PathVariable("roomId") Long roomId, @Valid UpdateRoomRequest request) {
 		debateService.updateDebateRoom(user, roomId, request);
 	}
 

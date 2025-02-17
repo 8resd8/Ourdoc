@@ -22,6 +22,7 @@ import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -46,7 +47,7 @@ public class NotificationController {
 
 	@GetMapping
 	public NotificationListResponse getNotifications(@Login User user,
-		@ModelAttribute NotificationConditionRequest request,
+		@Valid @ModelAttribute NotificationConditionRequest request,
 		Pageable pageable) {
 		return notificationQueryService.getUnreadNotifications(user, request, pageable);
 	}
