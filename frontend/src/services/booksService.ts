@@ -215,7 +215,7 @@ export interface BookCategoryBookProps {
 export interface BookCategoryContents {
   homeworkId: number;
   book: Book;
-  createdAt: Date;
+  createdAt: string;
   submitStatus: boolean;
   bookReports: BookReport[];
 }
