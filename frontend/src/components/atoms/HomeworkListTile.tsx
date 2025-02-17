@@ -22,7 +22,10 @@ export const HomeworkListTile = ({
   console.log(status);
 
   return (
-    <div className="self-stretch px-6 py-3 justify-start items-center gap-[18px] inline-flex hover:bg-primary-50 cursor-pointer">
+    <div
+      onClick={onClick}
+      className="self-stretch px-6 py-3 justify-start items-center gap-[18px] inline-flex hover:bg-primary-50 cursor-pointer"
+    >
       <div className="w-[60px] text-center text-gray-800 body-medium">{no}</div>
       <div className="w-[332px] truncate text-gray-800 body-medium">
         {title}

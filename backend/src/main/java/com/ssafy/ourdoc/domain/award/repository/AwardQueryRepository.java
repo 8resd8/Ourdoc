@@ -14,4 +14,8 @@ public interface AwardQueryRepository {
 	Optional<AwardDto> findAwardByUserId(Long userId, Long awardId);
 
 	List<AwardTeacherDto> findTeacherClassAwards(Long teacherId, AwardTeacherRequest request, Long studentUserId);
+
+	int getStampCount(Long userId);
+
+	int getAwardCount(Long userId);
 }

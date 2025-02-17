@@ -1,79 +1,76 @@
+import { useLocation } from 'react-router-dom';
+import {
+  BookReport,
+  getTeacherHomeworkBookDetailApi,
+  HomeworkBook,
+  TeacherHomeworkBookReport,
+} from '../../../services/booksService';
+import { useEffect, useState } from 'react';
+
 const TeacherHomeWorkReportList = () => {
-  const bookInfo = {
-    title: '어린왕자 (Le Petit Prince)',
-    author: '앙투안 드 생텍쥐페리',
-    publisher: '새움',
-    genre: '문학',
-    year: 2022,
-    image: '/assets/images/bookImage.png', // 이미지 경로
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const homeworkId = queryParams.get('homeworkId');
+  const [homeworkDetail, setHomeworkBook] = useState<HomeworkBook | null>(null);
+  const [bookReports, setBookReports] = useState<TeacherHomeworkBookReport[]>(
+    []
+  );
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const PAGE_SIZE = 10;
+
+  const fetchHomework = async (page = 0) => {
+    try {
+      const params = {
+        page: page,
+        size: PAGE_SIZE,
+        homeworkId: Number(homeworkId),
+      };
+      const response = await getTeacherHomeworkBookDetailApi(params);
+      setHomeworkBook(response.book);
+      setBookReports(response.bookReports.content);
+    } catch (error) {}
+  };
+  console.log(homeworkDetail);
+  useEffect(() => {
+    fetchHomework();
+  }, []);
+
+  const handlePageChange = (page: number) => {
+    if (page >= 0 && page < totalPages) {
+      fetchHomework(page);
+    }
   };
 
-  const tableData = [
-    {
-      no: 1,
-      content: '도서명도서명도서명도서명',
-      number: '8번',
-      studentName: '김현우',
-      submitDate: '5월 1일',
-      status: '완료',
-    },
-    {
-      no: 2,
-      content: '도서명도서명도서명도서명도서명도서명도서명도서명',
-      number: '8번',
-      studentName: '김현우',
-      submitDate: '5월 1일',
-      status: '완료',
-    },
-    {
-      no: 3,
-      content: '도서명도서명도서명도서명',
-      number: '8번',
-      studentName: '김현우',
-      submitDate: '5월 1일',
-      status: '미완료',
-    },
-    {
-      no: 4,
-      content: '도서명도서명도서명도서명',
-      number: '8번',
-      studentName: '김현우',
-      submitDate: '5월 1일',
-      status: '미완료',
-    },
-    {
-      no: 5,
-      content: '도서명도서명도서명도서명',
-      number: '8번',
-      studentName: '김현우',
-      submitDate: '5월 1일',
-      status: '미완료',
-    },
-  ];
-
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+  };
   return (
     <div className="w-[1200px] mx-auto mt-8">
       {/* 숙제 도서 카드 */}
       <div className="flex justify-center mb-8">
         <div className="flex bg-gray-0 shadow-xxsmall rounded-lg p-6 w-[630px] h-[340px]">
           <img
-            src={bookInfo.image}
-            alt={bookInfo.title}
+            src={homeworkDetail?.imageUrl}
+            alt={homeworkDetail?.title}
             className="w-[190px] h-[282px] object-cover rounded-md mr-6"
           />
-          <div className="">
-            <h2 className="headline-medium font-bold mb-4">{bookInfo.title}</h2>
-            <p className="body-medium text-gray-700 mb-2">
-              저자: {bookInfo.author}
+          <div className="mt-12">
+            <h2 className="headline-medium font-bold mb-4">
+              {homeworkDetail?.title}
+            </h2>
+            <p className="body-medium text-gray-700 mb-4">
+              저자: {homeworkDetail?.author}
             </p>
-            <p className="body-medium text-gray-700 mb-2">
-              출판사: {bookInfo.publisher}
+            <p className="body-medium text-gray-700 mb-4">
+              출판사: {homeworkDetail?.publisher}
             </p>
-            <p className="body-medium text-gray-700 mb-2">
-              장르: {bookInfo.genre}
+            <p className="body-medium text-gray-700 mb-4">
+              장르: {homeworkDetail?.genre}
             </p>
-            <p className="body-medium text-gray-700 mb-2">
-              출판년도: {bookInfo.year}
+            <p className="body-medium text-gray-700">
+              출판년도: {homeworkDetail?.publishYear}
             </p>
           </div>
         </div>
@@ -103,11 +100,13 @@ const TeacherHomeWorkReportList = () => {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row, index) => (
+            {bookReports.map((row, index) => (
               <tr key={index} className={`${index % 2 === 0 ? '' : ''}`}>
-                <td className="px-4 py-2 text-center">{row.no}</td>
+                <td className="px-4 py-2 text-center">
+                  {index + 1 + currentPage * 10}
+                </td>
                 <td className="px-4 py-2 truncate">{row.content}</td>
-                <td className="px-4 py-2 text-center">{row.number}</td>
+                <td className="px-4 py-2 text-center">{row.studentNumber}</td>
                 <td className="px-4 py-2 text-center">{row.studentName}</td>
                 <td className="px-4 py-2 text-center">{row.submitDate}</td>
                 <td className="px-4 py-2 text-center">
@@ -125,23 +124,46 @@ const TeacherHomeWorkReportList = () => {
             ))}
           </tbody>
         </table>
+        {/* 페이지네이션 */}
         <div className="flex justify-center items-center mt-8 space-x-2">
-          <button className="px-4 py-2 rounded-lg hover:bg-gray-100">
+          {/* 이전 페이지 버튼 */}
+          <button
+            className={`px-4 py-2 rounded-lg cursor-pointer ${
+              currentPage === 0
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'hover:bg-gray-100'
+            }`}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 0}
+          >
             &lt;
           </button>
-          <span className="px-4 py-2 text-gray-500 body-small rounded-lg">
-            1
-          </span>
-          <span className="px-4 py-2 text-gray-500 body-small rounded-lg">
-            2
-          </span>
-          <span className="px-4 py-2 text-gray-500 body-small rounded-lg hover:bg-gray-100">
-            3
-          </span>
-          <span className="px-4 py-2 text-gray-800 body-small rounded-lg hover:bg-gray-100">
-            4
-          </span>
-          <button className="px-4 py-2 rounded-lg hover:bg-gray-100">
+
+          {/* 페이지 번호 표시 */}
+          {Array.from({ length: totalPages }, (_, index) => (
+            <button
+              key={index}
+              className={`px-4 py-2 body-small rounded-lg cursor-pointer ${
+                currentPage === index
+                  ? 'bg-primary-500 text-white'
+                  : 'hover:bg-gray-100 text-gray-500'
+              }`}
+              onClick={() => handlePageChange(index)}
+            >
+              {index + 1}
+            </button>
+          ))}
+
+          {/* 다음 페이지 버튼 */}
+          <button
+            className={`px-4 py-2 rounded-lg cursor-pointer ${
+              currentPage === totalPages - 1
+                ? 'text-gray-400 cursor-not-allowed'
+                : 'hover:bg-gray-100'
+            }`}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages - 1}
+          >
             &gt;
           </button>
         </div>
