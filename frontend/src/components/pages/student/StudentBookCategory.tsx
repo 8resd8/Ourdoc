@@ -85,8 +85,6 @@ const StudentBookCategory = () => {
     fetchBooks(0);
   }, [selectedCategory]);
 
-  console.log(books);
-
   return (
     <div>
       <div className="w-[1200px] m-auto mt-8">
