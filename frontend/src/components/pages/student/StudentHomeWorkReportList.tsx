@@ -38,7 +38,6 @@ const StudentHomeWorkReportList = () => {
       setTotalPages(data.bookReports.totalPages);
       setCurrentPage(page);
       setSubmitHomework(data.homeworkSubmitStatus);
-      console.log(data);
     } catch (error) {
       console.error('Error fetching homework detail:', error);
     }
@@ -62,14 +61,12 @@ const StudentHomeWorkReportList = () => {
   const favoriteBook = async () => {
     if (homeworkDetail) {
       const response = await addFavoriteBookApi(homeworkDetail.bookId);
-      console.log(response);
       fetchHomeworkDetail();
     }
   };
   const favoriteCancel = async () => {
     if (homeworkDetail) {
       const response = await removeFavoriteBookApi(homeworkDetail.bookId);
-      console.log(response);
       fetchHomeworkDetail();
     }
   };
@@ -82,7 +79,6 @@ const StudentHomeWorkReportList = () => {
       bookreportId,
       homeworkId
     );
-    console.log(response);
   };
 
   return (

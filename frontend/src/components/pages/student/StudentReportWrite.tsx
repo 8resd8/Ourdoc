@@ -50,7 +50,6 @@ const StudentReportWrite = () => {
         feedbackContent: aiFeedback.feedbackContent,
         spellingContent: aiSpelling.feedbackContent,
       });
-      console.log(save);
 
       navigate('/student/main');
     } catch (error) {}

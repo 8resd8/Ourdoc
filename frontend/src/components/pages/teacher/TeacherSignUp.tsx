@@ -119,8 +119,6 @@ const TeacherSignUp = () => {
   const [passwordCheck, setPasswordCheck] = useState('');
 
   const handleInputChange = (id: string, value: string) => {
-    console.log(id, value);
-
     setSignUpRequest((prev) => ({ ...prev, [id]: value }));
     if (id === 'loginId') {
       setIsIdChecked(false);

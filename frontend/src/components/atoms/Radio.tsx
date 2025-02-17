@@ -7,8 +7,6 @@ interface PropsType {
 }
 
 const Radio = ({ placeholder, isSelected, onClick }: PropsType) => {
-  console.log(isSelected);
-
   return (
     <span
       onClick={onClick}

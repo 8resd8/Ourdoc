@@ -39,14 +39,12 @@ const TeacherBookSearch = () => {
       publisher: searchCategory === '출판사' ? searchTerm : '',
     };
     const response = await getBooksApi(params);
-    console.log(response);
 
     setBook(response.book.content);
     setTotalPages(response.book.totalPages);
     setTotalElements(response.book.totalElements);
     setCurrentPage(page);
   };
-  console.log(currentPage);
 
   const onPageChange = (pageNumber: number) => {
     if (pageNumber >= 0 && pageNumber < totalPages) {

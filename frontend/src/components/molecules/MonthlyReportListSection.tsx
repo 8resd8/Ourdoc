@@ -27,8 +27,6 @@ export const MonthlyReportListSection = ({
   const grade = getRecoil(studentGradeState);
   useEffect(() => {
     const fetchData = async () => {
-      console.log(getRecoil(studentGradeState));
-
       if (isStudent) {
         const classDailyReport = await studentDailyReportApi({
           month: selectedMonth,

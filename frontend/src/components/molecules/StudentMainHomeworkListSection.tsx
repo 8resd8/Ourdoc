@@ -53,7 +53,6 @@ export const StudentMainHomeworkListSection = () => {
       const response = await getStudentHomeworkBooksApi(param);
       setHomeworkList(response.content);
       const { content, ...paginationData } = response;
-      console.log('숙제 목록:', response);
 
       setPaginationInfo(paginationData);
     } catch (error) {

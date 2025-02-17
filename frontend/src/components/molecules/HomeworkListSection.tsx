@@ -18,7 +18,6 @@ export const HomeworkListSection = () => {
     setHomework(teacherHomework.homeworks.content);
   };
   const navigate = useNavigate();
-  console.log(homework);
 
   useEffect(() => {
     fetchData();

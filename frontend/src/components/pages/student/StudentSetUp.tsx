@@ -22,7 +22,6 @@ const StudentSetup = () => {
         loginId: loginInfo.loginId,
         password: loginInfo.password,
       });
-      console.log('로그인 성공:', response);
       setIsLoggedIn(true);
     } catch (error) {
       console.error('로그인 실패:', error);
@@ -85,6 +84,7 @@ const StudentSetup = () => {
             </div>
             <div className={classes.input}>
               <InputField
+                inputType="text"
                 validate=""
                 id="studentNumber"
                 label="출석번호"
@@ -123,6 +123,7 @@ const StudentSetup = () => {
             </div>
             <div className={classes.input}>
               <InputField
+                inputType="text"
                 validate=""
                 id="loginId"
                 label="아이디"
@@ -132,6 +133,7 @@ const StudentSetup = () => {
             </div>
             <div className={classes.input} onKeyDown={handleKeyPress}>
               <InputField
+                inputType="text"
                 validate="warning"
                 id="password"
                 label="비밀번호"
