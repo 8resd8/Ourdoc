@@ -248,7 +248,7 @@ export interface HomeworkContent {
   homeworkId: number;
   book: Book;
   createdAt: Date;
-  submitCount: number;
+  homeworkSubmitCount: number;
   bookReports: BookReport[];
 }
 
