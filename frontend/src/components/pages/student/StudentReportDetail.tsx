@@ -79,10 +79,14 @@ const StudentReportDetail = () => {
             <div className="w-[600px] h-[543px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-gray-800 report-font break-words overflow-auto">
               {report?.beforeContent}
             </div>
-            <img
-              src="/assets/images/goodStamp.png"
-              className="w-[172px] h-[172px] absolute bottom-0 right-0"
-            />
+            {report?.bookReportApproveStatus == '있음' ? (
+              <img
+                src="/assets/images/goodStamp.png"
+                className="w-[172px] h-[172px] absolute bottom-0 right-0"
+              />
+            ) : (
+              ''
+            )}
           </div>
           <div className="flex justify-end">
             {report?.bookReportApproveStatus == '있음' ? (
