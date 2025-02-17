@@ -127,7 +127,6 @@ public class BookFavoriteServiceTest {
 	@Test
 	@Disabled
 	@DisplayName("관심도서 목록 조회 성공")
-	@Disabled
 	void getBookFavoriteSuccess() {
 		User user = Mockito.mock(User.class);
 
