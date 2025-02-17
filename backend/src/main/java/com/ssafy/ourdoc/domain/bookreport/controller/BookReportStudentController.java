@@ -22,7 +22,9 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportSaveResponse;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStampResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
@@ -89,6 +91,16 @@ public class BookReportStudentController {
 	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(@Login User user,
 		@ModelAttribute BookReportStatisticsRequest request) {
 		return bookReportStudentService.getDailyBookReportStatistics(user, request);
+	}
+
+	@GetMapping("/rank")
+	public BookReportMyRankResponse getBookReportRank(@Login User user) {
+		return bookReportStudentService.getBookReportRank(user);
+	}
+
+	@GetMapping("/stamp")
+	public BookReportStampResponse getStampCount(@Login User user) {
+		return bookReportStudentService.getStampCount(user);
 	}
 
 }
