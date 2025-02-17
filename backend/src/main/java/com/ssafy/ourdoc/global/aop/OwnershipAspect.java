@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.global.aop;
 
+import static com.ssafy.ourdoc.global.common.enums.UserType.*;
+
 import java.util.NoSuchElementException;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.CheckOwner;
+import com.ssafy.ourdoc.global.common.enums.UserType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,8 +75,11 @@ public class OwnershipAspect {
 			throw new IllegalArgumentException("리소스 소유권 검증 불가능: user 또는 bookReportId가 null");
 		}
 
-		bookReportRepository.findByBookReport(bookReportId, user.getId())
-			.orElseThrow(() -> new NoSuchElementException("해당 독서록은 현재 유저 소유가 아닙니다."));
+		// 학생의 경우일 때만 검증 수행
+		if (user.getUserType() == 학생) {
+			bookReportRepository.findByBookReport(bookReportId, user.getId())
+				.orElseThrow(() -> new NoSuchElementException("해당 독서록은 현재 유저 소유가 아닙니다."));
+		}
 
 		return pjp.proceed();
 	}
