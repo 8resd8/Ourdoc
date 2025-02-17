@@ -42,7 +42,8 @@ export interface BookReport {
   beforeContent: string;
   createdAt: string;
   submitStatus: '제출' | '미제출';
-  approveStatus: '있음' | '없음';
+  homeworkSubmitStatus: '제출' | '미제출';
+  bookReportApproveStatus: '있음' | '없음';
 }
 export interface PaginatedBookReports {
   content: BookReport[];
@@ -103,6 +104,7 @@ export interface PaginatedBook {
 export interface StudentHomeworkBookDetail {
   book: HomeworkBook;
   bookReports: PaginatedBookReports;
+  homeworkSubmitStatus: any;
 }
 
 export interface HomeworkItem {

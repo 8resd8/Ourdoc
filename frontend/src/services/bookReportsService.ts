@@ -250,3 +250,13 @@ export const studentReportStatisticsApi = async ({
 
   return response.data;
 };
+
+// 학생이 독서록을 숙제로 제출
+export const studentSubmitHomeworkReportApi = async (
+  bookreportId: number,
+  homeworkId: number
+): Promise<void> => {
+  await api.post(
+    `/bookreports/students/${bookreportId}/homework/${homeworkId}`
+  );
+};
