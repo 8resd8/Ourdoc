@@ -73,8 +73,10 @@ public class BookReportTeacherService {
 		return convertDto;
 	}
 
-	public Page<ReportTeacherResponseWithId> getReportTeacherHomeworkPageResponses(Long homeworkId, Pageable pageable) {
-		Page<ReportTeacherResponseWithId> pageDto = bookReportRepository.bookReportsHomeworkPage(homeworkId, pageable)
+	public Page<ReportTeacherResponseWithId> getReportTeacherHomeworkPageResponses(Long homeworkId,
+		String approveStatus, Pageable pageable) {
+		Page<ReportTeacherResponseWithId> pageDto = bookReportRepository.bookReportsHomeworkPage(homeworkId,
+				approveStatus, pageable)
 			.map(dto -> new ReportTeacherResponseWithId(
 				dto.id(),
 				dto.studentNumber(),
@@ -145,7 +147,8 @@ public class BookReportTeacherService {
 			long readCount = rankDto.readCount();
 			totalCount += readCount;
 			if (rank < 4) {
-				podiumList.add(new BookReportRankDto(rankDto.studentNumber(), rankDto.name(), (int)readCount, rank, rankDto.profileImagePath()));
+				podiumList.add(new BookReportRankDto(rankDto.studentNumber(), rankDto.name(), (int)readCount, rank,
+					rankDto.profileImagePath()));
 			}
 		}
 
