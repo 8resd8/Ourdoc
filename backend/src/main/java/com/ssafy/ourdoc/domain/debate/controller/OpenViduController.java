@@ -25,7 +25,6 @@ import com.ssafy.ourdoc.global.integration.openvidu.service.OpenviduService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/openvidu")
 public class OpenViduController {
@@ -34,25 +33,23 @@ public class OpenViduController {
 	private final DebateService debateService;
 	private final OpenviduService openviduService;
 
-
 	@PostMapping("/join")
-	public JoinResponse joinSession(@Login User user, @RequestBody JoinRequest joinRequest) {
+	public JoinResponse joinSession(@Login User user, @Validated @RequestBody JoinRequest joinRequest) {
 		String randomId = UUID.randomUUID().toString();
 		String token = openViduService.getToken(joinRequest, randomId, user);
 		return new JoinResponse(token, randomId);
 	}
 
 	@PostMapping("/test")
-	public JoinTestResponse testJoinSession(@RequestBody JoinTestRequest joinRequest) {
+	public JoinTestResponse testJoinSession(@Validated @RequestBody JoinTestRequest joinRequest) {
 		String randomId = UUID.randomUUID().toString();
 		String token = openViduService.getToken(joinRequest.getSessionName());
 		return new JoinTestResponse(token);
 	}
 
-
 	@PostMapping("/new-join")
 	@ResponseStatus(HttpStatus.OK)
-	public String newJoinSession(@Login User user, @RequestBody JoinRequest joinRequest) {
+	public String newJoinSession(@Login User user, @Validated @RequestBody JoinRequest joinRequest) {
 		String sessionId = openViduService.newCreateSession(joinRequest, user);
 
 		return openviduService.generateToken(sessionId);
@@ -60,7 +57,8 @@ public class OpenViduController {
 
 	@PostMapping("/{roomId}/connection")
 	@ResponseStatus(HttpStatus.OK)
-	public String joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId, @RequestBody JoinRoomRequest request) {
+	public String joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId,
+		@RequestBody JoinRoomRequest request) {
 		return debateService.joinDebateRoom(user, roomId, request);
 	}
 }

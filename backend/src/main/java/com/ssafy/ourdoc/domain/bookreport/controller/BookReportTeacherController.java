@@ -31,7 +31,6 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/bookreports/teachers")
 public class BookReportTeacherController {
@@ -39,7 +38,8 @@ public class BookReportTeacherController {
 	private final BookReportTeacherService bookReportTeacherService;
 
 	@GetMapping
-	public ReportTeacherListResponse getBookReportList(@Login User user, @ModelAttribute ReportTeacherRequest request,
+	public ReportTeacherListResponse getBookReportList(@Login User user,
+		@Validated @ModelAttribute ReportTeacherRequest request,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		return bookReportTeacherService.getBookReports(user, request, pageable);
 	}
@@ -53,14 +53,14 @@ public class BookReportTeacherController {
 	@PostMapping("/{bookreportId}/comment")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void createBookReportComment(@Login User user, @PathVariable("bookreportId") Long bookreportId,
-		@RequestBody ReportCommentRequest request) {
+		@Validated @RequestBody ReportCommentRequest request) {
 		bookReportTeacherService.createComment(user, bookreportId, request);
 	}
 
 	@PatchMapping("/{bookreportId}/comment")
 	@ResponseStatus(HttpStatus.OK)
 	public void updateBookReportComment(@PathVariable("bookreportId") Long bookreportId,
-		@RequestBody ReportCommentRequest request) {
+		@Validated @RequestBody ReportCommentRequest request) {
 		bookReportTeacherService.updateComment(bookreportId, request);
 	}
 

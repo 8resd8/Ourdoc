@@ -17,7 +17,6 @@ import com.ssafy.ourdoc.global.integration.gpt.service.AIFeedbackService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/ai")
 public class GPTController {
@@ -26,13 +25,13 @@ public class GPTController {
 
 	@PostMapping("/spelling")
 	@ResponseStatus(HttpStatus.CREATED)
-	public FeedbackResponse checkSpelling(@Login User user, @RequestBody FeedbackRequest request) {
+	public FeedbackResponse checkSpelling(@Login User user, @Validated @RequestBody FeedbackRequest request) {
 		return aiFeedbackService.spelling(user, request);
 	}
 
 	@PostMapping("/feedback")
 	@ResponseStatus(HttpStatus.CREATED)
-	public FeedbackResponse provideFeedback(@Login User user, @RequestBody FeedbackRequest request) {
+	public FeedbackResponse provideFeedback(@Login User user, @Validated @RequestBody FeedbackRequest request) {
 		return aiFeedbackService.feedback(user, request);
 	}
 }

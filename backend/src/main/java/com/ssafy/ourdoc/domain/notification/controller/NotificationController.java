@@ -25,7 +25,6 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/notifications")
 public class NotificationController {
@@ -47,7 +46,7 @@ public class NotificationController {
 
 	@GetMapping
 	public NotificationListResponse getNotifications(@Login User user,
-		@ModelAttribute NotificationConditionRequest request,
+		@Validated @ModelAttribute NotificationConditionRequest request,
 		Pageable pageable) {
 		return notificationQueryService.getUnreadNotifications(user, request, pageable);
 	}

@@ -13,16 +13,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentAffiliationChangeRequest;
-import com.ssafy.ourdoc.domain.user.student.dto.StudentProfileResponseDto;
 import com.ssafy.ourdoc.domain.user.student.dto.StudentSignupRequest;
 import com.ssafy.ourdoc.domain.user.student.service.StudentService;
-import com.ssafy.ourdoc.domain.user.teacher.dto.TeacherProfileUpdateRequest;
 import com.ssafy.ourdoc.global.annotation.Login;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequestMapping("/students")
 @RequiredArgsConstructor
 public class StudentController {
@@ -31,7 +28,7 @@ public class StudentController {
 
 	// 1. 학생 회원가입
 	@PostMapping("/signup")
-	public ResponseEntity<String> signup(@RequestBody StudentSignupRequest request) {
+	public ResponseEntity<String> signup(@Validated @RequestBody StudentSignupRequest request) {
 		studentService.signup(request);
 		return ResponseEntity.ok("학생 회원가입 완료");
 	}
@@ -39,7 +36,7 @@ public class StudentController {
 	// 2. 학생 소속 변경 요청(학년 변경시)
 	@PostMapping("/request")
 	public ResponseEntity<String> studentAffiliationChange(@Login User user,
-		@RequestBody StudentAffiliationChangeRequest request) {
+		@Validated @RequestBody StudentAffiliationChangeRequest request) {
 		studentService.requestStudentAffiliationChange(user, request);
 		return ResponseEntity.ok("학생 소속 변경 신청 완료");
 	}
