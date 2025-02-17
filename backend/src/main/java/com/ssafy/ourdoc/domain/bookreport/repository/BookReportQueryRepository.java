@@ -9,6 +9,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDtoWithId;
@@ -43,4 +44,8 @@ public interface BookReportQueryRepository {
 	List<BookReportDailyStatisticsDto> classDailyBookReportCount(Long userId, int month);
 
 	List<BookReportRankDto> bookReportRank(Long userId);
+
+	List<BookReportMyRankDto> myBookReportRank(Long userId);
+
+	int myStampCount(Long userId);
 }
