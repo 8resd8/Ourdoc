@@ -145,7 +145,7 @@ public class BookFavoriteServiceTest {
 
 		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks, pageable);
 		assertThat(bookFavorites.favorite().getContent()).isEqualTo(
-			List.of(BookFavoriteDetail.of(new BookFavorite(book, user), false, List.of(),
+			List.of(BookFavoriteDetail.of(new BookFavorite(book, user), false,
 				bookStatusMapper.mapBookStatus(book, user))));
 
 	}
