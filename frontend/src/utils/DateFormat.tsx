@@ -14,7 +14,8 @@ export const DateFormat = (isoDate: string, type: string): string => {
 };
 
 export const detailDate = (a: string): string => {
-  const milliSeconds = new Date().getTime() - new Date(a).getTime();
+  const milliSeconds =
+    new Date().getTime() - addHours(new Date(a), 9).getTime();
   const seconds = milliSeconds / 1000;
   if (seconds < 60) return `방금 전`;
   const minutes = seconds / 60;
@@ -29,4 +30,9 @@ export const detailDate = (a: string): string => {
   if (months < 12) return `${Math.floor(months)}개월 전`;
   const years = days / 365;
   return `${Math.floor(years)}년 전`;
+};
+const addHours = (date: Date, hours: number): Date => {
+  const result = new Date(date);
+  result.setHours(result.getHours() + hours);
+  return result;
 };
