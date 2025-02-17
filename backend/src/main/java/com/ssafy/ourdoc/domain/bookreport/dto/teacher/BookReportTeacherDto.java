@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.querydsl.core.annotations.QueryProjection;
 
-public record BookReportTeacher(
+public record BookReportTeacherDto(
 	Long id,
 	int studentNumber,
 	String studentName,
@@ -12,6 +12,6 @@ public record BookReportTeacher(
 	LocalDateTime approveTime) {
 
 	@QueryProjection
-	public BookReportTeacher {
+	public BookReportTeacherDto {
 	}
 }
