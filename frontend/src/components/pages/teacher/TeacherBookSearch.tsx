@@ -64,22 +64,28 @@ const TeacherBookSearch = () => {
 
   const addClassHomeworkBook = async (bookId: number) => {
     const response = await addHomeworkBookApi(bookId);
+    fetchBook();
   };
   const addClassRecommendBook = async (bookId: number) => {
     const response = await addTeacherRecommendedBookApi(bookId);
+    fetchBook();
   };
   const addFavoriteBook = async (bookId: number) => {
     const response = await addFavoriteBookApi(bookId);
+    fetchBook();
   };
 
   const removeClassHomeworkBook = async (bookId: number) => {
     const response = await removeHomeworkBookApi(bookId);
+    fetchBook();
   };
   const removeClassRecommendBook = async (bookId: number) => {
     const response = await removeTeacherRecommendedBookApi(bookId);
+    fetchBook();
   };
   const removeFavoriteBook = async (bookId: number) => {
     const response = await removeFavoriteBookApi(bookId);
+    fetchBook();
   };
 
   return (
@@ -146,8 +152,8 @@ const TeacherBookSearch = () => {
                         text="관심"
                         onClick={() =>
                           !book.bookStatus?.favorite
-                            ? removeFavoriteBook(book.bookId)
-                            : addFavoriteBook(book.bookId)
+                            ? addFavoriteBook(book.bookId)
+                            : removeFavoriteBook(book.bookId)
                         }
                         // removeClick={()=>removeClassHomeworkBook(book.bookId)}
                         isActive={book.bookStatus?.favorite} // 상태에 따라 변경
