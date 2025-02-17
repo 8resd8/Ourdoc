@@ -17,18 +17,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudentDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportHomeworkStudentDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportStudentDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.teacher.BookReportTeacherDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QBookReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.QBookReportFeedBack;
 import com.ssafy.ourdoc.global.common.enums.Active;
@@ -125,8 +124,8 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public List<ReportTeacherDtoWithId> bookReportsHomework(Long homeworkId) {
-		return queryFactory.select(new QReportTeacherDtoWithId(
+	public List<BookReportTeacherDto> bookReportsHomework(Long homeworkId) {
+		return queryFactory.select(new QBookReportTeacherDto(
 				bookReport.id,
 				studentClass.studentNumber,
 				user.name.as("studentName"),
@@ -149,10 +148,10 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public Page<ReportTeacherDtoWithId> bookReportsHomeworkPage(Long homeworkId, String approveStatus,
+	public Page<BookReportTeacherDto> bookReportsHomeworkPage(Long homeworkId, String approveStatus,
 		Pageable pageable) {
 		int total = bookReportsHomework(homeworkId).size();
-		List<ReportTeacherDtoWithId> content = queryFactory.select(new QReportTeacherDtoWithId(
+		List<BookReportTeacherDto> content = queryFactory.select(new QBookReportTeacherDto(
 				bookReport.id,
 				studentClass.studentNumber,
 				user.name.as("studentName"),
@@ -180,8 +179,46 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public List<BookReportHomeworkStudentDto> bookReportsHomeworkStudents(Long bookId, Long userId) {
-		return queryFactory.select(Projections.constructor(BookReportHomeworkStudentDto.class,
+	public Page<BookReportTeacherDto> bookReportsTeacherPage(Long bookId, Pageable pageable) {
+		Long countResult = queryFactory.select(bookReport.count())
+			.from(bookReport)
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.user, user)
+			.where(
+				studentClass.active.eq(Active.활성),
+				bookReport.book.id.eq(bookId)
+			)
+			.fetchOne();
+		int total = countResult != null ? countResult.intValue() : 0;
+
+		List<BookReportTeacherDto> content = queryFactory.select(new QBookReportTeacherDto(
+				bookReport.id,
+				studentClass.studentNumber,
+				user.name.as("studentName"),
+				bookReport.createdAt,
+				bookReport.approveTime
+			))
+			.from(bookReport)
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.user, user)
+			.join(studentClass.classRoom, classRoom)
+			.join(classRoom.school, school)
+			.join(bookReport.book, book)
+			.where(
+				studentClass.active.eq(Active.활성),
+				bookReport.book.id.eq(bookId)
+			)
+			.orderBy(bookReport.createdAt.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		return new PageImpl<>(content, pageable, total);
+	}
+
+	@Override
+	public List<BookReportStudentDto> bookReportsHomeworkStudents(Long bookId, Long userId) {
+		return queryFactory.select(new QBookReportStudentDto(
 					bookReport.id,
 					bookReport.beforeContent,
 					bookReport.createdAt,
@@ -198,10 +235,10 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public Page<BookReportHomeworkStudentDto> bookReportsHomeworkStudentsPage(Long bookId, Long userId,
+	public Page<BookReportStudentDto> bookReportsHomeworkStudentsPage(Long bookId, Long userId,
 		Pageable pageable) {
 		int total = bookReportsHomeworkStudents(bookId, userId).size();
-		List<BookReportHomeworkStudentDto> content = queryFactory.select(new QBookReportHomeworkStudentDto(
+		List<BookReportStudentDto> content = queryFactory.select(new QBookReportStudentDto(
 				bookReport.id,
 				bookReport.beforeContent,
 				bookReport.createdAt,

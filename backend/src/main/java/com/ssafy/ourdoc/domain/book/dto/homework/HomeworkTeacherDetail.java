@@ -6,7 +6,7 @@ import java.util.List;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookStatus;
 import com.ssafy.ourdoc.domain.book.entity.Homework;
-import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponseWithId;
+import com.ssafy.ourdoc.domain.bookreport.dto.teacher.BookReportTeacher;
 
 import lombok.Builder;
 
@@ -16,10 +16,10 @@ public record HomeworkTeacherDetail(
 	BookResponse book,
 	LocalDateTime createdAt,
 	int homeworkSubmitCount,
-	List<ReportTeacherResponseWithId> bookReports
+	List<BookReportTeacher> bookReports
 ) {
 	public static HomeworkTeacherDetail of(Homework homework, int submitCount,
-		List<ReportTeacherResponseWithId> bookReports, BookStatus bookStatus) {
+		List<BookReportTeacher> bookReports, BookStatus bookStatus) {
 		return HomeworkTeacherDetail.builder()
 			.homeworkId(homework.getId())
 			.book(BookResponse.of(homework.getBook(), bookStatus))

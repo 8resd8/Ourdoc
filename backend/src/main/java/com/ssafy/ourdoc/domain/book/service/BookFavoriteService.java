@@ -11,14 +11,12 @@ import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookStatus;
 import com.ssafy.ourdoc.domain.book.dto.favorite.BookFavoriteDetail;
-import com.ssafy.ourdoc.domain.book.dto.favorite.BookFavoriteDetailPage;
 import com.ssafy.ourdoc.domain.book.dto.favorite.BookFavoriteListResponse;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
 import com.ssafy.ourdoc.domain.book.repository.BookFavoriteRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -81,20 +79,7 @@ public class BookFavoriteService {
 	private BookFavoriteDetail getBookFavoriteDetail(BookFavorite bookFavorite, User user) {
 		Book book = bookFavorite.getBook();
 		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(user.getId(), book.getId()) > 0;
-		List<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
-			book.getId(), user.getId());
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(bookFavorite.getBook(), user);
-		return BookFavoriteDetail.of(bookFavorite, submitStatus, bookReports, bookStatus);
-	}
-
-	public BookFavoriteDetailPage getBookFavoriteDetailPage(Long bookFavoriteId, User user, Pageable pageable) {
-		BookFavorite bookFavorite = bookFavoriteRepository.findById(bookFavoriteId)
-			.orElseThrow(()->new IllegalArgumentException("해당하는 관심도서 ID가 없습니다."));
-		Book book = bookFavorite.getBook();
-		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(user.getId(), book.getId()) > 0;
-		Page<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkPageResponses(
-			book.getId(), user.getId(), pageable);
-		BookStatus bookStatus = bookStatusMapper.mapBookStatus(bookFavorite.getBook(), user);
-		return BookFavoriteDetailPage.of(bookFavorite, submitStatus, bookReports, bookStatus);
+		return BookFavoriteDetail.of(bookFavorite, submitStatus, bookStatus);
 	}
 }
