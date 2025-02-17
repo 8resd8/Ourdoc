@@ -46,6 +46,7 @@ export const HomeworkListSection = () => {
                 publishYear={data.book.publishYear}
                 date={DateFormat(data.book.createdAt, '')}
                 status={data.book.homeworkSubmitCount}
+                studentCount={studentCount}
                 onClick={() => {}}
               />
             </div>
