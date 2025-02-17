@@ -127,6 +127,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	public List<BookReportTeacherDto> bookReportsHomework(Long homeworkId) {
 		return queryFactory.select(new QBookReportTeacherDto(
 				bookReport.id,
+				bookReport.beforeContent,
 				studentClass.studentNumber,
 				user.name.as("studentName"),
 				bookReport.createdAt,
@@ -153,6 +154,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 		int total = bookReportsHomework(homeworkId).size();
 		List<BookReportTeacherDto> content = queryFactory.select(new QBookReportTeacherDto(
 				bookReport.id,
+				bookReport.beforeContent,
 				studentClass.studentNumber,
 				user.name.as("studentName"),
 				bookReport.createdAt,
@@ -193,6 +195,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 
 		List<BookReportTeacherDto> content = queryFactory.select(new QBookReportTeacherDto(
 				bookReport.id,
+				bookReport.beforeContent,
 				studentClass.studentNumber,
 				user.name.as("studentName"),
 				bookReport.createdAt,

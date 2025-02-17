@@ -66,6 +66,7 @@ public class BookReportTeacherService {
 		List<BookReportTeacher> convertDto = bookReportRepository.bookReportsHomework(homeworkId).stream()
 			.map(dto -> new BookReportTeacher(
 				dto.id(),
+				dto.beforeContent(),
 				dto.studentNumber(),
 				dto.studentName(),
 				dto.createdAt(),
@@ -81,6 +82,7 @@ public class BookReportTeacherService {
 				approveStatus, pageable)
 			.map(dto -> new BookReportTeacher(
 				dto.id(),
+				dto.beforeContent(),
 				dto.studentNumber(),
 				dto.studentName(),
 				dto.createdAt(),
@@ -94,6 +96,7 @@ public class BookReportTeacherService {
 		Page<BookReportTeacher> pageDto = bookReportRepository.bookReportsTeacherPage(bookId, pageable)
 			.map(dto -> new BookReportTeacher(
 				dto.id(),
+				dto.beforeContent(),
 				dto.studentNumber(),
 				dto.studentName(),
 				dto.createdAt(),
