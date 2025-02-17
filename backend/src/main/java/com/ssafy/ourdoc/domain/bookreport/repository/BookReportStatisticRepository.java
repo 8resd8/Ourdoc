@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.bookreport.repository;
 
 import static com.ssafy.ourdoc.domain.bookreport.entity.QBookReport.*;
+import static com.ssafy.ourdoc.domain.bookreport.entity.QBookReportFeedBack.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
@@ -342,6 +343,23 @@ public class BookReportStatisticRepository {
 				bookReport.approveTime.isNotNull()
 			)
 			.fetchOne()).orElse(0);
+	}
+
+	public String getLatestAiFeedback(Long userId) {
+		Long studentClassId = queryFactory
+			.select(studentClass.id)
+			.from(studentClass)
+			.where(studentClass.user.id.eq(userId))
+			.fetchOne();
+
+		return queryFactory
+			.select(bookReportFeedBack.comment)
+			.from(bookReport)
+			.join(bookReport.bookReportFeedBack, bookReportFeedBack)
+			.where(bookReport.studentClass.id.eq(studentClassId))
+			.orderBy(bookReport.id.desc())
+			.limit(1)
+			.fetchOne();
 	}
 
 	private List<BookReportDailyStatisticsDto> getDailyBookReportCountDtos(List<Tuple> tuples) {
