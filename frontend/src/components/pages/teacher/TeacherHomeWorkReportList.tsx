@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   BookReport,
   getTeacherHomeworkBookDetailApi,
@@ -27,11 +27,12 @@ const TeacherHomeWorkReportList = () => {
         homeworkId: Number(homeworkId),
       };
       const response = await getTeacherHomeworkBookDetailApi(params);
+      console.log(response);
+
       setHomeworkBook(response.book);
       setBookReports(response.bookReports.content);
     } catch (error) {}
   };
-  console.log(homeworkDetail);
   useEffect(() => {
     fetchHomework();
   }, []);
@@ -46,6 +47,7 @@ const TeacherHomeWorkReportList = () => {
     const date = new Date(dateString);
     return `${date.getMonth() + 1}월 ${date.getDate()}일`;
   };
+  const navigate = useNavigate();
   return (
     <div className="w-[1200px] mx-auto mt-8">
       {/* 숙제 도서 카드 */}
@@ -105,12 +107,24 @@ const TeacherHomeWorkReportList = () => {
                 <td className="px-4 py-2 text-center">
                   {index + 1 + currentPage * 10}
                 </td>
-                <td className="px-4 py-2 truncate">{row.content}</td>
+                {/* <td className="px-4 py-2 truncate">{row.content}</td> */}
+                <td
+                  onClick={() => {
+                    navigate(
+                      `/teacher/report/detail/${row.bookreportId}/?studentNumber=${row.studentNumber}&name=${row.studentName}`
+                    );
+                  }}
+                  className="px-4 py-2 truncate"
+                >
+                  리스폰스 데이터가 없다..
+                </td>
                 <td className="px-4 py-2 text-center">{row.studentNumber}</td>
                 <td className="px-4 py-2 text-center">{row.studentName}</td>
-                <td className="px-4 py-2 text-center">{row.submitDate}</td>
                 <td className="px-4 py-2 text-center">
-                  {row.status === '완료' ? (
+                  {formatDate(row.createdAt)}
+                </td>
+                <td className="px-4 py-2 text-center">
+                  {row.approveStatus === '완료' ? (
                     <button className="body-small text-system-success border-system-success border w-[49px] h-[28px] rounded-[5px]">
                       완료
                     </button>

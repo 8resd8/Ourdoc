@@ -118,7 +118,7 @@ export const getStudentBookReportsApi = async (
 
 // 독서록 상세 조회
 export const getBookReportDetailApi = async (
-  bookReportId: string
+  bookReportId: number
 ): Promise<BookReportDetail> => {
   const response = await api.get<BookReportDetail>(
     `/bookreports/${bookReportId}`

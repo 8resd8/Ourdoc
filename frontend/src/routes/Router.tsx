@@ -86,7 +86,7 @@ const Router = () => {
           <Route path="book/search" element={<TeacherBookSearch />} />
           <Route path="homework/list" element={<TeacherHomeWorkReportList />} />
           <Route path="reports" element={<TeacherReportList />} />
-          <Route path="report/:id" element={<TeacherReportDetail />} />
+          <Route path="report/detail/:id" element={<TeacherReportDetail />} />
           <Route path="statistics" element={<TeacherStatistics />} />
           <Route path="mypage" element={<TeacherMyPage />} />
           <Route path="profile-update" element={<TeacherProfileUpdate />} />
