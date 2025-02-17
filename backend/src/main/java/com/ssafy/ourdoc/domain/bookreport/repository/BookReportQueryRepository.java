@@ -7,8 +7,8 @@ import org.springframework.data.domain.Pageable;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudentDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.teacher.BookReportTeacher;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 
 public interface BookReportQueryRepository {
@@ -17,9 +17,9 @@ public interface BookReportQueryRepository {
 
 	BookReportDetailDto bookReportDetail(Long reportId);
 
-	List<ReportTeacherDtoWithId> bookReportsHomework(Long homeworkId);
+	List<BookReportTeacher> bookReportsHomework(Long homeworkId);
 
-	Page<ReportTeacherDtoWithId> bookReportsHomeworkPage(Long homeworkId, String approveStatus, Pageable pageable);
+	Page<BookReportTeacher> bookReportsHomeworkPage(Long homeworkId, String approveStatus, Pageable pageable);
 
 	List<BookReportHomeworkStudentDto> bookReportsHomeworkStudents(Long bookId, Long userId);
 

@@ -25,10 +25,10 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportHomeworkStudentDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.teacher.BookReportTeacher;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDtoWithId;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.QBookReportFeedBack;
 import com.ssafy.ourdoc.global.common.enums.Active;
@@ -125,7 +125,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public List<ReportTeacherDtoWithId> bookReportsHomework(Long homeworkId) {
+	public List<BookReportTeacher> bookReportsHomework(Long homeworkId) {
 		return queryFactory.select(new QReportTeacherDtoWithId(
 				bookReport.id,
 				studentClass.studentNumber,
@@ -149,10 +149,10 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public Page<ReportTeacherDtoWithId> bookReportsHomeworkPage(Long homeworkId, String approveStatus,
+	public Page<BookReportTeacher> bookReportsHomeworkPage(Long homeworkId, String approveStatus,
 		Pageable pageable) {
 		int total = bookReportsHomework(homeworkId).size();
-		List<ReportTeacherDtoWithId> content = queryFactory.select(new QReportTeacherDtoWithId(
+		List<BookReportTeacher> content = queryFactory.select(new QReportTeacherDtoWithId(
 				bookReport.id,
 				studentClass.studentNumber,
 				user.name.as("studentName"),
