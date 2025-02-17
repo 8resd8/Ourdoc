@@ -174,7 +174,7 @@ const StudentBookCategory = () => {
             {selectedCategory === BookCategoryType.HomeWork ? (
               <HomeWorkButton
                 id={item.homeworkId}
-                isSubmitted={item.submitStatus}
+                isSubmitted={item.homeworkSubmitStatus}
               />
             ) : selectedCategory === BookCategoryType.Favorite ? (
               <FavoriteBookButton
