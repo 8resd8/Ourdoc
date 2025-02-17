@@ -102,14 +102,16 @@ const StudentReportDetail = () => {
         <div className="flex flex-col w-[600px] mt-[110px]">
           <div>
             <div className="text-gray-800 body-small">AI 선생님 의견</div>
-            <div className="w-[413px] h-[421px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
+            <div className="report-font tracking-widest w-[413px] h-[421px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
               <div className="w-[389px]">{report?.aiComment}</div>
             </div>
           </div>
           <div className="mt-3">
             <div className="text-gray-800 body-small">담임 선생님 의견</div>
             <div className="w-[413px] h-[126px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
-              <div className="w-[389px]">{report?.teacherComment}</div>
+              <div className="w-[389px] report-font">
+                {report?.teacherComment}
+              </div>
             </div>
           </div>
         </div>
