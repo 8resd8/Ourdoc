@@ -29,13 +29,9 @@ const StudentSignUp = () => {
   const queryParams = new URLSearchParams(location.search);
 
   const schoolName = queryParams.get('schoolName');
-  console.log('schoolName', schoolName);
   const schoolId = queryParams.get('schoolId');
-  console.log('schoolId', schoolId);
   const grade = queryParams.get('grade');
-  console.log('grade', grade);
   const classNumber = queryParams.get('classNumber');
-  console.log('classNumber', classNumber);
   const classId = queryParams.get('classId');
 
   const [signUpRequest, setSignUpRequest] = useState<SignupStudentRequest>({
@@ -82,9 +78,7 @@ const StudentSignUp = () => {
   const router = useNavigate();
   const handleSignUp = async () => {
     try {
-      console.log('회원가입 요청:', signUpRequest);
       const response = await signupStudentApi(signUpRequest);
-      console.log('회원가입 성공:', response);
       notify({
         type: 'success',
         text: '회원가입이 완료되었습니다.',
@@ -147,7 +141,6 @@ const StudentSignUp = () => {
     setBirthDate(newValue);
     handleInputChange('birth', newValue?.format('YYYY-MM-DD') || '');
   };
-  console.log(gender);
 
   return (
     <div className={classes.root}>

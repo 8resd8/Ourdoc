@@ -16,13 +16,11 @@ const StudentReportDetail = () => {
     if (id) {
       const response = await getBookReportDetailApi(id);
       setReport(response);
-      console.log(response);
     }
   };
 
   const deleteReport = async () => {
     const response = await deleteBookReportApi(Number(id));
-    console.log(response);
   };
   useEffect(() => {
     fetchReport();

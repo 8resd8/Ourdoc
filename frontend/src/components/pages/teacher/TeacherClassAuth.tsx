@@ -22,7 +22,6 @@ const TeacherClassAuth = () => {
       setTotalPages(response.totalPages);
       setStudents(response.content);
       setCurrentPage(page);
-      console.log(response);
     } catch (error: any) {
       console.error('학급 인증 목록 조회 실패:', error);
     }
@@ -43,7 +42,6 @@ const TeacherClassAuth = () => {
         studentNumber,
         isApproved
       );
-      console.log(response);
 
       fetchClassAuth(currentPage);
     } catch (error: any) {
