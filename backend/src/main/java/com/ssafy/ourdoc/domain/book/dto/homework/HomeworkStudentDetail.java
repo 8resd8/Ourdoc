@@ -15,7 +15,7 @@ public record HomeworkStudentDetail(
 	Long homeworkId,
 	BookResponse book,
 	LocalDateTime createdAt,
-	boolean submitStatus,
+	boolean homeworkSubmitStatus,
 	List<BookReportHomeworkStudent> bookReports
 ) {
 	public static HomeworkStudentDetail of(Homework homework, boolean submitStatus,
@@ -24,7 +24,7 @@ public record HomeworkStudentDetail(
 			.homeworkId(homework.getId())
 			.book(BookResponse.of(homework.getBook(), bookStatus))
 			.createdAt(homework.getCreatedAt())
-			.submitStatus(submitStatus)
+			.homeworkSubmitStatus(submitStatus)
 			.bookReports(bookReports)
 			.build();
 	}

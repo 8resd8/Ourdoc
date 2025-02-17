@@ -16,7 +16,7 @@ public record HomeworkStudentDetailPage(
 	Long homeworkId,
 	BookResponse book,
 	LocalDateTime createdAt,
-	boolean submitStatus,
+	boolean homeworkSubmitStatus,
 	Page<BookReportHomeworkStudent> bookReports
 ) {
 	public static HomeworkStudentDetailPage of(Homework homework, boolean submitStatus,
@@ -25,7 +25,7 @@ public record HomeworkStudentDetailPage(
 			.homeworkId(homework.getId())
 			.book(BookResponse.of(homework.getBook(), bookStatus))
 			.createdAt(homework.getCreatedAt())
-			.submitStatus(submitStatus)
+			.homeworkSubmitStatus(submitStatus)
 			.bookReports(bookReports)
 			.build();
 	}
