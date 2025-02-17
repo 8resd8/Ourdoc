@@ -9,7 +9,7 @@ public record BookReportDto(
 	Long bookReportId,
 	String content,
 	LocalDateTime submitTime,
-	ApproveStatus approveStatus,
+	ApproveStatus bookReportApproveStatus,
 	HomeworkStatus homework
 ) {
 }
