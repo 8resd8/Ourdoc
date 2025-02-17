@@ -135,7 +135,7 @@ public class UserService {
 	}
 
 	private void saveRefreshTokenAndSetCookie(User user, HttpHeaders headers) {
-		String refreshToken = jwtUtil.createRefreshToken(user.getLoginId());
+		String refreshToken = jwtUtil.createRefreshToken(user.getLoginId(), user.getUserType().name());
 		refreshService.storeRefreshToken(user.getLoginId(), refreshToken, jwtConfig.getRefreshExpiration());
 		headers.add(HttpHeaders.SET_COOKIE, "Refresh-Token=" + refreshToken + "; HttpOnly; Secure; Path=/");
 	}
