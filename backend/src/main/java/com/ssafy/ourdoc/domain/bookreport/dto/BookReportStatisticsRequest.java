@@ -1,12 +1,12 @@
 package com.ssafy.ourdoc.domain.bookreport.dto;
 
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Max;
 
 public record BookReportStatisticsRequest(
-	@Size(max = 250, message = "{size.max}")
+	@Max(value = 250, message = "{length.max}")
 	Integer grade,
 
-	@Size(max = 250, message = "{size.max}")
+	@Max(value = 250, message = "{length.max}")
 	Integer month
 ) {
 }
