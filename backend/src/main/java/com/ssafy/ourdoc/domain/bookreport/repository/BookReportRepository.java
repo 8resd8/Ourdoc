@@ -19,7 +19,7 @@ public interface BookReportRepository extends JpaRepository<BookReport, Long>, B
 	int countByUserIdAndBookId(@Param("userId") Long userId, @Param("bookId") Long bookId);
 
 	@Query("select b from BookReport b where b.studentClass.user.id = :userId and b.id = :bookReportId")
-	Optional<BookReport> findByBookReport(Long bookReportId, Long userId);
+	Optional<BookReport> findByBookReport(@Param("bookReportId") Long bookReportId, @Param("userId") Long userId);
 
 	@Query("select count(*) from BookReport br where br.homework.id = :homeworkId")
 	int countByHomeworkId(Long homeworkId);
