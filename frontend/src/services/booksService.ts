@@ -48,8 +48,43 @@ export interface BookReport {
   homeworkSubmitStatus: '제출' | '미제출';
   bookReportApproveStatus: '있음' | '없음';
 }
+export interface TeacherHomeworkBookReport {
+  bookreportId: number;
+  studentNumber: number;
+  studentName: string;
+  createdAt: string;
+  approveStatus: string;
+}
 export interface PaginatedBookReports {
   content: BookReport[];
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+    sort: {
+      sorted: boolean;
+      unsorted: boolean;
+      empty: boolean;
+    };
+    offset: number;
+    paged: boolean;
+    unpaged: boolean;
+  };
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  sort: {
+    sorted: boolean;
+    unsorted: boolean;
+    empty: boolean;
+  };
+  number: number;
+  numberOfElements: number;
+  size: number;
+  empty: boolean;
+}
+export interface TeacherPaginatedBookReports {
+  content: TeacherHomeworkBookReport[];
   pageable: {
     pageNumber: number;
     pageSize: number;
@@ -107,6 +142,12 @@ export interface PaginatedBook {
 export interface StudentHomeworkBookDetail {
   book: HomeworkBook;
   bookReports: PaginatedBookReports;
+  homeworkSubmitStatus: any;
+}
+
+export interface TeacherHomeworkBookDetail {
+  book: HomeworkBook;
+  bookReports: TeacherPaginatedBookReports;
   homeworkSubmitStatus: any;
 }
 
@@ -472,11 +513,12 @@ export const getTeacherHomeworkBooksApi =
 
 // 교사 학급 숙제 도서 상세 조회
 export const getTeacherHomeworkBookDetailApi = async (
-  homeworkId: number
-): Promise<BookDetail> => {
+  params: HomeworkDetailParams
+): Promise<TeacherHomeworkBookDetail> => {
   try {
-    const response = await api.get<BookDetail>(
-      `/books/teachers/homework/${homeworkId}`
+    const response = await api.get<TeacherHomeworkBookDetail>(
+      `/books/teachers/homework/${params.homeworkId}`,
+      { params: { page: params.page, size: params.size } }
     );
     return response.data;
   } catch (error) {
