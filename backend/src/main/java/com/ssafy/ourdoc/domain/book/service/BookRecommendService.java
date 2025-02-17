@@ -12,7 +12,6 @@ import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookStatus;
 import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendStudentDetail;
-import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendStudentDetailPage;
 import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendStudentResponse;
 import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendTeacherDetail;
 import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendTeacherResponse;
@@ -168,17 +167,5 @@ public class BookRecommendService {
 			book.getId(), user.getId());
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(bookRecommend.getBook(), user);
 		return BookRecommendStudentDetail.of(bookRecommend, submitStatus, bookReports, bookStatus);
-	}
-
-	public BookRecommendStudentDetailPage getBookRecommendDetailStudentPage(Long bookRecommendId, User user,
-		Pageable pageable) {
-		BookRecommend bookRecommend = bookRecommendRepository.findById(bookRecommendId)
-			.orElseThrow(() -> new IllegalArgumentException("해당하는 추천도서 ID가 없습니다."));
-		Book book = bookRecommend.getBook();
-		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(user.getId(), book.getId()) > 0;
-		Page<BookReportStudent> bookReports = bookReportStudentService.getReportStudentHomeworkPageResponses(
-			book.getId(), user.getId(), pageable);
-		BookStatus bookStatus = bookStatusMapper.mapBookStatus(bookRecommend.getBook(), user);
-		return BookRecommendStudentDetailPage.of(bookRecommend, submitStatus, bookReports, bookStatus);
 	}
 }

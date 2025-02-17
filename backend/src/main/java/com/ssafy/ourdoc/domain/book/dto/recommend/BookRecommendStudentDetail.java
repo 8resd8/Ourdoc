@@ -12,7 +12,6 @@ import lombok.Builder;
 
 @Builder
 public record BookRecommendStudentDetail(
-	Long bookRecommendId,
 	BookResponse book,
 	LocalDateTime createdAt,
 	boolean submitStatus,
@@ -21,7 +20,6 @@ public record BookRecommendStudentDetail(
 	public static BookRecommendStudentDetail of(BookRecommend bookRecommend, boolean submitStatus,
 		List<BookReportStudent> bookReports, BookStatus bookStatus) {
 		return BookRecommendStudentDetail.builder()
-			.bookRecommendId(bookRecommend.getId())
 			.book(BookResponse.of(bookRecommend.getBook(), bookStatus))
 			.createdAt(bookRecommend.getCreatedAt())
 			.bookReports(bookReports)
