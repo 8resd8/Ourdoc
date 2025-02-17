@@ -9,7 +9,7 @@ public record BookReportHomeworkStudent(
 	Long id,
 	String beforeContent,
 	LocalDateTime createdAt,
-	SubmitStatus bookReportsubmitStatus,
+	SubmitStatus homeworkSubmitStatus,
 	ApproveStatus bookReportApproveStatus
 ) {
 
