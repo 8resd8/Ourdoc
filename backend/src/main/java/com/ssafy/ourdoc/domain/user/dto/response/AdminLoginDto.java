@@ -6,6 +6,6 @@ public record AdminLoginDto(
 	String loginId,
 	String name,
 	UserType role,
-	String ProfileImagePath
+	String profileImagePath
 ) {
 }
