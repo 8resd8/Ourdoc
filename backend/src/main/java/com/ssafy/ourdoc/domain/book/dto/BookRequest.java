@@ -1,11 +1,11 @@
 package com.ssafy.ourdoc.domain.book.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
 
 public record BookRequest(
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
 	Long bookId
 ) {
 }

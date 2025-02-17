@@ -36,7 +36,6 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/bookreports/students")
 public class BookReportStudentController {
@@ -45,7 +44,8 @@ public class BookReportStudentController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public BookReportSaveResponse createBookReportStudent(@Login User user, @RequestBody BookReadLogRequest request) {
+	public BookReportSaveResponse createBookReportStudent(@Login User user,
+		@Validated @RequestBody BookReadLogRequest request) {
 		return bookReportStudentService.saveBookReport(user, request);
 	}
 
@@ -79,20 +79,20 @@ public class BookReportStudentController {
 	}
 
 	@GetMapping("/statistics")
-	public BookReportStatisticsResponse getBookReportStatistics(@Login User user, @ModelAttribute
+	public BookReportStatisticsResponse getBookReportStatistics(@Login User user, @Validated @ModelAttribute
 	BookReportStatisticsRequest request) {
 		return bookReportStudentService.getBookReportStatistics(user, request);
 	}
 
 	@GetMapping("/statistics/months")
 	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(@Login User user,
-		@ModelAttribute BookReportStatisticsRequest request) {
+		@Validated @ModelAttribute BookReportStatisticsRequest request) {
 		return bookReportStudentService.getMonthlyBookReportStatistics(user, request);
 	}
 
 	@GetMapping("/statistics/days")
 	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(@Login User user,
-		@ModelAttribute BookReportStatisticsRequest request) {
+		@Validated @ModelAttribute BookReportStatisticsRequest request) {
 		return bookReportStudentService.getDailyBookReportStatistics(user, request);
 	}
 

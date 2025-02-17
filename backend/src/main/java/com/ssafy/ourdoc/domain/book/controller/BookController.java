@@ -21,7 +21,6 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/books")
 public class BookController {
@@ -31,7 +30,7 @@ public class BookController {
 	@GetMapping
 	public ResponseEntity<BookListResponse> getBooks(
 		@Login User user,
-		@ModelAttribute BookSearchRequest request,
+		@Validated @ModelAttribute BookSearchRequest request,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		BookListResponse books = bookService.searchBook(user, request, pageable);
 		return ResponseEntity.ok(books);

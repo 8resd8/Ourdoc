@@ -4,7 +4,9 @@ import java.sql.Date;
 
 import com.ssafy.ourdoc.global.common.enums.Gender;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record StudentSignupRequest(
@@ -24,24 +26,24 @@ public record StudentSignupRequest(
 	@Size(min = 2, max = 250, message = "{size}")
 	String schoolName,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
 	Long schoolId,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
 	Long classId,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
 	Integer grade,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
 	Integer classNumber,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
 	Integer studentNumber,
 
 	@Size(max = 250, message = "{size.max}")

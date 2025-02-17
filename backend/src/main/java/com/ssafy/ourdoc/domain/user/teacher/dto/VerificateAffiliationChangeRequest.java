@@ -1,6 +1,8 @@
 package com.ssafy.ourdoc.domain.user.teacher.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record VerificateAffiliationChangeRequest(
@@ -8,12 +10,11 @@ public record VerificateAffiliationChangeRequest(
 	@Size(max = 250, message = "{size.max}")
 	String studentLoginId,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
 	Integer studentNumber,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
-	boolean isApproved
+	@NotNull(message = "{notblank}")
+	Boolean isApproved
 ) {
 }

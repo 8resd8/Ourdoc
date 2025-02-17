@@ -21,7 +21,6 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/bookreports")
 public class BookReportController {
@@ -37,7 +36,7 @@ public class BookReportController {
 
 	@PostMapping("/feedback")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createBookReportFeedback(@RequestBody FeedbackRequest request) {
+	public void createBookReportFeedback(@Validated @RequestBody FeedbackRequest request) {
 		bookReportService.saveBookReportFeedback(request);
 	}
 

@@ -28,7 +28,6 @@ import com.ssafy.ourdoc.global.annotation.Login;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/debates")
 public class DebateController {
@@ -43,13 +42,13 @@ public class DebateController {
 
 	@PostMapping("/teachers")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createDebateRoom(@Login User user, @RequestBody CreateRoomRequest request) {
+	public void createDebateRoom(@Login User user, @Validated @RequestBody CreateRoomRequest request) {
 		debateService.createDebateRoom(user, request);
 	}
 
 	@PostMapping("/{roomId}/connection")
 	public ResponseEntity<String> joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId,
-		@RequestBody JoinRoomRequest request) {
+		@Validated @RequestBody JoinRoomRequest request) {
 		String token = debateService.joinDebateRoom(user, roomId, request);
 		return ResponseEntity.ok(token);
 	}

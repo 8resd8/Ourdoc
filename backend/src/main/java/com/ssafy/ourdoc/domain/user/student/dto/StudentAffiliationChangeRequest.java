@@ -1,6 +1,8 @@
 package com.ssafy.ourdoc.domain.user.student.dto;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record StudentAffiliationChangeRequest(
@@ -8,24 +10,24 @@ public record StudentAffiliationChangeRequest(
 	@Size(max = 250, message = "{size.max}")
 	String schoolName,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
 	Long schoolId,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
 	Long classId,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
-	int grade,
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
+	Integer grade,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
-	int classNumber,
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
+	Integer classNumber,
 
-	@NotBlank(message = "{notblank}")
-	@Size(max = 250, message = "{size.max}")
-	int studentNumber
+	@NotNull(message = "{notblank}")
+	@Max(value = 250, message = "{length.max}")
+	Integer studentNumber
 ) {
 }

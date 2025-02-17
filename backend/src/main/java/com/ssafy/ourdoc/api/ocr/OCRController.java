@@ -17,7 +17,6 @@ import com.ssafy.ourdoc.global.integration.ocr.service.OCRService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 @RequestMapping("/ocr")
 public class OCRController {
