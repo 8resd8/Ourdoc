@@ -276,11 +276,12 @@ export const getFavoriteBooksApi = async (
   params: BookCategoryParams
 ): Promise<BookCategoryBookProps> => {
   try {
-    const response = await api.get<{ book: BookCategoryBookProps }>(
+    const response = await api.get<{ favorite: BookCategoryBookProps }>(
       '/books/favorite',
       { params }
     );
-    return response.data.book;
+
+    return response.data.favorite;
   } catch (error) {
     console.error('Error fetching student recommended books:', error);
     throw error;

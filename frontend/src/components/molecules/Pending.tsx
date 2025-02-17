@@ -1,5 +1,7 @@
+import { useNavigate } from 'react-router-dom';
 import classes from './Pending.module.css';
 const Pending = () => {
+  const navigate = useNavigate();
   return (
     <div>
       <div className={classes.root}>
@@ -23,7 +25,12 @@ const Pending = () => {
                 // className={`${classes.logo_img}`}
               />
             </div>
-            <div className="mt-[50px]">
+            <div
+              onClick={() => {
+                navigate('/');
+              }}
+              className="mt-[50px]"
+            >
               <button className="w-[414px] h-[48px] rounded-[10px] body-medium  bg-primary-500 text-gray-0 cursor-pointer">
                 확인
               </button>
