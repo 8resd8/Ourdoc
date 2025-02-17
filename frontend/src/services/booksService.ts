@@ -35,6 +35,7 @@ export interface HomeworkBook {
   publishYear: string;
   imageUrl: string;
   bookStatus: any;
+  homeworks: any;
 }
 
 export interface BookReport {
@@ -218,7 +219,7 @@ export interface BookCategoryContents {
   homeworkId: number;
   book: Book;
   createdAt: string;
-  submitStatus: boolean;
+  homeworkSubmitStatus: boolean;
   bookReports: BookReport[];
 }
 

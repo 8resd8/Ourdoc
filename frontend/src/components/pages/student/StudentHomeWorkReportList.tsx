@@ -159,7 +159,9 @@ const StudentHomeWorkReportList = () => {
           <tbody>
             {bookReports.map((row, index) => (
               <tr key={index} className={`${index % 2 === 0 ? '' : ''}`}>
-                <td className="px-4 py-2 text-center">{index + 1}</td>
+                <td className="px-4 py-2 text-center">
+                  {index + currentPage * 10 + 1}
+                </td>
                 <td
                   onClick={() => {
                     navigate(`/student/report/detail/${row.id}`);

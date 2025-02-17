@@ -40,6 +40,7 @@ import TeacherStatistics from '../components/pages/teacher/TeacherStatistics';
 import TeacherStudentInfo from '../components/pages/teacher/TeacherStudentInfo';
 import TeacherHeader from '../components/commons/TeacherHeader';
 import TeacherDebateBoard from '../components/pages/teacher/TeacherDebateBoard';
+// import StudentReportList from '../components/pages/student/StudentReportList';
 
 const Router = () => {
   return (
@@ -67,11 +68,12 @@ const Router = () => {
           <Route path="book/category" element={<StudentBookCategory />} />
           <Route path="book/search" element={<StudentBookSearch />} />
           <Route path="homework/list" element={<StudentHomeWorkReportList />} />
-          <Route path="report/write" element={<StudentReportWrite />} />
+          <Route path="report/write/:id" element={<StudentReportWrite />} />
           <Route path="report/detail/:id" element={<StudentReportDetail />} />
           <Route path="reports" element={<StudentAllReportList />} />
           <Route path="trophy" element={<StudentTrophy />} />
           <Route path="mypage" element={<StudentMyPage />} />
+          {/* <Route path="book/report/list" element={<StudentReportList />} /> */}
         </Route>
 
         {/* 교사 전용 라우트 */}

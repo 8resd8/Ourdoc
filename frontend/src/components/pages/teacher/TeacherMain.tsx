@@ -36,6 +36,7 @@ const TeacherMain = () => {
     MonthlyBookReport[]
   >([]);
   const [mostRead, setmostRead] = useState<MostReadBook>();
+  const [studentCount, setStudentCount] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,6 +44,7 @@ const TeacherMain = () => {
       const classMonthlyReport = await classMonthlyReportApi();
       const teacherHomework = await getTeacherHomeworkBooksApi();
       console.log(teacherHomework);
+      // setStudentCount(teacherHomework.homeworks);
 
       const mostRead = await mostReadApi();
       setclassReportRank(classReportRank);

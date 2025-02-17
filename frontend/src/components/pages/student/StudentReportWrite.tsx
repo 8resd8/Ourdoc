@@ -34,22 +34,24 @@ const StudentReportWrite = () => {
     beforeContent: reportContent,
     imageUrl: ocrImagePath,
     ocrCheck: ocrCheck ? '사용' : '미사용',
-    homeworkId: homeworkId,
+    // homeworkId: homeworkId,
   };
   const user = useRecoilValue(currentUserState);
   const navigate = useNavigate();
   const writeReport = async () => {
     try {
       const write = await createBookReportApi(param);
-
       const aiFeedback = await getAIFeedbackApi({ content: reportContent });
       const aiSpelling = await getAISpellingApi({ content: reportContent });
       setAfterContent(aiSpelling.feedbackContent);
 
       const save = saveAiFeedbackApi({
         bookReportId: write,
-        afterContent: aiFeedback.feedbackContent,
+        feedbackContent: aiFeedback.feedbackContent,
+        spellingContent: aiSpelling.feedbackContent,
       });
+      console.log(save);
+
       navigate('/student/main');
     } catch (error) {}
   };
