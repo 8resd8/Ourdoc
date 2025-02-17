@@ -186,7 +186,7 @@ const StudentHomeWorkReportList = () => {
                       onClick={() =>
                         submitHomeworkHandle(Number(row.id), Number(homeworkId))
                       }
-                      className="body-small text-system-info border-system-info border w-[60px] h-[28px] rounded-[5px]"
+                      className="body-small text-system-info border-system-info border w-[60px] h-[28px] rounded-[5px] cursor-pointer"
                     >
                       제출하기
                     </button>

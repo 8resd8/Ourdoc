@@ -14,7 +14,7 @@ const StudentReportDetail = () => {
   const [report, setReport] = useState<BookReportDetail | null>(null);
   const fetchReport = async () => {
     if (id) {
-      const response = await getBookReportDetailApi(id);
+      const response = await getBookReportDetailApi(Number(id));
       setReport(response);
     }
   };
