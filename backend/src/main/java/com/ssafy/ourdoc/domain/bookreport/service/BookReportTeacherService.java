@@ -16,11 +16,11 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankResponse;
+import com.ssafy.ourdoc.domain.bookreport.dto.teacher.BookReportTeacher;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportCommentRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponse;
-import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponseWithId;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportFeedbackRepository;
@@ -62,9 +62,9 @@ public class BookReportTeacherService {
 		return pageDto;
 	}
 
-	public List<ReportTeacherResponseWithId> getReportTeacherHomeworkResponses(Long homeworkId) {
-		List<ReportTeacherResponseWithId> convertDto = bookReportRepository.bookReportsHomework(homeworkId).stream()
-			.map(dto -> new ReportTeacherResponseWithId(
+	public List<BookReportTeacher> getReportTeacherHomeworkResponses(Long homeworkId) {
+		List<BookReportTeacher> convertDto = bookReportRepository.bookReportsHomework(homeworkId).stream()
+			.map(dto -> new BookReportTeacher(
 				dto.id(),
 				dto.studentNumber(),
 				dto.studentName(),
@@ -75,11 +75,11 @@ public class BookReportTeacherService {
 		return convertDto;
 	}
 
-	public Page<ReportTeacherResponseWithId> getReportTeacherHomeworkPageResponses(Long homeworkId,
+	public Page<BookReportTeacher> getReportTeacherHomeworkPageResponses(Long homeworkId,
 		String approveStatus, Pageable pageable) {
-		Page<ReportTeacherResponseWithId> pageDto = bookReportRepository.bookReportsHomeworkPage(homeworkId,
+		Page<BookReportTeacher> pageDto = bookReportRepository.bookReportsHomeworkPage(homeworkId,
 				approveStatus, pageable)
-			.map(dto -> new ReportTeacherResponseWithId(
+			.map(dto -> new BookReportTeacher(
 				dto.id(),
 				dto.studentNumber(),
 				dto.studentName(),

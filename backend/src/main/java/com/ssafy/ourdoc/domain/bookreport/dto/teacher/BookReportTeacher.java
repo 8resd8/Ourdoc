@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
 
-public record ReportTeacherResponseWithId(
+public record BookReportTeacher(
 	Long bookreportId,
 	int studentNumber,
 	String studentName,
