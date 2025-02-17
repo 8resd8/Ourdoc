@@ -27,6 +27,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.global.annotation.CheckOwner;
 import com.ssafy.ourdoc.global.annotation.Login;
 
 import lombok.RequiredArgsConstructor;
@@ -51,6 +52,7 @@ public class BookReportStudentController {
 		return bookReportStudentService.getBookReports(user, grade, pageable);
 	}
 
+	@CheckOwner(target = "bookReportId")
 	@DeleteMapping("/{bookReportId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteBookReport(@Login User user, @PathVariable("bookReportId") Long bookReportId) {

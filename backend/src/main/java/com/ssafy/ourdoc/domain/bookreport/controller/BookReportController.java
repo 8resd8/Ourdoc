@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.FeedbackRequest;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportService;
+import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.global.annotation.CheckOwner;
+import com.ssafy.ourdoc.global.annotation.Login;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,8 +28,10 @@ public class BookReportController {
 
 	private final BookReportService bookReportService;
 
+	@CheckOwner(target = "bookReportId")
 	@GetMapping("/{bookReportId}")
-	public BookReportDetailResponse getBookReportList(@PathVariable("bookReportId") Long bookReportId) {
+	public BookReportDetailResponse getBookReportList(@Login User user,
+		@PathVariable("bookReportId") Long bookReportId) {
 		return bookReportService.getBookReportDetail(bookReportId);
 	}
 
