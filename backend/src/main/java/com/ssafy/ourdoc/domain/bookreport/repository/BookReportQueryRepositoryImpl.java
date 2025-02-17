@@ -564,4 +564,17 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	private final NumberExpression<Integer> dayExpression = Expressions.numberTemplate(
 		Integer.class, "function('DAY', {0})", bookReport.createdAt
 	);
+
+	private BooleanExpression eqApproveStatus(String approveStatus) {
+		if (approveStatus == null || approveStatus.isEmpty()) {
+			return null;
+		}
+		if (approveStatus.equals("Y")) {
+			return bookReport.approveTime.isNotNull();
+		}
+		if (approveStatus.equals("N")) {
+			return bookReport.approveTime.isNull();
+		}
+		return null;
+	}
 }
