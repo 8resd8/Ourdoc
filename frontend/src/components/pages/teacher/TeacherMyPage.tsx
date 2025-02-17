@@ -1,4 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  getTeacherProfileApi,
+  TeacherProfile,
+} from '../../../services/teachersService';
 
 interface ModalProps {
   type: 'passwordConfirm' | 'passwordReset' | 'createClass';
@@ -68,58 +72,75 @@ const Modal = ({ type, onClose }: ModalProps) => {
 const TeacherMyPage = () => {
   const [modalType, setModalType] = useState<ModalProps['type'] | null>(null);
 
+  const [teacherUser, setTeacherUser] = useState<TeacherProfile>();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getTeacherProfileApi();
+
+      setTeacherUser(response);
+    };
+
+    fetchData();
+  }, []);
+
   return (
-    <div className="flex flex-col items-center p-6">
-      <img
-        className="w-48 h-48 rounded-full border border-gray-300"
-        src="/assets/images/tmpProfile.png"
-        alt="프로필 이미지"
-      />
-      <div className="mt-4 headline-medium font-semibold text-gray-800">
-        나미소 님
+    teacherUser && (
+      <div className="flex flex-col items-center p-6">
+        <img
+          className="w-48 h-48 rounded-full border border-gray-300"
+          src={teacherUser.profileImagePath}
+          alt="프로필 이미지"
+        />
+        <div className="mt-4 headline-medium font-semibold text-gray-800">
+          {teacherUser.name} 님
+        </div>
+        <div className="mt-6 w-[414px] space-y-4">
+          {[
+            { label: '아이디', value: teacherUser.loginId },
+            { label: '이메일', value: teacherUser.email },
+            {
+              label: '소속',
+              value: `${teacherUser.schoolName} ${teacherUser.grade}학년 ${teacherUser.classNumber}반`,
+            },
+            { label: '전화번호', value: teacherUser.phone },
+          ].map((item, index) => (
+            <div key={index} className="border-b pb-2">
+              <div className="body-small text-gray-800">{item.label}</div>
+              <div className="body-medium text-gray-800">{item.value}</div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 w-[414px] flex justify-between">
+          <button
+            onClick={() => setModalType('passwordReset')}
+            className="flex-1 px-3 py-4 border border-system-danger text-system-danger rounded-[10px] mr-2 cursor-pointer"
+          >
+            비밀번호 재설정
+          </button>
+          <button
+            onClick={() => setModalType('createClass')}
+            className="flex-1 px-3 py-4 bg-primary-500 text-gray-0 rounded-[10px] ml-2 cursor-pointer"
+          >
+            새 학급 생성
+          </button>
+        </div>
+        <div className="mt-6 space-y-4 w-[414px]">
+          <button className="w-full py-3 border border-secondary-500 text-secondary-500 rounded-[10px] cursor-pointer">
+            프로필 이미지 수정
+          </button>
+          <button
+            onClick={() => setModalType('passwordConfirm')}
+            className="w-full py-3 border border-primary-500 text-primary-500 rounded-[10px] cursor-pointer"
+          >
+            회원정보 수정
+          </button>
+        </div>
+        {modalType && (
+          <Modal type={modalType} onClose={() => setModalType(null)} />
+        )}
       </div>
-      <div className="mt-6 w-[414px] space-y-4">
-        {[
-          { label: '아이디', value: 'usertest' },
-          { label: '이메일', value: 'usertest@baver.com' },
-          { label: '소속', value: 'ㅁㅁ초등학교 1학년 2반' },
-          { label: '전화번호', value: '010-1441-1441' },
-        ].map((item, index) => (
-          <div key={index} className="border-b pb-2">
-            <div className="body-small text-gray-800">{item.label}</div>
-            <div className="body-medium text-gray-800">{item.value}</div>
-          </div>
-        ))}
-      </div>
-      <div className="mt-6 w-[414px] flex justify-between">
-        <button
-          onClick={() => setModalType('passwordReset')}
-          className="flex-1 px-3 py-4 border border-system-danger text-system-danger rounded-[10px] mr-2 cursor-pointer"
-        >
-          비밀번호 재설정
-        </button>
-        <button
-          onClick={() => setModalType('createClass')}
-          className="flex-1 px-3 py-4 bg-primary-500 text-gray-0 rounded-[10px] ml-2 cursor-pointer"
-        >
-          새 학급 생성
-        </button>
-      </div>
-      <div className="mt-6 space-y-4 w-[414px]">
-        <button className="w-full py-3 border border-secondary-500 text-secondary-500 rounded-[10px] cursor-pointer">
-          프로필 이미지 수정
-        </button>
-        <button
-          onClick={() => setModalType('passwordConfirm')}
-          className="w-full py-3 border border-primary-500 text-primary-500 rounded-[10px] cursor-pointer"
-        >
-          회원정보 수정
-        </button>
-      </div>
-      {modalType && (
-        <Modal type={modalType} onClose={() => setModalType(null)} />
-      )}
-    </div>
+    )
   );
 };
 

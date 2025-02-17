@@ -96,6 +96,17 @@ export interface School {
   address: string;
 }
 
+export interface TeacherProfile {
+  profileImagePath: string;
+  name: string;
+  loginId: string;
+  email: string;
+  schoolName: string;
+  grade: number;
+  classNumber: number;
+  phone: string;
+}
+
 // 교사 인증 요청
 export const requestTeacherVerificationApi = async (data: {
   name: string;
@@ -184,11 +195,10 @@ export const updateStudentInfoApi = async (
 };
 
 // 교사 본인 정보 조회
-export const getTeacherProfileApi =
-  async (): Promise<TeacherProfileResponse> => {
-    const response = await api.get<TeacherProfileResponse>(`/teachers/profile`);
-    return response.data;
-  };
+export const getTeacherProfileApi = async (): Promise<TeacherProfile> => {
+  const response = await api.get<TeacherProfile>(`/teachers/profile`);
+  return response.data;
+};
 
 // 교사 본인 정보 수정
 export const updateTeacherProfileApi = async (
