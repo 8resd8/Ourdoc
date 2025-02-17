@@ -23,7 +23,10 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportSaveResponse;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStampResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
@@ -198,5 +201,33 @@ public class BookReportStudentService {
 	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(User user,
 		BookReportStatisticsRequest request) {
 		return bookReportRepository.myDailyBookReportCount(user.getId(), request.grade(), request.month());
+	}
+
+	public BookReportMyRankResponse getBookReportRank(User user) {
+		List<BookReportMyRankDto> rankList = bookReportRepository.myBookReportRank(user.getId());
+		int rank = 0;
+		int myRank = 0;
+		int idx = 0;
+		int prevCount = -1;
+		int readCount = 0;
+		for (BookReportMyRankDto rankDto : rankList) {
+			idx++;
+			readCount = rankDto.stampCount();
+			if (readCount != prevCount) {
+				rank = idx;
+				prevCount = readCount;
+			}
+			if (user.getId().equals(rankDto.userId())) {
+				myRank = rank;
+			}
+		}
+
+		int stampCount = bookReportRepository.myStampCount(user.getId());
+
+		return new BookReportMyRankResponse(idx, stampCount, myRank);
+	}
+
+	public BookReportStampResponse getStampCount(User user) {
+		return new BookReportStampResponse(bookReportRepository.myStampCount(user.getId()));
 	}
 }

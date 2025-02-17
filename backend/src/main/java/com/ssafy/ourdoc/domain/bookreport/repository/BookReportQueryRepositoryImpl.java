@@ -34,6 +34,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportHomeworkStudentDto;
@@ -196,8 +197,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				.join(studentClass.classRoom, classRoom)
 				.where(
 					studentClass.user.id.eq(userId),
-					classRoom.grade.eq(grade),
-					bookReport.approveTime.isNotNull()
+					classRoom.grade.eq(grade)
 				).fetchOne()
 		).orElse(0L);
 	}
@@ -224,8 +224,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 					.join(bookReport.studentClass, studentClass)
 					.join(studentClass.classRoom, classRoom)
 					.where(
-						classRoom.id.eq(classRoomId),
-						bookReport.approveTime.isNotNull()
+						classRoom.id.eq(classRoomId)
 					).fetchOne())
 			.orElse(0L);
 
@@ -263,8 +262,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 					.join(bookReport.studentClass, studentClass)
 					.join(studentClass.classRoom, classRoom)
 					.where(
-						classRoom.id.eq(classRoomId),
-						bookReport.approveTime.isNotNull()
+						classRoom.id.eq(classRoomId)
 					).groupBy(studentClass.id)
 					.orderBy(bookReport.count().desc())
 					.limit(1)
@@ -337,7 +335,6 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.where(
 				studentClass.user.id.eq(userId),
 				classRoom.grade.eq(grade),
-				bookReport.approveTime.isNotNull(),
 				bookReport.createdAt.between(startDate(year), endDate(year))
 			).groupBy(monthExpression)
 			.fetch();
@@ -374,7 +371,6 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.join(studentClass.classRoom, classRoom)
 			.where(
 				classRoom.id.eq(classRoomId),
-				bookReport.approveTime.isNotNull(),
 				bookReport.createdAt.between(startDate(year), endDate(year))
 			).groupBy(monthExpression)
 			.fetch();
@@ -429,7 +425,6 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.where(
 				studentClass.user.id.eq(userId),
 				classRoom.grade.eq(grade),
-				bookReport.approveTime.isNotNull(),
 				bookReport.createdAt.between(startDate(year, month), endDate(year, month))
 			).groupBy(dayExpression)
 			.fetch();
@@ -466,7 +461,6 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.join(studentClass.classRoom, classRoom)
 			.where(
 				classRoom.id.eq(classRoomId),
-				bookReport.approveTime.isNotNull(),
 				bookReport.createdAt.between(startDate(year, month), endDate(year, month))
 			).groupBy(dayExpression)
 			.fetch();
@@ -484,8 +478,6 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				teacherClass.active.eq(Active.활성)
 			).fetchOne();
 
-		int a = 0;
-
 		return queryFactory
 			.select(Projections.constructor(
 				BookReportRankDto.class,
@@ -499,12 +491,59 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.leftJoin(bookReport)
 			.on(
 				bookReport.studentClass.eq(studentClass)
-					.and(bookReport.approveTime.isNotNull())
 			).where(
 				classRoom.id.eq(classRoomId)
 			).groupBy(studentClass.studentNumber)
 			.orderBy(bookReport.count().desc())
 			.fetch();
+	}
+
+	@Override
+	public List<BookReportMyRankDto> myBookReportRank(Long userId) {
+		Long classRoomId = queryFactory
+			.select(studentClass.classRoom.id)
+			.from(studentClass)
+			.where(
+				studentClass.user.id.eq(userId),
+				studentClass.active.eq(Active.활성)
+			).fetchOne();
+
+		return queryFactory
+			.select(Projections.constructor(
+				BookReportMyRankDto.class,
+				studentClass.user.id,
+				bookReport.count().intValue(),
+				Expressions.constant(0)
+			)).from(studentClass)
+			.join(studentClass.classRoom, classRoom)
+			.leftJoin(bookReport)
+			.on(
+				bookReport.studentClass.eq(studentClass)
+			).where(
+				classRoom.id.eq(classRoomId)
+			).groupBy(studentClass.studentNumber)
+			.orderBy(bookReport.count().desc())
+			.fetch();
+	}
+
+	@Override
+	public int myStampCount(Long userId) {
+		Long studentClassId = queryFactory
+			.select(studentClass.id)
+			.from(studentClass)
+			.where(
+				studentClass.user.id.eq(userId),
+				studentClass.active.eq(Active.활성)
+			).fetchOne();
+
+		return Optional.ofNullable(queryFactory
+			.select(bookReport.count().intValue())
+			.from(bookReport)
+			.where(
+				bookReport.studentClass.id.eq(studentClassId),
+				bookReport.approveTime.isNotNull()
+			)
+			.fetchOne()).orElse(0);
 	}
 
 	private List<BookReportDailyStatisticsDto> getDailyBookReportCountDtos(List<Tuple> tuples) {
