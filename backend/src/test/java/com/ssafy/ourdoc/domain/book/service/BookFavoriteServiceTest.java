@@ -24,7 +24,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.ssafy.ourdoc.domain.book.dto.BookListResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookStatus;
+import com.ssafy.ourdoc.domain.book.dto.favorite.BookFavoriteDetail;
+import com.ssafy.ourdoc.domain.book.dto.favorite.BookFavoriteListResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
@@ -139,10 +141,11 @@ public class BookFavoriteServiceTest {
 		when(bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks, pageable)).thenReturn(
 			mockBookFavoritePage);
 
-		BookListResponse bookFavorites = bookFavoriteService.getBookFavorites(request, user, pageable);
+		BookFavoriteListResponse bookFavorites = bookFavoriteService.getBookFavorites(request, user, pageable);
 
 		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks, pageable);
-		assertThat(bookFavorites.book().getContent()).isEqualTo(List.of(BookResponse.of(book, null)));
+		assertThat(bookFavorites.favorite().getContent()).isEqualTo(
+			List.of(BookFavoriteDetail.of(new BookFavorite(book, user), bookStatusMapper.mapBookStatus(book, user))));
 
 	}
 
@@ -160,10 +163,10 @@ public class BookFavoriteServiceTest {
 		when(bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks, pageable)).thenReturn(
 			mockBookFavoritePage);
 
-		BookListResponse bookFavorites = bookFavoriteService.getBookFavorites(request, user, pageable);
+		BookFavoriteListResponse bookFavorites = bookFavoriteService.getBookFavorites(request, user, pageable);
 
 		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks, pageable);
-		assertTrue(bookFavorites.book().getContent().isEmpty());
+		assertTrue(bookFavorites.favorite().getContent().isEmpty());
 	}
 
 	private void setBookId(Book book, Long id) throws Exception {
