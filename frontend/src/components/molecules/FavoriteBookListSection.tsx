@@ -1,13 +1,22 @@
 import { useEffect, useState } from 'react';
 import { BookBriefTile } from '../atoms/BookBriefTile';
-import { FavoriteBook, getFavoriteBooksApi } from '../../services/booksService';
+import {
+  BookCategoryBookProps,
+  BookCategoryParams,
+  getFavoriteBooksApi,
+} from '../../services/booksService';
+
+const PARAMS: BookCategoryParams = {
+  page: 0,
+  size: 5,
+};
 
 export const FavoriteBookListSection = () => {
-  const [favoriteBooks, setFavoriteBooks] = useState<FavoriteBook>();
+  const [favoriteBooks, setFavoriteBooks] = useState<BookCategoryBookProps>();
 
   useEffect(() => {
     const fetchFavoriteBooks = async () => {
-      const favoriteBooks = await getFavoriteBooksApi();
+      const favoriteBooks = await getFavoriteBooksApi(PARAMS);
 
       setFavoriteBooks(favoriteBooks);
     };
@@ -20,7 +29,7 @@ export const FavoriteBookListSection = () => {
       <div className="self-stretch justify-between items-start inline-flex">
         {favoriteBooks &&
           favoriteBooks.content.map((book, index) => (
-            <BookBriefTile key={index} book={book} />
+            <BookBriefTile key={index} book={book.book} />
           ))}
       </div>
     </div>
