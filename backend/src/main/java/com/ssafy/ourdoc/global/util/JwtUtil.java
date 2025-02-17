@@ -7,6 +7,7 @@ import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Component;
 
+import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.config.JwtConfig;
 
 import io.jsonwebtoken.Claims;
@@ -75,10 +76,10 @@ public class JwtUtil {
 	}
 
 	// JWT Refresh Token 생성
-	public String createRefreshToken(String userId, String role) {
+	public String createRefreshToken(String userId, UserType role) {
 		return Jwts.builder()
 			.setSubject(userId)
-			.claim("role", role)
+			.claim("role", role.name())
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getRefreshExpiration())) // Refresh 만료 시간
 			.signWith(getSigningKey(), SignatureAlgorithm.HS256)
