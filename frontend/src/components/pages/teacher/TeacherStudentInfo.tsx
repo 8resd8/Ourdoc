@@ -35,6 +35,7 @@ const TeacherStudentInfo = () => {
         studentLoginId: loginId,
         classId: classId,
       });
+      console.log(response);
 
       setawards(response);
     };

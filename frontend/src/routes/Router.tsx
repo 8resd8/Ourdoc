@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import Layout from '../layouts/Layout';
 import SignIn from '../components/pages/common/SignIn';
-import SampleDebateRoom from '../components/pages/common/SampleDebateRoom';
+import DebateRoom from '../components/pages/common/DebateRoom';
 import Test from '../components/pages/Test';
 import AuthLayout from '../layouts/AuthLayout';
 import Pending from '../components/molecules/Pending';
@@ -40,7 +40,6 @@ import TeacherStatistics from '../components/pages/teacher/TeacherStatistics';
 import TeacherStudentInfo from '../components/pages/teacher/TeacherStudentInfo';
 import TeacherHeader from '../components/commons/TeacherHeader';
 import TeacherDebateBoard from '../components/pages/teacher/TeacherDebateBoard';
-import { DebateRoom } from '../components/pages/common/DebateRoom';
 
 const Router = () => {
   return (
@@ -58,7 +57,6 @@ const Router = () => {
         {/* 선생 학생 공통 라우트 */}
         {/* <Route path="/debate/board" element={<DebateBoard />} /> */}
         <Route path="/webrtc/board" element={<WebRtcBoard />} />
-        <Route path="/sample/debate/room" element={<SampleDebateRoom />} />
         <Route path="/debate/room" element={<DebateRoom />} />
 
         {/* 학생 전용 라우트 */}
@@ -69,7 +67,7 @@ const Router = () => {
           <Route path="book/category" element={<StudentBookCategory />} />
           <Route path="book/search" element={<StudentBookSearch />} />
           <Route path="homework/list" element={<StudentHomeWorkReportList />} />
-          <Route path="report/write/:id" element={<StudentReportWrite />} />
+          <Route path="report/write" element={<StudentReportWrite />} />
           <Route path="report/detail/:id" element={<StudentReportDetail />} />
           <Route path="reports" element={<StudentAllReportList />} />
           <Route path="trophy" element={<StudentTrophy />} />
