@@ -90,6 +90,19 @@ public class BookReportTeacherService {
 		return pageDto;
 	}
 
+	public Page<BookReportTeacher> getReportTeacherPageResponses(Long bookId, Pageable pageable) {
+		Page<BookReportTeacher> pageDto = bookReportRepository.bookReportsTeacherPage(bookId, pageable)
+			.map(dto -> new BookReportTeacher(
+				dto.id(),
+				dto.studentNumber(),
+				dto.studentName(),
+				dto.createdAt(),
+				(dto.approveTime() != null) ? 있음 : 없음
+			));
+
+		return pageDto;
+	}
+
 	public void approveStamp(User user, Long bookReportId) {
 		BookReport bookReport = getBookReport(bookReportId);
 

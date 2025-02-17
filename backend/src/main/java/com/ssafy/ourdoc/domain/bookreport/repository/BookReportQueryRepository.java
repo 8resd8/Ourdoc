@@ -21,6 +21,8 @@ public interface BookReportQueryRepository {
 
 	Page<BookReportTeacherDto> bookReportsHomeworkPage(Long homeworkId, String approveStatus, Pageable pageable);
 
+	Page<BookReportTeacherDto> bookReportsTeacherPage(Long bookId, Pageable pageable);
+
 	List<BookReportStudentDto> bookReportsHomeworkStudents(Long bookId, Long userId);
 
 	Page<BookReportStudentDto> bookReportsHomeworkStudentsPage(Long bookId, Long userId, Pageable pageable);
