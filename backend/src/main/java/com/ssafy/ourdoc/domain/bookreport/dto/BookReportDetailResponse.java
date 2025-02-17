@@ -17,6 +17,6 @@ public record BookReportDetailResponse(
 	String afterContent,
 	String aiComment,
 	String teacherComment,
-	ApproveStatus approveStatus
+	ApproveStatus bookReportApproveStatus
 ) {
 }

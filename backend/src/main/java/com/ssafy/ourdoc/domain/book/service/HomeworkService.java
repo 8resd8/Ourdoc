@@ -117,7 +117,8 @@ public class HomeworkService {
 		return HomeworkTeacherDetail.of(homework, submitCount, bookReports, bookStatus);
 	}
 
-	public HomeworkTeacherDetailPage getHomeworkDetailTeacherPage(Long homeworkId, User user, Pageable pageable) {
+	public HomeworkTeacherDetailPage getHomeworkDetailTeacherPage(Long homeworkId, User user, String approveStatus,
+		Pageable pageable) {
 		Homework homework = homeworkRepository.findById(homeworkId)
 			.orElseThrow(() -> new NoSuchElementException("해당하는 숙제가 없습니다."));
 		if (!homework.getUser().equals(user)) {
@@ -126,7 +127,7 @@ public class HomeworkService {
 
 		int submitCount = bookReportRepository.countByHomeworkId(homeworkId);
 		Page<ReportTeacherResponseWithId> bookReports = bookReportTeacherService.getReportTeacherHomeworkPageResponses(
-			homeworkId, pageable);
+			homeworkId, approveStatus, pageable);
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(homework.getBook(), user);
 		return HomeworkTeacherDetailPage.of(homework, submitCount, bookReports, bookStatus);
 	}

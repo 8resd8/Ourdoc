@@ -15,7 +15,7 @@ public record HomeworkTeacherDetail(
 	Long homeworkId,
 	BookResponse book,
 	LocalDateTime createdAt,
-	int submitCount,
+	int homeworkSubmitCount,
 	List<ReportTeacherResponseWithId> bookReports
 ) {
 	public static HomeworkTeacherDetail of(Homework homework, int submitCount,
@@ -24,7 +24,7 @@ public record HomeworkTeacherDetail(
 			.homeworkId(homework.getId())
 			.book(BookResponse.of(homework.getBook(), bookStatus))
 			.createdAt(homework.getCreatedAt())
-			.submitCount(submitCount)
+			.homeworkSubmitCount(submitCount)
 			.bookReports(bookReports)
 			.build();
 	}

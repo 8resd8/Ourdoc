@@ -46,7 +46,7 @@ public class BookReportService {
 			.afterContent(detailDto.afterContent())
 			.aiComment(aiComment)
 			.teacherComment(teacherComment)
-			.approveStatus(approveStatus)
+			.bookReportApproveStatus(approveStatus)
 			.build();
 	}
 

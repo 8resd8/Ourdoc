@@ -9,6 +9,6 @@ public record ReportTeacherResponseWithId(
 	int studentNumber,
 	String studentName,
 	LocalDateTime createdAt,
-	ApproveStatus approveStatus
+	ApproveStatus bookReportApproveStatus
 ) {
 }
