@@ -160,9 +160,10 @@ public class HomeworkService {
 			throw new IllegalArgumentException("해당 숙제에 해당하는 학급의 학생이 아닙니다.");
 		}
 
+		Book book = homework.getBook();
 		boolean submitStatus = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId) > 0;
 		List<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
-			homeworkId, user.getId());
+			book.getId(), user.getId());
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(homework.getBook(), user);
 		return HomeworkStudentDetail.of(homework, submitStatus, bookReports, bookStatus);
 	}
