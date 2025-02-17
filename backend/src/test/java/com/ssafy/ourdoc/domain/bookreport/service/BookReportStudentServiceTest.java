@@ -132,7 +132,6 @@ class BookReportStudentServiceTest {
 		assertEquals(1L, response.bookReportId());
 	}
 
-
 	@Test
 	@DisplayName("독서록 피드백을 정상적으로 저장할 수 있다.")
 	void testSaveBookReportFeedback() {
@@ -168,7 +167,7 @@ class BookReportStudentServiceTest {
 		assertThat(response).isNotNull();
 		assertThat(response.bookReports().getContent()).hasSize(1); // Page의 content 검증
 		assertThat(response.bookReports().getContent().get(0).content()).isEqualTo("독서 후 감상");
-		assertThat(response.bookReports().getContent().get(0).approveStatus()).isEqualTo(ApproveStatus.없음);
+		assertThat(response.bookReports().getContent().get(0).bookReportApproveStatus()).isEqualTo(ApproveStatus.없음);
 		assertThat(response.bookReports().getContent().get(0).homework()).isEqualTo(HomeworkStatus.미제출);
 		assertThat(response.bookReports().getTotalElements()).isEqualTo(1); // 전체 데이터 개수 검증
 		assertThat(response.bookReports().getTotalPages()).isEqualTo(1);   // 총 페이지 수 검증
