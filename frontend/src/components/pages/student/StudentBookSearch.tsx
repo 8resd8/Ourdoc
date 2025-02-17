@@ -102,7 +102,7 @@ const StudentBookSearch = () => {
             itemList: book.map((book: Book, index: number) => (
               <div
                 onClick={() =>
-                  navigate(`/student/book/report/list/?bookId=${book.bookId}`)
+                  navigate(`/student/book/report/list/${book.bookId}`)
                 }
                 key={index}
                 className={`flex w-[850px] h-[240px] mt-3`}
