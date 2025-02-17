@@ -34,13 +34,13 @@ public class UserController {
 
 	// 1. 사용자 로그인
 	@PostMapping("/signin")
-	public ResponseEntity<?> Login(@Validated @RequestBody LoginRequest request) {
+	public ResponseEntity<?> Login(@RequestBody LoginRequest request) {
 		return userService.login(request);
 	}
 
 	// 2. ID 중복 체크
 	@PostMapping("/checkId")
-	public ResponseEntity<Boolean> checkDuplicateLoginId(@Validated @RequestBody CheckIdRequest request) {
+	public ResponseEntity<Boolean> checkDuplicateLoginId(@RequestBody CheckIdRequest request) {
 		boolean isDuplicate = userService.isLoginIdDuplicate(request);
 		return ResponseEntity.ok(isDuplicate);
 	}
@@ -64,14 +64,14 @@ public class UserController {
 	// 4. 비밀번호 일치 확인
 	@PostMapping("/password/verification")
 	public ResponseEntity<Boolean> verifyPassword(@Login User user,
-		@Validated @RequestBody CheckPasswordRequest request) {
+		@RequestBody CheckPasswordRequest request) {
 		boolean isDuplicate = userService.verifyPassword(user, request);
 		return ResponseEntity.ok(isDuplicate);
 	}
 
 	// 5. 비밀번호 변경
 	@PatchMapping("/password")
-	public void updatePassword(@Login User user, @Validated @RequestBody ChangePasswordRequest request) {
+	public void updatePassword(@Login User user, @RequestBody ChangePasswordRequest request) {
 		userService.changePassword(user, request);
 	}
 }

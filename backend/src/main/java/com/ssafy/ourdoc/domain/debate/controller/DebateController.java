@@ -42,13 +42,13 @@ public class DebateController {
 
 	@PostMapping("/teachers")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createDebateRoom(@Login User user, @Validated @RequestBody CreateRoomRequest request) {
+	public void createDebateRoom(@Login User user, @RequestBody CreateRoomRequest request) {
 		debateService.createDebateRoom(user, request);
 	}
 
 	@PostMapping("/{roomId}/connection")
 	public ResponseEntity<String> joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId,
-		@Validated @RequestBody JoinRoomRequest request) {
+		@RequestBody JoinRoomRequest request) {
 		String token = debateService.joinDebateRoom(user, roomId, request);
 		return ResponseEntity.ok(token);
 	}

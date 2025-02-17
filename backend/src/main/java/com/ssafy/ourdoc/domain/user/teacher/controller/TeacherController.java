@@ -65,7 +65,7 @@ public class TeacherController {
 	// 3. 학생 소속 변경 승인/거부
 	@PatchMapping("/verification")
 	public ResponseEntity<String> verificateAffiliationChange(@Login User user,
-		@Validated @RequestBody VerificateAffiliationChangeRequest request) {
+		@RequestBody VerificateAffiliationChangeRequest request) {
 		String response = teacherService.verificateAffiliationChange(user, request);
 		return ResponseEntity.ok(response);
 	}

@@ -38,18 +38,18 @@ public class HomeworkController {
 
 	@PostMapping("/teachers/homework")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void addHomework(@Validated @RequestBody BookRequest request, @Login User user) {
+	public void addHomework(@RequestBody BookRequest request, @Login User user) {
 		homeworkService.addHomework(request, user);
 	}
 
 	@DeleteMapping("/teachers/homework")
-	public void deleteHomework(@Validated @RequestBody BookRequest request, @Login User user) {
+	public void deleteHomework(@RequestBody BookRequest request, @Login User user) {
 		homeworkService.deleteHomework(request, user);
 	}
 
 	@GetMapping("/teachers/homework")
 	public ResponseEntity<HomeworkTeacherResponse> getHomeworkTeacherClass(
-		@Validated @ModelAttribute BookSearchRequest request,
+		@ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		HomeworkTeacherResponse response = homeworkService.getHomeworkTeacherClass(request, user, pageable);
@@ -69,7 +69,7 @@ public class HomeworkController {
 
 	@GetMapping("/students/homework")
 	public ResponseEntity<HomeworkStudentResponse> getHomeworkStudentClass(
-		@Validated @ModelAttribute BookSearchRequest request,
+		@ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		HomeworkStudentResponse response = homeworkService.getHomeworkStudentClass(request, user, pageable);

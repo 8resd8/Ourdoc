@@ -39,7 +39,7 @@ public class BookReportTeacherController {
 
 	@GetMapping
 	public ReportTeacherListResponse getBookReportList(@Login User user,
-		@Validated @ModelAttribute ReportTeacherRequest request,
+		@ModelAttribute ReportTeacherRequest request,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		return bookReportTeacherService.getBookReports(user, request, pageable);
 	}
@@ -53,14 +53,14 @@ public class BookReportTeacherController {
 	@PostMapping("/{bookreportId}/comment")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void createBookReportComment(@Login User user, @PathVariable("bookreportId") Long bookreportId,
-		@Validated @RequestBody ReportCommentRequest request) {
+		@RequestBody ReportCommentRequest request) {
 		bookReportTeacherService.createComment(user, bookreportId, request);
 	}
 
 	@PatchMapping("/{bookreportId}/comment")
 	@ResponseStatus(HttpStatus.OK)
 	public void updateBookReportComment(@PathVariable("bookreportId") Long bookreportId,
-		@Validated @RequestBody ReportCommentRequest request) {
+		@RequestBody ReportCommentRequest request) {
 		bookReportTeacherService.updateComment(bookreportId, request);
 	}
 

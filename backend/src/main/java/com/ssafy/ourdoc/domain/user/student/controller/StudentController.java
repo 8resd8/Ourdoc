@@ -28,7 +28,7 @@ public class StudentController {
 
 	// 1. 학생 회원가입
 	@PostMapping("/signup")
-	public ResponseEntity<String> signup(@Validated @RequestBody StudentSignupRequest request) {
+	public ResponseEntity<String> signup(@RequestBody StudentSignupRequest request) {
 		studentService.signup(request);
 		return ResponseEntity.ok("학생 회원가입 완료");
 	}
@@ -36,7 +36,7 @@ public class StudentController {
 	// 2. 학생 소속 변경 요청(학년 변경시)
 	@PostMapping("/request")
 	public ResponseEntity<String> studentAffiliationChange(@Login User user,
-		@Validated @RequestBody StudentAffiliationChangeRequest request) {
+		@RequestBody StudentAffiliationChangeRequest request) {
 		studentService.requestStudentAffiliationChange(user, request);
 		return ResponseEntity.ok("학생 소속 변경 신청 완료");
 	}

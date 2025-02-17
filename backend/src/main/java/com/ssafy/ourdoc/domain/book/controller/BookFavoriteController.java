@@ -31,19 +31,19 @@ public class BookFavoriteController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public void addFavorite(@Validated @RequestBody BookRequest request, @Login User user) {
+	public void addFavorite(@RequestBody BookRequest request, @Login User user) {
 		bookFavoriteService.addBookFavorite(request, user);
 	}
 
 	@GetMapping
-	public BookFavoriteListResponse getFavorite(@Validated @ModelAttribute BookSearchRequest request, @Login User user,
+	public BookFavoriteListResponse getFavorite(@ModelAttribute BookSearchRequest request, @Login User user,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 
 		return bookFavoriteService.getBookFavorites(request, user, pageable);
 	}
 
 	@DeleteMapping
-	public void deleteFavorite(@Validated @RequestBody BookRequest request, @Login User user) {
+	public void deleteFavorite(@RequestBody BookRequest request, @Login User user) {
 		bookFavoriteService.deleteBookFavorite(request, user);
 	}
 }

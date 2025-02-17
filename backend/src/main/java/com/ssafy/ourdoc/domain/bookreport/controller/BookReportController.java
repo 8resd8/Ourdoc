@@ -36,7 +36,7 @@ public class BookReportController {
 
 	@PostMapping("/feedback")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void createBookReportFeedback(@Validated @RequestBody FeedbackRequest request) {
+	public void createBookReportFeedback(@RequestBody FeedbackRequest request) {
 		bookReportService.saveBookReportFeedback(request);
 	}
 

@@ -30,7 +30,7 @@ public class BookController {
 	@GetMapping
 	public ResponseEntity<BookListResponse> getBooks(
 		@Login User user,
-		@Validated @ModelAttribute BookSearchRequest request,
+		@ModelAttribute BookSearchRequest request,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		BookListResponse books = bookService.searchBook(user, request, pageable);
 		return ResponseEntity.ok(books);

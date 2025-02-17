@@ -46,7 +46,7 @@ public class NotificationController {
 
 	@GetMapping
 	public NotificationListResponse getNotifications(@Login User user,
-		@Validated @ModelAttribute NotificationConditionRequest request,
+		@ModelAttribute NotificationConditionRequest request,
 		Pageable pageable) {
 		return notificationQueryService.getUnreadNotifications(user, request, pageable);
 	}

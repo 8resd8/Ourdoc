@@ -30,7 +30,7 @@ public class AwardTeacherController {
 	// 본인 반 학생 상장 조회
 	@GetMapping
 	public AwardTeacherResponse getTeacherClassAwards(@Login User user,
-		@Validated @ModelAttribute AwardTeacherRequest request) {
+		@ModelAttribute AwardTeacherRequest request) {
 		return awardTeacherService.getAwardTeachersClass(user, request);
 	}
 

@@ -45,7 +45,7 @@ public class BookReportStudentController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public BookReportSaveResponse createBookReportStudent(@Login User user,
-		@Validated @RequestBody BookReadLogRequest request) {
+		@RequestBody BookReadLogRequest request) {
 		return bookReportStudentService.saveBookReport(user, request);
 	}
 
@@ -79,20 +79,20 @@ public class BookReportStudentController {
 	}
 
 	@GetMapping("/statistics")
-	public BookReportStatisticsResponse getBookReportStatistics(@Login User user, @Validated @ModelAttribute
+	public BookReportStatisticsResponse getBookReportStatistics(@Login User user, @ModelAttribute
 	BookReportStatisticsRequest request) {
 		return bookReportStudentService.getBookReportStatistics(user, request);
 	}
 
 	@GetMapping("/statistics/months")
 	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(@Login User user,
-		@Validated @ModelAttribute BookReportStatisticsRequest request) {
+		@ModelAttribute BookReportStatisticsRequest request) {
 		return bookReportStudentService.getMonthlyBookReportStatistics(user, request);
 	}
 
 	@GetMapping("/statistics/days")
 	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(@Login User user,
-		@Validated @ModelAttribute BookReportStatisticsRequest request) {
+		@ModelAttribute BookReportStatisticsRequest request) {
 		return bookReportStudentService.getDailyBookReportStatistics(user, request);
 	}
 
