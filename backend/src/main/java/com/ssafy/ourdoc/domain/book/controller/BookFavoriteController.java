@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.ourdoc.domain.book.dto.favorite.BookFavoriteDetailPage;
 import com.ssafy.ourdoc.domain.book.dto.favorite.BookFavoriteListResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
@@ -41,6 +43,11 @@ public class BookFavoriteController {
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 
 		return bookFavoriteService.getBookFavorites(request, user, pageable);
+	}
+
+	@GetMapping("/detail")
+	public BookFavoriteDetailPage getFavoriteDetail(@RequestParam(name = "bookFavoriteId") Long bookFavoriteId, @Login User user, @PageableDefault(page = 0, size = 10) Pageable pageable){
+		return bookFavoriteService.getBookFavoriteDetailPage(bookFavoriteId, user, pageable);
 	}
 
 	@DeleteMapping

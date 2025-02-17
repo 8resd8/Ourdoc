@@ -12,15 +12,15 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
 import lombok.Builder;
 
 @Builder
-public record BookFavoriteDetail(
+public record BookFavoriteDetailPage(
 	Long bookFavoriteId,
 	BookResponse book,
 	boolean submitStatus,
-	List<BookReportHomeworkStudent> bookReports
+	Page<BookReportHomeworkStudent> bookReports
 ) {
-	public static BookFavoriteDetail of(BookFavorite bookFavorite,  boolean submitStatus,
-		List<BookReportHomeworkStudent> bookReports, BookStatus bookStatus) {
-		return BookFavoriteDetail.builder()
+	public static BookFavoriteDetailPage of(BookFavorite bookFavorite,  boolean submitStatus,
+		Page<BookReportHomeworkStudent> bookReports, BookStatus bookStatus) {
+		return BookFavoriteDetailPage.builder()
 			.bookFavoriteId(bookFavorite.getId())
 			.book(BookResponse.of(bookFavorite.getBook(), bookStatus))
 			.submitStatus(submitStatus)
