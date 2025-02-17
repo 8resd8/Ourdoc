@@ -39,7 +39,7 @@ import TeacherStatistics from '../components/pages/teacher/TeacherStatistics';
 import TeacherStudentInfo from '../components/pages/teacher/TeacherStudentInfo';
 import TeacherHeader from '../components/commons/TeacherHeader';
 import TeacherDebateBoard from '../components/pages/teacher/TeacherDebateBoard';
-// import StudentReportList from '../components/pages/student/StudentReportList';
+import StudentReportList from '../components/pages/student/StudentReportList';
 
 const Router = () => {
   return (
@@ -71,7 +71,7 @@ const Router = () => {
           <Route path="reports" element={<StudentAllReportList />} />
           <Route path="trophy" element={<StudentTrophy />} />
           <Route path="mypage" element={<StudentMyPage />} />
-          {/* <Route path="book/report/list" element={<StudentReportList />} /> */}
+          <Route path="book/report/list/:id" element={<StudentReportList />} />
         </Route>
 
         {/* 교사 전용 라우트 */}
