@@ -232,30 +232,6 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			? school.schoolName.eq(schoolName) : null;
 	}
 
-	private LocalDateTime startDate(int year) {
-		return YearMonth.of(year, 3).atDay(1).atStartOfDay();
-	}
-
-	private LocalDateTime startDate(int year, int month) {
-		return YearMonth.of(month <= 2 ? year + 1 : year, month).atDay(1).atStartOfDay();
-	}
-
-	private LocalDateTime endDate(int year) {
-		return YearMonth.of(year + 1, 2).atEndOfMonth().atTime(23, 59, 59);
-	}
-
-	private LocalDateTime endDate(int year, int month) {
-		return YearMonth.of(month <= 2 ? year + 1 : year, month).atEndOfMonth().atTime(23, 59, 59);
-	}
-
-	private final NumberExpression<Integer> monthExpression = Expressions.numberTemplate(
-		Integer.class, "function('MONTH', {0})", bookReport.createdAt
-	);
-
-	private final NumberExpression<Integer> dayExpression = Expressions.numberTemplate(
-		Integer.class, "function('DAY', {0})", bookReport.createdAt
-	);
-
 	private BooleanExpression eqApproveStatus(String approveStatus) {
 		if (approveStatus == null || approveStatus.isEmpty()) {
 			return null;
