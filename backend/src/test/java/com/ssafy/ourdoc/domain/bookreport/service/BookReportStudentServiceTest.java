@@ -136,7 +136,7 @@ class BookReportStudentServiceTest {
 	@DisplayName("독서록 피드백을 정상적으로 저장할 수 있다.")
 	void testSaveBookReportFeedback() {
 		// given
-		FeedbackRequest request = new FeedbackRequest(1L, "수정된 감상문");
+		FeedbackRequest request = new FeedbackRequest(1L, "피드백 감상문", "맞춤법");
 
 		when(bookReportRepository.findById(request.bookReportId())).thenReturn(Optional.of(mockBookReport));
 
@@ -146,7 +146,7 @@ class BookReportStudentServiceTest {
 		// then
 		verify(bookReportRepository, times(1)).findById(request.bookReportId());
 		verify(feedbackRepository, times(1)).save(any(BookReportFeedBack.class));
-		assertThat(mockBookReport.getAfterContent()).isEqualTo("수정된 감상문");
+		assertThat(mockBookReport.getAfterContent()).isEqualTo("맞춤법");
 	}
 
 	@Test

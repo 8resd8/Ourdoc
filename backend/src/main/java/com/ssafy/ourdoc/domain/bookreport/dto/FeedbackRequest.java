@@ -10,6 +10,10 @@ public record FeedbackRequest(
 
 	@NotBlank(message = "{notblank}")
 	@Size(max = 3000, message = "{size.max}")
-	String afterContent
+	String feedbackContent, // 피드백 내용
+
+	@NotBlank(message = "{notblank}")
+	@Size(max = 3000, message = "{size.max}")
+	String spellingContent // 맞춤법 내용
 ) {
 }
