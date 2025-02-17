@@ -5,7 +5,6 @@ import {
   getBookReportDetailApi,
 } from '../../../services/bookReportsService';
 import { useParams } from 'react-router-dom';
-import { format } from 'prettier';
 import { DateFormat } from '../../../utils/DateFormat';
 import { useRecoilValue } from 'recoil';
 import { currentUserState } from '../../../recoil';
@@ -31,7 +30,7 @@ const StudentReportDetail = () => {
   const user = useRecoilValue(currentUserState);
 
   return (
-    <div className="">
+    <div className="py-3.5">
       <div className="flex flex-row justify-center">
         <div className="flex flex-col w-[600px] ml-[200px] mr-[120px]">
           <div className="flex flex-col w-[600px] relative">
@@ -86,12 +85,16 @@ const StudentReportDetail = () => {
             />
           </div>
           <div className="flex justify-end">
-            <div
-              onClick={deleteReport}
-              className="cursor-pointer inline-flex py-[12px] px-[16px] mt-1 bg-system-danger rounded-[10px] justify-center items-center text-center text-gray-0 body-medium"
-            >
-              삭제하기
-            </div>
+            {report?.bookReportApproveStatus == '있음' ? (
+              <div></div>
+            ) : (
+              <div
+                onClick={deleteReport}
+                className="cursor-pointer inline-flex py-[12px] px-[16px] mt-1 bg-system-danger rounded-[10px] justify-center items-center text-center text-gray-0 body-medium"
+              >
+                삭제하기
+              </div>
+            )}
           </div>
         </div>
         <div className="flex flex-col w-[600px] mt-[110px]">
@@ -101,7 +104,7 @@ const StudentReportDetail = () => {
               <div className="w-[389px]">{report?.aiComment}</div>
             </div>
           </div>
-          <div>
+          <div className="mt-3">
             <div className="text-gray-800 body-small">담임 선생님 의견</div>
             <div className="w-[413px] h-[126px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
               <div className="w-[389px]">{report?.teacherComment}</div>

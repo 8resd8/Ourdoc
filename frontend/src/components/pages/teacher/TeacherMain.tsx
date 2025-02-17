@@ -5,7 +5,10 @@ import { NotificationSection } from '../../molecules/NotificationSection';
 import { RankingSection } from '../../molecules/RankingSection';
 import { MostReadBookSection } from '../../molecules/MostReadBookSection';
 import { DebateButton } from '../../atoms/DebateButton';
-import { Book } from '../../../services/booksService';
+import {
+  Book,
+  getTeacherHomeworkBooksApi,
+} from '../../../services/booksService';
 import { useEffect, useState } from 'react';
 import {
   MonthlyBookReport,
@@ -15,6 +18,7 @@ import {
   mostReadApi,
   MostReadBook,
 } from '../../../services/bookReportsService';
+import { teacherHomeworkBooksSelector } from '../../../recoil';
 
 export const book: Book = {
   bookId: 1,
@@ -37,6 +41,9 @@ const TeacherMain = () => {
     const fetchData = async () => {
       const classReportRank = await classReportRankApi();
       const classMonthlyReport = await classMonthlyReportApi();
+      const teacherHomework = await getTeacherHomeworkBooksApi();
+      console.log(teacherHomework);
+
       const mostRead = await mostReadApi();
       setclassReportRank(classReportRank);
       setclassMonthlyReport(classMonthlyReport);

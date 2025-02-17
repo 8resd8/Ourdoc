@@ -1,11 +1,24 @@
 import { useEffect, useState } from 'react';
 import { Book, getBooksApi } from '../../../services/booksService';
 import SelectVariants from '../../commons/SelectVariants';
+import { useLocation } from 'react-router-dom';
+import { PaginationButton } from '../../atoms/PagenationButton';
+import { AddDivider } from '../../../utils/AddDivder';
 
 const StudentBookSearch = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const searchCategoryParam = queryParams.get('searchCategory');
+  const searchTermParam = queryParams.get('searchTerm');
+
   const [book, setBook] = useState<Book[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchCategory, setSearchCategory] = useState('도서명');
+  const [searchTerm, setSearchTerm] = useState(searchTermParam || '');
+  const [searchCategory, setSearchCategory] = useState(
+    searchCategoryParam || '도서명'
+  );
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
 
   const fetchBook = async (page = 0) => {
     const params = {
@@ -16,12 +29,25 @@ const StudentBookSearch = () => {
       publisher: searchCategory === '출판사' ? searchTerm : '',
     };
     const response = await getBooksApi(params);
+    console.log(response);
+
     setBook(response.book.content);
+    setTotalPages(response.book.totalPages);
+    setTotalElements(response.book.totalElements);
+    setCurrentPage(page);
+  };
+  console.log(totalPages);
+  console.log(currentPage);
+
+  const onPageChange = (pageNumber: number) => {
+    if (pageNumber >= 0 && pageNumber < totalPages) {
+      fetchBook(pageNumber);
+    }
   };
 
   useEffect(() => {
     fetchBook();
-  }, []);
+  }, [searchCategory]);
 
   const handleSearch = () => {
     fetchBook();
@@ -69,16 +95,13 @@ const StudentBookSearch = () => {
 
       <div className="w-[1100px] m-auto">
         <h2 className="body-medium text-left ml-36 text-gray-900 mb-4">
-          총 {book.length}권
+          총 {totalElements}권
         </h2>
 
         <div className="justify-items-center">
-          {book &&
-            book.map((book: Book, index: number) => (
-              <div
-                key={index}
-                className={`flex w-[850px] h-[240px] mb-4 border-b border-gray-300`}
-              >
+          {AddDivider({
+            itemList: book.map((book: Book, index: number) => (
+              <div key={index} className={`flex w-[850px] h-[240px] mt-3`}>
                 <img
                   src={book.imageUrl}
                   alt={book.title}
@@ -102,8 +125,14 @@ const StudentBookSearch = () => {
                   </p>
                 </div>
               </div>
-            ))}
+            )),
+          })}
         </div>
+        <PaginationButton
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
       </div>
     </div>
   );

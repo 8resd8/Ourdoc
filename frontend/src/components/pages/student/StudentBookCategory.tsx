@@ -117,8 +117,6 @@ const StudentBookCategory = () => {
   };
 
   const [book, setBook] = useState<Book[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchCategory, setSearchCategory] = useState('도서명');
 
   const fetchBook = async (page = 0) => {
     const params = {
@@ -129,11 +127,14 @@ const StudentBookCategory = () => {
       publisher: searchCategory === '출판사' ? searchTerm : '',
     };
     const response = await getBooksApi(params);
-    setBook(response.book.content);
   };
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchCategory, setSearchCategory] = useState('도서명');
   const handleSearch = () => {
-    fetchBook();
+    navigate(
+      `/student/book/search/?searchCategory=${searchCategory}&searchTerm=${searchTerm}`
+    );
   };
 
   return (
