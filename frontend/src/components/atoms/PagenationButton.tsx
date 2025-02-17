@@ -13,7 +13,7 @@ export const PaginationButton = (props: PaginationProps) => {
   const endPage = Math.min(totalPages - 1, startPage + pageRange - 1);
 
   return (
-    <div className="flex justify-center items-center mt-8 space-x-2">
+    <div className="flex justify-center items-center mt-8 py-4 space-x-2">
       {/* 첫 페이지로 이동 버튼 */}
       <button
         className={`px-4 py-2 rounded-lg cursor-pointer ${
