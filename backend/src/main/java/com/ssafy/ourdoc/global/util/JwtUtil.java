@@ -75,9 +75,10 @@ public class JwtUtil {
 	}
 
 	// JWT Refresh Token 생성
-	public String createRefreshToken(String userId) {
+	public String createRefreshToken(String userId, String role) {
 		return Jwts.builder()
 			.setSubject(userId)
+			.claim("role", role)
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + jwtConfig.getRefreshExpiration())) // Refresh 만료 시간
 			.signWith(getSigningKey(), SignatureAlgorithm.HS256)
