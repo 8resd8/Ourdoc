@@ -1,12 +1,10 @@
 package com.ssafy.ourdoc.domain.book.dto.recommend;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookStatus;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudent;
 
 import lombok.Builder;
 
@@ -14,15 +12,13 @@ import lombok.Builder;
 public record BookRecommendStudentDetail(
 	BookResponse book,
 	LocalDateTime createdAt,
-	boolean submitStatus,
-	List<BookReportStudent> bookReports
+	boolean submitStatus
 ) {
 	public static BookRecommendStudentDetail of(BookRecommend bookRecommend, boolean submitStatus,
-		List<BookReportStudent> bookReports, BookStatus bookStatus) {
+		BookStatus bookStatus) {
 		return BookRecommendStudentDetail.builder()
 			.book(BookResponse.of(bookRecommend.getBook(), bookStatus))
 			.createdAt(bookRecommend.getCreatedAt())
-			.bookReports(bookReports)
 			.submitStatus(submitStatus)
 			.build();
 	}

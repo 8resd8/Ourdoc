@@ -20,7 +20,6 @@ import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudent;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
@@ -163,9 +162,7 @@ public class BookRecommendService {
 	private BookRecommendStudentDetail getBookRecommendDetailStudent(BookRecommend bookRecommend, User user) {
 		Book book = bookRecommend.getBook();
 		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(user.getId(), book.getId()) > 0;
-		List<BookReportStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
-			book.getId(), user.getId());
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(bookRecommend.getBook(), user);
-		return BookRecommendStudentDetail.of(bookRecommend, submitStatus, bookReports, bookStatus);
+		return BookRecommendStudentDetail.of(bookRecommend, submitStatus, bookStatus);
 	}
 }
