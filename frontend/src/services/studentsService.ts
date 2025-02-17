@@ -4,6 +4,7 @@ import { api } from '../services/api';
 export interface ChangeClassRequest {
   schoolName: string;
   schoolId: number;
+  classId: number;
   grade: number;
   classNumber: number;
   studentNumber: number;
