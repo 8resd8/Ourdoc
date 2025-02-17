@@ -142,7 +142,7 @@ public class BookReportStudentService {
 			throw new IllegalArgumentException("해당 숙제에 해당하는 학급의 학생이 아닙니다.");
 		}
 
-		int submitCount = bookReportRepository.countByHomeworkId(homeworkId);
+		int submitCount = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId);
 		if (bookReport.getHomework() != null || submitCount > 0) {
 			throw new IllegalArgumentException("숙제로 제출한 독서록이 이미 있습니다.");
 		}
