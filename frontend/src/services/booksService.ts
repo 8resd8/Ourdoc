@@ -294,6 +294,7 @@ export const removeFavoriteBookApi = async (
 ): Promise<number> => {
   try {
     const response = await api.delete('/books/favorite', { data: { bookId } });
+
     return response.status;
   } catch (error) {
     console.error('Error removing favorite book:', error);
