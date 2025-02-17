@@ -17,7 +17,7 @@ export const TrophyAwardSection = ({ awards }: { awards: AwardDetail[] }) => {
   );
 };
 
-const TrophyAwardItem = ({ award }: { award: AwardDetail }) => {
+export const TrophyAwardItem = ({ award }: { award: AwardDetail }) => {
   const [modal, setModal] = useState(false);
 
   return (
