@@ -45,7 +45,8 @@ public class S3StorageService {
 
 		validateFile(file);
 
-		String fileName = "ocr/" + UUID.randomUUID() + "_" + file.getOriginalFilename(); // 일단 ocr 1개한정
+		String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename(); // 일단 ocr 1개한정
+		// String fileName = "ocr/" + UUID.randomUUID() + "_" + file.getOriginalFilename(); // 일단 ocr 1개한정
 
 		PutObjectRequest putObjectRequest = PutObjectRequest.builder()
 			.bucket(bucketName)
