@@ -25,6 +25,13 @@ export interface Book {
   bookStatus?: BookStatus;
   createdAt: string;
   homeworkSubmitCount: number;
+  bookReports: content[];
+}
+export interface content {
+  id: number;
+  beforeContent: string;
+  homeworkSubmitStatus: string;
+  bookReportApproveStatus: string;
 }
 
 export interface HomeworkBook {
@@ -49,11 +56,12 @@ export interface BookReport {
   bookReportApproveStatus: '있음' | '없음';
 }
 export interface TeacherHomeworkBookReport {
+  beforeContent: string;
   bookreportId: number;
   studentNumber: number;
   studentName: string;
   createdAt: string;
-  approveStatus: string;
+  bookReportApproveStatus: string;
 }
 export interface PaginatedBookReports {
   content: BookReport[];
@@ -293,6 +301,49 @@ export interface HomeworkContent {
   bookReports: BookReport[];
 }
 
+export interface StudentBook {
+  bookId: number;
+  title: string;
+  author: string;
+  genre: string;
+  description: string;
+  publisher: string;
+  publishYear: string;
+  imageUrl: string;
+  bookStatus: BookStatus;
+  bookReports: BookReports;
+}
+
+export interface BookReports {
+  content: BookContent[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  sort: Sort;
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+
+export interface BookContent {
+  id: number;
+  beforeContent: string;
+  createdAt: string;
+  homeworkSubmitStatus: HomeworkSubmitStatus;
+  bookReportApproveStatus: BookReportApproveStatus;
+}
+
+export enum BookReportApproveStatus {
+  있음 = '있음',
+}
+
+export enum HomeworkSubmitStatus {
+  미제출 = '미제출',
+}
+
 // 도서 목록 조회
 export const getBooksApi = async (params: BookQueryParams) => {
   try {
@@ -317,8 +368,23 @@ export const getNationalLibraryBooksApi = async (
   }
 };
 
-// 도서 상세 조회
-export const getBookDetailsApi = async (
+// 학생 도서 상세 조회
+export const getStudentBookDetailsApi = async (
+  bookId: number,
+  page: number
+): Promise<StudentBook> => {
+  try {
+    const response = await api.get<StudentBook>(`/books/students/${bookId}`, {
+      params: { size: 10, page: page },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching book details:', error);
+    throw error;
+  }
+};
+// 선생생 도서 상세 조회
+export const getTeacherBookDetailsApi = async (
   bookId: number
 ): Promise<BookDetail> => {
   try {
