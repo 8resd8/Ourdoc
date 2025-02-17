@@ -116,7 +116,7 @@ const TeacherHomeWorkReportList = () => {
                   }}
                   className="px-4 py-2 truncate"
                 >
-                  리스폰스 데이터가 없다..
+                  {row.beforeContent}
                 </td>
                 <td className="px-4 py-2 text-center">{row.studentNumber}</td>
                 <td className="px-4 py-2 text-center">{row.studentName}</td>
@@ -124,7 +124,7 @@ const TeacherHomeWorkReportList = () => {
                   {formatDate(row.createdAt)}
                 </td>
                 <td className="px-4 py-2 text-center">
-                  {row.approveStatus === '완료' ? (
+                  {row.bookReportApproveStatus === '있음' ? (
                     <button className="body-small text-system-success border-system-success border w-[49px] h-[28px] rounded-[5px]">
                       완료
                     </button>
