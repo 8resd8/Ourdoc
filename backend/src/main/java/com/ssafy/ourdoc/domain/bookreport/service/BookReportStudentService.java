@@ -21,6 +21,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportLatestAiFeedbackResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankDto;
@@ -236,5 +237,9 @@ public class BookReportStudentService {
 
 	public BookReportStampResponse getStampCount(User user) {
 		return new BookReportStampResponse(bookReportStatisticRepository.myStampCount(user.getId()));
+	}
+
+	public BookReportLatestAiFeedbackResponse getLatestAiFeedback(User user) {
+		return new BookReportLatestAiFeedbackResponse(bookReportStatisticRepository.getLatestAiFeedback(user.getId()));
 	}
 }
