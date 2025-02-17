@@ -211,6 +211,7 @@ public class BookReportStudentService {
 	public BookReportMyRankResponse getBookReportRank(User user) {
 		List<BookReportMyRankDto> rankList = bookReportRepository.myBookReportRank(user.getId());
 		int rank = 0;
+		int myRank = 0;
 		int idx = 0;
 		int prevCount = -1;
 		int readCount = 0;
@@ -222,13 +223,13 @@ public class BookReportStudentService {
 				prevCount = readCount;
 			}
 			if (user.getId().equals(rankDto.userId())) {
-				break;
+				myRank = rank;
 			}
 		}
 
 		int stampCount = bookReportRepository.myStampCount(user.getId());
 
-		return new BookReportMyRankResponse(stampCount, rank);
+		return new BookReportMyRankResponse(idx, stampCount, myRank);
 	}
 
 	public BookReportStampResponse getStampCount(User user) {
