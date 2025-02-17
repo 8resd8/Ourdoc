@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Book } from '../../services/booksService';
 
 type BookBriefProps = {
@@ -5,8 +6,14 @@ type BookBriefProps = {
 };
 
 export const BookBriefTile = ({ book }: BookBriefProps) => {
+  const navigate = useNavigate();
+  console.log(book);
+
   return (
-    <div className="w-[185px] flex-col justify-start items-start gap-2 inline-flex">
+    <div
+      onClick={() => navigate(`/student/book/report/list/${book.bookId}`)}
+      className="cursor-pointer w-[185px] flex-col justify-start items-start gap-2 inline-flex"
+    >
       <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
         <div className="w-[185px] h-[232px] relative">
           <div className="w-[185px] h-[232px] left-0 top-0 absolute bg-gray-0 rounded-tr-[10px] rounded-br-[10px] shadow-xxsmall border border-gray-200"></div>
