@@ -7,12 +7,16 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.ssafy.ourdoc.domain.book.dto.BookListResponse;
+import com.ssafy.ourdoc.domain.book.dto.BookStatus;
+import com.ssafy.ourdoc.domain.book.dto.favorite.BookFavoriteDetail;
+import com.ssafy.ourdoc.domain.book.dto.favorite.BookFavoriteListResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
+import com.ssafy.ourdoc.domain.book.dto.recommend.BookRecommendTeacherDetail;
 import com.ssafy.ourdoc.domain.book.entity.Book;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
+import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookFavoriteRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
@@ -48,14 +52,30 @@ public class BookFavoriteService {
 		bookFavoriteRepository.delete(bookFavorite);
 	}
 
-	public BookListResponse getBookFavorites(BookSearchRequest request, User user, Pageable pageable) {
-		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
+	public BookFavoriteListResponse getBookFavorites(BookSearchRequest request, User user, Pageable pageable) {
+		List<Book> searchedBooks = getBookList(request);
+
 		Page<BookFavorite> bookFavorites = bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks, pageable);
-		List<Book> books = bookFavorites.stream().map(BookFavorite::getBook).toList();
-		List<BookResponse> bookResponse = books.stream()
-			.map(book -> BookResponse.of(book, bookStatusMapper.mapBookStatus(book, user)))
+
+		List<Book> books = bookFavorites.stream()
+			.map(BookFavorite::getBook)
 			.toList();
-		Page<BookResponse> bookResponsePage = new PageImpl<>(bookResponse, pageable, books.size());
-		return new BookListResponse(bookResponsePage);
+
+		List<BookFavoriteDetail> details = bookFavorites.stream()
+			.map(bookFavorite -> toBookFavoriteDetailTeacher(bookFavorite, user))
+			.toList();
+
+		Page<BookFavoriteDetail> content = new PageImpl<>(details, pageable, bookFavorites.getTotalElements());
+		return new BookFavoriteListResponse(content);
+	}
+
+	private List<Book> getBookList(BookSearchRequest request) {
+		return bookRepository.findBookList(request.title(), request.author(), request.publisher());
+	}
+
+	private BookFavoriteDetail toBookFavoriteDetailTeacher(BookFavorite bookFavorite, User user) {
+		Long bookId = bookFavorite.getBook().getId();
+		BookStatus bookStatus = bookStatusMapper.mapBookStatus(bookFavorite.getBook(), user);
+		return BookFavoriteDetail.of(bookFavorite, bookStatus);
 	}
 }
