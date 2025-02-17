@@ -20,11 +20,9 @@ public record BookStudentDetailResponse(
 	Year publishYear,
 	String imageUrl,
 	BookStatus bookStatus,
-	boolean homeworkSubmitStatus,
 	Page<BookReportStudent> bookReports
 ) {
-	public static BookStudentDetailResponse of(Book book, BookStatus bookStatus,
-		boolean submitStatus, Page<BookReportStudent> bookReports) {
+	public static BookStudentDetailResponse of(Book book, BookStatus bookStatus, Page<BookReportStudent> bookReports) {
 		return BookStudentDetailResponse.builder()
 			.bookId(book.getId())
 			.title(book.getTitle())
@@ -35,7 +33,6 @@ public record BookStudentDetailResponse(
 			.imageUrl(book.getImageUrl())
 			.description(book.getDescription())
 			.bookStatus(bookStatus)
-			.homeworkSubmitStatus(submitStatus)
 			.bookReports(bookReports)
 			.build();
 	}
