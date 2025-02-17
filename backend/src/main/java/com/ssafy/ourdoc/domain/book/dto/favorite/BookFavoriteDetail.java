@@ -11,7 +11,6 @@ import lombok.Builder;
 
 @Builder
 public record BookFavoriteDetail(
-	Long bookFavoriteId,
 	BookResponse book,
 	boolean submitStatus,
 	List<BookReportStudent> bookReports
@@ -19,7 +18,6 @@ public record BookFavoriteDetail(
 	public static BookFavoriteDetail of(BookFavorite bookFavorite, boolean submitStatus,
 		List<BookReportStudent> bookReports, BookStatus bookStatus) {
 		return BookFavoriteDetail.builder()
-			.bookFavoriteId(bookFavorite.getId())
 			.book(BookResponse.of(bookFavorite.getBook(), bookStatus))
 			.submitStatus(submitStatus)
 			.bookReports(bookReports)
