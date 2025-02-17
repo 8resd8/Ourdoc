@@ -133,6 +133,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.leftJoin(teacherFeedBack).on(teacherFeedBack.bookReport.id.eq(bookReport.id)
 				.and(teacherFeedBack.evaluatorType.eq(교사)))
 			.where(bookReport.id.eq(bookReportId))
+			.orderBy(bookReport.createdAt.desc())
 			.fetchOne();
 	}
 
@@ -155,7 +156,9 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.where(
 				bookReport.homework.id.eq(homeworkId),
 				studentClass.active.eq(Active.활성)
-			).fetch();
+			)
+			.orderBy(bookReport.createdAt.desc())
+			.fetch();
 	}
 
 	@Override
@@ -181,6 +184,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				studentClass.active.eq(Active.활성),
 				eqApproveStatus(approveStatus)
 			)
+			.orderBy(bookReport.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
@@ -284,6 +288,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.leftJoin(homework).on(bookReport.book.id.eq(homework.book.id))
 			.leftJoin(user).on(bookReport.studentClass.user.id.eq(user.id))
 			.where(bookReport.book.id.eq(bookId), user.id.eq(userId))
+			.orderBy(bookReport.createdAt.desc())
 			.fetch();
 	}
 
@@ -302,6 +307,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.leftJoin(homework).on(bookReport.book.id.eq(homework.book.id))
 			.leftJoin(user).on(bookReport.studentClass.user.id.eq(user.id))
 			.where(bookReport.book.id.eq(bookId), user.id.eq(userId))
+			.orderBy(bookReport.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
