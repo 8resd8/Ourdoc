@@ -25,6 +25,7 @@ import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReportFeedBack;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportFeedbackRepository;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
+import com.ssafy.ourdoc.domain.bookreport.repository.BookReportStatisticRepository;
 import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
@@ -39,6 +40,7 @@ public class BookReportTeacherService {
 	private final BookReportRepository bookReportRepository;
 	private final NotificationService notificationService;
 	private final BookReportFeedbackRepository bookReportFeedbackRepository;
+	private final BookReportStatisticRepository bookReportStatisticRepository;
 
 	public ReportTeacherListResponse getBookReports(User user, ReportTeacherRequest request, Pageable pageable) {
 		Page<ReportTeacherResponse> pageDto = getReportTeacherResponses(user, request, pageable);
@@ -128,15 +130,15 @@ public class BookReportTeacherService {
 	}
 
 	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(User user) {
-		return bookReportRepository.classMonthlyBookReportCount(user.getId());
+		return bookReportStatisticRepository.classMonthlyBookReportCount(user.getId());
 	}
 
 	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(User user, int month) {
-		return bookReportRepository.classDailyBookReportCount(user.getId(), month);
+		return bookReportStatisticRepository.classDailyBookReportCount(user.getId(), month);
 	}
 
 	public BookReportRankResponse getBookReportRank(User user) {
-		List<BookReportRankDto> rankList = bookReportRepository.bookReportRank(user.getId());
+		List<BookReportRankDto> rankList = bookReportStatisticRepository.bookReportRank(user.getId());
 		List<BookReportRankDto> podiumList = new ArrayList<>();
 		int rank = 0;
 		int totalCount = 0;

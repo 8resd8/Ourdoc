@@ -31,6 +31,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
+import com.ssafy.ourdoc.domain.bookreport.repository.BookReportStatisticRepository;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -52,6 +53,7 @@ public class BookReportStudentService {
 	private final BookRepository bookRepository;
 	private final NotificationService notificationService;
 	private final HomeworkRepository homeworkRepository;
+	private final BookReportStatisticRepository bookReportStatisticRepository;
 
 	public BookReportSaveResponse saveBookReport(User user, BookReadLogRequest request) {
 		if (request.ocrCheck() == 사용 && (request.imageUrl() == null || request.imageUrl().trim().isEmpty())) {
@@ -189,27 +191,27 @@ public class BookReportStudentService {
 	}
 
 	public BookReportStatisticsResponse getBookReportStatistics(User user, BookReportStatisticsRequest request) {
-		long myCount = bookReportRepository.myBookReportsCount(user.getId(), request.grade());
+		long myCount = bookReportStatisticRepository.myBookReportsCount(user.getId(), request.grade());
 
-		double averageCount = bookReportRepository.classAverageBookReportsCount(user.getId(), request.grade());
+		double averageCount = bookReportStatisticRepository.classAverageBookReportsCount(user.getId(), request.grade());
 
-		long highestCount = bookReportRepository.classHighestBookReportCount(user.getId(), request.grade());
+		long highestCount = bookReportStatisticRepository.classHighestBookReportCount(user.getId(), request.grade());
 
 		return new BookReportStatisticsResponse((int)myCount, averageCount, (int)highestCount);
 	}
 
 	public List<BookReportMonthlyStatisticsDto> getMonthlyBookReportStatistics(User user,
 		BookReportStatisticsRequest request) {
-		return bookReportRepository.myMonthlyBookReportCount(user.getId(), request.grade());
+		return bookReportStatisticRepository.myMonthlyBookReportCount(user.getId(), request.grade());
 	}
 
 	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(User user,
 		BookReportStatisticsRequest request) {
-		return bookReportRepository.myDailyBookReportCount(user.getId(), request.grade(), request.month());
+		return bookReportStatisticRepository.myDailyBookReportCount(user.getId(), request.grade(), request.month());
 	}
 
 	public BookReportMyRankResponse getBookReportRank(User user) {
-		List<BookReportMyRankDto> rankList = bookReportRepository.myBookReportRank(user.getId());
+		List<BookReportMyRankDto> rankList = bookReportStatisticRepository.myBookReportRank(user.getId());
 		int rank = 0;
 		int myRank = 0;
 		int idx = 0;
@@ -227,12 +229,12 @@ public class BookReportStudentService {
 			}
 		}
 
-		int stampCount = bookReportRepository.myStampCount(user.getId());
+		int stampCount = bookReportStatisticRepository.myStampCount(user.getId());
 
 		return new BookReportMyRankResponse(idx, stampCount, myRank);
 	}
 
 	public BookReportStampResponse getStampCount(User user) {
-		return new BookReportStampResponse(bookReportRepository.myStampCount(user.getId()));
+		return new BookReportStampResponse(bookReportStatisticRepository.myStampCount(user.getId()));
 	}
 }
