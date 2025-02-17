@@ -1,12 +1,16 @@
 import { Divider, Grid2, Stack } from '@mui/material';
-import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import { bookCategoryState } from '../../../recoil/atoms/bookCategoryAtom';
 import {
   Book,
+  BookCategoryContents,
+  BookCategoryParams,
   getBooksApi,
+  getClassStudentRecommendedBooksApi,
+  getFavoriteBooksApi,
   getStudentHomeworkBooksApi,
+  getStudentRecommendedBooksApi,
   HomeworkItem,
   PaginatedHomeworks,
 } from '../../../services/booksService';
@@ -19,123 +23,69 @@ import { FavoriteBookButton } from '../../atoms/FavoriteBookButton';
 import { HomeWorkButton } from '../../atoms/HomeWorkButton';
 import SvgColor from '../../atoms/SvgColor';
 import SelectVariants from '../../commons/SelectVariants';
-import { book } from '../teacher/TeacherMain';
 import { useNavigate } from 'react-router-dom';
+import { PaginationButton } from '../../atoms/PagenationButton';
 
-const homeWorkBook = (id: number): HomeworkItem => {
-  return {
-    homeworkId: id,
-    book: { ...book, description: '' },
-    createdAt: dayjs(new Date()).toString(),
-    submitStatus: id % 2 === 0,
-    bookReports: [''],
-  };
-};
-
-export const mockHomeWorkBooks: HomeworkItem[] = Array.from(
-  { length: 12 },
-  (_, index) => homeWorkBook(index)
-);
-const mockClasskBooks: HomeworkItem[] = Array.from({ length: 13 }, (_, index) =>
-  homeWorkBook(index + 100)
-);
-const mockFavoriteBooks: HomeworkItem[] = Array.from(
-  { length: 5 },
-  (_, index) => homeWorkBook(index + 200)
-);
-const mockGradeBooks: HomeworkItem[] = Array.from({ length: 19 }, (_, index) =>
-  homeWorkBook(index + 300)
-);
+const PAGE_SIZE = 10;
 
 const StudentBookCategory = () => {
-  const [selectedCategory, setSelectedCategory] =
-    useRecoilState(bookCategoryState);
-  const [books, setBooks] = useState<HomeworkItem[]>(mockHomeWorkBooks);
-
-  useEffect(() => {
-    switch (selectedCategory) {
-      case BookCategoryType.HomeWork:
-        setBooks(mockHomeWorkBooks);
-        break;
-      case BookCategoryType.Class:
-        setBooks(mockClasskBooks);
-        break;
-      case BookCategoryType.Favorite:
-        setBooks(mockFavoriteBooks);
-        break;
-      case BookCategoryType.Grade:
-        setBooks(mockGradeBooks);
-        break;
-    }
-  }, [selectedCategory]);
-
-  const param = {
-    page: 0,
-    size: 0,
-    title: '',
-    author: '',
-    publisher: '',
-  };
   const navigate = useNavigate();
-  const [bookList, setBookList] = useState<HomeworkItem[]>([]);
-  const [paginationInfo, setPaginationInfo] = useState<Omit<
-    PaginatedHomeworks,
-    'content'
-  > | null>(null);
+
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const PAGE_SIZE = 10;
-
-  const fetchHomeworkList = async (page = 0) => {
-    try {
-      const response = await getStudentHomeworkBooksApi(param);
-      setBookList(response.homeworks.content);
-      console.log(response.homeworks.content);
-
-      const { content, ...paginationData } = response.homeworks;
-      console.log('숙제 목록:', response);
-
-      setPaginationInfo(paginationData);
-    } catch (error) {
-      console.error('숙제 목록 가져오기 실패:', error);
-    }
-  };
-  console.log(bookList);
-
-  const handlePageChange = (page: number) => {
-    if (page >= 0 && page < totalPages) {
-      fetchHomeworkList(page);
-    }
-  };
-  useEffect(() => {
-    fetchHomeworkList(currentPage);
-  }, []);
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
-  };
-
-  const [book, setBook] = useState<Book[]>([]);
-
-  const fetchBook = async (page = 0) => {
-    const params = {
-      size: 10,
-      page: page,
-      title: searchCategory === '도서명' ? searchTerm : '',
-      author: searchCategory === '저자' ? searchTerm : '',
-      publisher: searchCategory === '출판사' ? searchTerm : '',
-    };
-    const response = await getBooksApi(params);
-  };
+  const [books, setBooks] = useState<BookCategoryContents[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [searchCategory, setSearchCategory] = useState('도서명');
+
+  const [selectedCategory, setSelectedCategory] =
+    useRecoilState(bookCategoryState);
+
+  const fetchBooks = async (page = 0) => {
+    const params: BookCategoryParams = {
+      page: page,
+      size: PAGE_SIZE,
+    };
+    try {
+      let response;
+      switch (selectedCategory) {
+        case BookCategoryType.HomeWork:
+          response = await getStudentHomeworkBooksApi(params);
+          break;
+        case BookCategoryType.Class:
+          response = await getClassStudentRecommendedBooksApi(params);
+          break;
+        case BookCategoryType.Favorite:
+          response = await getFavoriteBooksApi(params);
+          break;
+        case BookCategoryType.Grade:
+          response = await getStudentRecommendedBooksApi(params);
+          break;
+      }
+
+      setBooks(response.content);
+    } catch (error) {
+      console.error('도서 목록 가져오기 실패:', error);
+    }
+  };
+
+  const onPageChange = (pageNumber: number) => {
+    if (pageNumber >= 0 && pageNumber < totalPages) {
+      fetchBooks(pageNumber);
+    }
+  };
+
   const handleSearch = () => {
     navigate(
       `/student/book/search/?searchCategory=${searchCategory}&searchTerm=${searchTerm}`
     );
   };
+
+  useEffect(() => {
+    fetchBooks(0);
+  }, [selectedCategory]);
+
+  console.log(books);
 
   return (
     <div>
@@ -245,6 +195,11 @@ const StudentBookCategory = () => {
             </Grid2>
           ))}
         </Grid2>
+        <PaginationButton
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
       </div>
     </div>
   );
