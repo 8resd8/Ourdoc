@@ -23,6 +23,8 @@ export interface Book {
   publishYear: string;
   imageUrl: string;
   bookStatus?: BookStatus;
+  createdAt: string;
+  homeworkSubmitCount: number;
 }
 
 export interface HomeworkBook {
@@ -220,6 +222,33 @@ export interface BookCategoryContents {
   book: Book;
   createdAt: string;
   homeworkSubmitStatus: boolean;
+  bookReports: BookReport[];
+}
+
+export interface TeacherHomeworkBooks {
+  studentCount: number;
+  homeworks: Homeworks;
+}
+
+export interface Homeworks {
+  content: HomeworkContent[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  sort: Sort;
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+
+export interface HomeworkContent {
+  homeworkId: number;
+  book: Book;
+  createdAt: Date;
+  submitCount: number;
   bookReports: BookReport[];
 }
 
@@ -423,15 +452,23 @@ export const removeHomeworkBookApi = async (
 };
 
 // 교사 학급 숙제 도서 목록 조회
-export const getTeacherHomeworkBooksApi = async (): Promise<Book[]> => {
-  try {
-    const response = await api.get<Book[]>('/books/teachers/homework');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching teacher homework books:', error);
-    throw error;
-  }
-};
+export const getTeacherHomeworkBooksApi =
+  async (): Promise<TeacherHomeworkBooks> => {
+    try {
+      const response = await api.get<TeacherHomeworkBooks>(
+        '/books/teachers/homework',
+        {
+          params: { size: 3, page: 0 },
+        }
+      );
+      console.log(response);
+
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching teacher homework books:', error);
+      throw error;
+    }
+  };
 
 // 교사 학급 숙제 도서 상세 조회
 export const getTeacherHomeworkBookDetailApi = async (
