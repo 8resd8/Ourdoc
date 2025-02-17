@@ -12,9 +12,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.util.JwtBlacklistService;
+import com.ssafy.ourdoc.global.util.JwtRefreshService;
 import com.ssafy.ourdoc.global.util.JwtUtil;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
@@ -34,6 +36,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtUtil jwtUtil;
 	private final JwtBlacklistService blacklistService;
+	private final JwtRefreshService jwtRefreshService;
+
 	private List<String> excludedPaths;
 
 	@PostConstruct
@@ -67,10 +71,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		// 토큰이 없거나, 유효하지 않다면 401 반환
-		if (token == null || !jwtUtil.validateToken(token)) {
-			log.info("Unauthorized: Invalid or missing token {}", token);
-			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid or missing token");
+		// 토큰이 없으면 요청 차단
+		if (token == null) {
+			log.info("Unauthorized: Missing token");
+			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Missing token");
 			return;
 		}
 
@@ -79,46 +83,73 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 			String userId = claims.getSubject();
 			UserType role = UserType.valueOf(claims.get("role", String.class));
 
-			if (!isAuthorized(request.getRequestURI(), role)) {
-				log.info("인가되지 않은 사용자입니다. {}", token);
-				response.sendError(HttpServletResponse.SC_FORBIDDEN, "인가되지 않은 사용자입니다.");
-				return;
-			}
-
-			// JWT에서 추출한 정보를 Request 속성으로 저장
 			request.setAttribute("userId", userId);
 			request.setAttribute("role", role);
 
-			// 다음 필터로 요청을 전달
 			filterChain.doFilter(request, response);
 
+		} catch (ExpiredJwtException e) {
+			log.info("액세스 토큰 만료됨, Refresh token을 이용해 재발급 시도");
+			String newAccessToken = handleTokenRefresh(request, response);
+
+			if (newAccessToken != null) {
+				request.setAttribute("Authorization", "Bearer " + newAccessToken);
+				filterChain.doFilter(request, response);
+			} else {
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid refresh token");
+			}
 		} catch (JwtException e) {
-			// JWT 검증 실패 시 401 반환
 			log.info("Unauthorized: Invalid token {}", e.getMessage());
 			response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: Invalid token");
 		}
-	}
-
-	private boolean isAuthorized(String path, UserType role) {
-		boolean authorized = true;
-
-		if (path.startsWith("/admin") && !role.equals(관리자)) {
-			authorized = false;
-		} else if ((path.startsWith("/teachers") || path.startsWith("/books/teachers") ||
-			path.startsWith("/bookreports/teachers")) || path.startsWith("/debates/teachers") && !role.equals(교사)) {
-			authorized = false;
-		} else if ((path.startsWith("/students") || path.startsWith("/books/students") ||
-			path.startsWith("/bookreports/students")) || path.startsWith("/debates/students") && !role.equals(학생)) {
-			authorized = false;
-		}
-
-		return authorized;
 	}
 
 	private String extractToken(HttpServletRequest request) {
 		String bearerToken = request.getHeader("Authorization");
 		if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
 			return bearerToken.substring(7);
+		}
+		return null;
+	}
+
+	private String handleTokenRefresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String refreshToken = extractRefreshToken(request);
+
+		// 리프레시 토큰이 없으면 null 반환
+		if (refreshToken == null) {
+			log.warn("Refresh token 없음");
+			return null;
+		}
+
+		try {
+			Claims claims = jwtUtil.getClaims(refreshToken);
+			String userId = claims.getSubject();
+
+			// 리프레시 토큰이 유효한지 검증
+			if (!jwtRefreshService.isValidRefreshToken(userId, refreshToken)) {
+				log.warn("유효하지 않은 refresh token for user {}", userId);
+				return null;
+			}
+
+			// 새로운 액세스 토큰 발급
+			String role = claims.get("role", String.class);
+			String newAccessToken = jwtUtil.createToken(userId, role);
+
+			response.setHeader("Authorization", "Bearer " + newAccessToken);
+
+			return newAccessToken;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	private String extractRefreshToken(HttpServletRequest request) {
+		if (request.getCookies() != null) {
+			for (var cookie : request.getCookies()) {
+				if ("Refresh-Token".equals(cookie.getName())) {
+					return cookie.getValue();
+				}
+			}
 		}
 		return null;
 	}
