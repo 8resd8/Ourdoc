@@ -23,7 +23,7 @@ import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
 import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudent;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherResponseWithId;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
@@ -162,7 +162,7 @@ public class HomeworkService {
 
 		Book book = homework.getBook();
 		boolean submitStatus = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId) > 0;
-		List<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
+		List<BookReportStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
 			book.getId(), user.getId());
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(homework.getBook(), user);
 		return HomeworkStudentDetail.of(homework, submitStatus, bookReports, bookStatus);
@@ -179,7 +179,7 @@ public class HomeworkService {
 
 		Book book = homework.getBook();
 		boolean submitStatus = bookReportRepository.countByUserIdAndHomeworkId(user.getId(), homeworkId) > 0;
-		Page<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkPageResponses(
+		Page<BookReportStudent> bookReports = bookReportStudentService.getReportStudentHomeworkPageResponses(
 			book.getId(), user.getId(), pageable);
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(homework.getBook(), user);
 		return HomeworkStudentDetailPage.of(homework, submitStatus, bookReports, bookStatus);

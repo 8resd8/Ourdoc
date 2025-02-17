@@ -2,12 +2,10 @@ package com.ssafy.ourdoc.domain.book.dto.favorite;
 
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookStatus;
 import com.ssafy.ourdoc.domain.book.entity.BookFavorite;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudent;
 
 import lombok.Builder;
 
@@ -16,10 +14,10 @@ public record BookFavoriteDetail(
 	Long bookFavoriteId,
 	BookResponse book,
 	boolean submitStatus,
-	List<BookReportHomeworkStudent> bookReports
+	List<BookReportStudent> bookReports
 ) {
-	public static BookFavoriteDetail of(BookFavorite bookFavorite,  boolean submitStatus,
-		List<BookReportHomeworkStudent> bookReports, BookStatus bookStatus) {
+	public static BookFavoriteDetail of(BookFavorite bookFavorite, boolean submitStatus,
+		List<BookReportStudent> bookReports, BookStatus bookStatus) {
 		return BookFavoriteDetail.builder()
 			.bookFavoriteId(bookFavorite.getId())
 			.book(BookResponse.of(bookFavorite.getBook(), bookStatus))

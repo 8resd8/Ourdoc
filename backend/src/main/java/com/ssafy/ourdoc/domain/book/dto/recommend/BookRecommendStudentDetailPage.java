@@ -1,15 +1,13 @@
 package com.ssafy.ourdoc.domain.book.dto.recommend;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import com.ssafy.ourdoc.domain.book.dto.BookResponse;
 import com.ssafy.ourdoc.domain.book.dto.BookStatus;
 import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudent;
 
 import lombok.Builder;
 
@@ -18,10 +16,10 @@ public record BookRecommendStudentDetailPage(
 	BookResponse book,
 	LocalDateTime createdAt,
 	boolean submitStatus,
-	Page<BookReportHomeworkStudent> bookReports
+	Page<BookReportStudent> bookReports
 ) {
 	public static BookRecommendStudentDetailPage of(BookRecommend bookRecommend, boolean submitStatus,
-		Page<BookReportHomeworkStudent> bookReports, BookStatus bookStatus) {
+		Page<BookReportStudent> bookReports, BookStatus bookStatus) {
 		return BookRecommendStudentDetailPage.builder()
 			.book(BookResponse.of(bookRecommend.getBook(), bookStatus))
 			.createdAt(bookRecommend.getCreatedAt())

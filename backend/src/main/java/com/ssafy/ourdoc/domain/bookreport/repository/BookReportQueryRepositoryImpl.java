@@ -22,7 +22,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudentDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportHomeworkStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.BookReportTeacher;
@@ -180,8 +180,8 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public List<BookReportHomeworkStudentDto> bookReportsHomeworkStudents(Long bookId, Long userId) {
-		return queryFactory.select(Projections.constructor(BookReportHomeworkStudentDto.class,
+	public List<BookReportStudentDto> bookReportsHomeworkStudents(Long bookId, Long userId) {
+		return queryFactory.select(Projections.constructor(BookReportStudentDto.class,
 					bookReport.id,
 					bookReport.beforeContent,
 					bookReport.createdAt,
@@ -198,10 +198,10 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public Page<BookReportHomeworkStudentDto> bookReportsHomeworkStudentsPage(Long bookId, Long userId,
+	public Page<BookReportStudentDto> bookReportsHomeworkStudentsPage(Long bookId, Long userId,
 		Pageable pageable) {
 		int total = bookReportsHomeworkStudents(bookId, userId).size();
-		List<BookReportHomeworkStudentDto> content = queryFactory.select(new QBookReportHomeworkStudentDto(
+		List<BookReportStudentDto> content = queryFactory.select(new QBookReportHomeworkStudentDto(
 				bookReport.id,
 				bookReport.beforeContent,
 				bookReport.createdAt,

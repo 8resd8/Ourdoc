@@ -21,7 +21,7 @@ import com.ssafy.ourdoc.domain.book.entity.BookRecommend;
 import com.ssafy.ourdoc.domain.book.repository.BookRecommendRepository;
 import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.util.BookStatusMapper;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportHomeworkStudent;
+import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudent;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
@@ -53,6 +53,7 @@ public class BookRecommendService {
 	private final BookStatusMapper bookStatusMapper;
 
 	private final BookReportStudentService bookReportStudentService;
+
 	public void addBookRecommend(BookRequest request, User user) {
 		if (user.getUserType() == UserType.학생) {
 			throw new ForbiddenException("추천도서를 생성할 권한이 없습니다.");
@@ -163,18 +164,19 @@ public class BookRecommendService {
 	private BookRecommendStudentDetail getBookRecommendDetailStudent(BookRecommend bookRecommend, User user) {
 		Book book = bookRecommend.getBook();
 		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(user.getId(), book.getId()) > 0;
-		List<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
+		List<BookReportStudent> bookReports = bookReportStudentService.getReportStudentHomeworkResponses(
 			book.getId(), user.getId());
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(bookRecommend.getBook(), user);
 		return BookRecommendStudentDetail.of(bookRecommend, submitStatus, bookReports, bookStatus);
 	}
 
-	public BookRecommendStudentDetailPage getBookRecommendDetailStudentPage(Long bookRecommendId, User user, Pageable pageable) {
+	public BookRecommendStudentDetailPage getBookRecommendDetailStudentPage(Long bookRecommendId, User user,
+		Pageable pageable) {
 		BookRecommend bookRecommend = bookRecommendRepository.findById(bookRecommendId)
-			.orElseThrow(()->new IllegalArgumentException("해당하는 추천도서 ID가 없습니다."));
+			.orElseThrow(() -> new IllegalArgumentException("해당하는 추천도서 ID가 없습니다."));
 		Book book = bookRecommend.getBook();
 		boolean submitStatus = bookReportRepository.countByUserIdAndBookId(user.getId(), book.getId()) > 0;
-		Page<BookReportHomeworkStudent> bookReports = bookReportStudentService.getReportStudentHomeworkPageResponses(
+		Page<BookReportStudent> bookReports = bookReportStudentService.getReportStudentHomeworkPageResponses(
 			book.getId(), user.getId(), pageable);
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(bookRecommend.getBook(), user);
 		return BookRecommendStudentDetailPage.of(bookRecommend, submitStatus, bookReports, bookStatus);
