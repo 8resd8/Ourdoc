@@ -3,8 +3,8 @@ export const HeaderProfileButton = ({
   imagePath,
   onClick,
 }: {
-  name: string;
-  imagePath: string;
+  name: string | undefined;
+  imagePath: string | undefined;
   onClick: () => void;
 }) => {
   return (
@@ -12,7 +12,7 @@ export const HeaderProfileButton = ({
       className="flex flex-col items-center space-y-[8px] cursor-pointer"
       onClick={onClick}
     >
-      <img src={imagePath} className="w-[40px]" />
+      <img src={imagePath} className="w-[40px] h-[40px] rounded-full" />
       <div className="body-medium">{name}님</div>
     </div>
   );

@@ -1,12 +1,16 @@
 import { useRecoilValue } from 'recoil';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { currentUserState } from '../../recoil';
 import Layout from '../../layouts/Layout';
 import { HeaderProfileButton } from './HeaderProfileButton';
 import { DropdownMenu } from '../molecules/DropdownMenu';
 import { signoutApi } from '../../services/usersService';
 import Modal from './Modal';
+import {
+  StudentProfileResponse,
+  getStudentProfileApi,
+} from '../../services/studentsService';
 const DEFAULT_PROFILE_IMAGE_PATH = '/assets/images/profile.png';
 
 const HeaderRouter = ({
@@ -39,15 +43,19 @@ const HeaderRouter = ({
 };
 
 const StudentHeader = () => {
-  const user = useRecoilValue(currentUserState);
   const navigate = useNavigate();
-  const userName = user.name;
-  const userImage =
-    user.profileImagePath == '' || user.profileImagePath == null
-      ? DEFAULT_PROFILE_IMAGE_PATH
-      : user.profileImagePath;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [user, setUser] = useState<StudentProfileResponse>();
+  const userData = async () => {
+    try {
+      const response = await getStudentProfileApi();
+      setUser(response);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    userData();
+  }, []);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -61,6 +69,24 @@ const StudentHeader = () => {
       console.error('로그아웃 중 오류가 발생했습니다:', error);
     }
   };
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
@@ -88,11 +114,11 @@ const StudentHeader = () => {
                 className="w-[140px]"
               />
             </Link>
-            <div className="flex items-center order-2 static">
+            <div ref={dropdownRef} className="flex items-center order-2 static">
               <HeaderProfileButton
                 onClick={toggleDropdown}
-                name={userName}
-                imagePath={userImage}
+                name={user?.name}
+                imagePath={user?.profileImage}
               />
               {isDropdownOpen && (
                 <div className="absolute top-[90px] right-[80px] z-200">
