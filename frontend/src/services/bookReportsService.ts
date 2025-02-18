@@ -1,5 +1,5 @@
 import { api } from '../services/api';
-import { Book } from './booksService';
+import { Book, Pageable, Sort } from './booksService';
 
 // 인터페이스 정의
 export interface CreateBookReportRequest {
@@ -52,6 +52,12 @@ export interface BookReportDetail {
 
 export interface BookReportParams {
   grade: number;
+  page: number;
+  size: number;
+}
+
+export interface StudentBookReportParams extends BookReportParams {
+  classId: number;
 }
 
 export interface ClassReportRank {
@@ -92,6 +98,29 @@ export interface StudentRankResponse {
   lastRank: number;
 }
 
+export interface StudentBookReportListResponse {
+  content: StudentBookReportListContents[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  number: number;
+  sort: Sort;
+  numberOfElements: number;
+  size: number;
+  empty: boolean;
+}
+
+export interface StudentBookReportListContents {
+  bookId: number;
+  bookImagePath: string;
+  bookReportId: number;
+  bookTitle: string;
+  createdAt: string;
+  isHomework: boolean;
+}
+
 // 독서록 작성
 export const createBookReportApi = async (
   data: CreateBookReportRequest
@@ -117,12 +146,14 @@ export const getTeacherBookReportsApi = async (): Promise<BookReport[]> => {
 
 // 학생 독서록 목록 조회
 export const getStudentBookReportsApi = async (
-  params: BookReportParams
-): Promise<BookReport[]> => {
-  const response = await api.get<{ bookReports: BookReport[] }>(
-    '/bookreports/students',
-    { params }
-  );
+  params: StudentBookReportParams
+): Promise<StudentBookReportListResponse> => {
+  const response = await api.get<{
+    bookReports: StudentBookReportListResponse;
+  }>('/bookreports/students', { params });
+
+  console.log(response.data.bookReports);
+
   return response.data.bookReports;
 };
 
