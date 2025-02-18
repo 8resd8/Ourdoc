@@ -217,3 +217,21 @@ export const searchSchoolsApi = async (
   });
   return response.data;
 };
+
+// 교사의 학급속 학생 조회
+export const searchStudentByClass = async (classId: number) => {
+  const response = await api.get('/teachers/classes/students', {
+    params: {
+      classId,
+    },
+  });
+  return response.data;
+};
+
+// 교사의 학교 - 연도 - 학년 - 반 조회
+export const searchClass = async () => {
+  const response = await api.get('/teachers/classes');
+  console.log(response);
+
+  return response.data;
+};

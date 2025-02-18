@@ -79,6 +79,7 @@ const StudentHomeWorkReportList = () => {
       bookreportId,
       homeworkId
     );
+    fetchHomeworkDetail();
   };
 
   return (

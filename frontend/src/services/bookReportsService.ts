@@ -261,3 +261,19 @@ export const studentSubmitHomeworkReportApi = async (
     `/bookreports/students/${bookreportId}/homework/${homeworkId}`
   );
 };
+
+// 교사 독서록 목록 조회
+export const getTeacherBookReportsList = async (params: any) => {
+  const response = await api.get('/bookreports/teachers', {
+    params: {
+      size: 10,
+      page: params.page,
+      year: params.year,
+      studentNumber: params.studentNumber,
+      studentName: params.studentName,
+      schoolName: params.schoolName,
+    },
+  });
+
+  return response.data;
+};
