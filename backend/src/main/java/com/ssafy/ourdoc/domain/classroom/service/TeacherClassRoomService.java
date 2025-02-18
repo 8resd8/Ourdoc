@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.classroom.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,8 @@ public class TeacherClassRoomService {
 	private final ClassRoomRepository classRoomRepository;
 
 	public TeacherRoomResponse getTeacherRoom(User user, TeacherClassRequest request) {
-		List<TeachersRoomDto> findTeacherRooms = classRoomRepository.findByTeachersRoom(user.getId(), request);
+		Map<String, List<TeachersRoomDto>> findTeacherRooms = classRoomRepository.findByTeachersRoom(user.getId(),
+			request);
 
 		return new TeacherRoomResponse(findTeacherRooms);
 	}

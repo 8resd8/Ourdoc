@@ -1,6 +1,7 @@
 package com.ssafy.ourdoc.domain.classroom.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +26,7 @@ public class TeacherClassController {
 
 	// 해당 교사의 연도, 학교, 학년, 반 조회
 	@GetMapping("/classes")
-	public TeacherRoomResponse getTeachersRoom(@Login User user, @Valid @RequestBody TeacherClassRequest request) {
+	public TeacherRoomResponse getTeachersRoom(@Login User user, @Valid @ModelAttribute TeacherClassRequest request) {
 		return teacherClassRoomService.getTeacherRoom(user, request);
 	}
 

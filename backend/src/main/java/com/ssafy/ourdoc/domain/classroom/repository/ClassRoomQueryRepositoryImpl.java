@@ -1,5 +1,6 @@
 package com.ssafy.ourdoc.domain.classroom.repository;
 
+import static com.querydsl.core.group.GroupBy.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
 import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
@@ -8,8 +9,13 @@ import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
 import java.time.Year;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.classroom.dto.QSchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
@@ -21,6 +27,7 @@ import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeachersRoomDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.global.common.enums.Active;
 
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -81,8 +88,8 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 	}
 
 	@Override
-	public List<TeachersRoomDto> findByTeachersRoom(Long userId, TeacherClassRequest request) {
-		return queryFactory
+	public Map<String, List<TeachersRoomDto>> findByTeachersRoom(Long userId, TeacherClassRequest request) {
+		List<TeachersRoomDto> list = queryFactory
 			.select(new QTeachersRoomDto(
 				classRoom.school.schoolName,
 				classRoom.year,
@@ -91,8 +98,15 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 			))
 			.from(teacherClass)
 			.join(teacherClass.classRoom, classRoom)
-			.where(teacherClassEq(userId), classEq(request.classId()))
+			.where(teacherClassEq(userId))
 			.fetch();
+
+		return list.stream()
+			.collect(Collectors.groupingBy(dto -> dto.year().toString()));
+	}
+
+	private BooleanExpression classEq(Long classId) {
+		return classRoom.id.eq(classId);
 	}
 
 	@Override
@@ -103,7 +117,7 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 				studentClass.studentNumber
 			))
 			.from(studentClass)
-			.where(classEq(classId))
+			.where(studentClassAndClassEq(classId))
 			.orderBy(studentClass.studentNumber.asc())
 			.fetch();
 	}
@@ -126,7 +140,7 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 			.fetch();
 	}
 
-	private BooleanExpression classEq(Long classId) {
+	private BooleanExpression studentClassAndClassEq(Long classId) {
 		return studentClass.classRoom.id.eq(classId);
 	}
 
@@ -134,7 +148,7 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 		return teacherClass.user.id.eq(userId);
 	}
 
-	private static BooleanExpression studentClassEq(Long userId) {
+	private BooleanExpression studentClassEq(Long userId) {
 		return studentClass.user.id.eq(userId);
 	}
 }
