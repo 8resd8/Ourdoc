@@ -130,21 +130,17 @@ public class BookFavoriteServiceTest {
 	void getBookFavoriteSuccess() {
 		User user = Mockito.mock(User.class);
 
-		List<Book> searchedBooks = List.of(book);
 		List<BookFavorite> mockBookFavorite = List.of(
 			new BookFavorite(book, user)
 		);
 		Pageable pageable = PageRequest.of(0, 10);
 		Page<BookFavorite> mockBookFavoritePage = new PageImpl<>(mockBookFavorite, pageable, mockBookFavorite.size());
-		when(bookRepository.findBookList(request.title(), request.author(), request.publisher())).thenReturn(
-			searchedBooks);
-		when(bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks, pageable)).thenReturn(
+		when(bookFavoriteRepository.findByUser(user, pageable)).thenReturn(
 			mockBookFavoritePage);
 
-		BookFavoriteListResponse bookFavorites = bookFavoriteService.getBookFavorites(request, user, pageable);
+		BookFavoriteListResponse bookFavorites = bookFavoriteService.getBookFavorites(user, pageable);
 
-
-		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks, pageable);
+		verify(bookFavoriteRepository, times(1)).findByUser(user, pageable);
 		assertThat(bookFavorites.favorite().getContent()).isEqualTo(
 			List.of(BookFavoriteDetail.of(new BookFavorite(book, user), false,
 				bookStatusMapper.mapBookStatus(book, user))));
@@ -154,19 +150,16 @@ public class BookFavoriteServiceTest {
 	@DisplayName("관심도서 목록 빈 경우 성공")
 	void getEmptyBookFavoriteSuccess() {
 		User user = Mockito.mock(User.class);
-
-		List<Book> searchedBooks = List.of(book);
+		
 		List<BookFavorite> mockBookFavorite = new ArrayList<>();
 		Pageable pageable = PageRequest.of(0, 10);
 		Page<BookFavorite> mockBookFavoritePage = new PageImpl<>(mockBookFavorite, pageable, 0);
-		when(bookRepository.findBookList(request.title(), request.author(), request.publisher())).thenReturn(
-			searchedBooks);
-		when(bookFavoriteRepository.findByUserAndBookIn(user, searchedBooks, pageable)).thenReturn(
+		when(bookFavoriteRepository.findByUser(user, pageable)).thenReturn(
 			mockBookFavoritePage);
 
-		BookFavoriteListResponse bookFavorites = bookFavoriteService.getBookFavorites(request, user, pageable);
+		BookFavoriteListResponse bookFavorites = bookFavoriteService.getBookFavorites(user, pageable);
 
-		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks, pageable);
+		verify(bookFavoriteRepository, times(1)).findByUser(user, pageable);
 		assertTrue(bookFavorites.favorite().getContent().isEmpty());
 	}
 
