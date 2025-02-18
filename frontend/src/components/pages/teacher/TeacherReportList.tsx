@@ -257,7 +257,7 @@ const TeacherReportList = () => {
                 title={item.bookTitle}
                 studentNumber={item.studentNumber}
                 name={item.studentName}
-                isApproved={item.approveStatus}
+                isApproved={item.bookReportApproveStatus}
                 submitDate={formatDate(item.createdAt)}
                 no={currentPage * 10 + index + 1}
                 onClick={() =>

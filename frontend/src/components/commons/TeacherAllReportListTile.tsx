@@ -12,7 +12,7 @@ export const TeacherAllReportListTile = ({
   studentNumber: number;
   name: string;
   submitDate: string;
-  isApproved: boolean;
+  isApproved: string;
   onClick?: () => void;
 }) => (
   <div
@@ -33,9 +33,9 @@ export const TeacherAllReportListTile = ({
     <div className="w-[120px] items-center">
       <div>
         <div
-          className={`body-small px-3 py-1 border  rounded-[5px] ${isApproved ? 'border-system-success text-system-success' : 'border-system-danger text-system-danger'} text-center cursor-pointer`}
+          className={`body-small px-3 py-1 border  rounded-[5px] ${isApproved == '있음' ? 'border-system-success text-system-success' : 'border-system-danger text-system-danger'} text-center cursor-pointer`}
         >
-          {isApproved ? '완료' : '미완료'}
+          {isApproved == '있음' ? '완료' : '미완료'}
         </div>
       </div>
     </div>
