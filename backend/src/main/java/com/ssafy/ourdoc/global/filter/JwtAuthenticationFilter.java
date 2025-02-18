@@ -56,6 +56,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 		throws ServletException, IOException {
 
+		System.out.println("필터 진입");
+
 		// Preflight 응답은 바로 통과
 		if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
 			filterChain.doFilter(request, response);
@@ -81,7 +83,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		try {
 			Claims claims = jwtUtil.getClaims(token);
 			String userId = claims.getSubject();
-			UserType role = UserType.valueOf(claims.get("role", String.class));
+			String role = claims.get("role", String.class);
 
 			request.setAttribute("userId", userId);
 			request.setAttribute("role", role);
