@@ -63,7 +63,7 @@ public class BookService {
 	public BookTeacherDetailResponse getBookDetailTeacher(User user, Long id, Pageable pageable) {
 		Book book = findBookById(id);
 		Page<BookReportTeacher> bookReports = bookReportTeacherService.getReportTeacherPageResponses(book.getId(),
-			pageable);
+			user.getId(), pageable);
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(book, user);
 		return BookTeacherDetailResponse.of(book, bookStatus, bookReports);
 	}
