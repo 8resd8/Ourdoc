@@ -8,7 +8,8 @@ public record TeachersRoomDto(
 	String schoolName,
 	Year year,
 	int grade,
-	int classNumber
+	int classNumber,
+	Long classId
 ) {
 	@QueryProjection
 	public TeachersRoomDto {

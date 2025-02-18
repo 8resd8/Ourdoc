@@ -94,11 +94,13 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 				classRoom.school.schoolName,
 				classRoom.year,
 				classRoom.grade,
-				classRoom.classNumber
+				classRoom.classNumber,
+				classRoom.id
 			))
 			.from(teacherClass)
 			.join(teacherClass.classRoom, classRoom)
 			.where(teacherClassEq(userId))
+			.orderBy(classRoom.year.desc())
 			.fetch();
 
 		return list.stream()
