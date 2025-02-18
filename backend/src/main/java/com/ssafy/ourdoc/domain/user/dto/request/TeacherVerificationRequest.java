@@ -1,14 +1,14 @@
 package com.ssafy.ourdoc.domain.user.dto.request;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public record TeacherVerificationRequest(
 	@NotNull(message = "{notblank}")
-	Boolean isApproved,
+	boolean isApproved,
 
 	@NotNull(message = "{notblank}")
-	@Max(value = 250, message = "{length.max}")
+	@Positive(message = "{positive}")
 	Long teacherId
 ) {
 }

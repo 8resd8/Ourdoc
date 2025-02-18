@@ -336,6 +336,33 @@ export interface BookContent {
   bookReportApproveStatus: BookReportApproveStatus;
 }
 
+export interface TeacherBookCategoryRecommends {
+  studentCount: number;
+  recommends: TeacherBookCategoryBooks;
+}
+
+export interface TeacherBookCategoryBooks {
+  content: TeacherBookCategoryBooksContents[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  sort: Sort;
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+
+export interface TeacherBookCategoryBooksContents {
+  homeworkId: number;
+  book: Book;
+  createdAt: Date;
+  submitCount: number;
+  bookReports: BookReport[];
+}
+
 export enum BookReportApproveStatus {
   있음 = '있음',
 }
@@ -455,13 +482,14 @@ export const addTeacherRecommendedBookApi = async (
 
 // 교사 학년 추천 도서 목록 조회
 export const getTeacherRecommendedBooksApi = async (
-  params: BookQueryParams
-): Promise<RecommendedBook[]> => {
+  params: BookCategoryParams
+): Promise<TeacherBookCategoryRecommends> => {
   try {
-    const response = await api.get<RecommendedBook[]>(
+    const response = await api.get<TeacherBookCategoryRecommends>(
       '/books/teachers/recommend/grades',
       { params }
     );
+
     return response.data;
   } catch (error) {
     console.error('Error fetching teacher recommended books:', error);
@@ -471,13 +499,14 @@ export const getTeacherRecommendedBooksApi = async (
 
 // 교사 학급 추천 도서 목록 조회
 export const getClassTeacherRecommendedBooksApi = async (
-  params: BookQueryParams
-): Promise<RecommendedBook[]> => {
+  params: BookCategoryParams
+): Promise<TeacherBookCategoryRecommends> => {
   try {
-    const response = await api.get<RecommendedBook[]>(
+    const response = await api.get<TeacherBookCategoryRecommends>(
       '/books/teachers/recommend/classes',
       { params }
     );
+
     return response.data;
   } catch (error) {
     console.error('Error fetching teacher recommended books:', error);
@@ -559,23 +588,21 @@ export const removeHomeworkBookApi = async (
 };
 
 // 교사 학급 숙제 도서 목록 조회
-export const getTeacherHomeworkBooksApi =
-  async (): Promise<TeacherHomeworkBooks> => {
-    try {
-      const response = await api.get<TeacherHomeworkBooks>(
-        '/books/teachers/homework',
-        {
-          params: { size: 3, page: 0 },
-        }
-      );
-      console.log(response);
+export const getTeacherHomeworkBooksApi = async (
+  params: BookCategoryParams
+): Promise<TeacherHomeworkBooks> => {
+  try {
+    const response = await api.get<TeacherHomeworkBooks>(
+      '/books/teachers/homework',
+      { params }
+    );
 
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching teacher homework books:', error);
-      throw error;
-    }
-  };
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching teacher homework books:', error);
+    throw error;
+  }
+};
 
 // 교사 학급 숙제 도서 상세 조회
 export const getTeacherHomeworkBookDetailApi = async (

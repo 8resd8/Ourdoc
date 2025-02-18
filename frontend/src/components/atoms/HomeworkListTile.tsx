@@ -19,8 +19,6 @@ export const HomeworkListTile = ({
   studentCount: number;
   onClick?: () => void;
 }) => {
-  console.log(status);
-
   return (
     <div
       onClick={onClick}

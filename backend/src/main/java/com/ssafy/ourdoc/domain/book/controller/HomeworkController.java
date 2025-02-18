@@ -27,6 +27,7 @@ import com.ssafy.ourdoc.domain.book.service.HomeworkService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -38,18 +39,18 @@ public class HomeworkController {
 
 	@PostMapping("/teachers/homework")
 	@ResponseStatus(HttpStatus.CREATED)
-	public void addHomework(@RequestBody BookRequest request, @Login User user) {
+	public void addHomework(@Valid @RequestBody BookRequest request, @Login User user) {
 		homeworkService.addHomework(request, user);
 	}
 
 	@DeleteMapping("/teachers/homework")
-	public void deleteHomework(@RequestBody BookRequest request, @Login User user) {
+	public void deleteHomework(@Valid @RequestBody BookRequest request, @Login User user) {
 		homeworkService.deleteHomework(request, user);
 	}
 
 	@GetMapping("/teachers/homework")
 	public ResponseEntity<HomeworkTeacherResponse> getHomeworkTeacherClass(
-		@ModelAttribute BookSearchRequest request,
+		@Valid @ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
 		HomeworkTeacherResponse response = homeworkService.getHomeworkTeacherClass(request, user, pageable);
@@ -69,7 +70,7 @@ public class HomeworkController {
 
 	@GetMapping("/students/homework")
 	public ResponseEntity<HomeworkStudentResponse> getHomeworkStudentClass(
-		@ModelAttribute BookSearchRequest request,
+		@Valid @ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		HomeworkStudentResponse response = homeworkService.getHomeworkStudentClass(request, user, pageable);

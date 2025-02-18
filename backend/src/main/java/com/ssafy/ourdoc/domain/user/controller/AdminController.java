@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +16,7 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.service.AdminService;
 import com.ssafy.ourdoc.global.annotation.Login;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,7 +34,7 @@ public class AdminController {
 
 	@PatchMapping("/verification")
 	public ResponseEntity<String> verifyTeacher(@Login User user,
-		@RequestBody TeacherVerificationRequest request) {
+		@Valid @RequestBody TeacherVerificationRequest request) {
 		String response = adminService.verifyTeacher(user, request);
 		return ResponseEntity.ok(response);
 	}

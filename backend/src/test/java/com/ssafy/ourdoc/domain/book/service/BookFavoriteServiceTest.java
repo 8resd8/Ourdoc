@@ -143,11 +143,11 @@ public class BookFavoriteServiceTest {
 
 		BookFavoriteListResponse bookFavorites = bookFavoriteService.getBookFavorites(request, user, pageable);
 
+
 		verify(bookFavoriteRepository, times(1)).findByUserAndBookIn(user, searchedBooks, pageable);
 		assertThat(bookFavorites.favorite().getContent()).isEqualTo(
 			List.of(BookFavoriteDetail.of(new BookFavorite(book, user), false,
 				bookStatusMapper.mapBookStatus(book, user))));
-
 	}
 
 	@Test

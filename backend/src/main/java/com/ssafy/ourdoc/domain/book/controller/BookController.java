@@ -18,6 +18,7 @@ import com.ssafy.ourdoc.domain.book.service.BookService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,7 +31,7 @@ public class BookController {
 	@GetMapping
 	public ResponseEntity<BookListResponse> getBooks(
 		@Login User user,
-		@ModelAttribute BookSearchRequest request,
+		@Valid @ModelAttribute BookSearchRequest request,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		BookListResponse books = bookService.searchBook(user, request, pageable);
 		return ResponseEntity.ok(books);
