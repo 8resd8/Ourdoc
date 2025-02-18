@@ -38,7 +38,7 @@ public class BookReportFeedBack extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private EvaluatorType evaluatorType;
 
-	@Column(name = "comment")
+	@Column(name = "comment", columnDefinition = "TEXT")
 	private String comment;
 
 	@Builder
