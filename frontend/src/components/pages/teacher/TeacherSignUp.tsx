@@ -366,6 +366,7 @@ const TeacherSignUp = () => {
           cancelText={'아니요, 다시할래요'}
         />
         <UploadModal
+          type=""
           isOpen={isUploadModalOpen}
           onConfirm={handleUploadConfirm}
           onCancel={handleUploadCancel}
