@@ -7,6 +7,7 @@ import { getTeacherBookReportsList } from '../../../services/bookReportsService'
 import { Table, TableAlignType } from '../../atoms/Table';
 import { PaginationButton } from '../../atoms/PagenationButton';
 import { TeacherAllReportListTile } from '../../commons/TeacherAllReportListTile';
+import { useNavigate } from 'react-router-dom';
 
 const TABLE_HEADER = [
   {
@@ -61,6 +62,7 @@ const TeacherReportList = () => {
     const response = await searchStudentByClass(classId);
     setStudents(response.teachersClassStudents);
     setReports([]);
+    setSelectedStudent(null);
   };
   console.log(students);
 
@@ -100,9 +102,22 @@ const TeacherReportList = () => {
     const date = new Date(dateString);
     return `${date.getMonth() + 1}월 ${date.getDate()}일`;
   };
+
+  console.log(reports);
+
   useEffect(() => {
     fetchClass();
   }, []);
+  const navigate = useNavigate();
+  const goReportDetail = (
+    id: number,
+    studentNumber: string,
+    studentName: string
+  ) => {
+    navigate(
+      `/teacher/report/detail/${id}/?studentNumber=${studentNumber}&name=${studentName}`
+    );
+  };
 
   return (
     <div className="flex flex-row ">
@@ -150,22 +165,27 @@ const TeacherReportList = () => {
                     {classes.map((classInfo: any, index: any) => (
                       <div
                         key={index}
-                        className={`cursor-pointer w-[226px] px-10 py-2 left-0 bg-${selectedClass === classInfo ? 'primary-50' : 'gray-0'} flex-col justify-start items-start gap-2 inline-flex`}
+                        className={`cursor-pointer w-[226px] px-10 py-2 left-0 ${
+                          selectedClass?.classNumber === classInfo.classNumber
+                            ? 'bg-primary-50'
+                            : 'bg-gray-0'
+                        } flex-col justify-start items-start gap-2 inline-flex`}
                         style={{ top: `${48 + index * 48}px` }}
                         onClick={() => {
-                          setSelectedClass(classInfo.schoolName);
+                          setSelectedClass(classInfo);
                           getStudentByClass(classInfo.classId);
                         }}
                       >
                         <div
-                          className={`text-${selectedClass === classInfo ? 'primary-500' : 'text-gray-800'} body-medium ${selectedClass === classInfo.schoolName ? 'font-bold' : ''}`}
+                          className={`${
+                            selectedClass?.classNumber === classInfo.classNumber
+                              ? 'text-primary-500 font-bold'
+                              : 'text-gray-800'
+                          } body-medium`}
                         >
                           <div>{classInfo.schoolName}</div>
-                          <span
-                            className={`text-${selectedClass === classInfo ? 'primary-500' : 'text-gray-800'}`}
-                          >
-                            {classInfo.grade}학년
-                            {classInfo.classNumber}반
+                          <span>
+                            {classInfo.grade}학년 {classInfo.classNumber}반
                           </span>
                         </div>
                       </div>
@@ -230,14 +250,23 @@ const TeacherReportList = () => {
         <Table
           headers={TABLE_HEADER}
           datas={reports.map((item, index) => {
+            console.log(item.bookId);
+
             return (
               <TeacherAllReportListTile
                 title={item.bookTitle}
-                studentNumber={item.studentName}
+                studentNumber={item.studentNumber}
                 name={item.studentName}
                 isApproved={item.approveStatus}
-                submitDate={item.createdAt}
+                submitDate={formatDate(item.createdAt)}
                 no={currentPage * 10 + index + 1}
+                onClick={() =>
+                  goReportDetail(
+                    item.bookReportId,
+                    item.studentNumber,
+                    item.studentName
+                  )
+                }
               />
             );
           })}
