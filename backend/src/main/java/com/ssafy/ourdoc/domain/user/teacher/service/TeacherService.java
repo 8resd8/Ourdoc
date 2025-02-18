@@ -276,7 +276,7 @@ public class TeacherService {
 			// 학급이 없는 교사일 때
 			Teacher teacher = teacherRepository.findByUser(user);
 			TeacherNotInClassProfileDto response = new TeacherNotInClassProfileDto(user.getProfileImagePath(), user.getName(),
-				user.getLoginId(), teacher.getEmail(), teacher.getPhone());
+				user.getLoginId(), teacher.getEmail(), teacher.getPhone(), user.getBirth());
 			return ResponseEntity.ok(response);
 		} else if (user.getActive().equals(비활성)) {
 			throw new IllegalArgumentException("재직중인 교사가 아닙니다.");
