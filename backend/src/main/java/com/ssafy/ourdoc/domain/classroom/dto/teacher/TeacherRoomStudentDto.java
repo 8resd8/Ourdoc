@@ -4,7 +4,7 @@ import com.querydsl.core.annotations.QueryProjection;
 
 public record TeacherRoomStudentDto(
 	String studentName,
-	int classNumber
+	int studentNumber
 ) {
 	@QueryProjection
 	public TeacherRoomStudentDto {

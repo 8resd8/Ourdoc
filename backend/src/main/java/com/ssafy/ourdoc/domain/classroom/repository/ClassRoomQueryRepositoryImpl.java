@@ -15,6 +15,7 @@ import com.ssafy.ourdoc.domain.classroom.dto.QSchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.dto.teacher.QTeacherRoomStudentDto;
 import com.ssafy.ourdoc.domain.classroom.dto.teacher.QTeachersRoomDto;
+import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeacherClassRequest;
 import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeacherRoomStudentDto;
 import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeachersRoomDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
@@ -80,7 +81,7 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 	}
 
 	@Override
-	public List<TeachersRoomDto> findByTeachersRoom(Long userId) {
+	public List<TeachersRoomDto> findByTeachersRoom(Long userId, TeacherClassRequest request) {
 		return queryFactory
 			.select(new QTeachersRoomDto(
 				classRoom.school.schoolName,
@@ -90,21 +91,20 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 			))
 			.from(teacherClass)
 			.join(teacherClass.classRoom, classRoom)
-			.where(teacherClassEq(userId))
+			.where(teacherClassEq(userId), classEq(request.classId()))
 			.fetch();
 	}
 
 	@Override
-	public List<TeacherRoomStudentDto> findByTeachersRoomStudent(Long userId, Integer year) {
+	public List<TeacherRoomStudentDto> findByTeachersRoomStudent(Long userId, Long classId) {
 		return queryFactory
 			.select(new QTeacherRoomStudentDto(
 				user.name.as("studentName"),
-				classRoom.classNumber
+				studentClass.studentNumber
 			))
-			.from(teacherClass)
-			.join(teacherClass.classRoom, classRoom)
-			.join(teacherClass.user, user)
-			.where(teacherClassEq(userId), yearEq(year))
+			.from(studentClass)
+			.where(classEq(classId))
+			.orderBy(studentClass.studentNumber.asc())
 			.fetch();
 	}
 
@@ -126,11 +126,11 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 			.fetch();
 	}
 
-	private static BooleanExpression yearEq(Integer year) {
-		return classRoom.year.eq(Year.of(year));
+	private BooleanExpression classEq(Long classId) {
+		return studentClass.classRoom.id.eq(classId);
 	}
 
-	private static BooleanExpression teacherClassEq(Long userId) {
+	private BooleanExpression teacherClassEq(Long userId) {
 		return teacherClass.user.id.eq(userId);
 	}
 
