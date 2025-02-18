@@ -336,6 +336,41 @@ export interface BookContent {
   bookReportApproveStatus: BookReportApproveStatus;
 }
 
+export interface TeacherBook {
+  bookId: number;
+  title: string;
+  author: string;
+  genre: string;
+  description: string;
+  publisher: string;
+  publishYear: string;
+  imageUrl: string;
+  bookStatus: BookStatus;
+  bookReports: TeacherBookReports;
+}
+
+export interface TeacherBookReports {
+  content: TeacherBookContent[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  size: number;
+  number: number;
+  sort: Sort;
+  first: boolean;
+  numberOfElements: number;
+  empty: boolean;
+}
+export interface TeacherBookContent {
+  bookreportId: number;
+  beforeContent: string;
+  studentNumber: number;
+  studentName: string;
+  createdAt: string;
+  bookReportApproveStatus: BookReportApproveStatus;
+}
+
 export interface TeacherBookCategoryRecommends {
   studentCount: number;
   recommends: TeacherBookCategoryBooks;
@@ -410,15 +445,19 @@ export const getStudentBookDetailsApi = async (
     throw error;
   }
 };
-// 선생생 도서 상세 조회
+
+// 선생 도서 상세 조회
 export const getTeacherBookDetailsApi = async (
   bookId: number,
   page: number
-): Promise<StudentBook> => {
+): Promise<TeacherBook> => {
   try {
-    const response = await api.get<StudentBook>(`/books/teachers/${bookId}`, {
+    const response = await api.get<TeacherBook>(`/books/teachers/${bookId}`, {
       params: { size: 10, page: page },
     });
+
+    console.log(JSON.stringify(response.data));
+
     return response.data;
   } catch (error) {
     console.error('Error fetching book details:', error);
