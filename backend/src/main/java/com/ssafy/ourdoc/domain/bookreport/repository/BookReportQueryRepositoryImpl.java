@@ -24,6 +24,9 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudentDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.QBookReportStudentDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.student.BookReportListDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.student.BookReportListRequest;
+import com.ssafy.ourdoc.domain.bookreport.dto.student.QBookReportListDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.BookReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QBookReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDto;
@@ -267,6 +270,40 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.fetch();
 
 		return new PageImpl<>(content, pageable, total);
+	}
+
+	@Override
+	public Page<BookReportListDto> bookReportList(Long studentId, BookReportListRequest request, Pageable pageable) {
+		Long total = queryFactory
+			.select(bookReport.count())
+			.from(bookReport)
+			.where(bookReport.studentClass.user.id.eq(studentId))
+			.fetchOne();
+
+		List<BookReportListDto> bookReportLists = queryFactory
+			.select(new QBookReportListDto(
+				book.id,
+				bookReport.id,
+				book.title.as("bookTitle"),
+				book.imageUrl.as("bookImagePath"),
+				bookReport.homework,
+				bookReport.createdAt
+			))
+			.from(studentClass)
+			.join(studentClass.user, user)
+			.join(studentClass.classRoom, classRoom)
+			.join(bookReport).on(bookReport.studentClass.id.eq(studentClass.id))
+			.join(bookReport.book, book)
+			.where(
+				studentClass.classRoom.id.eq(request.classId()),
+				classRoom.grade.eq(request.grade())
+			)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.orderBy(bookReport.createdAt.desc())
+			.fetch();
+
+		return new PageImpl<>(bookReportLists, pageable, total);
 	}
 
 	private BooleanExpression eqYear(Integer year) {

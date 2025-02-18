@@ -3,7 +3,6 @@ package com.ssafy.ourdoc.domain.bookreport.controller;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,19 +12,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportLatestAiFeedbackResponse;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportSaveResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
+import com.ssafy.ourdoc.domain.bookreport.dto.student.BookReportListRequest;
+import com.ssafy.ourdoc.domain.bookreport.dto.student.BookReportStudentListResponse;
 import com.ssafy.ourdoc.domain.bookreport.service.BookReportStudentService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.CheckOwner;
@@ -48,10 +47,11 @@ public class BookReportStudentController {
 		return bookReportStudentService.saveBookReport(user, request);
 	}
 
+	// 학생 독서록리스트 전체 조회
 	@GetMapping
-	public BookReportListResponse getBookReportList(@Login User user, @RequestParam("grade") int grade,
-		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-		return bookReportStudentService.getBookReports(user, grade, pageable);
+	public BookReportStudentListResponse getBookReportList(@Login User user,
+		@Valid @ModelAttribute BookReportListRequest request, @PageableDefault(page = 0, size = 10) Pageable pageable) {
+		return bookReportStudentService.getBookReports(user, request, pageable);
 	}
 
 	@CheckOwner(target = "bookReportId")
@@ -63,23 +63,21 @@ public class BookReportStudentController {
 
 	@PostMapping("/{bookReportId}/homework/{homeworkId}")
 	@ResponseStatus(HttpStatus.OK)
-	public void submitBookReportToHomework(@Login User user,
-		@PathVariable("bookReportId") Long bookReportId,
+	public void submitBookReportToHomework(@Login User user, @PathVariable("bookReportId") Long bookReportId,
 		@PathVariable("homeworkId") Long homeworkId) {
 		bookReportStudentService.submitBookReportToHomework(user, bookReportId, homeworkId);
 	}
 
 	@DeleteMapping("/{bookReportId}/homework/{homeworkId}")
 	@ResponseStatus(HttpStatus.OK)
-	public void retrieveBookReportFromHomework(@Login User user,
-		@PathVariable("bookReportId") Long bookReportId,
+	public void retrieveBookReportFromHomework(@Login User user, @PathVariable("bookReportId") Long bookReportId,
 		@PathVariable("homeworkId") Long homeworkId) {
 		bookReportStudentService.retrieveBookReportFromHomework(user, bookReportId, homeworkId);
 	}
 
 	@GetMapping("/statistics")
-	public BookReportStatisticsResponse getBookReportStatistics(@Login User user, @Valid @ModelAttribute
-	BookReportStatisticsRequest request) {
+	public BookReportStatisticsResponse getBookReportStatistics(@Login User user,
+		@Valid @ModelAttribute BookReportStatisticsRequest request) {
 		return bookReportStudentService.getBookReportStatistics(user, request);
 	}
 

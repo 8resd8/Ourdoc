@@ -1,7 +1,5 @@
 package com.ssafy.ourdoc.domain.bookreport.service;
 
-import static com.ssafy.ourdoc.global.common.enums.ApproveStatus.*;
-import static com.ssafy.ourdoc.global.common.enums.HomeworkStatus.*;
 import static com.ssafy.ourdoc.global.common.enums.NotificationType.*;
 import static com.ssafy.ourdoc.global.common.enums.OcrCheck.*;
 
@@ -20,9 +18,7 @@ import com.ssafy.ourdoc.domain.book.repository.BookRepository;
 import com.ssafy.ourdoc.domain.book.repository.HomeworkRepository;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReadLogRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDailyStatisticsDto;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportLatestAiFeedbackResponse;
-import com.ssafy.ourdoc.domain.bookreport.dto.BookReportListResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMonthlyStatisticsDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportMyRankResponse;
@@ -30,6 +26,10 @@ import com.ssafy.ourdoc.domain.bookreport.dto.BookReportSaveResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStatisticsResponse;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudent;
+import com.ssafy.ourdoc.domain.bookreport.dto.student.BookReportListDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.student.BookReportListDtoConvert;
+import com.ssafy.ourdoc.domain.bookreport.dto.student.BookReportListRequest;
+import com.ssafy.ourdoc.domain.bookreport.dto.student.BookReportStudentListResponse;
 import com.ssafy.ourdoc.domain.bookreport.entity.BookReport;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportRepository;
 import com.ssafy.ourdoc.domain.bookreport.repository.BookReportStatisticRepository;
@@ -86,22 +86,24 @@ public class BookReportStudentService {
 		return homeworkRepository.findById(request.homeworkId()).orElse(null);
 	}
 
-	public BookReportListResponse getBookReports(User user, int grade, Pageable pageable) {
-		Page<BookReport> bookReports = bookReportRepository.findByUserIdAndGrade(user.getId(), grade, pageable);
-
-		List<BookReportDto> bookReportDtos = bookReports.stream()
-			.map(report -> new BookReportDto(
-				report.getId(),
-				report.getAfterContent(),
-				report.getCreatedAt(),
-				report.getApproveTime() == null ? 없음 : 있음,
-				report.getHomework() == null ? 미제출 : 제출
+	public BookReportStudentListResponse getBookReports(User user, BookReportListRequest request, Pageable pageable) {
+		Page<BookReportListDto> bookReportLists = bookReportRepository.bookReportList(user.getId(), request,
+			pageable);
+		List<BookReportListDtoConvert> convertList = bookReportLists.stream()
+			.map(report -> new BookReportListDtoConvert(
+				report.bookId(),
+				report.bookReportId(),
+				report.bookTitle(),
+				report.bookImagePath(),
+				report.homework() == null,
+				report.createdAt()
 			))
 			.toList();
 
-		Page<BookReportDto> bookReportDtoPage = new PageImpl<>(bookReportDtos, pageable,
-			bookReports.getTotalElements());
-		return new BookReportListResponse(bookReportDtoPage);
+		Page<BookReportListDtoConvert> convertedPage = new PageImpl<>(convertList, pageable,
+			bookReportLists.getTotalElements());
+
+		return new BookReportStudentListResponse(convertedPage);
 	}
 
 	public List<BookReportStudent> getReportStudentHomeworkResponses(Long bookId, Long userId) {

@@ -7,9 +7,12 @@ import org.springframework.data.domain.Pageable;
 
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportDetailDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.BookReportStudentDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.student.BookReportListDto;
+import com.ssafy.ourdoc.domain.bookreport.dto.student.BookReportListRequest;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.BookReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
+import com.ssafy.ourdoc.domain.user.entity.User;
 
 public interface BookReportQueryRepository {
 
@@ -28,5 +31,8 @@ public interface BookReportQueryRepository {
 	List<BookReportStudentDto> bookReportsHomeworkStudents(Long bookId, Long userId);
 
 	Page<BookReportStudentDto> bookReportsHomeworkStudentsPage(Long bookId, Long userId, Pageable pageable);
+
+	// 피그마 학생 3
+	Page<BookReportListDto> bookReportList(Long studentId, BookReportListRequest request, Pageable pageable);
 
 }
