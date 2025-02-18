@@ -1,9 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
-import { getRecoil, setRecoil } from 'recoil-nexus';
+import { getRecoil } from 'recoil-nexus';
 import { accessTokenState } from '../recoil/atoms/usersAtoms';
 import secureLocalStorage from 'react-secure-storage';
 import { signoutApi } from './usersService';
-import { loadingState } from '../recoil/atoms/loadingAtoms';
 
 const baseURL = import.meta.env.VITE_APP_API_URL;
 
@@ -18,7 +17,6 @@ const setupInterceptors = (instance: AxiosInstance) => {
   instance.interceptors.request.use(
     (config) => {
       console.log('api: ', config.url, '호출됨.');
-      setRecoil(loadingState, true);
 
       const accessToken = getAccessToken();
 
@@ -28,18 +26,15 @@ const setupInterceptors = (instance: AxiosInstance) => {
       return config;
     },
     (error) => {
-      setRecoil(loadingState, false);
       return Promise.reject(error);
     }
   );
 
   instance.interceptors.response.use(
     (response) => {
-      setRecoil(loadingState, false);
       return response;
     },
     async (error) => {
-      setRecoil(loadingState, false);
       /*
       const originalRequest = error.config;
 

@@ -13,6 +13,8 @@ import {
   getAISpellingApi,
 } from '../../../services/aiService';
 import { DateFormat } from '../../../utils/DateFormat';
+import { setRecoil } from 'recoil-nexus';
+import { loadingState } from '../../../recoil/atoms/loadingAtoms';
 
 const StudentReportWrite = () => {
   const queryParams = new URLSearchParams(location.search);
@@ -40,6 +42,7 @@ const StudentReportWrite = () => {
   const navigate = useNavigate();
   const writeReport = async () => {
     try {
+      setRecoil(loadingState, true);
       const write = await createBookReportApi(param);
       const aiFeedback = await getAIFeedbackApi({ content: reportContent });
       const aiSpelling = await getAISpellingApi({ content: reportContent });
@@ -51,8 +54,11 @@ const StudentReportWrite = () => {
         spellingContent: aiSpelling.feedbackContent,
       });
 
-      navigate('/student/main');
-    } catch (error) {}
+      setRecoil(loadingState, false);
+      navigate(-1);
+    } catch (error) {
+      setRecoil(loadingState, false);
+    }
   };
 
   const handleOCR = async () => {

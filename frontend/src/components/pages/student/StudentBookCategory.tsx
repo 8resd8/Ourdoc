@@ -173,7 +173,7 @@ const StudentBookCategory = () => {
             <BookBriefTile
               book={item.book}
               isHomework={selectedCategory == BookCategoryType.HomeWork}
-              isStudent={false}
+              isStudent={true}
               searchBookId={
                 selectedCategory == BookCategoryType.HomeWork
                   ? item.homeworkId
