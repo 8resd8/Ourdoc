@@ -7,6 +7,7 @@ export interface Notification {
   content: string;
   createdAt: string;
   senderName: string;
+  status: string;
 }
 
 export interface NotificationPageable {

@@ -1,5 +1,8 @@
 import { useState } from 'react';
-import { Notification } from '../../services/notificationsService';
+import {
+  markNotificationAsReadApi,
+  Notification,
+} from '../../services/notificationsService';
 import { detailDate } from '../../utils/DateFormat';
 import Modal from '../commons/Modal';
 
@@ -9,6 +12,10 @@ export const NotificationDetailTile = ({
   notification: Notification;
 }) => {
   const [modal, setmodal] = useState(false);
+
+  const markNotificationAsRead = async () => {
+    await markNotificationAsReadApi(notification.notificationId);
+  };
 
   return (
     <>
@@ -45,6 +52,7 @@ export const NotificationDetailTile = ({
         confirmText={'확인'}
         cancelText={'닫기'}
         onConfirm={function (): void {
+          markNotificationAsRead();
           setmodal(false);
         }}
         onCancel={function (): void {
@@ -55,12 +63,12 @@ export const NotificationDetailTile = ({
         onClick={() => setmodal(true)}
         className="w-[846px] self-stretch p-[24px] justify-between items-center inline-flex hover:bg-primary-50 cursor-pointer"
       >
-        <div className="text-center text-primary-500 body-medium">
+        <div className="w-20 text-center text-primary-500 body-medium">
           {notification.type}
         </div>
         <div className="w-[589px] flex-col justify-start items-end gap-3 inline-flex">
           <div
-            className={`self-stretch ${true ? 'body-medium-bold' : 'body-medium'} text-gray-800 truncate`}
+            className={`self-stretch ${notification.status == '안읽음' ? 'body-medium-bold' : 'body-medium'} text-gray-800 truncate`}
           >
             {notification.content}
           </div>
@@ -68,7 +76,7 @@ export const NotificationDetailTile = ({
             {notification.senderName}
           </div>
         </div>
-        <div className="text-center text-[#4e4e4e] body-medium">
+        <div className="w-20 text-end text-[#4e4e4e] body-medium">
           {detailDate(notification.createdAt)}
         </div>
       </div>

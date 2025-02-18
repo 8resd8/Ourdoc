@@ -1,14 +1,24 @@
 import { useState } from 'react';
 import { detailDate } from '../../utils/DateFormat';
 import Modal from '../commons/Modal';
-import { Notification } from '../../services/notificationsService';
+import {
+  markNotificationAsReadApi,
+  Notification,
+} from '../../services/notificationsService';
 
 export const NotificationTile = ({
   notification,
+  fetchData,
 }: {
   notification: Notification;
+  fetchData: () => void;
 }) => {
   const [modal, setmodal] = useState(false);
+
+  const markNotificationAsRead = async () => {
+    await markNotificationAsReadApi(notification.notificationId);
+    fetchData();
+  };
 
   return (
     <>
@@ -45,6 +55,7 @@ export const NotificationTile = ({
         confirmText={'확인'}
         cancelText={'닫기'}
         onConfirm={function (): void {
+          markNotificationAsRead();
           setmodal(false);
         }}
         onCancel={function (): void {
