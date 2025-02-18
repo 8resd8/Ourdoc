@@ -90,7 +90,7 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 	}
 
 	@Override
-	public Map<String, List<TeachersRoomDto>> findByTeachersRoom(Long userId, TeacherClassRequest request) {
+	public Map<String, List<TeachersRoomDto>> findByTeachersRoom(Long userId) {
 		List<TeachersRoomDto> list = queryFactory
 			.select(new QTeachersRoomDto(
 				classRoom.school.schoolName,

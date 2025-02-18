@@ -23,9 +23,8 @@ public class TeacherClassRoomService {
 
 	private final ClassRoomRepository classRoomRepository;
 
-	public TeacherRoomResponse getTeacherRoom(User user, TeacherClassRequest request) {
-		Map<String, List<TeachersRoomDto>> findTeacherRooms = classRoomRepository.findByTeachersRoom(user.getId(),
-			request);
+	public TeacherRoomResponse getTeacherRoom(User user) {
+		Map<String, List<TeachersRoomDto>> findTeacherRooms = classRoomRepository.findByTeachersRoom(user.getId());
 
 		return new TeacherRoomResponse(findTeacherRooms);
 	}

@@ -17,7 +17,7 @@ public interface ClassRoomQueryRepository {
 
 	List<SchoolClassDto> findByTeacherAndYear(Long userId, Year year);
 
-	Map<String, List<TeachersRoomDto>> findByTeachersRoom(Long userId, TeacherClassRequest request);
+	Map<String, List<TeachersRoomDto>> findByTeachersRoom(Long userId);
 
 	List<TeacherRoomStudentDto> findByTeachersRoomStudent(Long userId, Long classId);
 
