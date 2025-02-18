@@ -70,7 +70,8 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 				classRoom.school.schoolName,
 				classRoom.grade,
 				classRoom.classNumber,
-				teacher.phone
+				teacher.phone,
+				user.birth
 			))
 			.from(user)
 			.join(teacher).on(teacher.user.id.eq(user.id))
