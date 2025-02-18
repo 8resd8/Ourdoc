@@ -7,7 +7,6 @@ import {
 } from '../../../styles/bookCategoryType';
 import {
   Book,
-  BookCategoryContents,
   BookCategoryParams,
   getClassTeacherRecommendedBooksApi,
   getFavoriteBooksApi,
@@ -104,6 +103,7 @@ const NON_DELETE_TABLE_HEADER = [
 interface BookProps {
   book: Book;
   submitCount: number;
+  homeworkId?: number;
 }
 
 const TeacherBookCategory = () => {
@@ -134,11 +134,14 @@ const TeacherBookCategory = () => {
       switch (selectedCategory) {
         case BookCategoryType.HomeWork:
           response = await getTeacherHomeworkBooksApi(params);
+          console.log(response);
+
+          responseList = [];
           response.homeworks.content.forEach((element) => {
-            responseList = [];
             responseList.push({
               book: element.book,
               submitCount: element.homeworkSubmitCount,
+              homeworkId: element.homeworkId,
             });
           });
 
@@ -147,8 +150,8 @@ const TeacherBookCategory = () => {
           totalPage = response.homeworks.totalPages;
           break;
         case BookCategoryType.Class:
-          response = await getClassTeacherRecommendedBooksApi(params);
           responseList = [];
+          response = await getClassTeacherRecommendedBooksApi(params);
           response.recommends.content.forEach((element) => {
             responseList.push({
               book: element.book,
@@ -160,8 +163,8 @@ const TeacherBookCategory = () => {
           totalPage = response.recommends.totalPages;
           break;
         case BookCategoryType.Favorite:
-          response = await getFavoriteBooksApi(params);
           responseList = [];
+          response = await getFavoriteBooksApi(params);
           response.content.forEach((element) => {
             responseList.push({
               book: element.book,
@@ -174,8 +177,8 @@ const TeacherBookCategory = () => {
           totalPage = response.totalPages;
           break;
         case BookCategoryType.Grade:
-          response = await getTeacherRecommendedBooksApi(params);
           responseList = [];
+          response = await getTeacherRecommendedBooksApi(params);
           response.recommends.content.forEach((element) => {
             responseList.push({
               book: element.book,
@@ -349,7 +352,13 @@ const TeacherBookCategory = () => {
                 publisher={item.book.publisher}
                 publishYear={item.book.publishYear}
                 readerCount={item.submitCount}
-                onClick={() => {}}
+                onClick={() => {
+                  navigate(
+                    selectedCategory == BookCategoryType.HomeWork
+                      ? `/teacher/homework/list/?homeworkId=${item.homeworkId}`
+                      : `/teacher/book/report/list/${item.book.bookId}`
+                  );
+                }}
                 deleteClick={() => {
                   handleDeleteClick(item.book);
                 }}

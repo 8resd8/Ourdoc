@@ -170,7 +170,16 @@ const StudentBookCategory = () => {
       <div className="w-[1064px] grid grid-cols-5 gap-6">
         {books.map((item, index) => (
           <div key={index} className="flex flex-col self-stretch items-center">
-            <BookBriefTile book={item.book} />
+            <BookBriefTile
+              book={item.book}
+              isHomework={selectedCategory == BookCategoryType.HomeWork}
+              isStudent={false}
+              searchBookId={
+                selectedCategory == BookCategoryType.HomeWork
+                  ? item.homeworkId
+                  : item.book.bookId
+              }
+            />
             {selectedCategory === BookCategoryType.HomeWork ? (
               <HomeWorkButton
                 id={item.homeworkId}

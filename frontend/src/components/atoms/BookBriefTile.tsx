@@ -3,15 +3,37 @@ import { Book } from '../../services/booksService';
 
 type BookBriefProps = {
   book: Book;
+  isHomework: boolean;
+  isStudent: boolean;
+  searchBookId: number;
 };
 
-export const BookBriefTile = ({ book }: BookBriefProps) => {
+export const BookBriefTile = ({
+  book,
+  isHomework,
+  isStudent,
+  searchBookId,
+}: BookBriefProps) => {
   const navigate = useNavigate();
-  console.log(book);
+  let url = '';
+
+  if (isHomework) {
+    if (isStudent) {
+      url = `/student/homework/list/?homeworkId=${searchBookId}`;
+    } else {
+      url = `/teacher/homework/list/?homeworkId=${searchBookId}`;
+    }
+  } else {
+    if (isStudent) {
+      url = `/student/book/report/list/${searchBookId}`;
+    } else {
+      url = `/teacher/book/report/list/${searchBookId}`;
+    }
+  }
 
   return (
     <div
-      onClick={() => navigate(`/student/book/report/list/${book.bookId}`)}
+      onClick={() => navigate(url)}
       className="cursor-pointer w-[185px] flex-col justify-start items-start gap-2 inline-flex"
     >
       <div className="self-stretch h-80 rounded-[15px] flex-col justify-center items-center gap-2 flex">
