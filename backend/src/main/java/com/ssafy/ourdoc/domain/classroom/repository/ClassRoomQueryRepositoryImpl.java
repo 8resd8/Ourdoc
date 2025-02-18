@@ -102,8 +102,8 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 				classRoom.classNumber
 			))
 			.from(teacherClass)
-			.join(teacherClass.classRoom, classRoom).fetchJoin()
-			.join(teacherClass.user, user).fetchJoin()
+			.join(teacherClass.classRoom, classRoom)
+			.join(teacherClass.user, user)
 			.where(teacherClassEq(userId), yearEq(year))
 			.fetch();
 	}
