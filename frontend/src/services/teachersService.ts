@@ -27,9 +27,14 @@ export interface TeacherProfileResponse {
 }
 
 export interface TeacherProfileUpdateRequest {
-  name?: string;
-  grade?: number;
-  class?: number;
+  name: string;
+  loginId: string;
+  email: string;
+  phone: string;
+  schoolId: number;
+  year: number;
+  grade: number;
+  classNumber: number;
 }
 
 export interface StudentProfile {
@@ -202,10 +207,9 @@ export const getTeacherProfileApi = async (): Promise<TeacherProfile> => {
 
 // 교사 본인 정보 수정
 export const updateTeacherProfileApi = async (
-  teacherId: string,
   data: TeacherProfileUpdateRequest
 ): Promise<void> => {
-  await api.patch(`/teachers/${teacherId}/profile`, data);
+  await api.patch(`/teachers/profile`, data);
 };
 
 // 학교 검색 API

@@ -2,14 +2,23 @@ import { useEffect, useState } from 'react';
 import {
   getTeacherProfileApi,
   TeacherProfile,
+  updateTeacherProfileApi,
 } from '../../../services/teachersService';
+import { signinApi } from '../../../services/usersService';
+import { useNavigate } from 'react-router-dom';
+import { notify } from '../../commons/Toast';
 
 interface ModalProps {
   type: 'passwordConfirm' | 'passwordReset' | 'createClass';
   onClose: () => void;
+  loginClick: any;
 }
 
-const Modal = ({ type, onClose }: ModalProps) => {
+const Modal = ({ loginClick, type, onClose }: ModalProps) => {
+  const [password, setPassword] = useState('');
+  const login = () => {
+    loginClick(password);
+  };
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-50">
       <div className="bg-gray-0 rounded-[30px] shadow-small p-6 w-[414px]">
@@ -19,6 +28,7 @@ const Modal = ({ type, onClose }: ModalProps) => {
               비밀번호를 입력해주세요.
             </div>
             <input
+              onChange={(e) => setPassword(e.target.value)}
               type="password"
               className="mt-4 w-full border-b border-gray-800 p-2"
               placeholder="비밀번호"
@@ -53,14 +63,17 @@ const Modal = ({ type, onClose }: ModalProps) => {
             </p>
           </>
         )}
-        <div className="mt-6 flex justify-between">
+        <div className="mt-6 flex justify-between ">
           <button
             onClick={onClose}
-            className="flex-1 py-3 border border-gray-300 text-gray-400 rounded-[10px] mr-2"
+            className="flex-1 py-3 border border-gray-300 text-gray-400 rounded-[10px] mr-2 cursor-pointer"
           >
             취소
           </button>
-          <button className="flex-1 py-3 bg-primary-500 text-gray-0 rounded-[10px] ml-2">
+          <button
+            onClick={type == 'passwordConfirm' ? login : loginClick}
+            className="flex-1 py-3 bg-primary-500 text-gray-0 rounded-[10px] ml-2 cursor-pointer"
+          >
             확인
           </button>
         </div>
@@ -71,16 +84,31 @@ const Modal = ({ type, onClose }: ModalProps) => {
 
 const TeacherMyPage = () => {
   const [modalType, setModalType] = useState<ModalProps['type'] | null>(null);
-
   const [teacherUser, setTeacherUser] = useState<TeacherProfile>();
-
+  const navigate = useNavigate();
+  const fetchData = async () => {
+    const response = await getTeacherProfileApi();
+    setTeacherUser(response);
+  };
+  const handleLogin = async (password: string) => {
+    if (teacherUser)
+      try {
+        const response = await signinApi({
+          userType: '교사',
+          loginId: teacherUser.loginId,
+          password: password,
+        });
+        navigate(`/teacher/profile-update?name=${teacherUser.name}&loginId=${teacherUser.loginId}&email=${teacherUser.email}&phone=${teacherUser.phone}&schoolName=${teacherUser.schoolName}&grade=${teacherUser.grade}&classNumber=${teacherUser.classNumber}%schoolId=${teacherUser.schoolName}
+`);
+      } catch (error: any) {
+        notify({
+          type: 'error',
+          text: '사용자 인증에 실패했습니다.',
+        });
+        console.error('로그인 실패:', error);
+      }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await getTeacherProfileApi();
-
-      setTeacherUser(response);
-    };
-
     fetchData();
   }, []);
 
@@ -137,7 +165,11 @@ const TeacherMyPage = () => {
           </button>
         </div>
         {modalType && (
-          <Modal type={modalType} onClose={() => setModalType(null)} />
+          <Modal
+            loginClick={handleLogin}
+            type={modalType}
+            onClose={() => setModalType(null)}
+          />
         )}
       </div>
     )
