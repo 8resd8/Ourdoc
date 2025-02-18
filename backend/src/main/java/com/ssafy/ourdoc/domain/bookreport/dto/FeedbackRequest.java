@@ -1,13 +1,13 @@
 package com.ssafy.ourdoc.domain.bookreport.dto;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 public record FeedbackRequest(
 	@NotNull(message = "{notblank}")
-	@Max(value = 250, message = "{length.max}")
+	@Positive(message = "{positive}")
 	Long bookReportId,
 
 	@NotBlank(message = "{notblank}")
