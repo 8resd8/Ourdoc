@@ -80,15 +80,6 @@ const TeacherHomeWorkReportList = () => {
 
       {/* 제출한 독서록 리스트 테이블 */}
       <div className="w-full flex flex-col items-center">
-        {/* 버튼 섹션 */}
-        <div className="flex justify-end space-x-4 mb-4 w-[868px]">
-          <button className="body-medium px-4 py-2 text-gray-500 rounded-[10px]  border border-gray-500">
-            승인 완료만 보기
-          </button>
-          <button className="body-medium px-4 py-2 text-gray-500 rounded-[10px]  border border-gray-500">
-            승인 미완료만 보기
-          </button>
-        </div>
         {/* 테이블 */}
         <table className="w-[868px] mb-6">
           <thead>
@@ -107,7 +98,6 @@ const TeacherHomeWorkReportList = () => {
                 <td className="px-4 py-2 text-center">
                   {index + 1 + currentPage * 10}
                 </td>
-                {/* <td className="px-4 py-2 truncate">{row.content}</td> */}
                 <td
                   onClick={() => {
                     navigate(

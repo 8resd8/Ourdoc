@@ -21,6 +21,7 @@ import StudentHomeWorkReportList from '../components/pages/student/StudentHomeWo
 import StudentTrophy from '../components/pages/student/StudentTrophy';
 import StudentHeader from '../components/commons/StudentHeader';
 import StudentDebateBoard from '../components/pages/student/StudentDebateBoard';
+import StudentReportList from '../components/pages/student/StudentReportList';
 
 // Teacher 컴포넌트
 import TeacherBookCategory from '../components/pages/teacher/TeacherBookCategory';
@@ -39,7 +40,7 @@ import TeacherStatistics from '../components/pages/teacher/TeacherStatistics';
 import TeacherStudentInfo from '../components/pages/teacher/TeacherStudentInfo';
 import TeacherHeader from '../components/commons/TeacherHeader';
 import TeacherDebateBoard from '../components/pages/teacher/TeacherDebateBoard';
-import StudentReportList from '../components/pages/student/StudentReportList';
+import TeacherStudentReportList from '../components/pages/teacher/TeacherStudentReportList';
 
 const Router = () => {
   return (
@@ -66,12 +67,12 @@ const Router = () => {
           <Route path="book/category" element={<StudentBookCategory />} />
           <Route path="book/search" element={<StudentBookSearch />} />
           <Route path="homework/list" element={<StudentHomeWorkReportList />} />
+          <Route path="book/report/list/:id" element={<StudentReportList />} />
           <Route path="report/write/:id" element={<StudentReportWrite />} />
           <Route path="report/detail/:id" element={<StudentReportDetail />} />
           <Route path="reports" element={<StudentAllReportList />} />
           <Route path="trophy" element={<StudentTrophy />} />
           <Route path="mypage" element={<StudentMyPage />} />
-          <Route path="book/report/list/:id" element={<StudentReportList />} />
         </Route>
 
         {/* 교사 전용 라우트 */}
@@ -85,6 +86,10 @@ const Router = () => {
           <Route path="book/category" element={<TeacherBookCategory />} />
           <Route path="book/search" element={<TeacherBookSearch />} />
           <Route path="homework/list" element={<TeacherHomeWorkReportList />} />
+          <Route
+            path="book/report/list/:id"
+            element={<TeacherStudentReportList />}
+          />
           <Route path="reports" element={<TeacherReportList />} />
           <Route path="report/detail/:id" element={<TeacherReportDetail />} />
           <Route path="statistics" element={<TeacherStatistics />} />

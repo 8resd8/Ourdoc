@@ -29,7 +29,13 @@ export const FavoriteBookListSection = () => {
       <div className="self-stretch justify-between items-start inline-flex">
         {favoriteBooks &&
           favoriteBooks.content.map((book, index) => (
-            <BookBriefTile key={index} book={book.book} />
+            <BookBriefTile
+              key={index}
+              book={book.book}
+              isHomework={false}
+              isStudent={true}
+              searchBookId={book.book.bookId}
+            />
           ))}
       </div>
     </div>

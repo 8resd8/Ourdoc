@@ -412,10 +412,13 @@ export const getStudentBookDetailsApi = async (
 };
 // 선생생 도서 상세 조회
 export const getTeacherBookDetailsApi = async (
-  bookId: number
-): Promise<BookDetail> => {
+  bookId: number,
+  page: number
+): Promise<StudentBook> => {
   try {
-    const response = await api.get<BookDetail>(`/books/${bookId}`);
+    const response = await api.get<StudentBook>(`/books/teachers/${bookId}`, {
+      params: { size: 10, page: page },
+    });
     return response.data;
   } catch (error) {
     console.error('Error fetching book details:', error);

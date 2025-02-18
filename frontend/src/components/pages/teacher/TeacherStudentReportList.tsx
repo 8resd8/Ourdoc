@@ -5,11 +5,12 @@ import {
   StudentBook,
   addFavoriteBookApi,
   getStudentBookDetailsApi,
+  getTeacherBookDetailsApi,
   removeFavoriteBookApi,
 } from '../../../services/booksService';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-const StudentReportList = () => {
+const TeacherStudentReportList = () => {
   const { id } = useParams();
 
   const [bookDetail, setBookDetail] = useState<StudentBook | null>(null);
@@ -23,7 +24,7 @@ const StudentReportList = () => {
   const PAGE_SIZE = 10;
   const fetchBookDetail = async (page = 0) => {
     try {
-      const response = await getStudentBookDetailsApi(Number(id), page);
+      const response = await getTeacherBookDetailsApi(Number(id), page);
       setBookDetail(response);
       setBookReports(response.bookReports);
       setTotalPages(response.bookReports.totalPages);
@@ -89,34 +90,6 @@ const StudentReportList = () => {
             </p>
           </div>
         </div>
-        {/* 버튼 섹션 */}
-        <div className="flex space-x-4 mb-4 justify-between mt-4 w-[630px]">
-          {favorite ? (
-            <button
-              onClick={favoriteCancel}
-              className="cursor-pointer body-medium px-4 py-2 text-gray-500 rounded-[10px]  border border-gray-500"
-            >
-              관심 해제
-            </button>
-          ) : (
-            <button
-              onClick={favoriteBook}
-              className="cursor-pointer body-medium px-4 py-2 text-secondary-500 rounded-[10px]  border border-secondary-500"
-            >
-              관심 등록
-            </button>
-          )}
-          <button
-            onClick={() => {
-              navigate(
-                `/student/report/write/${id}?title=${bookDetail?.title}&author=${bookDetail?.author}&publisher=${bookDetail?.publisher}`
-              );
-            }}
-            className="cursor-pointer body-medium px-4 py-2 text-gray-0 rounded-[10px] bg-primary-500 "
-          >
-            독서록 작성
-          </button>
-        </div>
       </div>
 
       {/* 제출한 독서록 리스트 테이블 */}
@@ -127,8 +100,10 @@ const StudentReportList = () => {
             <tr className="">
               <th className="px-4 py-2 border-b border-gray-200">No</th>
               <th className="px-4 py-2 border-b border-gray-200">내용</th>
+              <th className="px-4 py-2 border-b border-gray-200">번호</th>
+              <th className="px-4 py-2 border-b border-gray-200">학생 이름</th>
               <th className="px-4 py-2 border-b border-gray-200">제출 날짜</th>
-              <th className="px-4 py-2 border-b border-gray-200">도장 여부</th>
+              <th className="px-4 py-2 border-b border-gray-200">승인 여부</th>
             </tr>
           </thead>
           <tbody>
@@ -140,13 +115,17 @@ const StudentReportList = () => {
                   </td>
                   <td
                     onClick={() => {
-                      navigate(`/student/report/detail/${row.id}`);
+                      navigate(
+                        `/teacher/report/detail/${row.bookreportId}/?studentNumber=${row.studentNumber}&name=${row.studentName}`
+                      );
                     }}
                     className="px-4 py-2 truncate cursor-pointer"
                   >
                     {row.beforeContent}
                   </td>
-                  <td className="px-4 py-2 text-center ">
+                  <td className="px-4 py-2 text-center">{row.studentNumber}</td>
+                  <td className="px-4 py-2 text-center">{row.studentName}</td>
+                  <td className="px-4 py-2 text-center">
                     {formatDate(row.createdAt)}
                   </td>
                   <td className="px-4 py-2 text-center">
@@ -212,4 +191,4 @@ const StudentReportList = () => {
   );
 };
 
-export default StudentReportList;
+export default TeacherStudentReportList;
