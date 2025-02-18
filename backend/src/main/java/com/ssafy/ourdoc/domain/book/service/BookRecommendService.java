@@ -154,7 +154,7 @@ public class BookRecommendService {
 
 	private BookRecommendTeacherDetail toBookRecommendDetailTeacher(BookRecommend bookRecommend, User user) {
 		Long bookId = bookRecommend.getBook().getId();
-		int submitCount = bookReportRepository.countByUserIdAndBookId(user.getId(), bookId);
+		int submitCount = bookReportRepository.bookReportCountTeacher(bookId, user.getId());
 		BookStatus bookStatus = bookStatusMapper.mapBookStatus(bookRecommend.getBook(), user);
 		return BookRecommendTeacherDetail.of(bookRecommend, submitCount, bookStatus);
 	}

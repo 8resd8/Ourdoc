@@ -92,8 +92,8 @@ public class BookReportTeacherService {
 		return pageDto;
 	}
 
-	public Page<BookReportTeacher> getReportTeacherPageResponses(Long bookId, Pageable pageable) {
-		Page<BookReportTeacher> pageDto = bookReportRepository.bookReportsTeacherPage(bookId, pageable)
+	public Page<BookReportTeacher> getReportTeacherPageResponses(Long bookId, Long userId, Pageable pageable) {
+		Page<BookReportTeacher> pageDto = bookReportRepository.bookReportsTeacherPage(bookId, userId, pageable)
 			.map(dto -> new BookReportTeacher(
 				dto.id(),
 				dto.beforeContent(),
