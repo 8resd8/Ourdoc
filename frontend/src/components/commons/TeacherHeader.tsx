@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { currentUserState } from '../../recoil';
 import Layout from '../../layouts/Layout';
 import { HeaderProfileButton } from './HeaderProfileButton';
@@ -59,6 +59,24 @@ const TeacherHeader = () => {
     }
   };
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <Modal
@@ -85,7 +103,7 @@ const TeacherHeader = () => {
                 className="w-[140px]"
               />
             </Link>
-            <div className="flex items-center order-2 static">
+            <div ref={dropdownRef} className="flex items-center order-2 static">
               <HeaderProfileButton
                 onClick={toggleDropdown}
                 name={userName}
