@@ -6,8 +6,16 @@ import {
   BookCategoryType,
 } from '../../../styles/bookCategoryType';
 import {
+  Book,
   BookCategoryContents,
   BookCategoryParams,
+  getClassTeacherRecommendedBooksApi,
+  getFavoriteBooksApi,
+  getTeacherHomeworkBooksApi,
+  getTeacherRecommendedBooksApi,
+  removeFavoriteBookApi,
+  removeHomeworkBookApi,
+  removeTeacherRecommendedBookApi,
 } from '../../../services/booksService';
 import { bookCategoryState } from '../../../recoil/atoms/bookCategoryAtom';
 import { useRecoilState } from 'recoil';
@@ -15,6 +23,7 @@ import { PaginationButton } from '../../atoms/PagenationButton';
 import SvgColor from '../../atoms/SvgColor';
 import { Table, TableAlignType } from '../../atoms/Table';
 import { TeacherBookCategoryListTile } from '../../atoms/TeacherBookCategoryListTile';
+import { notify } from '../../commons/Toast';
 
 const PAGE_SIZE = 10;
 const TABLE_HEADER = [
@@ -44,15 +53,69 @@ const TABLE_HEADER = [
   },
 ];
 
+const NON_SUMBIT_COUNT_TABLE_HEADER = [
+  {
+    label: 'No',
+    width: 60,
+  },
+  {
+    label: '도서명',
+    width: 240,
+    align: TableAlignType.left,
+  },
+  {
+    label: '지은이',
+  },
+  {
+    label: '출판사',
+  },
+  {
+    label: '출판 년도',
+  },
+  {
+    label: '삭제',
+  },
+];
+
+const NON_DELETE_TABLE_HEADER = [
+  {
+    label: 'No',
+    width: 60,
+  },
+  {
+    label: '도서명',
+    width: 240,
+    align: TableAlignType.left,
+  },
+  {
+    label: '지은이',
+  },
+  {
+    label: '출판사',
+  },
+  {
+    label: '출판 년도',
+  },
+  {
+    label: '제출 현황',
+  },
+];
+
+interface BookProps {
+  book: Book;
+  submitCount: number;
+}
+
 const TeacherBookCategory = () => {
   const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [books, setBooks] = useState<BookCategoryContents[]>([]);
+  const [books, setBooks] = useState<BookProps[]>([]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [searchCategory, setSearchCategory] = useState('도서명');
+  const [tableHeader, settableHeader] = useState(TABLE_HEADER);
 
   const [selectedCategory, setSelectedCategory] =
     useRecoilState(bookCategoryState);
@@ -64,24 +127,72 @@ const TeacherBookCategory = () => {
     };
     try {
       let response;
+      let bookList: BookProps[] = [];
+      let totalPage: number;
+      let responseList: BookProps[] = [];
+
       switch (selectedCategory) {
         case BookCategoryType.HomeWork:
-          // response = await getTeacherHomeworkBooksApi(params);
+          response = await getTeacherHomeworkBooksApi(params);
+          response.homeworks.content.forEach((element) => {
+            responseList = [];
+            responseList.push({
+              book: element.book,
+              submitCount: element.homeworkSubmitCount,
+            });
+          });
+
+          bookList = responseList;
+
+          totalPage = response.homeworks.totalPages;
           break;
         case BookCategoryType.Class:
-          // response = await getClassStudentRecommendedBooksApi(params);
+          response = await getClassTeacherRecommendedBooksApi(params);
+          responseList = [];
+          response.recommends.content.forEach((element) => {
+            responseList.push({
+              book: element.book,
+              submitCount: element.submitCount,
+            });
+          });
+
+          bookList = responseList;
+          totalPage = response.recommends.totalPages;
           break;
         case BookCategoryType.Favorite:
-          // response = await getFavoriteBooksApi(params);
+          response = await getFavoriteBooksApi(params);
+          responseList = [];
+          response.content.forEach((element) => {
+            responseList.push({
+              book: element.book,
+              submitCount: 0,
+            });
+          });
+
+          bookList = responseList;
+
+          totalPage = response.totalPages;
           break;
         case BookCategoryType.Grade:
-          // response = await getStudentRecommendedBooksApi(params);
+          response = await getTeacherRecommendedBooksApi(params);
+          responseList = [];
+          response.recommends.content.forEach((element) => {
+            responseList.push({
+              book: element.book,
+              submitCount: element.submitCount,
+            });
+          });
+
+          bookList = responseList;
+          totalPage = response.recommends.totalPages;
           break;
       }
 
-      // setBooks(response.content);
-      // setTotalPages(response.totalPages);
-      setCurrentPage(page);
+      if (response) {
+        setBooks(bookList);
+        setTotalPages(totalPage);
+        setCurrentPage(page);
+      }
     } catch (error) {
       console.error('도서 목록 가져오기 실패:', error);
     }
@@ -99,8 +210,46 @@ const TeacherBookCategory = () => {
     );
   };
 
+  const handleDeleteClick = async (item: Book) => {
+    try {
+      switch (selectedCategory) {
+        case BookCategoryType.HomeWork:
+          await removeHomeworkBookApi(item.bookId);
+          break;
+        case BookCategoryType.Class:
+          await removeTeacherRecommendedBookApi(item.bookId);
+          break;
+        case BookCategoryType.Favorite:
+          await removeFavoriteBookApi(item.bookId);
+          break;
+
+        default:
+          break;
+      }
+
+      notify({ type: 'success', text: '삭제가 완료되었습니다.' });
+    } catch (error) {
+      notify({ type: 'error', text: '삭제 중 오류가 발생했습니다.' });
+    } finally {
+      fetchBooks(0);
+    }
+  };
+
   useEffect(() => {
     fetchBooks(0);
+
+    switch (selectedCategory) {
+      case BookCategoryType.Favorite:
+        settableHeader(NON_SUMBIT_COUNT_TABLE_HEADER);
+        break;
+      case BookCategoryType.Grade:
+        settableHeader(NON_DELETE_TABLE_HEADER);
+        break;
+
+      default:
+        settableHeader(TABLE_HEADER);
+        break;
+    }
   }, [selectedCategory]);
 
   useEffect(() => {
@@ -190,19 +339,25 @@ const TeacherBookCategory = () => {
 
       <div>
         <Table
-          headers={TABLE_HEADER}
-          datas={[
-            <TeacherBookCategoryListTile
-              no={1}
-              title="어린 왕자는 진정한 소중함은 눈에 보이지 않고 마음으로 보아야 한다는 깨달음을 주는 책이다."
-              author={'fooo'}
-              publisher={'sadf'}
-              publishYear={2024}
-              readerCount={1}
-              onClick={() => {}}
-              deleteClick={() => {}}
-            />,
-          ]}
+          headers={tableHeader}
+          datas={books.map((item, index) => {
+            return (
+              <TeacherBookCategoryListTile
+                no={currentPage * 10 + index + 1}
+                title={item.book.title}
+                author={item.book.author}
+                publisher={item.book.publisher}
+                publishYear={item.book.publishYear}
+                readerCount={item.submitCount}
+                onClick={() => {}}
+                deleteClick={() => {
+                  handleDeleteClick(item.book);
+                }}
+                showCount={selectedCategory != BookCategoryType.Favorite}
+                showDelete={selectedCategory != BookCategoryType.Grade}
+              />
+            );
+          })}
         />
       </div>
       <PaginationButton
