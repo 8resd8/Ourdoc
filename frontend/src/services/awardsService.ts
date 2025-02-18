@@ -17,6 +17,10 @@ export interface CreateAwardRequest {
   file: File;
 }
 
+export interface StampCountResponse {
+  stampCount: number;
+}
+
 // 상장 목록 조회
 export const getAwardsListApi = async (): Promise<AwardDetail[]> => {
   const response = await api.get<AwardsListResponse>('/awards');
@@ -67,4 +71,11 @@ export const getTeacherStudentAwardsApi = async ({
   );
 
   return response.data.studentAwards;
+};
+
+// 학생 칭찬 스탬프 개수 조회
+export const getStampCountApi = async (): Promise<StampCountResponse> => {
+  const response = await api.get<StampCountResponse>('/students/awards/stamp');
+
+  return response.data;
 };

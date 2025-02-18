@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
-import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.BookStatus;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetail;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetailPage;
@@ -93,13 +92,11 @@ public class HomeworkService {
 		homeworkRepository.delete(homework);
 	}
 
-	public HomeworkTeacherResponse getHomeworkTeacherClass(BookSearchRequest request, User user, Pageable pageable) {
+	public HomeworkTeacherResponse getHomeworkTeacherClass(User user, Pageable pageable) {
 		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
 
-		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
-		Page<Homework> homeworks = homeworkRepository.findByClassRoomAndBookIn(userClassRoom,
-			searchedBooks, pageable);
+		Page<Homework> homeworks = homeworkRepository.findByClassRoom(userClassRoom, pageable);
 
 		List<HomeworkTeacherDetail> details = homeworks.stream()
 			.map(homework -> getHomeworkDetailTeacher(homework.getId(), user))
@@ -137,12 +134,10 @@ public class HomeworkService {
 		return HomeworkTeacherDetailPage.of(homework, submitCount, bookReports, bookStatus);
 	}
 
-	public HomeworkStudentResponse getHomeworkStudentClass(BookSearchRequest request, User user, Pageable pageable) {
+	public HomeworkStudentResponse getHomeworkStudentClass(User user, Pageable pageable) {
 		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 
-		List<Book> searchedBooks = bookRepository.findBookList(request.title(), request.author(), request.publisher());
-		Page<Homework> homeworks = homeworkRepository.findByClassRoomAndBookIn(userClassRoom,
-			searchedBooks, pageable);
+		Page<Homework> homeworks = homeworkRepository.findByClassRoom(userClassRoom, pageable);
 
 		List<HomeworkStudentDetail> details = homeworks.stream()
 			.map(homework -> getHomeworkDetailStudent(homework.getId(), user))

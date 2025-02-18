@@ -3,6 +3,7 @@ package com.ssafy.ourdoc.global.interceptor;
 import static com.ssafy.ourdoc.global.common.enums.UserType.*;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import com.ssafy.ourdoc.global.common.enums.UserType;
@@ -25,8 +26,11 @@ public class JwtInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
 		Exception {
+		if (CorsUtils.isPreFlightRequest(request)) {
+			return true;
+		}
 
-		UserType role = UserType.valueOf((String) request.getAttribute("role"));
+		UserType role = UserType.valueOf((String)request.getAttribute("role"));
 		String path = request.getRequestURI();
 
 		if (role == null) {
@@ -44,13 +48,13 @@ public class JwtInterceptor implements HandlerInterceptor {
 
 	private boolean isAuthorized(String path, UserType role) {
 
-		if (path.startsWith("/admin") && !role.equals(관리자)) {
+		if (path.startsWith("/api/admin") && !role.equals(관리자)) {
 			return false;
-		} else if ((path.startsWith("/teachers") || path.startsWith("/books/teachers") ||
-			path.startsWith("/bookreports/teachers") || path.startsWith("/debates/teachers")) && !role.equals(교사)) {
+		} else if ((path.startsWith("/api/teachers") || path.startsWith("/api/books/teachers") ||
+			path.startsWith("/api/bookreports/teachers") || path.startsWith("/api/debates/teachers")) && !role.equals(교사)) {
 			return false;
-		} else if ((path.startsWith("/students") || path.startsWith("/books/students") ||
-			path.startsWith("/bookreports/students") || path.startsWith("/debates/students")) && !role.equals(학생)) {
+		} else if ((path.startsWith("/api/students") || path.startsWith("/api/books/students") ||
+			path.startsWith("/api/bookreports/students") || path.startsWith("/api/debates/students")) && !role.equals(학생)) {
 			return false;
 		}
 

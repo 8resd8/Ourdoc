@@ -1,4 +1,14 @@
-export const TrophySummarySection = () => {
+export const TrophySummarySection = ({
+  stampCount,
+  studentTotalCount,
+  myRank,
+  recentFeedback,
+}: {
+  stampCount: number;
+  studentTotalCount: number;
+  myRank: number;
+  recentFeedback: string;
+}) => {
   return (
     <div className="h-[238px] p-6 bg-gray-0 rounded-[15px] shadow-xsmall flex-col justify-start items-start gap-3 inline-flex">
       <div className="text-gray-800 headline-medium">성취도</div>
@@ -6,14 +16,16 @@ export const TrophySummarySection = () => {
         <div className="self-stretch py-6 justify-center items-center gap-9 inline-flex">
           <div>
             <span className="text-primary-500 body-medium">칭찬도장 </span>
-            <span className="text-primary-500 headline-medium">7</span>
+            <span className="text-primary-500 headline-medium">
+              {stampCount}
+            </span>
             <span className="text-primary-500 body-medium">개를 모았어요.</span>
           </div>
           <div>
             <span className="text-primary-500 body-medium">
-              반 친구 12명 중에{' '}
+              반 친구 {studentTotalCount}명 중에{' '}
             </span>
-            <span className="text-primary-500 headline-medium">1</span>
+            <span className="text-primary-500 headline-medium">{myRank}</span>
             <span className="text-primary-500 body-medium">
               번째로 많이 읽었어요.
             </span>
@@ -27,10 +39,7 @@ export const TrophySummarySection = () => {
             </div>
             <div className="py-3 justify-center items-center inline-flex">
               <div className="w-[582px] text-gray-700 body-small truncate">
-                참 잘했어요!참 잘했어요!참 잘했어요!참 잘했어요!참 잘했어요!참
-                잘했어요!참 잘했어요!참 잘했어요!참 잘했어요!참 잘했어요!참
-                잘했어요!참 잘했어요!참 잘했어요!참 잘했어요!참 잘했어요!참
-                잘했어요!참 잘했어요!참 잘했어요!참 잘했어요!참 잘했어요!
+                {recentFeedback}
               </div>
             </div>
           </div>

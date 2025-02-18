@@ -1,4 +1,3 @@
-import { Divider } from '@mui/material';
 import { MonthlyReportChart } from '../../molecules/MonthlyReportChart';
 import { MonthlyReportListSection } from '../../molecules/MonthlyReportListSection';
 import { useEffect, useState } from 'react';
@@ -15,8 +14,11 @@ import { getRecoil, setRecoil } from 'recoil-nexus';
 import { currentUserState, studentGradeState } from '../../../recoil';
 import {
   AwardDetail,
+  getStampCountApi,
   getStudentAwardsListApi,
 } from '../../../services/awardsService';
+import { createIndexArray } from '../../../utils/CreateIndexArray';
+import { PageDivider } from '../../atoms/PageDivider';
 
 const StudentTrophy = () => {
   const user = getRecoil(currentUserState);
@@ -27,9 +29,7 @@ const StudentTrophy = () => {
   const [studentReportStatistics, setstudentReportStatistics] =
     useState<ReportStatistics>();
   const [studentAwardsList, setstudentAwardsList] = useState<AwardDetail[]>();
-  const createIndexArray = (length: number) => {
-    return Array.from({ length }, (_, i) => i + 1);
-  };
+  const [stampCount, setstampCount] = useState<number>(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,17 +40,19 @@ const StudentTrophy = () => {
         grade: selectedGrade,
       });
       const studentAwardsList = await getStudentAwardsListApi();
+      const stampCount = await getStampCountApi();
 
       setstudentMonthlyReport(classMonthlyReport);
       setRecoil(studentGradeState, selectedGrade);
       setstudentReportStatistics(studentReportStatistics);
       setstudentAwardsList(studentAwardsList);
+      setstampCount(stampCount.stampCount);
     };
     fetchData();
   }, [selectedGrade]);
 
   return (
-    <div className="flex flex-col justify-center items-center ">
+    <div className="flex flex-col justify-center items-center pb-10">
       <div className="flex flex-col justify-center items-center">
         {/* 숙제 도서 제목 */}
         <h2 className="headline-large text-center mb-[36px] mt-[40px]">
@@ -87,11 +89,9 @@ const StudentTrophy = () => {
           })}
         </div>
 
-        <Divider
-          className="border-gray-200"
-          sx={{ width: '100vw', mb: '36px' }}
-        />
-        <div className="w-[1064px] flex flex-col pb-10 gap-20 justify-between">
+        <PageDivider />
+
+        <div className="w-[1064px] flex flex-col gap-20 justify-between">
           <div className="flex justify-between">
             <MonthlyReportChart mockMonthlyReport={studentMonthlyReport} />
             <MonthlyReportListSection isStudent />
@@ -117,7 +117,7 @@ const StudentTrophy = () => {
             <TrophyAwardSection awards={studentAwardsList} />
           )}
 
-          <TrophyStampSection count={28} />
+          <TrophyStampSection count={stampCount} />
         </div>
       </div>
     </div>

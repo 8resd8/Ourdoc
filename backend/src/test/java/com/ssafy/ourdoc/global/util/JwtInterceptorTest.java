@@ -3,16 +3,16 @@ package com.ssafy.ourdoc.global.util;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.ssafy.ourdoc.global.common.enums.UserType;
-import com.ssafy.ourdoc.global.interceptor.JwtInterceptor;
-import com.ssafy.ourdoc.global.util.JwtRefreshService;
-import com.ssafy.ourdoc.global.util.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import com.ssafy.ourdoc.global.common.enums.UserType;
+import com.ssafy.ourdoc.global.interceptor.JwtInterceptor;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @SpringBootTest
 class JwtInterceptorTest {
@@ -48,7 +48,7 @@ class JwtInterceptorTest {
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpServletResponse response = mock(HttpServletResponse.class);
 
-		when(request.getRequestURI()).thenReturn("/admin/dashboard");
+		when(request.getRequestURI()).thenReturn("/api/admin/dashboard");
 		when(request.getAttribute("role")).thenReturn(UserType.학생.name());
 
 		boolean result = jwtInterceptor.preHandle(request, response, new Object());

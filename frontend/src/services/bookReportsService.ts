@@ -1,5 +1,5 @@
 import { api } from '../services/api';
-import { Book } from './booksService';
+import { Book, Pageable, Sort } from './booksService';
 
 // 인터페이스 정의
 export interface CreateBookReportRequest {
@@ -52,6 +52,12 @@ export interface BookReportDetail {
 
 export interface BookReportParams {
   grade: number;
+  page: number;
+  size: number;
+}
+
+export interface StudentBookReportParams extends BookReportParams {
+  classId: number;
 }
 
 export interface ClassReportRank {
@@ -82,6 +88,39 @@ export interface ReportStatistics {
   readCount: number;
 }
 
+export interface StudentRecentAIFeedbackResponse {
+  content: string;
+}
+
+export interface StudentRankResponse {
+  stampCount: number;
+  rank: number;
+  lastRank: number;
+}
+
+export interface StudentBookReportListResponse {
+  content: StudentBookReportListContents[];
+  pageable: Pageable;
+  last: boolean;
+  totalElements: number;
+  totalPages: number;
+  first: boolean;
+  number: number;
+  sort: Sort;
+  numberOfElements: number;
+  size: number;
+  empty: boolean;
+}
+
+export interface StudentBookReportListContents {
+  bookId: number;
+  bookImagePath: string;
+  bookReportId: number;
+  bookTitle: string;
+  createdAt: string;
+  isHomework: boolean;
+}
+
 // 독서록 작성
 export const createBookReportApi = async (
   data: CreateBookReportRequest
@@ -107,12 +146,14 @@ export const getTeacherBookReportsApi = async (): Promise<BookReport[]> => {
 
 // 학생 독서록 목록 조회
 export const getStudentBookReportsApi = async (
-  params: BookReportParams
-): Promise<BookReport[]> => {
-  const response = await api.get<{ bookReports: BookReport[] }>(
-    '/bookreports/students',
-    { params }
-  );
+  params: StudentBookReportParams
+): Promise<StudentBookReportListResponse> => {
+  const response = await api.get<{
+    bookReports: StudentBookReportListResponse;
+  }>('/bookreports/students', { params });
+
+  console.log(response.data.bookReports);
+
   return response.data.bookReports;
 };
 
@@ -262,6 +303,16 @@ export const studentSubmitHomeworkReportApi = async (
   );
 };
 
+// 학생 최근 AI 피드백 조회
+export const studentRecentAIFeedbackApi =
+  async (): Promise<StudentRecentAIFeedbackResponse> => {
+    const response = await api.get(`/bookreports/students/feedback/ai/recent`);
+    return response.data;
+  };
+
+// 학생 독서록 순위 조회
+export const getStudentRankApi = async (): Promise<StudentRankResponse> => {
+  const response = await api.get(`/bookreports/students/rank`);
 // 교사 독서록 목록 조회
 export const getTeacherBookReportsList = async (params: any) => {
   const response = await api.get('/bookreports/teachers', {

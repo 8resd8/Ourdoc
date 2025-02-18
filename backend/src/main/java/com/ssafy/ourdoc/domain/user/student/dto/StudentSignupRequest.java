@@ -40,7 +40,7 @@ public record StudentSignupRequest(
 
 	@NotNull(message = "{notblank}")
 	@Min(value = 1, message = "{size.min}")
-	@Max(value = 20, message = "{size.max}")
+	@Max(value = 6, message = "{size.max}")
 	Integer grade,
 
 	@NotNull(message = "{notblank}")

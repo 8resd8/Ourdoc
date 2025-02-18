@@ -8,8 +8,10 @@ import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
 import java.time.Year;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import com.querydsl.core.types.Expression;
@@ -88,7 +90,7 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 	}
 
 	@Override
-	public Map<String, List<TeachersRoomDto>> findByTeachersRoom(Long userId, TeacherClassRequest request) {
+	public Map<String, List<TeachersRoomDto>> findByTeachersRoom(Long userId) {
 		List<TeachersRoomDto> list = queryFactory
 			.select(new QTeachersRoomDto(
 				classRoom.school.schoolName,
@@ -100,11 +102,15 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 			.from(teacherClass)
 			.join(teacherClass.classRoom, classRoom)
 			.where(teacherClassEq(userId))
-			.orderBy(classRoom.year.desc())
 			.fetch();
 
-		return list.stream()
+		Map<String, List<TeachersRoomDto>> grouped = list.stream()
 			.collect(Collectors.groupingBy(dto -> dto.year().toString()));
+
+		TreeMap<String, List<TeachersRoomDto>> sortedResult = new TreeMap<>(Comparator.reverseOrder());
+		sortedResult.putAll(grouped);
+
+		return sortedResult;
 	}
 
 	private BooleanExpression classEq(Long classId) {

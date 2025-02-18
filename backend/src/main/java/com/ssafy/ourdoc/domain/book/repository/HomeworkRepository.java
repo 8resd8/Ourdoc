@@ -19,7 +19,7 @@ public interface HomeworkRepository extends JpaRepository<Homework, Long>, Homew
 
 	List<Homework> findByClassRoomId(Long classRoomId);
 
-	Page<Homework> findByClassRoomAndBookIn(ClassRoom classRoom, List<Book> books, Pageable pageable);
+	Page<Homework> findByClassRoom(ClassRoom classRoom, Pageable pageable);
 
 	boolean existsByBookAndClassRoom(Book book, ClassRoom classRoom);
 }

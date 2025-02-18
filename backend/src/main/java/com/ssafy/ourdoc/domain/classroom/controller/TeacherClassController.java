@@ -26,8 +26,8 @@ public class TeacherClassController {
 
 	// 해당 교사의 연도, 학교, 학년, 반 조회
 	@GetMapping("/classes")
-	public TeacherRoomResponse getTeachersRoom(@Login User user, @Valid @ModelAttribute TeacherClassRequest request) {
-		return teacherClassRoomService.getTeacherRoom(user, request);
+	public TeacherRoomResponse getTeachersRoom(@Login User user) {
+		return teacherClassRoomService.getTeacherRoom(user);
 	}
 
 	// 교사 반 학생 조회
