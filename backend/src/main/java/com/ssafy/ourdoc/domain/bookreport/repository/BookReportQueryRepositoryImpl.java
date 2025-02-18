@@ -181,17 +181,8 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public Page<BookReportTeacherDto> bookReportsTeacherPage(Long bookId, Pageable pageable) {
-		Long countResult = queryFactory.select(bookReport.count())
-			.from(bookReport)
-			.join(bookReport.studentClass, studentClass)
-			.join(studentClass.user, user)
-			.where(
-				studentClass.active.eq(Active.활성),
-				bookReport.book.id.eq(bookId)
-			)
-			.fetchOne();
-		int total = countResult != null ? countResult.intValue() : 0;
+	public Page<BookReportTeacherDto> bookReportsTeacherPage(Long bookId, Long userId, Pageable pageable) {
+		int total = bookReportCountTeacher(bookId, userId);
 
 		List<BookReportTeacherDto> content = queryFactory.select(new QBookReportTeacherDto(
 				bookReport.id,
@@ -205,11 +196,13 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.join(bookReport.studentClass, studentClass)
 			.join(studentClass.user, user)
 			.join(studentClass.classRoom, classRoom)
+			.join(teacherClass.classRoom, studentClass.classRoom)
 			.join(classRoom.school, school)
 			.join(bookReport.book, book)
 			.where(
 				studentClass.active.eq(Active.활성),
-				bookReport.book.id.eq(bookId)
+				bookReport.book.id.eq(bookId),
+				teacherClass.user.id.eq(userId)
 			)
 			.orderBy(bookReport.createdAt.desc())
 			.offset(pageable.getOffset())
@@ -217,6 +210,22 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.fetch();
 
 		return new PageImpl<>(content, pageable, total);
+	}
+
+	@Override
+	public int bookReportCountTeacher(Long bookId, Long userId) {
+		Long countResult = queryFactory.select(bookReport.count())
+			.from(bookReport)
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.user, user)
+			.join(teacherClass).on(teacherClass.classRoom.eq(studentClass.classRoom))
+			.where(
+				studentClass.active.eq(Active.활성),
+				bookReport.book.id.eq(bookId),
+				teacherClass.user.id.eq(userId)
+			)
+			.fetchOne();
+		return countResult != null ? countResult.intValue() : 0;
 	}
 
 	@Override
