@@ -1,4 +1,4 @@
-package com.ssafy.ourdoc.domain.notification.dto;
+package com.ssafy.ourdoc.domain.notification.dto.request;
 
 import com.ssafy.ourdoc.global.annotation.EnumValid;
 import com.ssafy.ourdoc.global.common.enums.NotificationStatus;
