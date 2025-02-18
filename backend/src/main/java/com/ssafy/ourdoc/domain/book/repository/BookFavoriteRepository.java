@@ -18,5 +18,5 @@ public interface BookFavoriteRepository extends JpaRepository<BookFavorite, Long
 
 	List<BookFavorite> findByUser(User user);
 
-	Page<BookFavorite> findByUserAndBookIn(User user, List<Book> books, Pageable pageable);
+	Page<BookFavorite> findByUser(User user, Pageable pageable);
 }

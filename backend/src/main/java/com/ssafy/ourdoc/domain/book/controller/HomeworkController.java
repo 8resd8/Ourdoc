@@ -5,10 +5,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.book.dto.BookRequest;
-import com.ssafy.ourdoc.domain.book.dto.BookSearchRequest;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentDetailPage;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkStudentResponse;
 import com.ssafy.ourdoc.domain.book.dto.homework.HomeworkTeacherDetailPage;
@@ -50,10 +47,9 @@ public class HomeworkController {
 
 	@GetMapping("/teachers/homework")
 	public ResponseEntity<HomeworkTeacherResponse> getHomeworkTeacherClass(
-		@Valid @ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-		HomeworkTeacherResponse response = homeworkService.getHomeworkTeacherClass(request, user, pageable);
+		HomeworkTeacherResponse response = homeworkService.getHomeworkTeacherClass(user, pageable);
 		return ResponseEntity.ok(response);
 	}
 
@@ -70,10 +66,9 @@ public class HomeworkController {
 
 	@GetMapping("/students/homework")
 	public ResponseEntity<HomeworkStudentResponse> getHomeworkStudentClass(
-		@Valid @ModelAttribute BookSearchRequest request,
 		@Login User user,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
-		HomeworkStudentResponse response = homeworkService.getHomeworkStudentClass(request, user, pageable);
+		HomeworkStudentResponse response = homeworkService.getHomeworkStudentClass(user, pageable);
 		return ResponseEntity.ok(response);
 	}
 
