@@ -2,6 +2,7 @@ package com.ssafy.ourdoc.domain.notification.dto;
 
 import java.time.LocalDateTime;
 
+import com.ssafy.ourdoc.global.common.enums.NotificationStatus;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
 public record NotificationDetailDto(
@@ -9,6 +10,7 @@ public record NotificationDetailDto(
 	NotificationType type,
 	String senderName,
 	String content,
-	LocalDateTime createdAt
+	LocalDateTime createdAt,
+	LocalDateTime readTime
 ) {
 }
