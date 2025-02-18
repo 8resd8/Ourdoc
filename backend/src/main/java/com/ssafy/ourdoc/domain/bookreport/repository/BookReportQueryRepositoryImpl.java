@@ -276,9 +276,16 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	public Page<BookReportListDto> bookReportList(Long studentId, BookReportListRequest request, Pageable pageable) {
 		Long total = queryFactory
 			.select(bookReport.count())
-			.from(bookReport)
-			.where(bookReport.studentClass.user.id.eq(studentId))
-			.fetchOne();
+			.from(studentClass)
+			.join(studentClass.user, user)
+			.join(studentClass.classRoom, classRoom)
+			.join(bookReport).on(bookReport.studentClass.id.eq(studentClass.id))
+			.join(bookReport.book, book)
+			.where(
+				bookReport.studentClass.user.id.eq(studentId),
+				studentClass.classRoom.id.eq(request.classId()),
+				classRoom.grade.eq(request.grade())
+			).fetchOne();
 
 		List<BookReportListDto> bookReportLists = queryFactory
 			.select(new QBookReportListDto(
@@ -294,7 +301,9 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.join(studentClass.classRoom, classRoom)
 			.join(bookReport).on(bookReport.studentClass.id.eq(studentClass.id))
 			.join(bookReport.book, book)
+			.leftJoin(bookReport.homework)
 			.where(
+				bookReport.studentClass.user.id.eq(studentId),
 				studentClass.classRoom.id.eq(request.classId()),
 				classRoom.grade.eq(request.grade())
 			)
