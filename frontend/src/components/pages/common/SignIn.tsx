@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../../atoms/Button';
 import InputField from '../../molecules/InputField';
@@ -7,6 +7,7 @@ import { signinApi } from '../../../services/usersService';
 import { currentUserState } from '../../../recoil';
 import { useSetRecoilState } from 'recoil';
 import { notify } from '../../commons/Toast';
+import { getRecoil } from 'recoil-nexus';
 
 const SignIn = () => {
   const [userType, setUserType] = useState('학생');
@@ -48,6 +49,12 @@ const SignIn = () => {
       handleLogin();
     }
   };
+
+  useEffect(() => {
+    if (getRecoil(currentUserState).role == '교사') {
+      setUserType('교사');
+    }
+  }, []);
 
   return (
     <div className={classes.root}>
