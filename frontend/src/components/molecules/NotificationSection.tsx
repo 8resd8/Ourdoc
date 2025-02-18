@@ -12,11 +12,12 @@ export const NotificationSection = ({ isStudent }: { isStudent?: boolean }) => {
   const navigate = useNavigate();
   const [notifications, setnotifications] = useState<NotificationPageable>();
 
+  const fetchData = async () => {
+    const notifications = await getNotificationsApi({ status: '안읽음' });
+    setnotifications(notifications);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      const notifications = await getNotificationsApi({});
-      setnotifications(notifications);
-    };
     fetchData();
   }, []);
 
@@ -42,7 +43,11 @@ export const NotificationSection = ({ isStudent }: { isStudent?: boolean }) => {
             notifications
               ? notifications?.content
                   .map((item, index) => (
-                    <NotificationTile key={index} notification={item} />
+                    <NotificationTile
+                      key={index}
+                      notification={item}
+                      fetchData={fetchData}
+                    />
                   ))
                   .splice(0, 3)
               : []
