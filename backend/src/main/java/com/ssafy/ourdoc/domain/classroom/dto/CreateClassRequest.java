@@ -11,12 +11,12 @@ public record CreateClassRequest(
 	@Size(max = 250, message = "{size.max}")
 	String schoolAddress,
 
-	@Min(value = 1700, message = "{size.min}")
-	@Max(value = 3000, message = "{size.max}")
+	@Min(value = 1900, message = "{size.min}")
+	@Max(value = 2200, message = "{size.max}")
 	int year,
 
 	@Min(value = 1, message = "{size.min}")
-	@Max(value = 20, message = "{size.max}")
+	@Max(value = 6, message = "{size.max}")
 	int grade,
 
 	@Min(value = 1, message = "{size.min}")
