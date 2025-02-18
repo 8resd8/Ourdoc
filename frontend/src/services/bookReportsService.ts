@@ -313,6 +313,9 @@ export const studentRecentAIFeedbackApi =
 // 학생 독서록 순위 조회
 export const getStudentRankApi = async (): Promise<StudentRankResponse> => {
   const response = await api.get(`/bookreports/students/rank`);
+  return response.data;
+};
+
 // 교사 독서록 목록 조회
 export const getTeacherBookReportsList = async (params: any) => {
   const response = await api.get('/bookreports/teachers', {
