@@ -1,5 +1,7 @@
 package com.ssafy.ourdoc.domain.user.teacher.dto;
 
+import java.util.Date;
+
 public record TeacherProfileResponseDto(
 	String profileImagePath,
 	String name,
@@ -8,6 +10,7 @@ public record TeacherProfileResponseDto(
 	String schoolName,
 	int grade,
 	int classNumber,
-	String phone
+	String phone,
+	Date birth
 ) {
 }
