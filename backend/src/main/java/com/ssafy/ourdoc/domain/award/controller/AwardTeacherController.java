@@ -1,7 +1,6 @@
 package com.ssafy.ourdoc.domain.award.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +17,7 @@ import com.ssafy.ourdoc.domain.award.service.AwardTeacherService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,7 +30,7 @@ public class AwardTeacherController {
 	// 본인 반 학생 상장 조회
 	@GetMapping
 	public AwardTeacherResponse getTeacherClassAwards(@Login User user,
-		@ModelAttribute AwardTeacherRequest request) {
+		@Valid @ModelAttribute AwardTeacherRequest request) {
 		return awardTeacherService.getAwardTeachersClass(user, request);
 	}
 

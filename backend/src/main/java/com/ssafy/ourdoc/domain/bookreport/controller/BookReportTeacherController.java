@@ -28,6 +28,7 @@ import com.ssafy.ourdoc.domain.bookreport.service.BookReportTeacherService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -39,7 +40,7 @@ public class BookReportTeacherController {
 
 	@GetMapping
 	public ReportTeacherListResponse getBookReportList(@Login User user,
-		@ModelAttribute ReportTeacherRequest request,
+		@Valid @ModelAttribute ReportTeacherRequest request,
 		@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		return bookReportTeacherService.getBookReports(user, request, pageable);
 	}
@@ -53,14 +54,14 @@ public class BookReportTeacherController {
 	@PostMapping("/{bookreportId}/comment")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void createBookReportComment(@Login User user, @PathVariable("bookreportId") Long bookreportId,
-		@RequestBody ReportCommentRequest request) {
+		@Valid @RequestBody ReportCommentRequest request) {
 		bookReportTeacherService.createComment(user, bookreportId, request);
 	}
 
 	@PatchMapping("/{bookreportId}/comment")
 	@ResponseStatus(HttpStatus.OK)
 	public void updateBookReportComment(@PathVariable("bookreportId") Long bookreportId,
-		@RequestBody ReportCommentRequest request) {
+		@Valid @RequestBody ReportCommentRequest request) {
 		bookReportTeacherService.updateComment(bookreportId, request);
 	}
 
@@ -76,7 +77,7 @@ public class BookReportTeacherController {
 	}
 
 	@GetMapping("/statistics/days")
-	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(@Login User user, @ModelAttribute
+	public List<BookReportDailyStatisticsDto> getDailyBookReportStatistics(@Login User user, @Valid @ModelAttribute
 	BookReportStatisticsRequest request) {
 		return bookReportTeacherService.getDailyBookReportStatistics(user, request.month());
 	}

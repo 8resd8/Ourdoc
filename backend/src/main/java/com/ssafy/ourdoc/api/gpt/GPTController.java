@@ -1,7 +1,6 @@
 package com.ssafy.ourdoc.api.gpt;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +13,7 @@ import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackRequest;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackResponse;
 import com.ssafy.ourdoc.global.integration.gpt.service.AIFeedbackService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,13 +25,13 @@ public class GPTController {
 
 	@PostMapping("/spelling")
 	@ResponseStatus(HttpStatus.CREATED)
-	public FeedbackResponse checkSpelling(@Login User user, @RequestBody FeedbackRequest request) {
+	public FeedbackResponse checkSpelling(@Login User user, @Valid @RequestBody FeedbackRequest request) {
 		return aiFeedbackService.spelling(user, request);
 	}
 
 	@PostMapping("/feedback")
 	@ResponseStatus(HttpStatus.CREATED)
-	public FeedbackResponse provideFeedback(@Login User user, @RequestBody FeedbackRequest request) {
+	public FeedbackResponse provideFeedback(@Login User user, @Valid @RequestBody FeedbackRequest request) {
 		return aiFeedbackService.feedback(user, request);
 	}
 }
