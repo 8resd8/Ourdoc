@@ -196,7 +196,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.join(bookReport.studentClass, studentClass)
 			.join(studentClass.user, user)
 			.join(studentClass.classRoom, classRoom)
-			.join(teacherClass.classRoom, studentClass.classRoom)
+			.join(teacherClass).on(teacherClass.classRoom.eq(studentClass.classRoom))
 			.join(classRoom.school, school)
 			.join(bookReport.book, book)
 			.where(
