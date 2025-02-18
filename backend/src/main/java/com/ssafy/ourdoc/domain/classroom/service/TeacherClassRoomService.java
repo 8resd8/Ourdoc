@@ -1,10 +1,12 @@
 package com.ssafy.ourdoc.domain.classroom.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeacherClassRequest;
 import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeacherRoomResponse;
 import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeacherRoomStudentDto;
 import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeacherRoomStudentResponse;
@@ -21,14 +23,16 @@ public class TeacherClassRoomService {
 
 	private final ClassRoomRepository classRoomRepository;
 
-	public TeacherRoomResponse getTeacherRoom(User user) {
-		List<TeachersRoomDto> findTeacherRooms = classRoomRepository.findByTeachersRoom(user.getId());
+	public TeacherRoomResponse getTeacherRoom(User user, TeacherClassRequest request) {
+		Map<String, List<TeachersRoomDto>> findTeacherRooms = classRoomRepository.findByTeachersRoom(user.getId(),
+			request);
 
 		return new TeacherRoomResponse(findTeacherRooms);
 	}
 
-	public TeacherRoomStudentResponse getTeacherRoomStudent(User user, Integer year) {
-		List<TeacherRoomStudentDto> findTeacherStudents = classRoomRepository.findByTeachersRoomStudent(user.getId(), year);
+	public TeacherRoomStudentResponse getTeacherRoomStudent(User user, Long classId) {
+		List<TeacherRoomStudentDto> findTeacherStudents = classRoomRepository.findByTeachersRoomStudent(user.getId(),
+			classId);
 
 		return new TeacherRoomStudentResponse(findTeacherStudents);
 	}
