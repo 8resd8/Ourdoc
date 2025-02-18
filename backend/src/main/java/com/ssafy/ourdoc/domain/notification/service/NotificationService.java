@@ -12,10 +12,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.ssafy.ourdoc.domain.notification.dto.NotificationDto;
+import com.ssafy.ourdoc.domain.notification.dto.NotificationSendDto;
 import com.ssafy.ourdoc.domain.notification.entity.Notification;
 import com.ssafy.ourdoc.domain.notification.entity.NotificationRecipient;
-import com.ssafy.ourdoc.domain.notification.exception.SubscribeException;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
@@ -107,7 +106,7 @@ public class NotificationService {
 			return;
 		}
 
-		NotificationDto response = new NotificationDto(
+		NotificationSendDto response = new NotificationSendDto(
 			notification.getId(),
 			notification.getNotificationType(),
 			notification.getContent(),

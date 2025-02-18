@@ -5,12 +5,15 @@ import java.time.LocalDateTime;
 import com.ssafy.ourdoc.global.common.enums.NotificationStatus;
 import com.ssafy.ourdoc.global.common.enums.NotificationType;
 
-public record NotificationDto(
+import lombok.Builder;
+
+@Builder
+public record NotificationDetailDtoConvert(
 	Long notificationId,
 	NotificationType type,
+	String senderName,
 	String content,
 	LocalDateTime createdAt,
-	String senderName,
-	LocalDateTime readTime
+	NotificationStatus status
 ) {
 }

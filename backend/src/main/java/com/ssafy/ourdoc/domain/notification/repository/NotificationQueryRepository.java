@@ -3,7 +3,7 @@ package com.ssafy.ourdoc.domain.notification.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.ssafy.ourdoc.domain.notification.dto.NotificationConditionRequest;
+import com.ssafy.ourdoc.domain.notification.dto.request.NotificationConditionRequest;
 import com.ssafy.ourdoc.domain.notification.dto.NotificationDetailDto;
 import com.ssafy.ourdoc.domain.notification.dto.NotificationDto;
 
