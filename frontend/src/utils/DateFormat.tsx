@@ -36,3 +36,8 @@ const addHours = (date: Date, hours: number): Date => {
   result.setHours(result.getHours() + hours);
   return result;
 };
+
+export const monthDayFormat = (dateString: string) => {
+  const date = new Date(dateString);
+  return `${date.getMonth() + 1}월 ${date.getDate()}일`;
+};
