@@ -4,16 +4,23 @@ import { PlusButton } from '../atoms/PlusButton';
 import { Table, TableAlignType } from '../atoms/Table';
 import { useEffect, useState } from 'react';
 import {
+  BookCategoryParams,
   getTeacherHomeworkBooksApi,
   HomeworkContent,
 } from '../../services/booksService';
 import { DateFormat } from '../../utils/DateFormat';
 
+const PAGE_SIZE = 3;
+const PARAMS: BookCategoryParams = {
+  page: 0,
+  size: PAGE_SIZE,
+};
+
 export const HomeworkListSection = () => {
   const [studentCount, setStudentCount] = useState(0);
   const [homework, setHomework] = useState<HomeworkContent[]>([]);
   const fetchData = async () => {
-    const teacherHomework = await getTeacherHomeworkBooksApi();
+    const teacherHomework = await getTeacherHomeworkBooksApi(PARAMS);
     setStudentCount(teacherHomework.studentCount);
     setHomework(teacherHomework.homeworks.content);
   };
