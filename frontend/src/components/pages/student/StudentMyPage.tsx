@@ -74,9 +74,7 @@ const Modal = ({ type, onClose }: ModalProps) => {
 const StudentMyPage = () => {
   const [modalType, setModalType] = useState<ModalProps['type'] | null>(null);
   const [user, setUser] = useState<StudentProfileResponse>();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-  const [certificateFile, setCertificateFile] = useState<File | null>(null);
 
   const handleUploadClick = () => {
     setIsUploadModalOpen(true);
