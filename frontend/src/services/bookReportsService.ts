@@ -82,6 +82,16 @@ export interface ReportStatistics {
   readCount: number;
 }
 
+export interface StudentRecentAIFeedbackResponse {
+  content: string;
+}
+
+export interface StudentRankResponse {
+  stampCount: number;
+  rank: number;
+  lastRank: number;
+}
+
 // 독서록 작성
 export const createBookReportApi = async (
   data: CreateBookReportRequest
@@ -260,4 +270,17 @@ export const studentSubmitHomeworkReportApi = async (
   await api.post(
     `/bookreports/students/${bookreportId}/homework/${homeworkId}`
   );
+};
+
+// 학생 최근 AI 피드백 조회
+export const studentRecentAIFeedbackApi =
+  async (): Promise<StudentRecentAIFeedbackResponse> => {
+    const response = await api.get(`/bookreports/students/feedback/ai/recent`);
+    return response.data;
+  };
+
+// 학생 독서록 순위 조회
+export const getStudentRankApi = async (): Promise<StudentRankResponse> => {
+  const response = await api.get(`/bookreports/students/rank`);
+  return response.data;
 };

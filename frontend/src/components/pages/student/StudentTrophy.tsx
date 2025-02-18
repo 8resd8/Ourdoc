@@ -15,6 +15,7 @@ import { getRecoil, setRecoil } from 'recoil-nexus';
 import { currentUserState, studentGradeState } from '../../../recoil';
 import {
   AwardDetail,
+  getStampCountApi,
   getStudentAwardsListApi,
 } from '../../../services/awardsService';
 
@@ -27,6 +28,7 @@ const StudentTrophy = () => {
   const [studentReportStatistics, setstudentReportStatistics] =
     useState<ReportStatistics>();
   const [studentAwardsList, setstudentAwardsList] = useState<AwardDetail[]>();
+  const [stampCount, setstampCount] = useState<number>(0);
   const createIndexArray = (length: number) => {
     return Array.from({ length }, (_, i) => i + 1);
   };
@@ -40,11 +42,13 @@ const StudentTrophy = () => {
         grade: selectedGrade,
       });
       const studentAwardsList = await getStudentAwardsListApi();
+      const stampCount = await getStampCountApi();
 
       setstudentMonthlyReport(classMonthlyReport);
       setRecoil(studentGradeState, selectedGrade);
       setstudentReportStatistics(studentReportStatistics);
       setstudentAwardsList(studentAwardsList);
+      setstampCount(stampCount.stampCount);
     };
     fetchData();
   }, [selectedGrade]);
@@ -117,7 +121,7 @@ const StudentTrophy = () => {
             <TrophyAwardSection awards={studentAwardsList} />
           )}
 
-          <TrophyStampSection count={28} />
+          <TrophyStampSection count={stampCount} />
         </div>
       </div>
     </div>
