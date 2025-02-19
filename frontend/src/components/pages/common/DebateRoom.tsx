@@ -3,26 +3,31 @@ import { useEffect, useRef, useState } from 'react';
 import classes from './DabateRoom.module.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getRecoil } from 'recoil-nexus';
-import { currentUserState, debatesState } from '../../../recoil';
-import { deleteDebateApi } from '../../../services/debatesService';
+import { currentUserState } from '../../../recoil';
+import {
+  DebateRoomDetail,
+  deleteDebateApi,
+  getDebateDetailApi,
+} from '../../../services/debatesService';
 
 const DebateRoom = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const token = location.state.token;
+  const locationRoomId = location.state.roomId;
+  const OVRef = useRef<OpenVidu | null>(null);
   const publisherRef = useRef<HTMLDivElement>(null);
   const subscribersRef = useRef<HTMLDivElement>(null);
-  const OVRef = useRef<OpenVidu | null>(null);
+  const [room, setRoom] = useState<DebateRoomDetail>();
   const [publisher, setPublisher] = useState<Publisher | null>(null);
-  const [isAudioActive, setIsAudioActive] = useState<boolean>(true);
-  const [isVideoActive, setIsVideoActive] = useState<boolean>(true);
-  const [session, setSession] = useState<Session | null>(null);
-  const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false);
   const [screenPublisher, setScreenPublisher] = useState<Publisher | null>(
     null
   );
+  const [session, setSession] = useState<Session | null>(null);
+  const [isAudioActive, setIsAudioActive] = useState<boolean>(true);
+  const [isVideoActive, setIsVideoActive] = useState<boolean>(true);
+  const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false);
   const user = getRecoil(currentUserState);
-  const room = getRecoil(debatesState);
 
   // 이미 구독된 스트림에 대해 중복 호출하지 않도록 처리하는 헬퍼 함수
   const subscribeToStream = (stream: any, currentSession: Session) => {
@@ -65,6 +70,10 @@ const DebateRoom = () => {
 
   // 백엔드 토큰 발급 후 세션에 입장하는 함수
   const joinSession = async () => {
+    if (session != null) {
+      return;
+    }
+
     const OV = new OpenVidu();
     OVRef.current = OV;
     const mySession = OV.initSession();
@@ -213,7 +222,30 @@ const DebateRoom = () => {
   };
 
   useEffect(() => {
+    const fetchRoom = async () => {
+      const response = await getDebateDetailApi(locationRoomId);
+      setRoom(response);
+    };
+
+    fetchRoom();
+
     joinSession();
+
+    const handleBeforeUnload = () => {
+      leaveSession();
+    };
+
+    const handlePopState = () => {
+      leaveSession();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, []);
 
   // publisher 초기화: 세션 입장 후 실행
@@ -303,7 +335,7 @@ const DebateRoom = () => {
             className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
           >
             <img
-              src={`/assets/images/${isAudioActive ? 'video_off' : 'video_on'}.png`}
+              src={`/assets/images/${isVideoActive ? 'video_off' : 'video_on'}.png`}
             />
             {isVideoActive ? '비디오 끄기' : '비디오 켜기'}
           </button>

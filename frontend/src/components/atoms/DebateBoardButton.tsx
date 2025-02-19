@@ -3,12 +3,12 @@ import { DebateRoom, enterDebateApi } from '../../services/debatesService';
 import { useEffect, useState } from 'react';
 import Modal from '../commons/Modal';
 import { detailDate } from '../../utils/DateFormat';
-import { debatesState } from '../../recoil';
-import { setRecoil } from 'recoil-nexus';
+
 interface RoomInformationProps {
   roomId: string;
   password: string;
 }
+
 export const DebateBoardButton = ({ room }: { room: DebateRoom }) => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
@@ -17,16 +17,7 @@ export const DebateBoardButton = ({ room }: { room: DebateRoom }) => {
     password: '',
   });
 
-  useEffect(() => {
-    setRoomInformation({
-      roomId: room.roomId,
-      password: '',
-    });
-    setRecoil(debatesState, room);
-  }, []);
-
   const enterRoom = async () => {
-    setShowModal(true);
     if (!roomInformation.password.trim()) {
       alert('비밀번호를 입력해주세요.');
       return;
@@ -37,7 +28,9 @@ export const DebateBoardButton = ({ room }: { room: DebateRoom }) => {
         password: roomInformation.password,
       });
 
-      navigate('/debate/room', { state: { token: response } });
+      navigate('/debate/room', {
+        state: { token: response.token, roomId: roomInformation.roomId },
+      });
     } catch (error) {
       console.error('error:', error);
       alert('error');
@@ -45,6 +38,13 @@ export const DebateBoardButton = ({ room }: { room: DebateRoom }) => {
 
     setShowModal(false);
   };
+
+  useEffect(() => {
+    setRoomInformation({
+      roomId: room.roomId,
+      password: '',
+    });
+  }, []);
 
   return (
     <>
@@ -59,6 +59,12 @@ export const DebateBoardButton = ({ room }: { room: DebateRoom }) => {
                 type="password"
                 placeholder="비밀번호 입력하세요."
                 value={roomInformation?.password ?? ''}
+                onKeyDown={(e) => {
+                  if (e.key == 'Enter') {
+                    enterRoom();
+                    setRoomInformation({ ...roomInformation, password: '' });
+                  }
+                }}
                 onChange={(e) => {
                   setRoomInformation({
                     ...roomInformation,
@@ -90,7 +96,7 @@ export const DebateBoardButton = ({ room }: { room: DebateRoom }) => {
             {room.title}
           </div>
           <div className="text-gray-800 caption-medium truncate">
-            {room.schoolName} 초등학교 | {room.creatorName} 선생님
+            {room.schoolName} {room.creatorName} 선생님
           </div>
         </div>
         <div className="flex flex-col w-[60px] justify-between items-end self-stretch">

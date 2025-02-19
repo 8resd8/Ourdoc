@@ -24,12 +24,20 @@ export interface DebateRoomResponse {
 }
 
 export interface CreateDebateRequest {
-  roomName: string;
+  title: string;
   password: string;
+}
+
+export interface CreateDebateResponse {
+  roomId: number;
 }
 
 export interface EnterDebateRequest {
   password: string;
+}
+
+export interface EnterDebateResponse {
+  token: string;
 }
 
 export interface DebateRoomDetail extends DebateRoom {
@@ -56,8 +64,11 @@ export const getDebatesApi = async (data: {
 // 독서 토론 방 생성
 export const createDebateApi = async (
   data: CreateDebateRequest
-): Promise<string> => {
-  const response = await api.post('/openvidu/new-join', data);
+): Promise<CreateDebateResponse> => {
+  const response = await api.post<CreateDebateResponse>(
+    '/debates/teachers',
+    data
+  );
   return response.data;
 };
 
@@ -86,8 +97,12 @@ export const deleteDebateApi = async (roomId: string): Promise<void> => {
 export const enterDebateApi = async (
   roomId: string,
   data: EnterDebateRequest
-): Promise<string> => {
-  const response = await api.post(`/openvidu/${roomId}/connection`, data);
+): Promise<EnterDebateResponse> => {
+  const response = await api.post<EnterDebateResponse>(
+    `/debates/${roomId}/connection`,
+    data
+  );
+
   return response.data;
 };
 

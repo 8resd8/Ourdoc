@@ -5,6 +5,7 @@ import { PaginationButton } from '../../atoms/PagenationButton';
 import {
   createDebateApi,
   DebateRoom,
+  enterDebateApi,
   getDebatesApi,
 } from '../../../services/debatesService';
 import Modal from '../../commons/Modal';
@@ -57,22 +58,38 @@ const TeacherDebateBoard = () => {
       alert('비밀번호를 입력해주세요.');
       return;
     }
+
     try {
       // 백엔드에 방 생성 요청
       const response = await createDebateApi({
-        roomName: roomInformation.title,
+        title: roomInformation.title,
         password: roomInformation.password,
       });
 
       alert(`"${roomInformation.title}" 방이 생성되었습니다.`);
 
-      navigate('/debate/room', { state: { token: response } });
+      enterRoom(response.roomId);
     } catch (error) {
       console.error('방 생성 중 오류 발생:', error);
       alert('방 생성 중 오류가 발생했습니다.');
     }
 
     setShowModal(false);
+  };
+
+  const enterRoom = async (roomId: number) => {
+    try {
+      const response = await enterDebateApi(roomId.toString(), {
+        password: roomInformation.password,
+      });
+
+      navigate('/debate/room', {
+        state: { token: response.token, roomId: roomId },
+      });
+    } catch (error) {
+      console.error('방 입장 중 오류 발생:', error);
+      alert('방 입장 중 오류가 발생했습니다.');
+    }
   };
 
   useEffect(() => {
@@ -107,6 +124,12 @@ const TeacherDebateBoard = () => {
                 type="password"
                 placeholder="방 비밀번호을 입력하세요."
                 value={roomInformation?.password ?? ''}
+                onKeyDown={(e) => {
+                  if (e.key == 'Enter') {
+                    createDebateRoom();
+                    setRoomInformation({ title: '', password: '' });
+                  }
+                }}
                 onChange={(e) => {
                   setRoomInformation({
                     ...roomInformation,
