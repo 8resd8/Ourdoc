@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolIdResponse;
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolResponse;
 import com.ssafy.ourdoc.domain.classroom.entity.School;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
@@ -37,11 +38,12 @@ public class SchoolService {
 
 	private final SchoolRepository schoolRepository;
 
-	public Page<SchoolResponse> searchSchoolName(String schoolName, Pageable pageable) {
+	public Page<SchoolIdResponse> searchSchoolName(String schoolName, Pageable pageable) {
 		Page<School> schoolPage = schoolRepository.findAllBySchoolNameContaining(schoolName, pageable);
 
 		return schoolPage.map(school ->
-			new SchoolResponse(
+			new SchoolIdResponse(
+				school.getId(),
 				school.getSchoolName(),
 				school.getAddress()
 			)
