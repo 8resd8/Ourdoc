@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolDto;
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolIdPageResponse;
+import com.ssafy.ourdoc.domain.classroom.dto.SchoolIdResponse;
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolResponse;
 import com.ssafy.ourdoc.domain.classroom.repository.SchoolRepository;
 import com.ssafy.ourdoc.domain.classroom.service.SchoolSaveService;
@@ -33,7 +35,7 @@ public class SchoolController {
 	private final SchoolRepository schoolRepository;
 
 	@GetMapping
-	public ResponseEntity<Page<SchoolResponse>> findSchools(@RequestParam("schoolName") String schoolName,
+	public ResponseEntity<Page<SchoolIdResponse>> findSchools(@RequestParam("schoolName") String schoolName,
 		@PageableDefault(size = 10, page = 0) Pageable pageable) {
 		return ResponseEntity.ok().body(schoolService.searchSchoolName(schoolName, pageable));
 	}
