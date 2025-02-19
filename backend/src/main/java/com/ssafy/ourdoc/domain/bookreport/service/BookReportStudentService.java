@@ -96,7 +96,7 @@ public class BookReportStudentService {
 				report.bookReportId(),
 				report.bookTitle(),
 				report.bookImagePath(),
-				report.homework() == null,
+				report.homework() != null,
 				report.createdAt()
 			))
 			.toList();
