@@ -456,8 +456,6 @@ export const getTeacherBookDetailsApi = async (
       params: { size: 10, page: page },
     });
 
-    console.log(JSON.stringify(response.data));
-
     return response.data;
   } catch (error) {
     console.error('Error fetching book details:', error);

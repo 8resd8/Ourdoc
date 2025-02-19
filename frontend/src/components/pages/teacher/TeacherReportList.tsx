@@ -55,7 +55,6 @@ const TeacherReportList = () => {
   const fetchClass = async () => {
     const response = await searchClass();
     setClasses(response.teachersRoom);
-    console.log(response.teachersRoom);
   };
 
   const getStudentByClass = async (classId: number) => {
@@ -64,9 +63,7 @@ const TeacherReportList = () => {
     setReports([]);
     setSelectedStudent(null);
   };
-  console.log(students);
 
-  console.log(selectedStudent);
   const param = {
     page: 0,
     size: 10,
@@ -78,14 +75,11 @@ const TeacherReportList = () => {
   const getReportsByStudent = async (page = 0, param: any) => {
     try {
       const response = await getTeacherBookReportsList(param);
-      console.log(response);
       setTotalPages(response.bookReports.totalPages);
       setCurrentPage(page);
       setReports(response.bookReports.content);
     } catch (error) {}
   };
-  console.log(students);
-  console.log(selectedClass);
 
   const onPageChange = (pageNumber: number) => {
     if (pageNumber >= 0 && pageNumber < totalPages) {
@@ -102,8 +96,6 @@ const TeacherReportList = () => {
     const date = new Date(dateString);
     return `${date.getMonth() + 1}월 ${date.getDate()}일`;
   };
-
-  console.log(reports);
 
   useEffect(() => {
     fetchClass();
@@ -250,8 +242,6 @@ const TeacherReportList = () => {
         <Table
           headers={TABLE_HEADER}
           datas={reports.map((item, index) => {
-            console.log(item.bookId);
-
             return (
               <TeacherAllReportListTile
                 title={item.bookTitle}

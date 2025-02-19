@@ -134,7 +134,6 @@ const TeacherBookCategory = () => {
       switch (selectedCategory) {
         case BookCategoryType.HomeWork:
           response = await getTeacherHomeworkBooksApi(params);
-          console.log(response);
 
           responseList = [];
           response.homeworks.content.forEach((element) => {
