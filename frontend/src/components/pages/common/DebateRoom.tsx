@@ -65,6 +65,10 @@ const DebateRoom = () => {
 
   // 백엔드 토큰 발급 후 세션에 입장하는 함수
   const joinSession = async () => {
+    if (session != null) {
+      return;
+    }
+
     const OV = new OpenVidu();
     OVRef.current = OV;
     const mySession = OV.initSession();
@@ -214,6 +218,22 @@ const DebateRoom = () => {
 
   useEffect(() => {
     joinSession();
+
+    // const handleBeforeUnload = () => {
+    //   leaveSession();
+    // };
+
+    // const handlePopState = () => {
+    //   leaveSession();
+    // };
+
+    // window.addEventListener('beforeunload', handleBeforeUnload);
+    // window.addEventListener('popstate', handlePopState);
+
+    // return () => {
+    //   window.removeEventListener('beforeunload', handleBeforeUnload);
+    //   window.removeEventListener('popstate', handlePopState);
+    // };
   }, []);
 
   // publisher 초기화: 세션 입장 후 실행
@@ -303,7 +323,7 @@ const DebateRoom = () => {
             className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
           >
             <img
-              src={`/assets/images/${isAudioActive ? 'video_off' : 'video_on'}.png`}
+              src={`/assets/images/${isVideoActive ? 'video_off' : 'video_on'}.png`}
             />
             {isVideoActive ? '비디오 끄기' : '비디오 켜기'}
           </button>
