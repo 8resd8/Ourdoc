@@ -1,11 +1,12 @@
 package com.ssafy.ourdoc.domain.debate.controller;
 
+import java.net.URI;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,11 +16,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
+import com.ssafy.ourdoc.domain.debate.dto.RoomCreateResponse;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDetailResponse;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
+import com.ssafy.ourdoc.domain.debate.dto.RoomJoinResponse;
 import com.ssafy.ourdoc.domain.debate.dto.UpdateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.service.DebateService;
 import com.ssafy.ourdoc.domain.user.entity.User;
@@ -42,16 +46,21 @@ public class DebateController {
 	}
 
 	@PostMapping("/teachers")
-	@ResponseStatus(HttpStatus.CREATED)
-	public void createDebateRoom(@Login User user, @Valid @RequestBody CreateRoomRequest request) {
-		debateService.createDebateRoom(user, request);
+	public ResponseEntity<RoomCreateResponse> createDebateRoom(@Login User user,
+		@Valid @RequestBody CreateRoomRequest request) {
+		RoomCreateResponse response = debateService.createDebateRoom(user, request);
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+			.path("/{roomId}/connection")
+			.buildAndExpand(response)
+			.toUri();
+		return ResponseEntity.created(location).body(response);
 	}
 
 	@PostMapping("/{roomId}/connection")
-	public ResponseEntity<String> joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId,
+	public ResponseEntity<RoomJoinResponse> joinDebateRoom(@Login User user, @PathVariable("roomId") Long roomId,
 		@Valid @RequestBody JoinRoomRequest request) {
-		String token = debateService.joinDebateRoom(user, roomId, request);
-		return ResponseEntity.ok(token);
+		RoomJoinResponse response = debateService.joinDebateRoom(user, roomId, request);
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{roomId}")
@@ -69,7 +78,8 @@ public class DebateController {
 
 	@PatchMapping("/teachers/{roomId}")
 	@ResponseStatus(HttpStatus.OK)
-	public void updateDebateRoom(@Login User user, @PathVariable("roomId") Long roomId, @Valid UpdateRoomRequest request) {
+	public void updateDebateRoom(@Login User user, @PathVariable("roomId") Long roomId,
+		@Valid UpdateRoomRequest request) {
 		debateService.updateDebateRoom(user, roomId, request);
 	}
 
