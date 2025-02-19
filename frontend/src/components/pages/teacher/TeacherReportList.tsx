@@ -145,8 +145,11 @@ const TeacherReportList = () => {
                       </svg>
                     </div>
                     <div
-                      className="text-gray-800 body-medium font-bold"
-                      onClick={() => setSelectedYear(year)}
+                      className="text-gray-800 body-medium font-bold cursor-pointer"
+                      onClick={() => {
+                        setSelectedYear(year);
+                        selectedYear == year ? setSelectedYear('') : '';
+                      }}
                     >
                       {year}년도
                     </div>

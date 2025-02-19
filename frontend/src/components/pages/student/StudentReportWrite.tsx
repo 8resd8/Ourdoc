@@ -62,7 +62,7 @@ const StudentReportWrite = () => {
 
       const save = saveAiFeedbackApi({
         bookReportId: write,
-        feedbackContent: aiFeedback,
+        feedbackContent: aiFeedback.feedbackContent,
         spellingContent: aiSpelling.feedbackContent,
       });
 
