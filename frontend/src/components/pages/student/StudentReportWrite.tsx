@@ -44,7 +44,10 @@ const StudentReportWrite = () => {
     try {
       setRecoil(loadingState, true);
       const write = await createBookReportApi(param);
-      const aiFeedback = await getAIFeedbackApi({ content: reportContent });
+      const aiFeedback = await getAIFeedbackApi({
+        content: reportContent,
+        bookTitle: title || '',
+      });
       const aiSpelling = await getAISpellingApi({ content: reportContent });
       setAfterContent(aiSpelling.feedbackContent);
 
