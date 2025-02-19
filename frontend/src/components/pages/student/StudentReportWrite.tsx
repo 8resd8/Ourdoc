@@ -15,6 +15,7 @@ import {
 import { DateFormat } from '../../../utils/DateFormat';
 import { setRecoil } from 'recoil-nexus';
 import { loadingState } from '../../../recoil/atoms/loadingAtoms';
+import { notify } from '../../commons/Toast';
 
 const StudentReportWrite = () => {
   const queryParams = new URLSearchParams(location.search);
@@ -43,6 +44,14 @@ const StudentReportWrite = () => {
   const writeReport = async () => {
     try {
       setRecoil(loadingState, true);
+      if (reportContent == '') {
+        notify({
+          type: 'error',
+          text: '독서록을 작성해주세요.',
+        });
+        setRecoil(loadingState, false);
+        return;
+      }
       const write = await createBookReportApi(param);
       const aiFeedback = await getAIFeedbackApi({
         content: reportContent,
@@ -53,7 +62,7 @@ const StudentReportWrite = () => {
 
       const save = saveAiFeedbackApi({
         bookReportId: write,
-        feedbackContent: aiFeedback.feedbackContent,
+        feedbackContent: aiFeedback,
         spellingContent: aiSpelling.feedbackContent,
       });
 
