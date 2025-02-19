@@ -33,6 +33,7 @@ import com.ssafy.ourdoc.domain.bookreport.dto.teacher.QReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherDto;
 import com.ssafy.ourdoc.domain.bookreport.dto.teacher.ReportTeacherRequest;
 import com.ssafy.ourdoc.domain.bookreport.entity.QBookReportFeedBack;
+import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.common.enums.Active;
 
 import lombok.RequiredArgsConstructor;
@@ -273,7 +274,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 	}
 
 	@Override
-	public Page<BookReportListDto> bookReportList(Long studentId, BookReportListRequest request, Pageable pageable) {
+	public Page<BookReportListDto> bookReportList(User studentUser, BookReportListRequest request, Pageable pageable) {
 		Long total = queryFactory
 			.select(bookReport.count())
 			.from(studentClass)
@@ -282,7 +283,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.join(bookReport).on(bookReport.studentClass.id.eq(studentClass.id))
 			.join(bookReport.book, book)
 			.where(
-				bookReport.studentClass.user.id.eq(studentId),
+				bookReport.studentClass.user.loginId.eq(studentUser.getLoginId()),
 				studentClass.classRoom.id.eq(request.classId()),
 				classRoom.grade.eq(request.grade())
 			).fetchOne();
@@ -303,7 +304,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.join(bookReport.book, book)
 			.leftJoin(bookReport.homework)
 			.where(
-				bookReport.studentClass.user.id.eq(studentId),
+				bookReport.studentClass.user.loginId.eq(studentUser.getLoginId()),
 				studentClass.classRoom.id.eq(request.classId()),
 				classRoom.grade.eq(request.grade())
 			)
