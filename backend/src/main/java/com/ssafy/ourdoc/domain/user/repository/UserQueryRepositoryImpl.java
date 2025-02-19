@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.user.entity.QUser;
 import com.ssafy.ourdoc.domain.user.entity.User;
+import com.ssafy.ourdoc.global.common.enums.Active;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +26,7 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
 		// 학생의 classId 가져오기
 		Long classId = queryFactory.select(studentClass.classRoom.id)
 			.from(studentClass)
-			.where(studentClass.user.id.eq(studentUserId))
+			.where(studentClass.user.id.eq(studentUserId), studentClass.active.eq(Active.활성))
 			.fetchOne();
 
 		// classId로 해당 클래스의 교사 조회
