@@ -3,6 +3,7 @@ import { DebateRoom, enterDebateApi } from '../../services/debatesService';
 import { useEffect, useState } from 'react';
 import Modal from '../commons/Modal';
 import { detailDate } from '../../utils/DateFormat';
+
 interface RoomInformationProps {
   roomId: string;
   password: string;
@@ -27,7 +28,9 @@ export const DebateBoardButton = ({ room }: { room: DebateRoom }) => {
         password: roomInformation.password,
       });
 
-      navigate('/debate/room', { state: { token: response.token } });
+      navigate('/debate/room', {
+        state: { token: response.token, roomId: roomInformation.roomId },
+      });
     } catch (error) {
       console.error('error:', error);
       alert('error');
@@ -93,7 +96,7 @@ export const DebateBoardButton = ({ room }: { room: DebateRoom }) => {
             {room.title}
           </div>
           <div className="text-gray-800 caption-medium truncate">
-            {room.schoolName} 초등학교 | {room.creatorName} 선생님
+            {room.schoolName} {room.creatorName} 선생님
           </div>
         </div>
         <div className="flex flex-col w-[60px] justify-between items-end self-stretch">

@@ -83,7 +83,9 @@ const TeacherDebateBoard = () => {
         password: roomInformation.password,
       });
 
-      navigate('/debate/room', { state: { token: response.token } });
+      navigate('/debate/room', {
+        state: { token: response.token, roomId: roomId },
+      });
     } catch (error) {
       console.error('방 입장 중 오류 발생:', error);
       alert('방 입장 중 오류가 발생했습니다.');
