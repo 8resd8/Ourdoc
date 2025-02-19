@@ -88,7 +88,7 @@ public class BookReportStudentService {
 	}
 
 	public BookReportStudentListResponse getBookReports(User user, BookReportListRequest request, Pageable pageable) {
-		Page<BookReportListDto> bookReportLists = bookReportRepository.bookReportList(user.getId(), request,
+		Page<BookReportListDto> bookReportLists = bookReportRepository.bookReportList(user, request,
 			pageable);
 		List<BookReportListDtoConvert> convertList = bookReportLists.stream()
 			.map(report -> new BookReportListDtoConvert(
