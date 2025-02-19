@@ -3,12 +3,11 @@ package com.ssafy.ourdoc.domain.book.repository;
 import static com.ssafy.ourdoc.domain.book.entity.QBook.*;
 import static com.ssafy.ourdoc.domain.bookreport.entity.QBookReport.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
+import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
-import java.time.LocalDateTime;
 import java.time.Year;
-import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,6 +76,15 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 		int grade = Optional.ofNullable(tuple)
 			.map(t -> t.get(classRoom.grade))
 			.orElse(0);
+		Long schoolId = queryFactory
+			.select(school.id)
+			.from(teacherClass)
+			.join(teacherClass.classRoom, classRoom)
+			.join(classRoom.school, school)
+			.where(
+				teacherClass.user.id.eq(userId),
+				teacherClass.active.eq(Active.활성)
+			).fetchOne();
 
 		return queryFactory
 			.select(Projections.constructor(
@@ -94,33 +102,20 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 				), bookReport.count().intValue()
 			)).from(book)
 			.leftJoin(bookReport)
-			.on(bookReport.book.eq(book)
-				.and(bookReport.approveTime.isNotNull())
-				.and(bookReport.createdAt.between(startDate(year), endDate(year)))
-			)
+			.on(bookReport.book.eq(book))
 			.leftJoin(bookReport.studentClass, studentClass)
 			.leftJoin(studentClass.classRoom, classRoom)
+			.leftJoin(classRoom.school, school)
 			.where(
-				classRoom.grade.eq(grade).or(bookReport.isNull())
+				school.id.eq(schoolId)
+					.and(classRoom.grade.eq(grade))
+					.or(bookReport.isNull())
 			).groupBy(book.id)
 			.orderBy(bookReport.count().desc())
-			.limit(1)
-			.fetchOne();
+			.fetchFirst();
 	}
 
 	public BookMostDto findBookClassMost(Long userId) {
-		int year = Optional.ofNullable(
-				queryFactory
-					.select(classRoom.year)
-					.from(teacherClass)
-					.join(teacherClass.classRoom, classRoom)
-					.where(
-						teacherClass.user.id.eq(userId),
-						teacherClass.active.eq(Active.활성)
-					).fetchOne())
-			.map(Year::getValue)
-			.orElse(0);
-
 		Long classRoomId = queryFactory
 			.select(teacherClass.classRoom.id)
 			.from(teacherClass)
@@ -146,25 +141,13 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 			)).from(book)
 			.leftJoin(bookReport)
 			.on(bookReport.book.eq(book)
-				.and(bookReport.createdAt.between(startDate(year), endDate(year)))
-				.and(bookReport.approveTime.isNotNull())
-			)
-			.leftJoin(bookReport.studentClass, studentClass)
+			).leftJoin(bookReport.studentClass, studentClass)
 			.leftJoin(studentClass.classRoom, classRoom)
 			.where(
 				classRoom.id.eq(classRoomId).or(bookReport.isNull())
 			).groupBy(book.id)
 			.orderBy(bookReport.count().desc())
-			.limit(1)
-			.fetchOne();
-	}
-
-	private LocalDateTime startDate(int year) {
-		return YearMonth.of(year, 3).atDay(1).atStartOfDay();
-	}
-
-	private LocalDateTime endDate(int year) {
-		return YearMonth.of(year + 1, 2).atEndOfMonth().atTime(23, 59, 59);
+			.fetchFirst();
 	}
 
 	private BooleanExpression containsTitle(String title) {
