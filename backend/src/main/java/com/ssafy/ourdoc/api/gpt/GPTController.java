@@ -11,6 +11,7 @@ import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackRequest;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackResponse;
+import com.ssafy.ourdoc.global.integration.gpt.dto.SpellingRequest;
 import com.ssafy.ourdoc.global.integration.gpt.service.AIFeedbackService;
 
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ public class GPTController {
 
 	@PostMapping("/spelling")
 	@ResponseStatus(HttpStatus.CREATED)
-	public FeedbackResponse checkSpelling(@Login User user, @Valid @RequestBody FeedbackRequest request) {
+	public FeedbackResponse checkSpelling(@Login User user, @Valid @RequestBody SpellingRequest request) {
 		return aiFeedbackService.spelling(user, request);
 	}
 
