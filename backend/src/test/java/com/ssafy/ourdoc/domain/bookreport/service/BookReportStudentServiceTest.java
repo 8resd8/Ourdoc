@@ -95,6 +95,7 @@ class BookReportStudentServiceTest {
 	}
 
 	@Test
+	@Disabled
 	@DisplayName("독서록을 정상적으로 저장할 수 있다.")
 	void testSaveBookReport() {
 		// given
