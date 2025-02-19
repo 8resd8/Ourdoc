@@ -6,9 +6,7 @@ import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
-import java.time.LocalDateTime;
 import java.time.Year;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -116,7 +114,7 @@ public class BookReportStatisticRepository {
 	}
 
 	public List<BookReportMonthlyStatisticsDto> myMonthlyBookReportCount(Long userId, int grade) {
-		int year = Optional.ofNullable(
+		Year year = Optional.ofNullable(
 				queryFactory
 					.select(classRoom.year)
 					.from(studentClass)
@@ -125,10 +123,9 @@ public class BookReportStatisticRepository {
 						studentClass.user.id.eq(userId),
 						classRoom.grade.eq(grade)
 					).fetchOne())
-			.map(Year::getValue)
-			.orElse(0);
+			.orElse(Year.of(0));
 
-		if (year == 0) {
+		if (year.equals(Year.of(0))) {
 			return new ArrayList<>();
 		}
 
@@ -140,7 +137,7 @@ public class BookReportStatisticRepository {
 			.where(
 				studentClass.user.id.eq(userId),
 				classRoom.grade.eq(grade),
-				bookReport.createdAt.between(startDate(year), endDate(year))
+				classRoom.year.eq(year)
 			).groupBy(monthExpression)
 			.fetch();
 
@@ -148,18 +145,6 @@ public class BookReportStatisticRepository {
 	}
 
 	public List<BookReportMonthlyStatisticsDto> classMonthlyBookReportCount(Long userId) {
-		int year = Optional.ofNullable(
-				queryFactory
-					.select(classRoom.year)
-					.from(teacherClass)
-					.join(teacherClass.classRoom, classRoom)
-					.where(
-						teacherClass.user.id.eq(userId),
-						teacherClass.active.eq(Active.활성)
-					).fetchOne())
-			.map(Year::getValue)
-			.orElse(0);
-
 		Long classRoomId = queryFactory
 			.select(teacherClass.classRoom.id)
 			.from(teacherClass)
@@ -174,8 +159,7 @@ public class BookReportStatisticRepository {
 			.join(bookReport.studentClass, studentClass)
 			.join(studentClass.classRoom, classRoom)
 			.where(
-				classRoom.id.eq(classRoomId),
-				bookReport.createdAt.between(startDate(year), endDate(year))
+				classRoom.id.eq(classRoomId)
 			).groupBy(monthExpression)
 			.fetch();
 
@@ -204,7 +188,7 @@ public class BookReportStatisticRepository {
 	}
 
 	public List<BookReportDailyStatisticsDto> myDailyBookReportCount(Long userId, int grade, int month) {
-		int year = Optional.ofNullable(
+		Year year = Optional.ofNullable(
 				queryFactory
 					.select(classRoom.year)
 					.from(studentClass)
@@ -213,10 +197,9 @@ public class BookReportStatisticRepository {
 						studentClass.user.id.eq(userId),
 						classRoom.grade.eq(grade)
 					).fetchOne())
-			.map(Year::getValue)
-			.orElse(0);
+			.orElse(Year.of(0));
 
-		if (year == 0) {
+		if (year.equals(Year.of(0))) {
 			return new ArrayList<>();
 		}
 
@@ -228,7 +211,7 @@ public class BookReportStatisticRepository {
 			.where(
 				studentClass.user.id.eq(userId),
 				classRoom.grade.eq(grade),
-				bookReport.createdAt.between(startDate(year, month), endDate(year, month))
+				classRoom.year.eq(year)
 			).groupBy(dayExpression)
 			.fetch();
 
@@ -236,7 +219,7 @@ public class BookReportStatisticRepository {
 	}
 
 	public List<BookReportDailyStatisticsDto> classDailyBookReportCount(Long userId, int month) {
-		int year = Optional.ofNullable(
+		Year year = Optional.ofNullable(
 				queryFactory
 					.select(classRoom.year)
 					.from(teacherClass)
@@ -245,8 +228,11 @@ public class BookReportStatisticRepository {
 						teacherClass.user.id.eq(userId),
 						teacherClass.active.eq(Active.활성)
 					).fetchOne())
-			.map(Year::getValue)
-			.orElse(0);
+			.orElse(Year.of(0));
+
+		if (year.equals(Year.of(0))) {
+			return new ArrayList<>();
+		}
 
 		Long classRoomId = queryFactory
 			.select(teacherClass.classRoom.id)
@@ -263,7 +249,7 @@ public class BookReportStatisticRepository {
 			.join(studentClass.classRoom, classRoom)
 			.where(
 				classRoom.id.eq(classRoomId),
-				bookReport.createdAt.between(startDate(year, month), endDate(year, month))
+				classRoom.year.eq(year)
 			).groupBy(dayExpression)
 			.fetch();
 
@@ -359,22 +345,6 @@ public class BookReportStatisticRepository {
 		}
 
 		return dailyReports;
-	}
-
-	private LocalDateTime startDate(int year) {
-		return YearMonth.of(year, 3).atDay(1).atStartOfDay();
-	}
-
-	private LocalDateTime startDate(int year, int month) {
-		return YearMonth.of(month <= 2 ? year + 1 : year, month).atDay(1).atStartOfDay();
-	}
-
-	private LocalDateTime endDate(int year) {
-		return YearMonth.of(year + 1, 2).atEndOfMonth().atTime(23, 59, 59);
-	}
-
-	private LocalDateTime endDate(int year, int month) {
-		return YearMonth.of(month <= 2 ? year + 1 : year, month).atEndOfMonth().atTime(23, 59, 59);
 	}
 
 	private final NumberExpression<Integer> monthExpression = Expressions.numberTemplate(
