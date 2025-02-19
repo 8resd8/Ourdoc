@@ -17,15 +17,15 @@ const getAccessToken = () =>
 
 const setupInterceptors = (instance: AxiosInstance) => {
   instance.interceptors.request.use(
-    (config) => {
-      console.log('api: ', config.url, '호출됨.');
+    (request) => {
+      console.log('api: ', request.url, '호출됨.');
 
       const accessToken = getAccessToken();
 
       if (accessToken) {
-        config.headers.Authorization = accessToken;
+        request.headers.Authorization = accessToken;
       }
-      return config;
+      return request;
     },
     (error) => {
       return Promise.reject(error);
