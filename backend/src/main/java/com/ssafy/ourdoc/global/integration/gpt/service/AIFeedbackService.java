@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
-import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
+import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackRequest;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackResponse;
 import com.ssafy.ourdoc.global.util.Prompt;
@@ -45,6 +45,6 @@ public class AIFeedbackService {
 	}
 
 	private Optional<StudentClass> getStudentClass(User user) {
-		return studentClassRepository.findStudentClassByUserId(user.getId());
+		return studentClassRepository.findByUserIdAndActive(user.getId(), Active.활성);
 	}
 }
