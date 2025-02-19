@@ -330,7 +330,7 @@ public class BookReportStatisticRepository {
 		Long studentClassId = queryFactory
 			.select(studentClass.id)
 			.from(studentClass)
-			.where(studentClass.user.id.eq(userId))
+			.where(studentClass.user.id.eq(userId), studentClass.active.eq(Active.활성))
 			.fetchOne();
 
 		return queryFactory
