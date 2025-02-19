@@ -152,8 +152,6 @@ export const getStudentBookReportsApi = async (
     bookReports: StudentBookReportListResponse;
   }>('/bookreports/students', { params });
 
-  console.log(response.data.bookReports);
-
   return response.data.bookReports;
 };
 
