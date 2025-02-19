@@ -98,7 +98,7 @@ const TeacherMyPage = () => {
           loginId: teacherUser.loginId,
           password: password,
         });
-        navigate(`/teacher/profile-update?name=${teacherUser.name}&loginId=${teacherUser.loginId}&email=${teacherUser.email}&phone=${teacherUser.phone}&schoolName=${teacherUser.schoolName}&grade=${teacherUser.grade}&classNumber=${teacherUser.classNumber}%schoolId=${teacherUser.schoolName}
+        navigate(`/teacher/profile-update?name=${teacherUser.name}&loginId=${teacherUser.loginId}&email=${teacherUser.email}&phone=${teacherUser.phone}&schoolName=${teacherUser.schoolName}&grade=${teacherUser.grade}&classNumber=${teacherUser.classNumber}&schoolId=${teacherUser.schoolName}&profileImage=${teacherUser.profileImagePath}
 `);
       } catch (error: any) {
         notify({

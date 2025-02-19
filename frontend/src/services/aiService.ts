@@ -2,6 +2,7 @@ import { api } from '../services/api';
 
 // 독서록 AI 피드백 API 호출
 export interface AIFeedbackRequest {
+  bookTitle: string;
   content: string;
 }
 

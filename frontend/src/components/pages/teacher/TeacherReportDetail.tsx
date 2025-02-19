@@ -43,6 +43,7 @@ const TeacherReportDetail = () => {
   };
   const removeTeacherComment = async () => {
     const response = await deleteTeacherCommentApi(Number(id));
+    fetchReport();
   };
   const modifyTeacherComment = async () => {
     const teacherCommentRequest: TeacherCommentRequest = {

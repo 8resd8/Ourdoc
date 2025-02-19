@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { updateTeacherProfileApi } from '../../../services/teachersService';
+import {
+  searchSchoolsApi,
+  updateTeacherProfileApi,
+} from '../../../services/teachersService';
+import Modal from '../../commons/Modal';
+import AddressSearchModal from '../../commons/AddressSearchModal';
 
 const TeacherProfileUpdate = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
+  const schoolName = searchParams.get('schoolName');
+  const profileImage = searchParams.get('profileImage') || undefined;
+  console.log(profileImage);
 
   const [formData, setFormData] = useState({
     name: searchParams.get('name') || '',
@@ -25,21 +33,35 @@ const TeacherProfileUpdate = () => {
     }));
   };
 
+  const handleSelectSchool = (selectedSchool: {
+    schoolName: string;
+    schoolId: number;
+  }) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      schoolId: selectedSchool.schoolId,
+    }));
+    setmodal(false);
+  };
+
   const updateProfile = async () => {
     const response = await updateTeacherProfileApi(formData);
   };
 
+  const [modal, setmodal] = useState(false);
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
       <img
         className="w-[196px] h-[196px] rounded-full border border-gray-200"
-        src="/assets/images/tmpProfile.png"
+        src={
+          profileImage == '' ? '/assets/images/tmpProfile.png' : profileImage
+        }
         alt="프로필"
       />
       <div className="text-center text-gray-800 body-medium font-semibold mt-4">
-        나미소 님
+        {formData.name} 님
       </div>
-      <div className="flex flex-col justify-start items-center gap-[72px] mt-6">
+      <div className="flex flex-col justify-start items-center gap-[20px] mt-6">
         <div className="flex flex-col justify-start items-center gap-8">
           {[
             {
@@ -67,13 +89,20 @@ const TeacherProfileUpdate = () => {
             <div key={idx} className="w-[414px]">
               <label className="text-gray-800 body-small">{item.label}</label>
               <input
+                onClick={
+                  item.name === 'schoolName' ? () => setmodal(true) : undefined
+                }
                 type="text"
                 name={item.name}
-                value={formData[item.name as keyof typeof formData]}
+                value={
+                  item.name == 'schoolName'
+                    ? schoolName || ''
+                    : formData[item.name as keyof typeof formData]
+                }
                 onChange={handleChange}
                 placeholder={item.placeholder}
                 disabled={item.disabled}
-                className="w-full h-10 py-2 bg-gray-0 border-b border-gray-200 text-gray-800 body-small focus:outline-none"
+                className="w-full h-10 py-2 bg-gray-0 border-b border-gray-200 text-gray-800 body-small focus:outline-none cursor-pointer"
               />
             </div>
           ))}
@@ -107,10 +136,17 @@ const TeacherProfileUpdate = () => {
             ))}
           </div>
         </div>
-        <button className="w-[414px] px-[140px] py-4 bg-primary-500 rounded-[10px] body-medium text-gray-0">
+        <button className="w-[414px] px-[140px] py-4 bg-primary-500 rounded-[10px] body-medium text-gray-0 mb-2">
           저장하기
         </button>
       </div>
+      {modal && (
+        <AddressSearchModal
+          onClose={() => setmodal(false)}
+          open={modal}
+          onSelectSchool={handleSelectSchool}
+        />
+      )}
     </div>
   );
 };

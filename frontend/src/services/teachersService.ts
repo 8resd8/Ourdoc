@@ -214,10 +214,12 @@ export const updateTeacherProfileApi = async (
 
 // 학교 검색 API
 export const searchSchoolsApi = async (
-  schoolName: string
-): Promise<School[]> => {
-  const response = await api.get<School[]>('/teachers/class', {
-    params: { schoolName },
+  schoolName: string,
+  page: number,
+  size: number
+) => {
+  const response = await api.get('/schools', {
+    params: { schoolName, page, size },
   });
   return response.data;
 };
