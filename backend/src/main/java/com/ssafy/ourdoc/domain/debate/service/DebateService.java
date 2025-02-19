@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.OnlineUserDto;
+import com.ssafy.ourdoc.domain.debate.dto.RoomCreateResponse;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDetailResponse;
 import com.ssafy.ourdoc.domain.debate.dto.RoomDto;
+import com.ssafy.ourdoc.domain.debate.dto.RoomJoinResponse;
 import com.ssafy.ourdoc.domain.debate.dto.UpdateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
@@ -50,7 +52,7 @@ public class DebateService {
 		});
 	}
 
-	public void createDebateRoom(User user, CreateRoomRequest request) {
+	public RoomCreateResponse createDebateRoom(User user, CreateRoomRequest request) {
 		String sessionId = openviduService.createSession();
 
 		Room room = Room.builder()
@@ -58,13 +60,15 @@ public class DebateService {
 			.user(user)
 			.title(request.title())
 			.password(request.password())
-			.maxPeople(request.maxPeople())
+			.maxPeople(10)
 			.build();
 
 		debateRoomRepository.save(room);
+
+		return new RoomCreateResponse(room.getId());
 	}
 
-	public String joinDebateRoom(User user, Long roomId, JoinRoomRequest request) {
+	public RoomJoinResponse joinDebateRoom(User user, Long roomId, JoinRoomRequest request) {
 		Room room = debateRoomRepository.findById(roomId)
 			.orElseThrow(() -> new IllegalArgumentException("해당 방은 존재하지 않습니다."));
 
@@ -94,7 +98,7 @@ public class DebateService {
 			.build();
 		debateRoomOnlineRepository.save(roomOnline);
 
-		return token;
+		return new RoomJoinResponse(token);
 	}
 
 	public void leaveDebateRoom(User user, Long roomId) {
