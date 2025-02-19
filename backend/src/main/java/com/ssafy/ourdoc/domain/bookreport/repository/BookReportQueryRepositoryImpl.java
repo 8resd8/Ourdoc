@@ -284,7 +284,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.join(bookReport.book, book)
 			.where(
 				bookReport.studentClass.user.loginId.eq(studentUser.getLoginId()),
-				studentClass.classRoom.id.eq(request.classId()),
+				// studentClass.classRoom.id.eq(request.classId()),
 				classRoom.grade.eq(request.grade())
 			).fetchOne();
 
@@ -305,7 +305,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 			.leftJoin(bookReport.homework)
 			.where(
 				bookReport.studentClass.user.loginId.eq(studentUser.getLoginId()),
-				studentClass.classRoom.id.eq(request.classId()),
+				// studentClass.classRoom.id.eq(request.classId()),
 				classRoom.grade.eq(request.grade())
 			)
 			.offset(pageable.getOffset())
