@@ -8,6 +8,7 @@ public record TeacherProfileResponseDto(
 	String loginId,
 	String email,
 	String schoolName,
+	Long schoolId,
 	int grade,
 	int classNumber,
 	String phone,
