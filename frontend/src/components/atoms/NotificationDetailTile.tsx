@@ -8,13 +8,16 @@ import Modal from '../commons/Modal';
 
 export const NotificationDetailTile = ({
   notification,
+  onFetch,
 }: {
   notification: Notification;
+  onFetch: () => void;
 }) => {
   const [modal, setmodal] = useState(false);
 
   const markNotificationAsRead = async () => {
     await markNotificationAsReadApi(notification.notificationId);
+    onFetch();
   };
 
   return (
