@@ -132,7 +132,7 @@ const BookCard = ({
           )}
         </div>
         <div className="self-stretch h-6 justify-start items-center gap-5 inline-flex">
-          <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small group-hover:text-primary-400">
+          <div className="grow shrink basis-0 self-stretch text-gray-800 headline-small truncate group-hover:text-primary-400">
             {bookReport.bookTitle}
           </div>
         </div>
