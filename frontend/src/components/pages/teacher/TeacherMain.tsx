@@ -24,13 +24,22 @@ const TeacherMain = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const classReportRank = await classReportRankApi();
-      const classMonthlyReport = await classMonthlyReportApi();
-      const mostRead = await mostReadApi();
-      setclassReportRank(classReportRank);
-      setclassMonthlyReport(classMonthlyReport);
-      setmostRead(mostRead);
+      try {
+        const [classReportRank, classMonthlyReport, mostRead] =
+          await Promise.all([
+            classReportRankApi(),
+            classMonthlyReportApi(),
+            mostReadApi(),
+          ]);
+
+        setclassReportRank(classReportRank);
+        setclassMonthlyReport(classMonthlyReport);
+        setmostRead(mostRead);
+      } catch (error) {
+        console.error('데이터 가져오기 실패:', error);
+      }
     };
+
     fetchData();
   }, []);
 
