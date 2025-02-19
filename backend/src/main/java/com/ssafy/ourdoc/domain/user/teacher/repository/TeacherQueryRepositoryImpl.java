@@ -68,6 +68,7 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 				user.loginId,
 				teacher.email,
 				classRoom.school.schoolName,
+				classRoom.school.id,
 				classRoom.grade,
 				classRoom.classNumber,
 				teacher.phone,
