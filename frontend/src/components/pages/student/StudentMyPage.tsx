@@ -104,6 +104,7 @@ const StudentMyPage = () => {
   useEffect(() => {
     userData();
   }, []);
+  console.log(user);
 
   return (
     <div className="flex flex-col items-center p-6">
@@ -126,7 +127,7 @@ const StudentMyPage = () => {
               user?.grade +
               '학년' +
               ' ' +
-              user?.studentNumber +
+              user?.classNumber +
               '반',
           },
           { label: '생년월일', value: user?.birth },
