@@ -47,7 +47,10 @@ export const TeacherBookCategoryListTile = ({
       <div className="w-[120px] items-center">
         <div>
           <div
-            onClick={deleteClick}
+            onClick={(event) => {
+              event.stopPropagation(); // 클릭 이벤트 전파 막기
+              deleteClick?.();
+            }}
             className="body-small px-3 py-1 border border-system-danger rounded-[5px] text-system-danger text-center cursor-pointer"
           >
             삭제
