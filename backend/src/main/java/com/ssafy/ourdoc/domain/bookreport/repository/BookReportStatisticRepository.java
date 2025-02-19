@@ -55,7 +55,8 @@ public class BookReportStatisticRepository {
 			.where(
 				studentClass.user.id.eq(userId),
 				classRoom.grade.eq(grade)
-			).fetchOne();
+			).orderBy(classRoom.createdAt.desc())
+			.fetchFirst();
 
 		if (classRoomId == null) {
 			return 0L;
@@ -92,7 +93,8 @@ public class BookReportStatisticRepository {
 			.where(
 				studentClass.user.id.eq(userId),
 				classRoom.grade.eq(grade)
-			).fetchOne();
+			).orderBy(classRoom.createdAt.desc())
+			.fetchFirst();
 
 		if (classRoomId == null) {
 			return 0L;
@@ -122,7 +124,7 @@ public class BookReportStatisticRepository {
 					.where(
 						studentClass.user.id.eq(userId),
 						classRoom.grade.eq(grade)
-					).fetchOne())
+					).fetchFirst())
 			.orElse(Year.of(0));
 
 		if (year.equals(Year.of(0))) {
@@ -196,7 +198,7 @@ public class BookReportStatisticRepository {
 					.where(
 						studentClass.user.id.eq(userId),
 						classRoom.grade.eq(grade)
-					).fetchOne())
+					).fetchFirst())
 			.orElse(Year.of(0));
 
 		if (year.equals(Year.of(0))) {
