@@ -4,7 +4,7 @@ import {
   deleteBookReportApi,
   getBookReportDetailApi,
 } from '../../../services/bookReportsService';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DateFormat } from '../../../utils/DateFormat';
 import { useRecoilValue } from 'recoil';
 import { currentUserState } from '../../../recoil';
@@ -12,15 +12,27 @@ import { currentUserState } from '../../../recoil';
 const StudentReportDetail = () => {
   const { id } = useParams();
   const [report, setReport] = useState<BookReportDetail | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const fetchReport = async () => {
     if (id) {
       const response = await getBookReportDetailApi(Number(id));
       setReport(response);
     }
   };
-
+  const navigate = useNavigate();
   const deleteReport = async () => {
-    const response = await deleteBookReportApi(Number(id));
+    if (isDeleting) return;
+    setIsDeleting(true);
+    try {
+      await deleteBookReportApi(Number(id));
+      navigate('/student/main');
+    } catch (error) {
+      console.error('삭제 실패:', error);
+    }
+    setTimeout(() => {
+      setIsDeleting(false);
+    }, 3000);
   };
   useEffect(() => {
     fetchReport();
@@ -94,7 +106,7 @@ const StudentReportDetail = () => {
                 onClick={deleteReport}
                 className="cursor-pointer inline-flex py-[12px] px-[16px] mt-1 bg-system-danger rounded-[10px] justify-center items-center text-center text-gray-0 body-medium"
               >
-                삭제하기
+                {isDeleting ? '삭제 중...' : '삭제하기'}
               </div>
             )}
           </div>
