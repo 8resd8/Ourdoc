@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import {
-  searchSchoolsApi,
-  updateTeacherProfileApi,
-} from '../../../services/teachersService';
-import Modal from '../../commons/Modal';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { updateTeacherProfileApi } from '../../../services/teachersService';
 import AddressSearchModal from '../../commons/AddressSearchModal';
 import UploadModal from '../../commons/UploadModal';
 import { CameraIcon } from 'lucide-react';
@@ -26,14 +22,14 @@ const TeacherProfileUpdate = () => {
   const [certificateFile, setCertificateFile] = useState<File | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    name: null,
-    loginId: null,
-    email: null,
-    phone: null,
-    year: null,
-    grade: null,
-    schoolId: schoolId || null,
-    classNumber: null,
+    name: name,
+    loginId: loginId,
+    email: email,
+    phone: phone,
+    schoolId: schoolId,
+    year: year,
+    grade: grade,
+    classNumber: classNumber,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,16 +37,16 @@ const TeacherProfileUpdate = () => {
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value === '' ? null : value, // 빈 문자열이면 null 유지
+      [name]: value,
     }));
   };
 
-  const [school, setSchool] = useState<{ schoolName: string | null }>({
-    schoolName: schoolName,
+  const [school, setSchool] = useState<{ schoolName: string }>({
+    schoolName: schoolName || '',
   });
   const handleSelectSchool = (selectedSchool: {
-    schoolName: string | null;
-    id: number | null;
+    schoolName: string;
+    id: number;
   }) => {
     setSchool((prevData) => ({
       ...prevData,
@@ -62,34 +58,29 @@ const TeacherProfileUpdate = () => {
     }));
     setmodal(false);
   };
-  console.log(formData);
+  const navigate = useNavigate();
   const updateProfile = async () => {
     try {
-      if (!certificateFile) {
-        setCertificateFile(null);
-      }
       const requestData = {
-        name: formData.name || null,
-        loginId: formData.loginId || null,
-        email: formData.email || null,
-        phone: formData.phone || null,
-        year: formData.year || null,
-        grade: formData.grade || null,
-        schoolId: formData.schoolId || null,
-        classNumber: formData.classNumber || null,
+        name: formData.name || '',
+        loginId: formData.loginId || '',
+        email: formData.email || '',
+        phone: formData.phone || '',
+        schoolId: schoolId || 0,
+        year: Number(formData.year) || 0,
+        grade: Number(formData.grade) || 0,
+        classNumber: Number(formData.classNumber) || 0,
       };
-      if (certificateFile) {
-        const response = await updateTeacherProfileApi(
-          requestData,
-          certificateFile
-        );
-        console.log(response);
-      } else {
-        const response = await updateTeacherProfileApi(requestData, null);
-        console.log(response);
-      }
-    } catch (error) {}
+      const response = await updateTeacherProfileApi(
+        requestData,
+        certificateFile
+      );
+      navigate('/teacher/mypage');
+    } catch (error) {
+      console.log(error);
+    }
   };
+  console.log(formData);
 
   const handleUploadConfirm = (file: File | null) => {
     if (file) {
@@ -159,15 +150,7 @@ const TeacherProfileUpdate = () => {
                 value={
                   item.name === 'schoolName'
                     ? school.schoolName || ''
-                    : formData[item.name as keyof typeof formData] !== null
-                      ? (formData[item.name as keyof typeof formData] as
-                          | string
-                          | number)
-                      : item.name === 'email'
-                        ? email || ''
-                        : item.name === 'phone'
-                          ? phone || ''
-                          : ''
+                    : (formData[item.name as keyof typeof formData] ?? '')
                 }
                 onChange={handleChange}
                 placeholder={item.placeholder ?? undefined}
@@ -198,19 +181,7 @@ const TeacherProfileUpdate = () => {
                 <input
                   type="text"
                   name={item.name}
-                  value={
-                    item.name === 'schoolName'
-                      ? school.schoolName || ''
-                      : formData[item.name as keyof typeof formData] !== null
-                        ? (formData[item.name as keyof typeof formData] as
-                            | string
-                            | number)
-                        : item.name === 'grade'
-                          ? grade || ''
-                          : item.name === 'classNumber'
-                            ? classNumber || ''
-                            : ''
-                  }
+                  value={formData[item.name as keyof typeof formData] ?? ''}
                   onChange={handleChange}
                   placeholder={item.label}
                   className="w-full h-10 py-2 border-b border-gray-200 text-gray-800 body-small focus:outline-none"

@@ -52,6 +52,7 @@ const UploadModal = ({ type, isOpen, onConfirm, onCancel }: ModalProps) => {
     // 파일 입력 초기화
     event.target.value = '';
   };
+  console.log(selectedFile);
 
   const handleConfirm = () => {
     onConfirm(selectedFile);
@@ -84,7 +85,9 @@ const UploadModal = ({ type, isOpen, onConfirm, onCancel }: ModalProps) => {
             type="file"
             ref={fileInputRef}
             onChange={handleFileChange}
-            accept={type === 'profile' ? 'image/*' : '.pdf,.jpg,.jpeg,.png'}
+            accept={
+              type === 'profile' ? '.jpg,.jpeg,.png' : '.pdf,.jpg,.jpeg,.png'
+            }
             className="hidden"
           />
           {type === 'profile' && previewUrl ? (

@@ -4,10 +4,7 @@ import { searchSchoolsApi } from '../../services/teachersService';
 interface AddressSearchModalProps {
   open: boolean;
   onClose: () => void;
-  onSelectSchool: (school: {
-    schoolName: string | null;
-    id: number | null;
-  }) => void;
+  onSelectSchool: (school: { schoolName: string; id: number }) => void;
 }
 
 const AddressSearchModal = ({

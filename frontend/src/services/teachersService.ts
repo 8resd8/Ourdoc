@@ -27,14 +27,14 @@ export interface TeacherProfileResponse {
 }
 
 export interface TeacherProfileUpdateRequest {
-  name: string | null;
-  loginId: string | null;
-  email: string | null;
-  phone: string | null;
-  schoolId: number | null;
-  year: number | null;
-  grade: number | null;
-  classNumber: number | null;
+  name: string;
+  loginId: string;
+  email: string;
+  phone: string;
+  schoolId: number;
+  year: number;
+  grade: number;
+  classNumber: number;
 }
 
 export interface StudentProfile {
@@ -110,6 +110,7 @@ export interface TeacherProfile {
   grade: number;
   classNumber: number;
   phone: string;
+  schoolId: number;
 }
 
 // 교사 인증 요청
@@ -211,13 +212,14 @@ export const updateTeacherProfileApi = async (
   certificateFile: File | null
 ): Promise<void> => {
   const formData = new FormData();
+  console.log(data);
 
   formData.append(
     'request',
     new Blob([JSON.stringify(data)], { type: 'application/json' })
   );
 
-  if (certificateFile) {
+  if (certificateFile !== null) {
     const fileType = certificateFile.type;
     if (fileType === 'application/pdf') {
       const pdfBlob = new Blob([certificateFile], { type: 'application/pdf' });
@@ -225,6 +227,8 @@ export const updateTeacherProfileApi = async (
     } else {
       formData.append('certificateFile', certificateFile);
     }
+  } else {
+    formData.append('certificateFile', '');
   }
 
   await multipartApi.patch(`/teachers/profile`, formData);
@@ -256,5 +260,10 @@ export const searchStudentByClass = async (classId: number) => {
 export const searchClass = async () => {
   const response = await api.get('/teachers/classes');
 
+  return response.data;
+};
+
+export const createTeacherClass = async () => {
+  const response = await api.post('/teachers/class');
   return response.data;
 };

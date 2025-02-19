@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+  createTeacherClass,
   getTeacherProfileApi,
   TeacherProfile,
   updateTeacherProfileApi,
@@ -13,13 +14,17 @@ interface ModalProps {
   type: 'passwordConfirm' | 'passwordReset' | 'createClass' | 'profileEdit';
   onClose: () => void;
   loginClick: any;
+  addClass: () => void;
 }
 
-const Modal = ({ loginClick, type, onClose }: ModalProps) => {
+const Modal = ({ addClass, loginClick, type, onClose }: ModalProps) => {
   const [password, setPassword] = useState('');
 
   const login = () => {
     loginClick(password);
+  };
+  const addClassRoom = () => {
+    addClass();
   };
   const enterEvent = (e: any) => {
     if (e.key == 'Enter') {
@@ -79,7 +84,7 @@ const Modal = ({ loginClick, type, onClose }: ModalProps) => {
             취소
           </button>
           <button
-            onClick={type == 'passwordConfirm' ? login : loginClick}
+            onClick={type == 'passwordConfirm' ? login : addClassRoom}
             className="flex-1 py-3 bg-primary-500 text-gray-0 rounded-[10px] ml-2 cursor-pointer"
           >
             확인
@@ -99,6 +104,7 @@ const TeacherMyPage = () => {
     const response = await getTeacherProfileApi();
     setTeacherUser(response);
   };
+  console.log(teacherUser);
 
   const handleLogin = async (password: string) => {
     if (teacherUser)
@@ -108,7 +114,7 @@ const TeacherMyPage = () => {
           loginId: teacherUser.loginId,
           password: password,
         });
-        navigate(`/teacher/profile-update?name=${teacherUser.name}&loginId=${teacherUser.loginId}&email=${teacherUser.email}&phone=${teacherUser.phone}&schoolName=${teacherUser.schoolName}&grade=${teacherUser.grade}&classNumber=${teacherUser.classNumber}&schoolId=${teacherUser.schoolName}&profileImage=${teacherUser.profileImagePath}
+        navigate(`/teacher/profile-update?name=${teacherUser.name}&loginId=${teacherUser.loginId}&email=${teacherUser.email}&phone=${teacherUser.phone}&schoolName=${teacherUser.schoolName}&grade=${teacherUser.grade}&classNumber=${teacherUser.classNumber}&schoolId=${teacherUser.schoolId}&profileImage=${teacherUser.profileImagePath}
 `);
       } catch (error: any) {
         notify({
@@ -117,6 +123,13 @@ const TeacherMyPage = () => {
         });
         console.error('로그인 실패:', error);
       }
+  };
+
+  const createClass = async () => {
+    try {
+      const response = await createTeacherClass();
+      console.log(response);
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -174,6 +187,7 @@ const TeacherMyPage = () => {
         </div>
         {modalType && (
           <Modal
+            addClass={createClass}
             loginClick={handleLogin}
             type={modalType}
             onClose={() => setModalType(null)}
