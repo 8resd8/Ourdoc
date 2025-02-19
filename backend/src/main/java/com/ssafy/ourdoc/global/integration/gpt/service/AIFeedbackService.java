@@ -38,16 +38,16 @@ public class AIFeedbackService {
 	public FeedbackResponse feedback(User user, FeedbackRequest request) {
 		int studentGrade = getStudentGrade(user);
 		String feedback = chatModel.call(Prompt.feedback(studentGrade, request));
-		// JSON 파싱하기
-		log.info("내용: \n\n{}", feedback);
-		ObjectMapper objectMapper = new ObjectMapper();
+		return getFeedbackResponse(feedback);
+	}
 
+	private static FeedbackResponse getFeedbackResponse(String feedback) {
+		ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			return objectMapper.readValue(feedback, FeedbackResponse.class);
 		} catch (JsonProcessingException e) {
 			throw new IllegalStateException("JSON 파싱 실패", e);
 		}
-		// return new FeedbackResponse(feedback);
 	}
 
 	private int getStudentGrade(User user) {
