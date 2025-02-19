@@ -7,6 +7,7 @@ import { currentUserState } from '../../../recoil';
 import {
   DebateRoomDetail,
   deleteDebateApi,
+  exitDebateApi,
   getDebateDetailApi,
 } from '../../../services/debatesService';
 
@@ -206,7 +207,14 @@ const DebateRoom = () => {
   };
 
   // 세션 종료 처리
-  const leaveSession = () => {
+  const leaveSession = async () => {
+    const storedRoom = sessionStorage.getItem('debateRoom');
+    let disconnectedRoom: DebateRoomDetail | undefined;
+
+    if (storedRoom) {
+      disconnectedRoom = JSON.parse(storedRoom);
+    }
+
     if (session) {
       session.disconnect();
       navigate(-1);
@@ -216,8 +224,10 @@ const DebateRoom = () => {
     if (subscribersRef.current) {
       subscribersRef.current.innerHTML = '';
     }
-    if (user.name == room?.creatorName) {
-      deleteDebateApi(room.roomId);
+
+    await exitDebateApi(disconnectedRoom?.roomId!);
+    if (user.name == disconnectedRoom?.creatorName) {
+      await deleteDebateApi(disconnectedRoom?.roomId!);
     }
   };
 
@@ -225,6 +235,8 @@ const DebateRoom = () => {
     const fetchRoom = async () => {
       const response = await getDebateDetailApi(locationRoomId);
       setRoom(response);
+
+      sessionStorage.setItem('debateRoom', JSON.stringify(response));
     };
 
     fetchRoom();
@@ -347,7 +359,9 @@ const DebateRoom = () => {
           </button>
         </div>
         <button
-          onClick={leaveSession}
+          onClick={() => {
+            navigate(-1);
+          }}
           className={`items-center caption-medium py-2 px-3 gap-2 flex flex-col  text-system-danger cursor-pointer hover:brightness-80`}
         >
           <img src={`/assets/images/exit.png`} />
