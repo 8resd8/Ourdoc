@@ -19,6 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.ssafy.ourdoc.domain.debate.dto.CreateRoomRequest;
 import com.ssafy.ourdoc.domain.debate.dto.JoinRoomRequest;
+import com.ssafy.ourdoc.domain.debate.dto.RoomCreateResponse;
+import com.ssafy.ourdoc.domain.debate.dto.RoomJoinResponse;
 import com.ssafy.ourdoc.domain.debate.entity.Room;
 import com.ssafy.ourdoc.domain.debate.entity.RoomOnline;
 import com.ssafy.ourdoc.domain.debate.repository.DebateRoomOnlineRepository;
@@ -48,7 +50,9 @@ class DebateServiceTest {
 	private User teacher;
 	private User student;
 	private CreateRoomRequest createRoomRequest;
+	private RoomCreateResponse roomCreateResponse;
 	private JoinRoomRequest joinRoomRequest;
+	private RoomJoinResponse roomJoinResponse;
 	private Room room;
 
 	@BeforeEach
@@ -75,7 +79,7 @@ class DebateServiceTest {
 			.active(Active.비활성)
 			.build();
 
-		createRoomRequest = new CreateRoomRequest("테스트방", "password1234", 5);
+		createRoomRequest = new CreateRoomRequest("테스트방", "password1234");
 
 		joinRoomRequest = new JoinRoomRequest("password1234");
 
@@ -108,9 +112,9 @@ class DebateServiceTest {
 		when(debateRoomOnlineRepository.countCurrentPeople(room.getId())).thenReturn(3L);
 		when(openviduService.generateToken(room.getSessionId())).thenReturn("token123");
 
-		String token = debateService.joinDebateRoom(teacher, roomId, joinRoomRequest);
+		roomJoinResponse = debateService.joinDebateRoom(teacher, roomId, joinRoomRequest);
 
-		assertThat(token).isEqualTo("token123");
+		assertThat(roomJoinResponse.token()).isEqualTo("token123");
 		verify(debateRoomRepository).findById(roomId);
 		verify(openviduService).generateToken(room.getSessionId());
 		verify(debateRoomOnlineRepository).save(any(RoomOnline.class));
