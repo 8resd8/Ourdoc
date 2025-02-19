@@ -76,7 +76,7 @@ export const DebateBoardButton = ({ room }: { room: DebateRoom }) => {
             </div>
           </div>
         }
-        confirmText={'만들기'}
+        confirmText={'입장하기'}
         cancelText={'취소'}
         onConfirm={() => {
           enterRoom();

@@ -7,6 +7,7 @@ import { currentUserState } from '../../../recoil';
 import {
   DebateRoomDetail,
   deleteDebateApi,
+  exitDebateApi,
   getDebateDetailApi,
 } from '../../../services/debatesService';
 
@@ -31,22 +32,24 @@ const DebateRoom = () => {
 
   // 이미 구독된 스트림에 대해 중복 호출하지 않도록 처리하는 헬퍼 함수
   const subscribeToStream = (stream: any, currentSession: Session) => {
-    // 자신의 스트림이면 구독하지 않음
     if (
       stream.connection.connectionId === currentSession.connection.connectionId
     )
       return;
-    // 이미 해당 스트림 구독 컨테이너가 있으면 중복 구독 방지
     if (document.getElementById(`subscriber-${stream.streamId}`)) return;
 
     const subscriberContainer = document.createElement('div');
     subscriberContainer.className = classes['subscriber-container'];
     subscriberContainer.id = `subscriber-${stream.streamId}`;
 
-    // 클릭 시 확대/축소 기능 (CSS 클래스 토글)
-    subscriberContainer.addEventListener('click', () => {
-      subscriberContainer.classList.toggle(classes['enlarged']);
-    });
+    const subscriberName =
+      JSON.parse(stream.connection.data).clientData || '익명 사용자';
+
+    const nameTag = document.createElement('div');
+    nameTag.className = 'text-center text-gray-800 body-medium mt-2';
+    nameTag.innerText = subscriberName;
+
+    subscriberContainer.appendChild(nameTag);
 
     if (subscribersRef.current) {
       subscribersRef.current.appendChild(subscriberContainer);
@@ -206,7 +209,14 @@ const DebateRoom = () => {
   };
 
   // 세션 종료 처리
-  const leaveSession = () => {
+  const leaveSession = async () => {
+    const storedRoom = sessionStorage.getItem('debateRoom');
+    let disconnectedRoom: DebateRoomDetail | undefined;
+
+    if (storedRoom) {
+      disconnectedRoom = JSON.parse(storedRoom);
+    }
+
     if (session) {
       session.disconnect();
       navigate(-1);
@@ -216,8 +226,10 @@ const DebateRoom = () => {
     if (subscribersRef.current) {
       subscribersRef.current.innerHTML = '';
     }
-    if (user.name == room?.creatorName) {
-      deleteDebateApi(room.roomId);
+
+    await exitDebateApi(disconnectedRoom?.roomId!);
+    if (user.name == disconnectedRoom?.creatorName) {
+      await deleteDebateApi(disconnectedRoom?.roomId!);
     }
   };
 
@@ -225,6 +237,8 @@ const DebateRoom = () => {
     const fetchRoom = async () => {
       const response = await getDebateDetailApi(locationRoomId);
       setRoom(response);
+
+      sessionStorage.setItem('debateRoom', JSON.stringify(response));
     };
 
     fetchRoom();
@@ -302,6 +316,9 @@ const DebateRoom = () => {
       </div>
       <div className="flex flex-col items-center w-full gap-5">
         <div className={classes['video-area']} ref={publisherRef}></div>
+        <div className="text-center text-gray-800 body-medium mt-2">
+          {user.name} (나)
+        </div>
         <div
           className={classes['subscribers-container']}
           ref={subscribersRef}
@@ -347,7 +364,9 @@ const DebateRoom = () => {
           </button>
         </div>
         <button
-          onClick={leaveSession}
+          onClick={() => {
+            navigate(-1);
+          }}
           className={`items-center caption-medium py-2 px-3 gap-2 flex flex-col  text-system-danger cursor-pointer hover:brightness-80`}
         >
           <img src={`/assets/images/exit.png`} />
