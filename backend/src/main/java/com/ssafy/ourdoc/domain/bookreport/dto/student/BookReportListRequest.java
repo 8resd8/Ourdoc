@@ -11,7 +11,6 @@ public record BookReportListRequest(
 	@Max(value = 6, message = "{size.max}")
 	int grade,
 
-	@NotNull(message = "{not.blank}")
 	@Positive(message = "{positive}")
 	Long classId
 ) {

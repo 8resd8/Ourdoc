@@ -41,7 +41,13 @@ const TeacherNoti = () => {
         itemList={
           notifications
             ? notifications?.content.map((item, index) => (
-                <NotificationDetailTile key={index} notification={item} />
+                <NotificationDetailTile
+                  key={index}
+                  notification={item}
+                  onFetch={function (): void {
+                    fetchData(currentPage);
+                  }}
+                />
               ))
             : []
         }

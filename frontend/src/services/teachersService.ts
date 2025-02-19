@@ -237,7 +237,6 @@ export const searchStudentByClass = async (classId: number) => {
 // 교사의 학교 - 연도 - 학년 - 반 조회
 export const searchClass = async () => {
   const response = await api.get('/teachers/classes');
-  console.log(response);
 
   return response.data;
 };

@@ -33,6 +33,6 @@ public interface BookReportQueryRepository {
 	Page<BookReportStudentDto> bookReportsHomeworkStudentsPage(Long bookId, Long userId, Pageable pageable);
 
 	// 피그마 학생 3
-	Page<BookReportListDto> bookReportList(Long studentId, BookReportListRequest request, Pageable pageable);
+	Page<BookReportListDto> bookReportList(User studentUser, BookReportListRequest request, Pageable pageable);
 
 }

@@ -24,12 +24,19 @@ const StudentMain = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const recentFeedback = await studentRecentAIFeedbackApi();
-      const studentRank = await getStudentRankApi();
+      try {
+        const [recentFeedback, studentRank] = await Promise.all([
+          studentRecentAIFeedbackApi(),
+          getStudentRankApi(),
+        ]);
 
-      setrecentFeedback(recentFeedback.content);
-      setstampCount(studentRank);
+        setrecentFeedback(recentFeedback.content);
+        setstampCount(studentRank);
+      } catch (error) {
+        console.error('데이터 가져오기 실패:', error);
+      }
     };
+
     fetchData();
   }, []);
 

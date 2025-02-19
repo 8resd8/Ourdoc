@@ -3,6 +3,8 @@ import { getRecoil } from 'recoil-nexus';
 import { accessTokenState } from '../recoil/atoms/usersAtoms';
 import secureLocalStorage from 'react-secure-storage';
 import { signoutApi } from './usersService';
+import { notify } from '../components/commons/Toast';
+import { toast } from 'react-toastify';
 
 const baseURL = import.meta.env.VITE_APP_API_URL;
 
@@ -35,6 +37,62 @@ const setupInterceptors = (instance: AxiosInstance) => {
       return response;
     },
     async (error) => {
+      const errorState = error.status;
+
+      switch (errorState) {
+        case 401:
+          notify({
+            type: 'error',
+            text: '선생 및 학생이 다릅니다. 재로그인을 요청합니다.',
+          });
+
+          await signoutApi();
+
+          toast.onChange((payload) => {
+            if (payload.status === 'removed') {
+              window.location.href = '/';
+            }
+          });
+
+          break;
+        case 403:
+          notify({
+            type: 'error',
+            text: '권한이 존재하지 않습니다.',
+          });
+
+          toast.onChange((payload) => {
+            if (payload.status === 'removed') {
+              window.history.back();
+            }
+          });
+
+          break;
+
+        case 404:
+          notify({ type: 'error', text: '컨텐츠가 존재하지 않습니다.' });
+
+          toast.onChange((payload) => {
+            if (payload.status === 'removed') {
+              window.history.back();
+            }
+          });
+
+          break;
+
+        case 500:
+          notify({
+            type: 'error',
+            text: '서버에서 오류가 발생했습니다. 재로그인 요청합니다.',
+          });
+
+          toast.onChange((payload) => {
+            if (payload.status === 'removed') {
+              window.location.href = '/';
+            }
+          });
+      }
+
       /*
       const originalRequest = error.config;
 
@@ -55,12 +113,7 @@ const setupInterceptors = (instance: AxiosInstance) => {
           logout(); // ✅ Refresh Token도 만료되면 로그아웃
         }
       }
-          */
-
-      if (error.response?.status === 401) {
-        console.warn('비인가 에러 401. 로그아웃 진행');
-        await signoutApi(); // 401 오류 발생 시 자동 로그아웃
-      }
+      */
 
       return Promise.reject(error);
     }
