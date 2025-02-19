@@ -6,60 +6,122 @@ import {
 } from '../../../services/teachersService';
 import Modal from '../../commons/Modal';
 import AddressSearchModal from '../../commons/AddressSearchModal';
+import UploadModal from '../../commons/UploadModal';
+import { CameraIcon } from 'lucide-react';
 
 const TeacherProfileUpdate = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const schoolName = searchParams.get('schoolName');
   const profileImage = searchParams.get('profileImage') || undefined;
-  console.log(profileImage);
+  const name = searchParams.get('name');
+  const loginId = searchParams.get('loginId');
+  const email = searchParams.get('email');
+  const phone = searchParams.get('phone');
+  const year = new Date().getFullYear();
+  const grade = searchParams.get('grade');
+  const schoolId = Number(searchParams.get('schoolId'));
+  const classNumber = searchParams.get('classNumber');
 
+  const [certificateFile, setCertificateFile] = useState<File | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [formData, setFormData] = useState({
-    name: searchParams.get('name') || '',
-    loginId: searchParams.get('loginId') || '',
-    email: searchParams.get('email') || '',
-    phone: searchParams.get('phone') || '',
-    schoolId: Number(searchParams.get('schoolId')) || 0,
-    year: Number(new Date().getFullYear().toString()) || 0,
-    grade: Number(searchParams.get('grade')) || 0,
-    classNumber: Number(searchParams.get('classNumber')) || 0,
+    name: null,
+    loginId: null,
+    email: null,
+    phone: null,
+    year: null,
+    grade: null,
+    schoolId: schoolId || null,
+    classNumber: null,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      [name]: value === '' ? null : value, // 빈 문자열이면 null 유지
     }));
   };
 
+  const [school, setSchool] = useState<{ schoolName: string | null }>({
+    schoolName: schoolName,
+  });
   const handleSelectSchool = (selectedSchool: {
-    schoolName: string;
-    schoolId: number;
+    schoolName: string | null;
+    id: number | null;
   }) => {
+    setSchool((prevData) => ({
+      ...prevData,
+      schoolName: selectedSchool.schoolName,
+    }));
     setFormData((prevData) => ({
       ...prevData,
-      schoolId: selectedSchool.schoolId,
+      schoolId: selectedSchool.id,
     }));
     setmodal(false);
   };
-
+  console.log(formData);
   const updateProfile = async () => {
-    const response = await updateTeacherProfileApi(formData);
+    try {
+      if (!certificateFile) {
+        setCertificateFile(null);
+      }
+      const requestData = {
+        name: formData.name || null,
+        loginId: formData.loginId || null,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        year: formData.year || null,
+        grade: formData.grade || null,
+        schoolId: formData.schoolId || null,
+        classNumber: formData.classNumber || null,
+      };
+      if (certificateFile) {
+        const response = await updateTeacherProfileApi(
+          requestData,
+          certificateFile
+        );
+        console.log(response);
+      } else {
+        const response = await updateTeacherProfileApi(requestData, null);
+        console.log(response);
+      }
+    } catch (error) {}
   };
 
+  const handleUploadConfirm = (file: File | null) => {
+    if (file) {
+      setCertificateFile(file);
+    }
+    setIsUploadModalOpen(false);
+  };
+
+  const handleUploadClick = () => {
+    setIsUploadModalOpen(true);
+  };
+  const handleUploadCancel = () => {
+    setIsUploadModalOpen(false);
+  };
   const [modal, setmodal] = useState(false);
   return (
     <div className="flex flex-col justify-center items-center min-h-screen">
-      <img
-        className="w-[196px] h-[196px] rounded-full border border-gray-200"
-        src={
-          profileImage == '' ? '/assets/images/tmpProfile.png' : profileImage
-        }
-        alt="프로필"
-      />
+      <div className="relative">
+        <img
+          className="w-48 h-48 rounded-full border border-gray-300"
+          src={profileImage}
+          alt="프로필 이미지"
+        />
+        <button
+          className="absolute bottom-2 right-2 bg-gray-700 border border-gray-200 text-white p-2 rounded-full hover:text-primary-500 hover:bg-gray-0 cursor-pointer"
+          onClick={handleUploadClick}
+        >
+          <CameraIcon className="w-6 h-6" />
+        </button>
+      </div>
       <div className="text-center text-gray-800 body-medium font-semibold mt-4">
-        {formData.name} 님
+        {name} 님
       </div>
       <div className="flex flex-col justify-start items-center gap-[20px] mt-6">
         <div className="flex flex-col justify-start items-center gap-8">
@@ -67,7 +129,7 @@ const TeacherProfileUpdate = () => {
             {
               label: '아이디',
               name: 'loginId',
-              placeholder: formData?.loginId,
+              placeholder: loginId,
               disabled: true,
             },
             {
@@ -95,24 +157,33 @@ const TeacherProfileUpdate = () => {
                 type="text"
                 name={item.name}
                 value={
-                  item.name == 'schoolName'
-                    ? schoolName || ''
-                    : formData[item.name as keyof typeof formData]
+                  item.name === 'schoolName'
+                    ? school.schoolName || ''
+                    : formData[item.name as keyof typeof formData] !== null
+                      ? (formData[item.name as keyof typeof formData] as
+                          | string
+                          | number)
+                      : item.name === 'email'
+                        ? email || ''
+                        : item.name === 'phone'
+                          ? phone || ''
+                          : ''
                 }
                 onChange={handleChange}
-                placeholder={item.placeholder}
+                placeholder={item.placeholder ?? undefined}
                 disabled={item.disabled}
-                className="w-full h-10 py-2 bg-gray-0 border-b border-gray-200 text-gray-800 body-small focus:outline-none cursor-pointer"
+                className="w-full h-10 py-2 bg-gray-0 border-b border-gray-200 text-gray-800 body-small focus:outline-none"
               />
             </div>
           ))}
+
           <div className="flex justify-between w-[414px] gap-4">
             <div className="flex-1">
               <label className="text-gray-800 body-small">년도</label>
               <input
                 type="text"
                 name="year"
-                value={formData.year}
+                value={year ?? undefined}
                 onChange={handleChange}
                 disabled
                 className="w-full h-10 py-2 border-b border-gray-200 text-gray-800 body-small focus:outline-none"
@@ -127,7 +198,19 @@ const TeacherProfileUpdate = () => {
                 <input
                   type="text"
                   name={item.name}
-                  value={formData[item.name as keyof typeof formData]}
+                  value={
+                    item.name === 'schoolName'
+                      ? school.schoolName || ''
+                      : formData[item.name as keyof typeof formData] !== null
+                        ? (formData[item.name as keyof typeof formData] as
+                            | string
+                            | number)
+                        : item.name === 'grade'
+                          ? grade || ''
+                          : item.name === 'classNumber'
+                            ? classNumber || ''
+                            : ''
+                  }
                   onChange={handleChange}
                   placeholder={item.label}
                   className="w-full h-10 py-2 border-b border-gray-200 text-gray-800 body-small focus:outline-none"
@@ -136,7 +219,10 @@ const TeacherProfileUpdate = () => {
             ))}
           </div>
         </div>
-        <button className="w-[414px] px-[140px] py-4 bg-primary-500 rounded-[10px] body-medium text-gray-0 mb-2">
+        <button
+          onClick={updateProfile}
+          className="w-[414px] px-[140px] py-4 bg-primary-500 rounded-[10px] body-medium text-gray-0 mb-2 cursor-pointer"
+        >
           저장하기
         </button>
       </div>
@@ -147,6 +233,12 @@ const TeacherProfileUpdate = () => {
           onSelectSchool={handleSelectSchool}
         />
       )}
+      <UploadModal
+        type="profile"
+        isOpen={isUploadModalOpen}
+        onConfirm={handleUploadConfirm}
+        onCancel={handleUploadCancel}
+      />
     </div>
   );
 };

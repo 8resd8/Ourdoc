@@ -4,7 +4,10 @@ import { searchSchoolsApi } from '../../services/teachersService';
 interface AddressSearchModalProps {
   open: boolean;
   onClose: () => void;
-  onSelectSchool: (school: { schoolName: string; schoolId: number }) => void;
+  onSelectSchool: (school: {
+    schoolName: string | null;
+    id: number | null;
+  }) => void;
 }
 
 const AddressSearchModal = ({
@@ -13,7 +16,7 @@ const AddressSearchModal = ({
   onSelectSchool,
 }: AddressSearchModalProps) => {
   const [school, setSchool] = useState<
-    { schoolName: string; schoolId: number; address: string }[]
+    { schoolName: string; id: number; address: string }[]
   >([]);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -26,18 +29,19 @@ const AddressSearchModal = ({
       console.error(error);
     }
   };
-
-  const handleSelect = (selectedSchool: {
-    schoolName: string;
-    schoolId: number;
-  }) => {
+  const handleKeyPress: React.KeyboardEventHandler<HTMLInputElement> = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch(searchQuery);
+    }
+  };
+  const handleSelect = (selectedSchool: { schoolName: string; id: number }) => {
     onSelectSchool(selectedSchool); // 부모로 데이터 전달
-    onClose(); // 모달 닫기
+    onClose();
   };
 
   return (
     open && (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-primary-50 bg-opacity-50">
         <div className="bg-white rounded-2xl shadow-lg w-96 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             학교 찾기
@@ -46,12 +50,13 @@ const AddressSearchModal = ({
             <input
               type="text"
               placeholder="소속 학교명을 검색하세요"
-              className="w-[260px] border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-primary-500"
+              className="w-[260px]  rounded-md px-3 py-2 focus:ring-2 focus:ring-primary-500"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleKeyPress}
             />
             <button
-              className="bg-primary-500 text-white px-4 py-2 rounded-md hover:bg-primary-600 transition w-full"
+              className="bg-primary-500 text-white px-4 py-2 rounded-md hover:bg-primary-600 transition w-full cursor-pointer"
               onClick={() => handleSearch(searchQuery)}
             >
               검색
@@ -66,7 +71,7 @@ const AddressSearchModal = ({
                 onClick={() =>
                   handleSelect({
                     schoolName: data.schoolName,
-                    schoolId: data.schoolId,
+                    id: data.id,
                   })
                 }
               >

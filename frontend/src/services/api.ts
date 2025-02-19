@@ -80,17 +80,18 @@ const setupInterceptors = (instance: AxiosInstance) => {
 
           break;
 
-        case 500:
-          notify({
-            type: 'error',
-            text: '서버에서 오류가 발생했습니다. 재로그인 요청합니다.',
-          });
+        // case 500:
+        //   notify({
+        //     type: 'error',
+        //     text: '서버에서 오류가 발생했습니다. 재로그인 요청합니다.',
+        //   });
 
-          toast.onChange((payload) => {
-            if (payload.status === 'removed') {
-              window.location.href = '/';
-            }
-          });
+        //   toast.onChange((payload) => {
+        //     if (payload.status === 'removed') {
+        //       window.location.href = '/';
+        //     }
+        //   });
+        //   break;
       }
 
       /*

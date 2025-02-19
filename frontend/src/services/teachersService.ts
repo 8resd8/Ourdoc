@@ -1,4 +1,4 @@
-import { api } from '../services/api';
+import { api, multipartApi } from '../services/api';
 
 // 인터페이스 정의
 export interface TemporaryPasswordResponse {
@@ -27,14 +27,14 @@ export interface TeacherProfileResponse {
 }
 
 export interface TeacherProfileUpdateRequest {
-  name: string;
-  loginId: string;
-  email: string;
-  phone: string;
-  schoolId: number;
-  year: number;
-  grade: number;
-  classNumber: number;
+  name: string | null;
+  loginId: string | null;
+  email: string | null;
+  phone: string | null;
+  schoolId: number | null;
+  year: number | null;
+  grade: number | null;
+  classNumber: number | null;
 }
 
 export interface StudentProfile {
@@ -207,9 +207,27 @@ export const getTeacherProfileApi = async (): Promise<TeacherProfile> => {
 
 // 교사 본인 정보 수정
 export const updateTeacherProfileApi = async (
-  data: TeacherProfileUpdateRequest
+  data: TeacherProfileUpdateRequest,
+  certificateFile: File | null
 ): Promise<void> => {
-  await api.patch(`/teachers/profile`, data);
+  const formData = new FormData();
+
+  formData.append(
+    'request',
+    new Blob([JSON.stringify(data)], { type: 'application/json' })
+  );
+
+  if (certificateFile) {
+    const fileType = certificateFile.type;
+    if (fileType === 'application/pdf') {
+      const pdfBlob = new Blob([certificateFile], { type: 'application/pdf' });
+      formData.append('certificateFile', pdfBlob, certificateFile.name);
+    } else {
+      formData.append('certificateFile', certificateFile);
+    }
+  }
+
+  await multipartApi.patch(`/teachers/profile`, formData);
 };
 
 // 학교 검색 API

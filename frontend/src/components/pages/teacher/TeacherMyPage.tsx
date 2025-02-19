@@ -7,17 +7,24 @@ import {
 import { signinApi } from '../../../services/usersService';
 import { useNavigate } from 'react-router-dom';
 import { notify } from '../../commons/Toast';
+import { CameraIcon } from 'lucide-react';
 
 interface ModalProps {
-  type: 'passwordConfirm' | 'passwordReset' | 'createClass';
+  type: 'passwordConfirm' | 'passwordReset' | 'createClass' | 'profileEdit';
   onClose: () => void;
   loginClick: any;
 }
 
 const Modal = ({ loginClick, type, onClose }: ModalProps) => {
   const [password, setPassword] = useState('');
+
   const login = () => {
     loginClick(password);
+  };
+  const enterEvent = (e: any) => {
+    if (e.key == 'Enter') {
+      loginClick(password);
+    }
   };
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-50">
@@ -28,6 +35,7 @@ const Modal = ({ loginClick, type, onClose }: ModalProps) => {
               비밀번호를 입력해주세요.
             </div>
             <input
+              onKeyDown={enterEvent}
               onChange={(e) => setPassword(e.target.value)}
               type="password"
               className="mt-4 w-full border-b border-gray-800 p-2"
@@ -86,10 +94,12 @@ const TeacherMyPage = () => {
   const [modalType, setModalType] = useState<ModalProps['type'] | null>(null);
   const [teacherUser, setTeacherUser] = useState<TeacherProfile>();
   const navigate = useNavigate();
+
   const fetchData = async () => {
     const response = await getTeacherProfileApi();
     setTeacherUser(response);
   };
+
   const handleLogin = async (password: string) => {
     if (teacherUser)
       try {
@@ -108,6 +118,7 @@ const TeacherMyPage = () => {
         console.error('로그인 실패:', error);
       }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -154,9 +165,6 @@ const TeacherMyPage = () => {
           </button>
         </div>
         <div className="mt-6 space-y-4 w-[414px]">
-          <button className="w-full py-3 border border-secondary-500 text-secondary-500 rounded-[10px] cursor-pointer">
-            프로필 이미지 수정
-          </button>
           <button
             onClick={() => setModalType('passwordConfirm')}
             className="w-full py-3 border border-primary-500 text-primary-500 rounded-[10px] cursor-pointer"
