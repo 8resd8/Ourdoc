@@ -5,47 +5,19 @@
 
 # <br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2025.01.06~2025.02.21-green?style=flat&logo=&logoColor=white" />]()
 
-## 사용한 기술 스택
 
-<div align=center><h1>📚 STACKS</h1></div>
-
-<div>
-  <h3>FrontEnd</h3>
-  <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white"/>
-  <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB"/>
-  <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white"/>
-</div>
-
-<div>
-  <h3>BackEnd</h3>
-  <img src="https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white"/>
-  <img src="https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white"/>
-  <img src="https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white"/>
-  <img src="https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white">
-</div>
-
-<div>
-  <h3>Infra</h3>
-  <img src="https://img.shields.io/badge/Amazon%20S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Amazon%20EC2-FF9900?style=for-the-badge&logo=Amazon%20EC2&logoColor=white">
-  <img src="https://img.shields.io/badge/jenkins-%232C5263.svg?style=for-the-badge&logo=jenkins&logoColor=white"/>
-  <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/>
-  <img src="https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white">
-</div>
-<br>
 
 </div> 
 
-## 📝 프로젝트: 우리들의 독서기록
+# 📝 서비스명 & 로고
+
+## 우리들의 독서기록
+
+> 업무강도가 높은 초등학교 교사를 위한 독서록 관리 및 피드백 서비스
 
 ![우리들의 독서기록](images%2Flogo1.png)
 
-### 한줄 소개
-
-> 업무강도가 높은 초등학교 교사를 위한 독서록 관리 시스템
-
-### 상세 소개
+### 주요 기능
 
 - 교사는 시간의 한계로 학생들의 독서록 지도에 어려움을 겪고 있음
 - 초등학생 독서록 관리 서비스(우독)는 초등학생과 교사를 위한 독서록 작성 지원 플랫폼
@@ -75,23 +47,34 @@
 - **독서 토론방 개설 (RTC 활용)**
     - 학교 간 실시간 독서 토론을 진행하여 학생들의 독서 이해력과 표현력 향상.
 
-## 실제 화면
+## 서비스 화면
 
-|                              로그인 화면                              |                           교사 숙세도서 현황                           |
-|:----------------------------------------------------------------:|:--------------------------------------------------------------:|
-|                 ![login.png](images%2Flogin.png)                 |         ![teacher_book.png](images%2Fteacher_book.png)         |
-|                           교사 학생 독서록 관리                           |                            교사 학급관리                             |
-|       ![teacher_booklog.png](images%2Fteacher_booklog.png)       |        ![teacher_class.png](images%2Fteacher_class.png)        |
-|                             교사 메인화면                              |                           Screen #2                            |
-|          ![teacher_main.png](images%2Fteacher_main.png)          |         ![teacher_room.png](images%2Fteacher_room.png)         |
-|                          독서토론방 사진변경 필요                           |                            토론방 추가필요                            |
-|          ![teacher_main.png](images%2Fteacher_main.png)          |         ![teacher_room.png](images%2Fteacher_room.png)         |
-|                            Screen #1                             |                             학생 #2                              |
-| ![student_homework_look.png](images%2Fstudent_homework_look.png) | ![student_booklog_save.png](images%2Fstudent_booklog_save.png) |
-|                            Screen #3                             |                           Screen #4                            |
-|  ![student_booklog_look.png](images%2Fstudent_booklog_look.png)  |        ![student_award.png](images%2Fstudent_award.png)        |
-|                            Screen #5                             |                           Screen #6                            |
-|          ![teacher_main.png](images%2Fteacher_main.png)          |         ![teacher_room.png](images%2Fteacher_room.png)         |
+## 교사
+
+|                                  로그인 화면                                  |                                교사 숙세도서 현황                                |
+|:------------------------------------------------------------------------:|:------------------------------------------------------------------------:|
+|                     ![login.png](images%2Flogin.png)                     |          ![teacher_book.png](images/teacher%2Fteacher_book.png)          |
+|                               교사 학생 독서록 관리                               |                                 교사 학급관리                                  |
+|       ![teacher_booklog.png](images/teacher%2Fteacher_booklog.png)       |         ![teacher_class.png](images/teacher%2Fteacher_class.png)         |
+|                                 교사 메인화면                                  |                                  학생 통계1                                  |
+|          ![teacher_main.png](images/teacher%2Fteacher_main.png)          |        ![student_award2.png](images/student%2Fstudent_award2.png)        |
+|                                  학생 통계2                                  |                              학생 독서록 목록 입장화면                              |
+|        ![student_award3.png](images/student%2Fstudent_award3.png)        | ![student_mybookreadlog.png](images/student%2Fstudent_mybookreadlog.png) |
+|                                 학생 숙제도서                                  |                               학생 독서감상문 작성                                |
+| ![student_homework_look.png](images/student%2Fstudent_homework_look.png) |  ![student_booklog_save.png](images/student%2Fstudent_booklog_save.png)  |
+|                                독서감상문 피드백                                 |                                                                          |
+|  ![student_booklog_look.png](images/student%2Fstudent_booklog_look.png)  |         ![student_award.png](images/student%2Fstudent_award.png)         |
+|                               교사 독서토론 방 개설                               |                                Screen #6                                 |
+|          ![teacher_room.png](images/teacher%2Fteacher_room.png)          |          ![teacher_room.png](images/teacher%2Fteacher_room.png)          |
+
+
+## 학생
+
+|                                  로그인 화면                                  |                                교사 숙세도서 현황                                |
+|:------------------------------------------------------------------------:|:------------------------------------------------------------------------:|
+|                     ![login.png](images%2Flogin.png)                     |          ![teacher_book.png](images/teacher%2Fteacher_book.png)          |
+|                               교사 학생 독서록 관리                               |                                 교사 학급관리                                  |
+|                                                                          |                                                                          |
 
 ## 프로젝트 API 설계
 
@@ -105,19 +88,19 @@
 
 # 프로젝트 2025년 일정
 
-### 아이디어 선정: 02.06 ~ 02.15
+### 아이디어 선정: 02.06 ~ 02.15 (10일)
 
-### 기획: 02.15 ~ 01.17
+### 기획: 02.15 ~ 01.17 (3일)
 
-### 개발: 01.17 ~ 02.17
+### 개발: 01.17 ~ 02.17 (1달)
 
-### 테스트 및 QA: 02.17 ~ 02.20
+### 테스트 및 QA: 02.15 ~ 02.20 (5일)
 
-### 최종 발표: 2.21
+### 프로젝트 종료: 2.21
 
 ## 🗂️ APIs
 
-👉🏻 [API 바로보기](/backend/APIs.md)
+👉🏻 [API 명세서](/backend/APIs.md)
 
 
 <br />
@@ -180,14 +163,96 @@
 - **JWT**
     - [JWT 토큰 주의사항](https://www.notion.so/JWT-Enum-19ec6c90458e80959144cc9ecb7bcd07?pvs=4)
 
+## 기술 스택
+
+<div align=center><h1>📚 STACKS</h1></div>
+
+<div>
+  <h3>FrontEnd</h3>
+  <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white"/>
+  <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB"/>
+  <img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white"/>
+</div>
+
+<div>
+  <h3>BackEnd</h3>
+  <img src="https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white"/>
+  <img src="https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white"/>
+  <img src="https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white"/>
+  <img src="https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white">
+</div>
+
+<div>
+  <h3>Infra</h3>
+  <img src="https://img.shields.io/badge/Amazon%20S3-FF9900?style=for-the-badge&logo=amazons3&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Amazon%20EC2-FF9900?style=for-the-badge&logo=Amazon%20EC2&logoColor=white">
+  <img src="https://img.shields.io/badge/jenkins-%232C5263.svg?style=for-the-badge&logo=jenkins&logoColor=white"/>
+  <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/>
+  <img src="https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white">
+</div>
+<br>
+
 ## 💁‍♂️ 프로젝트 팀원
 
-|                    Backend                     |                    Backend                     |                    Frontend                    |
-|:----------------------------------------------:|:----------------------------------------------:|:----------------------------------------------:|
-| ![](https://github.com/yewon-Noh.png?size=120) | ![](https://github.com/SeongHo-C.png?size=120) | ![](https://github.com/SeongHo-C.png?size=120) |
-|      [김현우](https://github.com/yewon-Noh)       |       [김보민](https://github.com/mokbee1)        |       [양영조](https://github.com/10019610)       |
+|                    Backend                     |              Backend              |                   Frontend                   |
+|:----------------------------------------------:|:---------------------------------:|:--------------------------------------------:|
+| ![team_hyunwoo.png](images%2Fteam_hyunwoo.png) |  ![김보민](images%2Fteam_bomin.png)  | ![team_yungjo.png](images%2Fteam_yungjo.png) |
+|      [김현우](https://github.com/yewon-Noh)       | [김보민](https://github.com/mokbee1) |      [양영조](https://github.com/10019610)      |
 
-|                    Backend                     |                    Backend                     |                    Frontend                    |
-|:----------------------------------------------:|:----------------------------------------------:|:----------------------------------------------:|
-| ![](https://github.com/yewon-Noh.png?size=120) | ![](https://github.com/SeongHo-C.png?size=120) | ![](https://github.com/SeongHo-C.png?size=120) |
-|       [윤윤호](https://github.com/10019610)       |       [방승윤](https://github.com/mokbee1)        |      [상한규](https://github.com/SeongHo-C)       | 
+|                   Backend                    |                     Backend                      |                  Frontend                  |
+|:--------------------------------------------:|:------------------------------------------------:|:------------------------------------------:|
+| ![team_yoonho.png](images%2Fteam_yoonho.png) | ![team_seungyun.png](images%2Fteam_seungyun.png) | ![team_hangu.png](images%2Fteam_hangu.png) |
+|      [윤윤호](https://github.com/10019610)      |        [방승윤](https://github.com/mokbee1)         |    [상한규](https://github.com/SeongHo-C)     |
+
+## 프로젝트 팀원 역할
+
+### Frontend
+
+- 상한규
+  - 프론트 기술 리더
+  - 프로젝트 매니저, 일정관리
+  - 서비스 컨셉, 로고 디자인..
+  - ..
+- 양영조
+  - 귀여운 형
+  - 핵심 API 담당
+
+### Backend
+
+- 윤윤호
+  - 백엔드 기술 리더
+  - EC2, Docker, Jenkins CI/CD 구축
+  - Nginx 서버 설정
+  - 도서데이터 수집
+  - 수많은 api
+  - ...
+
+
+- 김현우
+  - MySQL RDS, S3 구축  
+  - Spring AI 피드백 적용
+  - SSE 알림
+  - 이미지 OCR 적용
+  - OpenVidu 화상채팅 프론트 기능구현
+  - 독서록 OCR 작성 및 피드백 관리
+  - 전국 초등학교 데이터 삽입
+  - 프로젝트 내용 작성
+  - 트러블 슈팅 정리
+  - ..
+
+
+- 방승윤
+  - OpenVidu 서버 담당
+  - 독서토론 총괄
+  - 통계쿼리 담당
+  - 프로텍트 QA & 테스터
+  - ...
+
+
+- 김보민
+  - 팀장
+  - 프로젝트 기획
+  - JWT 인증 관리
+  - QR코드 생성
+  - ...
