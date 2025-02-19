@@ -1,7 +1,7 @@
 package com.ssafy.ourdoc.global.integation.gpt.service;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Optional;
@@ -19,6 +19,7 @@ import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
+import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackRequest;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackResponse;
@@ -46,7 +47,7 @@ class AIFeedbackServiceTest {
 		StudentClass mockStudentClass = mock(StudentClass.class);
 		ClassRoom mockClassRoom = mock(ClassRoom.class);
 
-		when(studentClassRepository.findStudentClassByUserId(1L))
+		when(studentClassRepository.findByUserIdAndActive(1L, Active.활성))
 			.thenReturn(Optional.of(mockStudentClass));
 
 		when(mockStudentClass.getClassRoom()).thenReturn(mockClassRoom);
@@ -73,7 +74,7 @@ class AIFeedbackServiceTest {
 		StudentClass mockStudentClass = mock(StudentClass.class);
 		ClassRoom mockClassRoom = mock(ClassRoom.class);
 
-		when(studentClassRepository.findStudentClassByUserId(2L))
+		when(studentClassRepository.findByUserIdAndActive(2L, Active.활성))
 			.thenReturn(Optional.of(mockStudentClass));
 
 		when(mockStudentClass.getClassRoom()).thenReturn(mockClassRoom);
