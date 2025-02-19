@@ -211,7 +211,8 @@ public class BookReportStatisticRepository {
 			.where(
 				studentClass.user.id.eq(userId),
 				classRoom.grade.eq(grade),
-				classRoom.year.eq(year)
+				classRoom.year.eq(year),
+				bookReport.createdAt.month().eq(month)
 			).groupBy(dayExpression)
 			.fetch();
 
@@ -249,7 +250,8 @@ public class BookReportStatisticRepository {
 			.join(studentClass.classRoom, classRoom)
 			.where(
 				classRoom.id.eq(classRoomId),
-				classRoom.year.eq(year)
+				classRoom.year.eq(year),
+				bookReport.createdAt.month().eq(month)
 			).groupBy(dayExpression)
 			.fetch();
 
