@@ -38,6 +38,7 @@ import com.ssafy.ourdoc.domain.notification.service.NotificationService;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
+import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.common.enums.ApproveStatus;
 import com.ssafy.ourdoc.global.common.enums.SubmitStatus;
 
@@ -62,7 +63,7 @@ public class BookReportStudentService {
 			throw new IllegalArgumentException("OCR 사용 시 imageURL 입력이 필요합니다.");
 		}
 
-		StudentClass studentClass = studentClassRepository.findStudentClassByUserId(user.getId()).orElseThrow();
+		StudentClass studentClass = studentClassRepository.findByUserIdAndActive(user.getId(), Active.활성).orElseThrow();
 		Book book = bookRepository.findById(request.bookId()).orElseThrow();
 
 		BookReport bookReport = BookReport.builder()

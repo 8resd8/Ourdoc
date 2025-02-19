@@ -8,9 +8,10 @@ import org.springframework.stereotype.Service;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
-import com.ssafy.ourdoc.domain.user.student.repository.StudentRepository;
+import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackRequest;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackResponse;
+import com.ssafy.ourdoc.global.integration.gpt.dto.SpellingRequest;
 import com.ssafy.ourdoc.global.util.Prompt;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class AIFeedbackService {
 	private final ChatModel chatModel;
 	private final StudentClassRepository studentClassRepository;
 
-	public FeedbackResponse spelling(User user, FeedbackRequest request) {
+	public FeedbackResponse spelling(User user, SpellingRequest request) {
 		int studentGrade = getStudentGrade(user);
 		String aiSpellingFeedback = chatModel.call(Prompt.spelling(studentGrade, request.content()));
 
@@ -31,7 +32,7 @@ public class AIFeedbackService {
 
 	public FeedbackResponse feedback(User user, FeedbackRequest request) {
 		int studentGrade = getStudentGrade(user);
-		String aiSpellingFeedback = chatModel.call(Prompt.feedback(studentGrade, request.content()));
+		String aiSpellingFeedback = chatModel.call(Prompt.feedback(studentGrade, request));
 
 		return new FeedbackResponse(aiSpellingFeedback);
 	}
@@ -45,6 +46,6 @@ public class AIFeedbackService {
 	}
 
 	private Optional<StudentClass> getStudentClass(User user) {
-		return studentClassRepository.findStudentClassByUserId(user.getId());
+		return studentClassRepository.findByUserIdAndActive(user.getId(), Active.활성);
 	}
 }
