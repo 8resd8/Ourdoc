@@ -186,3 +186,13 @@ export const setupStudentApi = async (
 ): Promise<void> => {
   const response = await api.post<boolean>('/students/request', data);
 };
+
+export const getAdminTeacherVerifyListApi = async () => {
+  const response = await api.get('/admin/teachers/verification');
+  return response.data;
+};
+
+export const verifyAdminTeacher = async (param: any) => {
+  const response = await api.patch(`/admin/verification`, param);
+  return response.data;
+};

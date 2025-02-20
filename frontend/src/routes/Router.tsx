@@ -41,6 +41,7 @@ import TeacherStudentInfo from '../components/pages/teacher/TeacherStudentInfo';
 import TeacherHeader from '../components/commons/TeacherHeader';
 import TeacherDebateBoard from '../components/pages/teacher/TeacherDebateBoard';
 import TeacherStudentReportList from '../components/pages/teacher/TeacherStudentReportList';
+import Admin from '../components/pages/common/Admin';
 
 const Router = () => {
   return (
@@ -52,6 +53,7 @@ const Router = () => {
         <Route path="/student/signup" element={<StudentSignUp />} />
         <Route path="/teacher/signup" element={<TeacherSignUp />} />
         <Route path="/pending" element={<Pending />} />
+        <Route path="/admin" element={<Admin />} />
       </Route>
       <Route element={<Layout />}>
         {/* 선생 학생 공통 라우트 */}
