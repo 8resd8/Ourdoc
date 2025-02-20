@@ -42,7 +42,7 @@ const TeacherStudentInfo = () => {
   }, []);
 
   const navigateToStudentReport = () => {
-    navigate('/teacher/reports', { state: { loginId } });
+    navigate('/teacher/reports', { state: { name, studentNumber } });
   };
 
   return (
