@@ -61,7 +61,7 @@ public class DebateService {
 			.user(user)
 			.title(request.title())
 			.password(request.password())
-			.maxPeople(10)
+			.maxPeople(9)
 			.build();
 
 		debateRoomRepository.save(room);
