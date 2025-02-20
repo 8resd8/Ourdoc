@@ -1,8 +1,5 @@
 <div align="center">
 
-<!-- logo -->
-
-[//]: # (![우리들의 독서기록]&#40;images%2Flogo1.png&#41;)
 <h1><img src="images/logo1.png" width="588"/></h1>
 
 
@@ -78,21 +75,23 @@
 
 ## 학생
 
-|              로그인 화면              |                       교사 숙세도서 현황                       |
-|:--------------------------------:|:------------------------------------------------------:|
+| 1 | 2 |
+|:-------------------------5-------:|:------------------------------------------------------:|
 | ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
-|           교사 학생 독서록 관리           |                        교사 학급관리                         |
-|                                  |                                                        |
+| 3 | 4 |
+| ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
+| 5 | 5 |
+| ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
+| 6 | 7 |
+| ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
+| 8 | 9 |
+| ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
+| 10 | 11 |
+| ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
 
 ## 프로젝트 API 설계
 
 - [👉🏻 API](https://www.notion.so/API-b47f3630abc64a7ebda056f0cb098cbe?pvs=25)
-
-## 시스템 아키텍쳐
-
-필요한 기술 스택에 대한 logo는 [skills 폴더](/skills/)에서 다운로드 받을 수 있습니다.
-
-<br />
 
 # <br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2025.01.06~2025.02.21-green?style=flat&logo=&logoColor=white" />]()
 
@@ -128,7 +127,7 @@
 
 <br />
 
-## 🤔 트러블 슈팅
+# 🤔 트러블 슈팅
 
 - **OpenVidu - nginxX 충돌**
     - [OpenVidu 포트 충돌에 대해](https://www.notion.so/openvidu-nginx-5a0fdf35c0b448c28779452a451d0cd2?pvs=4)
@@ -146,6 +145,10 @@
     - [OCR 선택과 이용](https://www.notion.so/OCR-196c6c90458e80d898aafecc118deae4?pvs=4)
 
 
+- **알림 전송 방식**
+    - [알림 전송 4가지 방식과 선택](https://www.notion.so/19fc6c90458e808fa796fac1d3b01a4e?pvs=4)
+
+
 - **JWT**
     - [JWT 토큰 주의사항](https://www.notion.so/JWT-Enum-19ec6c90458e80959144cc9ecb7bcd07?pvs=4)
 
@@ -156,6 +159,9 @@
   <img src="images/skill/TypeScript.png" width="120"/>
   <img src="images/skill/React.png" width="120"/>
   <img src="images/skill/Tailwind.png" width="120"/>
+  <img src="images/skill/Vite.png" width="120"/>
+  <img src="images/skill/Yarn.png" width="120"/>
+
 </div>
 
 <div>
@@ -164,12 +170,15 @@
   <img src="images/skill/SpringBoot.png" width="120"/>
   <img src="images/skill/SpringDataJPA.png" width="120"/>
   <img src="images/skill/Qeurydsl.png" width="120"/>
+  <img src="images/skill/Mysql.png" width="120"/>
+  <img src="images/skill/Redis.png" width="120"/>
 </div>
 
 <div>
   <h3>Infra</h3>
   <img src="images/skill/AWSEC2.png" width="120"/>
   <img src="images/skill/AWSRDS.png" width="120"/>
+  <img src="images/skill/AWSS3.png" width="120"/>
   <img src="images/skill/Nginx.png" width="120"/>
   <img src="images/skill/Docker.png" width="120"/>
   <img src="images/skill/Jenkins.png" width="120"/>
@@ -178,15 +187,15 @@
 
 ## 💁‍♂️ 프로젝트 팀원
 
-|                    Backend                     |              Backend              |                   Frontend                   |
-|:----------------------------------------------:|:---------------------------------:|:--------------------------------------------:|
-| ![team_hyunwoo.png](images%2Fteam_hyunwoo.png) |  ![김보민](images%2Fteam_bomin.png)  | ![team_yungjo.png](images%2Fteam_yungjo.png) |
-|        [김현우](https://github.com/8resd8)        | [김보민](https://github.com/mokbee1) |      [양영조](https://github.com/10019610)      |
+|             Backend              |              Backend              |              Frontend              |
+|:--------------------------------:|:---------------------------------:|:----------------------------------:|
+| ![김현우](images/team_hyunwoo.png)  |   ![김보민](images/team_bomin.png)   | ![양영조.png](images/team_yungjo.png) |
+| [김현우](https://github.com/8resd8) | [김보민](https://github.com/mokbee1) | [양영조](https://github.com/10019610) |
 
-|                   Backend                    |                     Backend                      |                  Frontend                  |
-|:--------------------------------------------:|:------------------------------------------------:|:------------------------------------------:|
-| ![team_yoonho.png](images%2Fteam_yoonho.png) | ![team_seungyun.png](images%2Fteam_seungyun.png) | ![team_hangu.png](images%2Fteam_hangu.png) |
-|      [윤윤호](https://github.com/10019610)      |        [방승윤](https://github.com/sybang97)        |    [상한규](https://github.com/SeongHo-C)     |
+|              Backend               |              Backend               |                  Frontend                  |
+|:----------------------------------:|:----------------------------------:|:------------------------------------------:|
+|   ![윤윤호](images/team_yoonho.png)   |  ![방승윤](images/team_seungyun.png)  |       ![상한규](images/team_hangu.png)        |
+| [윤윤호](https://github.com/10019610) | [방승윤](https://github.com/sybang97) | [상한규](https://github.com/littlewaterdrops) |
 
 ## 프로젝트 팀원 역할
 
@@ -240,5 +249,3 @@
     - 핵심 API 화면 구현
     - CSS 다듬기
     - 공통 컴포넌트 제작
-
-  
