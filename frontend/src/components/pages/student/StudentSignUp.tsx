@@ -178,6 +178,7 @@ const StudentSignUp = () => {
         </div>
         <div className={classes.input}>
           <InputField
+            value=""
             validate=""
             inputType="password"
             id="password"
@@ -189,6 +190,7 @@ const StudentSignUp = () => {
 
         <div className={classes.input}>
           <InputField
+            value=""
             validate={passwordValidate}
             id="passwordCheck"
             inputType="password"
@@ -199,6 +201,7 @@ const StudentSignUp = () => {
         </div>
         <div className={classes.input}>
           <InputField
+            value=""
             validate=""
             inputType="text"
             id="name"
@@ -209,6 +212,7 @@ const StudentSignUp = () => {
         </div>
         <div className={classes.input}>
           <InputField
+            value=""
             validate=""
             inputType="text"
             id="number"

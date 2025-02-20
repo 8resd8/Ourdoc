@@ -66,9 +66,10 @@ const StudentReportWrite = () => {
         feedbackContent: aiFeedback.aiFeedbackContent,
         spellingContent: aiSpelling.feedbackContent,
       });
-
-      setRecoil(loadingState, false);
-      navigate(`/student/report/detail/${write}`);
+      setTimeout(() => {
+        setRecoil(loadingState, false);
+        navigate(`/student/report/detail/${write}`);
+      }, 2000);
     } catch (error) {
       setRecoil(loadingState, false);
     }

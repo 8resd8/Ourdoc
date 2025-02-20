@@ -39,6 +39,7 @@ export interface DayReport {
 }
 
 export interface BookReportDetail {
+  bookId: number;
   bookTitle: string;
   author: string;
   publisher: string;

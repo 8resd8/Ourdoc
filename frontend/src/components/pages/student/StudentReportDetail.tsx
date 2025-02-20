@@ -9,6 +9,7 @@ import { DateFormat } from '../../../utils/DateFormat';
 import { useRecoilValue } from 'recoil';
 import { currentUserState } from '../../../recoil';
 import { HighlightText } from '../../atoms/HighlightText';
+import { notify } from '../../commons/Toast';
 
 const StudentReportDetail = () => {
   const { id } = useParams();
@@ -29,7 +30,11 @@ const StudentReportDetail = () => {
     setIsDeleting(true);
     try {
       await deleteBookReportApi(Number(id));
-      navigate('/student/main');
+      notify({
+        type: 'success',
+        text: '독서록이 삭제되었습니다.',
+      });
+      navigate(`/student/book/report/list/${report?.bookId}`);
     } catch (error) {
       console.error('삭제 실패:', error);
     }

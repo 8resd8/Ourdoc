@@ -52,11 +52,11 @@ const TeacherReportDetail = () => {
   };
   const removeTeacherComment = async () => {
     const response = await deleteTeacherCommentApi(Number(id));
-    fetchReport();
     notify({
       type: 'success',
-      text: '의견이 삭제제되었습니다.',
+      text: '의견이 삭제되었습니다.',
     });
+    fetchReport();
   };
   const modifyTeacherComment = async () => {
     const teacherCommentRequest: TeacherCommentRequest = {

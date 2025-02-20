@@ -3,21 +3,30 @@ import {
   createTeacherClass,
   getTeacherProfileApi,
   TeacherProfile,
-  updateTeacherProfileApi,
 } from '../../../services/teachersService';
-import { signinApi } from '../../../services/usersService';
+import { changePasswordApi, signinApi } from '../../../services/usersService';
 import { useNavigate } from 'react-router-dom';
 import { notify } from '../../commons/Toast';
-import { CameraIcon } from 'lucide-react';
+import { validateDate } from '@mui/x-date-pickers';
 
 interface ModalProps {
   type: 'passwordConfirm' | 'passwordReset' | 'createClass' | 'profileEdit';
   onClose: () => void;
   loginClick: any;
   addClass: () => void;
+  updatePassword: () => void;
+  classData: any;
+  onChange: (e: any) => void;
 }
 
-const Modal = ({ addClass, loginClick, type, onClose }: ModalProps) => {
+const Modal = ({
+  classData,
+  addClass,
+  loginClick,
+  updatePassword,
+  type,
+  onClose,
+}: ModalProps) => {
   const [password, setPassword] = useState('');
 
   const login = () => {
@@ -26,11 +35,66 @@ const Modal = ({ addClass, loginClick, type, onClose }: ModalProps) => {
   const addClassRoom = () => {
     addClass();
   };
+  const update = async () => {
+    try {
+      if (passwordValidate == 'danger') {
+        notify({
+          type: 'error',
+          text: '비밀번호를 확인하세요.',
+        });
+        return;
+      }
+      onClose();
+      const response = await changePasswordApi({ newPassword: password });
+      console.log(response);
+    } catch (error) {}
+  };
+
+  const updatepassword = () => {
+    if (passwordValidate == 'danger') {
+      notify({
+        type: 'error',
+        text: '비밀번호를 확인하세요.',
+      });
+      return;
+    }
+    updatePassword();
+  };
   const enterEvent = (e: any) => {
     if (e.key == 'Enter') {
       loginClick(password);
     }
   };
+  const [passwordCheck, setPasswordCheck] = useState('');
+  const [passwordValidate, setPasswordValidate] = useState<
+    'warning' | 'success' | 'danger' | ''
+  >('');
+
+  const handleInputChange = (id: string, value: string) => {
+    if (id == 'password') setPassword(value);
+    if (id == 'check') setPasswordCheck(value);
+  };
+
+  useEffect(() => {
+    setPasswordValidate(
+      password !== '' && passwordCheck === password ? 'success' : 'danger'
+    );
+  }, [password, passwordCheck]);
+
+  const getValidationMessage = () => {
+    switch (passwordValidate) {
+      case 'warning':
+        return { message: 'Warning', icon: '/assets/images/Warning.svg' };
+      case 'success':
+        return { message: 'Success', icon: '/assets/images/Success.svg' };
+      case 'danger':
+        return { message: 'Danger', icon: '/assets/images/Danger.svg' };
+      default:
+        return { message: '', icon: '' };
+    }
+  };
+
+  const { message, icon } = getValidationMessage();
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-300 bg-opacity-50">
       <div className="bg-gray-0 rounded-[30px] shadow-small p-6 w-[414px]">
@@ -57,12 +121,20 @@ const Modal = ({ addClass, loginClick, type, onClose }: ModalProps) => {
               type="password"
               className="mt-4 w-full border-b border-gray-800 p-2"
               placeholder="새 비밀번호"
+              onChange={(e) => handleInputChange('password', e.target.value)}
             />
             <input
               type="password"
               className="mt-4 w-full border-b border-gray-800 p-2"
               placeholder="비밀번호 확인"
+              onChange={(e) => handleInputChange('check', e.target.value)}
             />
+            <div className={` mt-[8px] w-96 text-gray-800 caption-small`}>
+              <span>
+                <img src={icon} alt={message} />
+              </span>
+              <span>{message}</span>
+            </div>
           </>
         )}
         {type === 'createClass' && (
@@ -71,7 +143,9 @@ const Modal = ({ addClass, loginClick, type, onClose }: ModalProps) => {
               새 학급 생성
             </div>
             <p className="mt-4 text-center text-gray-800">
-              <span className="text-primary-500">성룡초등학교 1학년 1반</span>
+              <span className="text-primary-500">
+                {classData.school} {classData.grade}학년 {classData.class}반
+              </span>
               으로 만들까요?
             </p>
           </>
@@ -84,7 +158,13 @@ const Modal = ({ addClass, loginClick, type, onClose }: ModalProps) => {
             취소
           </button>
           <button
-            onClick={type == 'passwordConfirm' ? login : addClassRoom}
+            onClick={
+              type == 'passwordConfirm'
+                ? login
+                : type == 'createClass'
+                  ? addClassRoom
+                  : update
+            }
             className="flex-1 py-3 bg-primary-500 text-gray-0 rounded-[10px] ml-2 cursor-pointer"
           >
             확인
@@ -99,6 +179,18 @@ const TeacherMyPage = () => {
   const [modalType, setModalType] = useState<ModalProps['type'] | null>(null);
   const [teacherUser, setTeacherUser] = useState<TeacherProfile>();
   const navigate = useNavigate();
+  const [newPassword, setNewPassword] = useState('');
+
+  const changePassword = (e: any) => {
+    setNewPassword(e.target.value);
+  };
+  const updatePassword = async () => {
+    try {
+      const response = await changePasswordApi({ newPassword: newPassword });
+      setModalType(null);
+      console.log(response);
+    } catch (error) {}
+  };
 
   const fetchData = async () => {
     const response = await getTeacherProfileApi();
@@ -130,6 +222,12 @@ const TeacherMyPage = () => {
       const response = await createTeacherClass();
       console.log(response);
     } catch (error) {}
+  };
+
+  const classData = {
+    grade: teacherUser?.grade,
+    class: teacherUser?.classNumber,
+    school: teacherUser?.schoolName,
   };
 
   useEffect(() => {
@@ -187,6 +285,9 @@ const TeacherMyPage = () => {
         </div>
         {modalType && (
           <Modal
+            updatePassword={updatePassword}
+            onChange={changePassword}
+            classData={classData}
             addClass={createClass}
             loginClick={handleLogin}
             type={modalType}
