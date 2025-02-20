@@ -389,7 +389,7 @@ const DebateRoom = () => {
           <div className="flex flex-row h-full items-center justify-between">
             {/* <button
               onClick={toggleScreenShare}
-              className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
+              className={`items-center debate-font-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
             >
               {isScreenSharing ? '화면 공유 중지' : '화면 공유'}
             </button> */}
@@ -402,7 +402,7 @@ const DebateRoom = () => {
                     setIsAudioActive(newAudioStatus);
                   }
                 }}
-                className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-300 bg-transparent rounded-[100px] text-gray-0 cursor-pointer hover:brightness-80`}
+                className={`items-center debate-font-medium py-2 px-3 gap-2 flex flex-row border border-primary-300 bg-transparent rounded-[100px] text-gray-0 cursor-pointer hover:brightness-80`}
               >
                 <img
                   src={`/assets/images/${isAudioActive ? 'mic_off' : 'mic_on'}.png`}
@@ -417,7 +417,7 @@ const DebateRoom = () => {
                     setIsVideoActive(newVideoStatus);
                   }
                 }}
-                className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-300 bg-transparent rounded-[100px] text-gray-0 cursor-pointer hover:brightness-80`}
+                className={`items-center debate-font-medium py-2 px-3 gap-2 flex flex-row border border-primary-300 bg-transparent rounded-[100px] text-gray-0 cursor-pointer hover:brightness-80`}
               >
                 <img
                   src={`/assets/images/${isVideoActive ? 'video_off' : 'video_on'}.png`}
@@ -429,7 +429,7 @@ const DebateRoom = () => {
               onClick={() => {
                 leaveSession();
               }}
-              className={`items-center body-medium py-2 px-3 gap-2 flex flex-col  bg-system-danger text-primary-500 rounded-[15px] cursor-pointer hover:brightness-80`}
+              className={`items-center debate-font-medium py-2 px-3 gap-2 flex flex-col  bg-system-danger text-primary-500 rounded-[15px] cursor-pointer hover:brightness-80`}
             >
               나가기
             </button> */}
@@ -437,7 +437,7 @@ const DebateRoom = () => {
               onClick={() => {
                 leaveSession();
               }}
-              className={`items-center body-medium py-2 pl-3 pr-4 gap-2 flex flex-row bg-system-danger rounded-[15px] text-gray-0 cursor-pointer hover:brightness-80`}
+              className={`items-center debate-font-medium py-2 pl-3 pr-4 gap-2 flex flex-row bg-system-danger rounded-[15px] text-gray-0 cursor-pointer hover:brightness-80`}
             >
               <img src={`/assets/images/exit.png`} className="w-5 h-5" />
               나가기
