@@ -23,7 +23,7 @@ const { persistAtom } = recoilPersist({
 export const currentUserState = atom<LoginResponse>({
   key: 'currentUserState',
   default: {
-    id: '0',
+    loginId: '0',
     name: '김미소',
     role: '교사사',
     profileImagePath: '/assets/images/profile.png',

@@ -2,6 +2,7 @@ import { api } from '../services/api';
 
 // 인터페이스 정의
 export interface DebateRoom {
+  creatorLoginId: string;
   roomId: string;
   sessionId: string;
   title: string;
@@ -77,6 +78,8 @@ export const getDebateDetailApi = async (
   roomId: string
 ): Promise<DebateRoomDetail> => {
   const response = await api.get<DebateRoomDetail>(`/debates/${roomId}`);
+
+  console.log(response);
   return response.data;
 };
 
