@@ -135,7 +135,7 @@
   <img src="images/skill/TypeScript.png" width="120"/>
   <img src="images/skill/React.png" width="120"/>
   <img src="images/skill/Tailwind.png" width="120"/>
-  <img src="images/skill/Vite.png" width="120"/>
+  <img src="images/skill/Vite.png" width="120"/><br>
   <img src="images/skill/Yarn.png" width="120"/>
   <img src="images/skill/Axios.png" width="120"/>
   <img src="images/skill/Recoil.png" width="120"/>
