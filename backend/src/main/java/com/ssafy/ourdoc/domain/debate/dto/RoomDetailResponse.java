@@ -7,6 +7,7 @@ public record RoomDetailResponse(
 	Long roomId,
 	String title,
 	String creatorName,
+	Long creatorId,
 	int maxPeople,
 	Long currentPeople,
 	LocalDateTime createdAt,
