@@ -98,9 +98,9 @@ const TeacherHeader = () => {
           <div className="h-[110px] bg-gray-0 shadow-xxsmall flex flex-wrap justify-between items-center px-[80px]">
             <Link to="/teacher/main">
               <img
-                src="/assets/images/logo1.png"
+                src="/assets/images/logo2.png"
                 alt="로고"
-                className="w-[140px]"
+                className="w-[90px]"
               />
             </Link>
             <div ref={dropdownRef} className="flex items-center order-2 static">
