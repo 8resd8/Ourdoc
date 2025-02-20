@@ -48,6 +48,10 @@ public class BookReportService {
 			.aiComment(aiComment)
 			.teacherComment(teacherComment)
 			.bookReportApproveStatus(approveStatus)
+			.classNumber(detailDto.classNumber()) // 새로 추가된 정보
+			.grade(detailDto.grade())
+			.studentNumber(detailDto.studentNumber())
+			.schoolName(detailDto.schoolName())
 			.build();
 	}
 
