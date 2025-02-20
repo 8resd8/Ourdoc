@@ -18,14 +18,23 @@ const TeacherProfileUpdate = () => {
   const grade = searchParams.get('grade');
   const schoolId = Number(searchParams.get('schoolId'));
   const classNumber = searchParams.get('classNumber');
-
+  const formatPhoneNumber = (value: string) => {
+    const numericValue = value.replace(/\D/g, '');
+    if (numericValue.length <= 3) {
+      return numericValue;
+    } else if (numericValue.length <= 7) {
+      return `${numericValue.slice(0, 3)}-${numericValue.slice(3)}`;
+    } else {
+      return `${numericValue.slice(0, 3)}-${numericValue.slice(3, 7)}-${numericValue.slice(7, 11)}`;
+    }
+  };
   const [certificateFile, setCertificateFile] = useState<File | null>(null);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: name,
     loginId: loginId,
     email: email,
-    phone: phone,
+    phone: formatPhoneNumber(phone || ''),
     schoolId: schoolId,
     year: year,
     grade: grade,
@@ -35,10 +44,18 @@ const TeacherProfileUpdate = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    if (name === 'phone') {
+      const formattedValue = formatPhoneNumber(value);
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: formattedValue,
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
 
   const [school, setSchool] = useState<{ schoolName: string }>({

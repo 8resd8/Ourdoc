@@ -5,15 +5,17 @@ interface PropsType {
   inputType: 'text' | 'password';
   placeholder: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value: any;
 }
 
-const Input = ({ id, placeholder, onChange, inputType }: PropsType) => {
+const Input = ({ value, id, placeholder, onChange, inputType }: PropsType) => {
   return (
     <input
       type={inputType}
       id={id}
       placeholder={placeholder}
       onChange={onChange}
+      value={value}
       className={`${classes.input} body-medium border-b-gray-200`}
     />
   );
