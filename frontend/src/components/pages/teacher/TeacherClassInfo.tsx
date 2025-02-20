@@ -7,6 +7,8 @@ import {
 import Card from '../../atoms/Card';
 import classes from './TeacherClassInfo.module.css';
 import { useNavigate } from 'react-router-dom';
+import { getRecoil } from 'recoil-nexus';
+import { currentUserState } from '../../../recoil';
 
 const PAGE_SIZE = 10;
 
@@ -15,7 +17,7 @@ const TeacherClassInfo = () => {
   const [students, setStudents] = useState<StudentProfile[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-
+  const user = getRecoil(currentUserState);
   const fetchStudentInfo = async (page = 0) => {
     try {
       const params = { size: PAGE_SIZE, page };
@@ -48,7 +50,9 @@ const TeacherClassInfo = () => {
   return (
     <div className={`${classes.root} mx-auto p-4`}>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="headline-large text-gray-800">학급 정보</h1>
+        <h1 className="headline-large text-gray-800">
+          {user.schoolName} {user.grade}학년 {user.classNumber}반
+        </h1>
         <button
           onClick={navigateToAuth}
           className="px-4 py-2 cursor-pointer border border-primary-500 rounded-lg text-primary-500"
