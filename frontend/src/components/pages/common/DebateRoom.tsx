@@ -72,7 +72,7 @@ const DebateRoom = () => {
       '익명 사용자';
 
     const nameTag = document.createElement('div');
-    nameTag.className = 'text-center text-gray-0 body-medium';
+    nameTag.className = 'text-center text-gray-0 debate-font-small';
     nameTag.innerText = subscriberName;
 
     wrapper.appendChild(subscriberContainer);
@@ -379,7 +379,7 @@ const DebateRoom = () => {
                 ref={publisherRef}
                 className="w-full max-w-[640px] aspect-[16/9] border border-gray-200 bg-gray-300 rounded-lg overflow-hidden relative mb-2"
               ></div>
-              <div className="text-center text-gray-0 body-medium">
+              <div className="text-center text-gray-0 debate-font-small">
                 {user.name} (나)
               </div>
             </div>
@@ -389,7 +389,7 @@ const DebateRoom = () => {
           <div className="flex flex-row h-full items-center justify-between">
             {/* <button
               onClick={toggleScreenShare}
-              className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
+              className={`items-center debate-font-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
             >
               {isScreenSharing ? '화면 공유 중지' : '화면 공유'}
             </button> */}
@@ -402,7 +402,7 @@ const DebateRoom = () => {
                     setIsAudioActive(newAudioStatus);
                   }
                 }}
-                className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-300 bg-transparent rounded-[100px] text-gray-0 cursor-pointer hover:brightness-80`}
+                className={`items-center debate-font-medium py-2 px-3 gap-2 flex flex-row border border-primary-300 bg-transparent rounded-[100px] text-gray-0 cursor-pointer hover:brightness-80`}
               >
                 <img
                   src={`/assets/images/${isAudioActive ? 'mic_off' : 'mic_on'}.png`}
@@ -417,7 +417,7 @@ const DebateRoom = () => {
                     setIsVideoActive(newVideoStatus);
                   }
                 }}
-                className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-300 bg-transparent rounded-[100px] text-gray-0 cursor-pointer hover:brightness-80`}
+                className={`items-center debate-font-medium py-2 px-3 gap-2 flex flex-row border border-primary-300 bg-transparent rounded-[100px] text-gray-0 cursor-pointer hover:brightness-80`}
               >
                 <img
                   src={`/assets/images/${isVideoActive ? 'video_off' : 'video_on'}.png`}
@@ -429,7 +429,7 @@ const DebateRoom = () => {
               onClick={() => {
                 leaveSession();
               }}
-              className={`items-center body-medium py-2 px-3 gap-2 flex flex-col  bg-system-danger text-primary-500 rounded-[15px] cursor-pointer hover:brightness-80`}
+              className={`items-center debate-font-medium py-2 px-3 gap-2 flex flex-col  bg-system-danger text-primary-500 rounded-[15px] cursor-pointer hover:brightness-80`}
             >
               나가기
             </button> */}
@@ -437,7 +437,7 @@ const DebateRoom = () => {
               onClick={() => {
                 leaveSession();
               }}
-              className={`items-center body-medium py-2 pl-3 pr-4 gap-2 flex flex-row bg-system-danger rounded-[15px] text-gray-0 cursor-pointer hover:brightness-80`}
+              className={`items-center debate-font-medium py-2 pl-3 pr-4 gap-2 flex flex-row bg-system-danger rounded-[15px] text-gray-0 cursor-pointer hover:brightness-80`}
             >
               <img src={`/assets/images/exit.png`} className="w-5 h-5" />
               나가기
@@ -447,12 +447,12 @@ const DebateRoom = () => {
       </div>
       <div className="w-90 h-full bg-secondary-600 px-6 py-10">
         <div className="flex flex-col gap-3 text-gray-0">
-          <div className="headline-medium">토론방 정보</div>
-          <div className="headline-small w-full whitespace-normal break-words">
+          <div className="debate-font-headline">토론방 정보</div>
+          <div className="debate-font-large w-full whitespace-normal break-words">
             주제 : {room?.title}
           </div>
 
-          <div className="body-medium pb-6">
+          <div className="debate-font-medium pb-6">
             <div>담당 선생님 : {room?.creatorName}</div>
             <div>생성일시 : {DateFormat(room?.createdAt ?? '', '')}</div>
             <div>
@@ -475,5 +475,5 @@ const DebateRoom = () => {
 export default DebateRoom;
 
 const ParticipantTile = ({ name }: { name: string }) => {
-  return <div className={`body-medium py-3`}>{name}</div>;
+  return <div className={`debate-font-small py-3`}>{name}</div>;
 };
