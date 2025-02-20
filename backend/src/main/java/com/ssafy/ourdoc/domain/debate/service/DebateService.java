@@ -169,6 +169,7 @@ public class DebateService {
 			room.getId(),
 			room.getTitle(),
 			room.getUser().getName(),
+			room.getUser().getId(),
 			room.getMaxPeople(),
 			currentPeople,
 			room.getCreatedAt(),
