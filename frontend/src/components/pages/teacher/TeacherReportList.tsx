@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import {
   searchClass,
   searchStudentByClass,
+  TeachersClassStudent,
+  TeachersRoom,
 } from '../../../services/teachersService';
 import { getTeacherBookReportsList } from '../../../services/bookReportsService';
 import { Table, TableAlignType } from '../../atoms/Table';
 import { PaginationButton } from '../../atoms/PagenationButton';
 import { TeacherAllReportListTile } from '../../commons/TeacherAllReportListTile';
 import { useNavigate } from 'react-router-dom';
+import { monthDayFormat } from '../../../utils/DateFormat';
 
 const TABLE_HEADER = [
   {
@@ -33,40 +36,57 @@ const TABLE_HEADER = [
     label: '승인 여부',
   },
 ];
-const TeacherReportList = () => {
-  const [selectedYear, setSelectedYear] = useState<string>('');
-  const [selectedClass, setSelectedClass] = useState<{
-    classId: number;
-    schoolName: string;
-    year: string;
-    grade: number;
-    classNumber: number;
-  } | null>(null);
-  const [selectedStudent, setSelectedStudent] = useState<{
-    studentNumber: number;
-    studentName: string;
-  } | null>(null);
-  const [students, setStudents] = useState<any[]>([]);
 
-  const [classes, setClasses] = useState<any[]>([]);
+const TeacherReportList = () => {
+  const navigate = useNavigate();
+
+  const [selectedYear, setSelectedYear] = useState<string>('');
+  const [selectedClass, setSelectedClass] = useState<TeachersRoom | null>(null);
+  const [selectedStudent, setSelectedStudent] =
+    useState<TeachersClassStudent | null>(null);
+  const [students, setStudents] = useState<TeachersClassStudent[]>([]);
+  const [classes, setClasses] = useState<{ [key: string]: TeachersRoom[] }>();
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [reports, setReports] = useState<any[]>([]);
+  const [sortedClasses, setsortedClasses] =
+    useState<[string, TeachersRoom[]][]>();
 
   const fetchClass = async () => {
     const response = await searchClass();
+
     setClasses(response.teachersRoom);
   };
 
-  const getStudentByClass = async (classId: number) => {
+  const getStudentByClass = async (
+    classId: number,
+    teacherClassStudent: TeachersClassStudent | null
+  ) => {
     const response = await searchStudentByClass(classId);
     setStudents(response.teachersClassStudents);
-    setReports([]);
-    setSelectedStudent(null);
+
+    if (teacherClassStudent) {
+      setSelectedStudent(teacherClassStudent);
+    } else {
+      if (response.teachersClassStudents.length != 0) {
+        setSelectedStudent(response.teachersClassStudents[0]);
+        getReportsByStudent(0, response.teachersClassStudents[0]);
+      }
+    }
   };
-  const getReportsByStudent = async (page = 0, param: any) => {
+  const getReportsByStudent = async (
+    page = 0,
+    student: TeachersClassStudent
+  ) => {
     try {
-      const response = await getTeacherBookReportsList(param);
+      const response = await getTeacherBookReportsList({
+        size: 10,
+        page: page,
+        year: selectedYear,
+        studentNumber: student.studentNumber,
+        studentName: student.studentName,
+        schoolName: selectedClass ? selectedClass.schoolName : '',
+      });
       setTotalPages(response.bookReports.totalPages);
       setCurrentPage(page);
       setReports(response.bookReports.content);
@@ -75,25 +95,10 @@ const TeacherReportList = () => {
 
   const onPageChange = (pageNumber: number) => {
     if (pageNumber >= 0 && pageNumber < totalPages) {
-      getReportsByStudent(pageNumber, {
-        page: pageNumber,
-        year: selectedYear,
-        studentNumber: selectedStudent?.studentNumber,
-        studentName: selectedStudent?.studentName,
-        schoolName: selectedClass?.schoolName,
-      });
+      getReportsByStudent(pageNumber, selectedStudent!);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.getMonth() + 1}월 ${date.getDate()}일`;
-  };
-
-  useEffect(() => {
-    fetchClass();
-  }, []);
-  const navigate = useNavigate();
   const goReportDetail = (
     id: number,
     studentNumber: string,
@@ -104,6 +109,42 @@ const TeacherReportList = () => {
     );
   };
 
+  useEffect(() => {
+    fetchClass();
+  }, []);
+
+  useEffect(() => {
+    if (classes) {
+      const sortedClasses = Object.entries(classes).sort(
+        ([yearA], [yearB]) => parseInt(yearB, 10) - parseInt(yearA, 10)
+      );
+
+      setsortedClasses(sortedClasses);
+    }
+  }, [classes]);
+
+  useEffect(() => {
+    if (sortedClasses) {
+      setSelectedClass(sortedClasses[0][1][0]);
+    }
+  }, [sortedClasses]);
+
+  useEffect(() => {
+    if (selectedClass) {
+      setSelectedYear(selectedClass.year);
+      getStudentByClass(selectedClass.classId, null);
+    }
+  }, [selectedClass]);
+
+  useEffect(() => {
+    if (selectedYear) {
+      const foo = sortedClasses?.find((v, i, o) => {
+        return v[0] == selectedYear;
+      });
+      setSelectedClass(foo![1][0]);
+    }
+  }, [selectedYear]);
+
   return (
     <div className="flex flex-row ">
       <div className="flex ">
@@ -112,79 +153,85 @@ const TeacherReportList = () => {
             반별 조회
           </div>
           <div className="h-[100px] left-0 top-[164px]  flex-col justify-start items-start gap-4 inline-flex">
-            {Object.entries(classes).map(([year, classes]) => (
-              <div key={year} className="h-[136px] relative">
-                <div className="w-[226px] h-10 px-4 py-2 left-0 top-0 flex-col justify-start items-start gap-2 inline-flex">
-                  <div className="self-stretch grow shrink basis-0 justify-start items-center gap-2 inline-flex">
-                    <div data-svg-wrapper className="relative cursor-pointer">
-                      <svg
-                        onClick={() => {
-                          setSelectedYear(year);
-                          selectedYear == year ? setSelectedYear('') : '';
-                        }}
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d={
-                            selectedYear === year
-                              ? 'M4 6L8 10L12 6'
-                              : 'M12 10L8 6L4 10'
-                          }
-                          stroke="black"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                    </div>
-                    <div
-                      className="text-gray-800 body-medium font-bold cursor-pointer"
-                      onClick={() => {
-                        setSelectedYear(year);
-                        selectedYear == year ? setSelectedYear('') : '';
-                      }}
-                    >
-                      {year}년도
-                    </div>
-                  </div>
-                </div>
-                {selectedYear === year && (
-                  <div>
-                    {classes.map((classInfo: any) => (
-                      <div
-                        key={classInfo.classId}
-                        className={`cursor-pointer w-[226px] px-10 py-2 left-0 ${
-                          selectedClass?.classId === classInfo.classId
-                            ? 'bg-primary-50'
-                            : 'bg-gray-0'
-                        } flex-col justify-start items-start gap-2 inline-flex`}
-                        onClick={() => {
-                          setSelectedClass(classInfo);
-                          getStudentByClass(classInfo.classId);
-                        }}
-                      >
+            {sortedClasses &&
+              sortedClasses.map(([year, classes]) => {
+                return (
+                  <div key={year} className="h-[136px] relative">
+                    <div className="w-[226px] h-10 px-4 py-2 left-0 top-0 flex-col justify-start items-start gap-2 inline-flex">
+                      <div className="self-stretch grow shrink basis-0 justify-start items-center gap-2 inline-flex">
                         <div
-                          className={`${
-                            selectedClass?.classId === classInfo.classId
-                              ? 'text-primary-500 font-bold'
-                              : 'text-gray-800'
-                          } body-medium`}
+                          data-svg-wrapper
+                          className="relative cursor-pointer"
                         >
-                          <div>{classInfo.schoolName}</div>
-                          <span>
-                            {classInfo.grade}학년 {classInfo.classNumber}반
-                          </span>
+                          <svg
+                            onClick={() => {
+                              setSelectedYear(year);
+                              selectedYear == year ? setSelectedYear('') : '';
+                            }}
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d={
+                                selectedYear === year
+                                  ? 'M4 6L8 10L12 6'
+                                  : 'M12 10L8 6L4 10'
+                              }
+                              stroke="black"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                        <div
+                          className="text-gray-800 body-medium font-bold cursor-pointer"
+                          onClick={() => {
+                            setSelectedYear(year);
+                            selectedYear == year ? setSelectedYear('') : '';
+                          }}
+                        >
+                          {year}년도
                         </div>
                       </div>
-                    ))}
+                    </div>
+                    {selectedYear === year && (
+                      <div>
+                        {classes.map((classInfo: any) => (
+                          <div
+                            key={classInfo.classId}
+                            className={`cursor-pointer w-[226px] px-10 py-2 left-0 ${
+                              selectedClass?.classId === classInfo.classId
+                                ? 'bg-primary-50'
+                                : 'bg-gray-0'
+                            } flex-col justify-start items-start gap-2 inline-flex`}
+                            onClick={() => {
+                              setSelectedClass(classInfo);
+                              getStudentByClass(classInfo.classId, null);
+                            }}
+                          >
+                            <div
+                              className={`${
+                                selectedClass?.classId === classInfo.classId
+                                  ? 'text-primary-500 font-bold'
+                                  : 'text-gray-800'
+                              } body-medium`}
+                            >
+                              <div>{classInfo.schoolName}</div>
+                              <span>
+                                {classInfo.grade}학년 {classInfo.classNumber}반
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
+                );
+              })}
           </div>
         </div>
 
@@ -204,13 +251,7 @@ const TeacherReportList = () => {
                 } justify-start items-center gap-2 inline-flex cursor-pointer`}
                 onClick={() => {
                   setSelectedStudent(student);
-                  getReportsByStudent(currentPage, {
-                    page: currentPage,
-                    year: selectedYear,
-                    studentNumber: student.studentNumber,
-                    studentName: student.studentName,
-                    schoolName: selectedClass ? selectedClass.schoolName : '',
-                  });
+                  getReportsByStudent(currentPage, student);
                 }}
               >
                 <div
@@ -248,7 +289,7 @@ const TeacherReportList = () => {
                 studentNumber={item.studentNumber}
                 name={item.studentName}
                 isApproved={item.bookReportApproveStatus}
-                submitDate={formatDate(item.createdAt)}
+                submitDate={monthDayFormat(item.createdAt)}
                 no={currentPage * 10 + index + 1}
                 onClick={() =>
                   goReportDetail(

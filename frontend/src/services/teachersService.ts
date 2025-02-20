@@ -113,6 +113,27 @@ export interface TeacherProfile {
   schoolId: number;
 }
 
+export interface TeacherReportListSearchClassResponse {
+  teachersRoom: { [key: string]: TeachersRoom[] };
+}
+
+export interface TeachersRoom {
+  schoolName: string;
+  year: string;
+  grade: number;
+  classNumber: number;
+  classId: number;
+}
+
+export interface TeachersClassStudentsResponse {
+  teachersClassStudents: TeachersClassStudent[];
+}
+
+export interface TeachersClassStudent {
+  studentName: string;
+  studentNumber: number;
+}
+
 // 교사 인증 요청
 export const requestTeacherVerificationApi = async (data: {
   name: string;
@@ -248,17 +269,19 @@ export const searchSchoolsApi = async (
 
 // 교사의 학급속 학생 조회
 export const searchStudentByClass = async (classId: number) => {
-  const response = await api.get('/teachers/classes/students', {
-    params: {
-      classId,
-    },
-  });
+  const response = await api.get<TeachersClassStudentsResponse>(
+    '/teachers/classes/students',
+    {
+      params: { classId },
+    }
+  );
   return response.data;
 };
 
 // 교사의 학교 - 연도 - 학년 - 반 조회
 export const searchClass = async () => {
-  const response = await api.get('/teachers/classes');
+  const response =
+    await api.get<TeacherReportListSearchClassResponse>('/teachers/classes');
 
   return response.data;
 };

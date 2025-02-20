@@ -122,6 +122,15 @@ export interface StudentBookReportListContents {
   isHomework: boolean;
 }
 
+export interface TeacherBookReportsListParams {
+  size: number;
+  page: number;
+  year: string;
+  studentNumber: number;
+  studentName: string;
+  schoolName: string;
+}
+
 // 독서록 작성
 export const createBookReportApi = async (
   data: CreateBookReportRequest
@@ -316,7 +325,9 @@ export const getStudentRankApi = async (): Promise<StudentRankResponse> => {
 };
 
 // 교사 독서록 목록 조회
-export const getTeacherBookReportsList = async (params: any) => {
+export const getTeacherBookReportsList = async (
+  params: TeacherBookReportsListParams
+) => {
   const response = await api.get('/bookreports/teachers', {
     params: {
       size: 10,
