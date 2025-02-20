@@ -73,6 +73,7 @@ const TeacherReportDetail = () => {
       text: '의견이 수정되었습니다.',
     });
   };
+
   useEffect(() => {
     fetchReport();
   }, []);
@@ -187,18 +188,20 @@ const TeacherReportDetail = () => {
               <div className="text-gray-800 body-small mt-2 mb-1">
                 담임 선생님 의견
               </div>
+              <textarea
+                placeholder="의견을 작성해주세요."
+                value={teacherComment === '없음' ? '' : teacherComment}
+                onChange={(e) => setTeacherComment(e.target.value)}
+                className="w-[413px] h-[126px] px-6 py-4 rounded-[5px] border border-gray-200 resize-none text-gray-800 report-font break-words"
+                style={{
+                  verticalAlign: 'top',
+                  textAlign: 'left',
+                }}
+                disabled={report?.bookReportApproveStatus === '있음'}
+              />
+
               {report?.teacherComment == '없음' ? (
                 <div>
-                  <textarea
-                    placeholder="의견을 작성해주세요."
-                    value={teacherComment == '없음' ? '' : teacherComment}
-                    onChange={(e) => setTeacherComment(e.target.value)}
-                    className="w-[413px] h-[126px] px-6 py-4 rounded-[5px] border border-gray-200 resize-none text-gray-800 report-font break-words"
-                    style={{
-                      verticalAlign: 'top',
-                      textAlign: 'left',
-                    }}
-                  />
                   <div className="flex justify-end w-[413px] mt-3 ">
                     <div
                       onClick={() => addTeacherComment()}
@@ -210,16 +213,6 @@ const TeacherReportDetail = () => {
                 </div>
               ) : report?.bookReportApproveStatus == '없음' ? (
                 <div>
-                  <textarea
-                    placeholder="의견을 작성해주세요."
-                    value={teacherComment}
-                    onChange={(e) => setTeacherComment(e.target.value)}
-                    className="w-[413px] h-[126px] px-6 py-4 rounded-[5px] border border-gray-200 resize-none text-gray-800 report-font break-words"
-                    style={{
-                      verticalAlign: 'top',
-                      textAlign: 'left',
-                    }}
-                  />
                   <div className="flex justify-end w-[413px] mt-3">
                     <div
                       onClick={() => modifyTeacherComment()}
