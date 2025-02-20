@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="images/logo1.png" width="588"/>
+<img src="images/Logo1.png" width="588"/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<img src="images/logo2.png" width="300"/>
+<img src="images/Logo2.png" width="300"/>
 
 
 </div> 
@@ -99,7 +99,7 @@
 
 ## 🛠️ 프로젝트 아키텍쳐
 
-<img src="images/system_architecture.png" width="5000"/>
+<img src="images/Architecture.png" width="5000"/>
 
 <br />
 
@@ -132,36 +132,46 @@
 
 <div>
   <h3>FrontEnd</h3>
-  <img src="images/skill/TypeScript.png" width="120"/>
-  <img src="images/skill/React.png" width="120"/>
-  <img src="images/skill/Tailwind.png" width="120"/>
-  <img src="images/skill/Vite.png" width="120"/><br>
-  <img src="images/skill/Yarn.png" width="120"/>
-  <img src="images/skill/Axios.png" width="120"/>
-  <img src="images/skill/Recoil.png" width="120"/>
+  <img src="images/skills/TypeScript.png" width="120"/>
+  <img src="images/skills/React.png" width="120"/>
+  <img src="images/skills/Tailwind.png" width="120"/>
+  <img src="images/skills/Vite.png" width="120"/><br>
+  <img src="images/skills/Yarn.png" width="120"/>
+  <img src="images/skills/Axios.png" width="120"/>
+  <img src="images/skills/Recoil.png" width="120"/>
 
 </div>
 
 <div>
   <h3>BackEnd</h3>
-  <img src="images/skill/Java.png" width="120"/>
-  <img src="images/skill/SpringBoot.png" width="120"/>
-  <img src="images/skill/SpringDataJPA.png" width="120"/>
-  <img src="images/skill/Qeurydsl.png" width="120"/>
-  <img src="images/skill/Mysql.png" width="120"/>
-  <img src="images/skill/Redis.png" width="120"/>
+  <img src="images/skills/Java.png" width="120"/>
+  <img src="images/skills/SpringBoot.png" width="120"/>
+  <img src="images/skills/SpringDataJPA.png" width="120"/><br>
+  <img src="images/skills/Qeurydsl.png" width="120"/>
+  <img src="images/skills/Mysql.png" width="120"/>
+  <img src="images/skills/Redis.png" width="120"/>
 </div>
 
 <div>
   <h3>Infra</h3>
-  <img src="images/skill/AWSEC2.png" width="120"/>
-  <img src="images/skill/AWSRDS.png" width="120"/>
-  <img src="images/skill/AWSS3.png" width="120"/>
-  <img src="images/skill/Nginx.png" width="120"/>
-  <img src="images/skill/Docker.png" width="120"/>
-  <img src="images/skill/Jenkins.png" width="120"/>
+  <img src="images/skills/AWSEC2.png" width="120"/>
+  <img src="images/skills/AWSRDS.png" width="120"/>
+  <img src="images/skills/AWSS3.png" width="120"/><br>
+  <img src="images/skills/Nginx.png" width="120"/>
+  <img src="images/skills/Docker.png" width="120"/>
+  <img src="images/skills/Jenkins.png" width="120"/>
+
 </div>
 <br>
+
+<div>
+  <h3>외부 서비스</h3>
+  <img src="images/skills/ChatGPT.png" width="120"/>
+  <img src="images/skills/Clova.png" width="120"/>
+  <img src="images/skills/OpenVidu.png" width="120"/>
+
+
+</div>
 
 # <br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2025.01.06~2025.02.21-green?style=flat&logo=&logoColor=white" />]()
 
@@ -206,7 +216,7 @@
     - AWS S3 구축 및 이미지 업로드 구현
     - Spring AI를 이용한 독서록 피드백 구현
     - 독서록 작성, 교사 칭찬도장 적용 시 SSE 알림 적용 및 저장
-    - 네이버 클로바 OCR 적용, 독서록 OCR 작성 및 피드백 관리
+    - 네이버 클로바 OCR 적용, 독서록 OCR 작성 및 피드백 작성
     - OpenVidu 화상채팅 프론트 기능구현
     - 전국 초등학교 데이터 DB 삽입
     - 프로젝트 내용 정리 및 작성
