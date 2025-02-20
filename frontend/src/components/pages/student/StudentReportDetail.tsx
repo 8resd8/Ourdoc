@@ -107,12 +107,8 @@ const StudentReportDetail = () => {
               <div>
                 <button
                   onClick={() => setFeedbackView(!feedbackView)}
-                  className="h-[50px] cursor-pointer inline-flex py-[12px] px-[10px] mt-2 mr-1.5 border text-system-success border-system-success rounded-[10px] justify-center items-center text-center body-medium"
+                  className="h-[50px] cursor-pointer inline-flex py-[12px] px-[10px] mt-2 mr-3 border text-system-success border-system-success rounded-[10px] justify-center items-center text-center body-medium"
                 >
-                  <img
-                    src="/assets/images/word.png"
-                    className="w-[20px] mr-1"
-                  />
                   {feedbackView ? '선생님 의견 보기' : '맞춤법 검사'}
                 </button>
               </div>
@@ -120,9 +116,8 @@ const StudentReportDetail = () => {
               <div>
                 <button
                   onClick={() => setFeedbackView(!feedbackView)}
-                  className=" cursor-pointer inline-flex py-[12px] px-[10px] mt-4 mr-1.5 border text-system-success border-system-success rounded-[10px] justify-center items-center text-center body-medium"
+                  className=" cursor-pointer inline-flex py-[12px] px-[10px] mt-4 mr-3 border text-system-success border-system-success rounded-[10px] justify-center items-center text-center body-medium"
                 >
-                  <img src="/assets/images/word.png" className="w-[13px]" />
                   {feedbackView ? '선생님 의견 보기' : '맞춤법 검사'}
                 </button>
                 <button

@@ -12,7 +12,10 @@ export const HeaderProfileButton = ({
       className="flex flex-col items-center space-y-[8px] cursor-pointer"
       onClick={onClick}
     >
-      <img src={imagePath} className="w-[40px] h-[40px] rounded-full" />
+      <img
+        src={imagePath ?? '/assets/images/profile.png'}
+        className="w-[40px] h-[40px] rounded-full"
+      />
       <div className="body-medium">{name}님</div>
     </div>
   );

@@ -203,7 +203,7 @@ const TeacherSignUp = () => {
           <span className="headline-medium text-gray-800">
             을 진행해주세요!
           </span>
-          <div className="caption-medium text-gray-800 mb-4">
+          <div className="caption-medium text-gray-800 mt-1 mb-4">
             모든 칸은 필수 입력 칸입니다.
           </div>
         </div>

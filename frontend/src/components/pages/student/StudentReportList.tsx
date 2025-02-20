@@ -12,6 +12,7 @@ import { ReportBookCardListTile } from '../../atoms/ReportBookCardListTile';
 import { monthDayFormat } from '../../../utils/DateFormat';
 import { PaginationButton } from '../../atoms/PagenationButton';
 import { ReportBookCard } from '../../atoms/ReportBookCard';
+import { notify } from '../../commons/Toast';
 
 const TABLE_HEADER = [
   {
@@ -55,12 +56,22 @@ const StudentReportList = () => {
   };
 
   const favoriteBook = async () => {
-    await addFavoriteBookApi(Number(id));
-    fetchBookDetail();
+    try {
+      await addFavoriteBookApi(Number(id));
+      notify({ type: 'success', text: '관심 도서가 등록되었습니다.' });
+      fetchBookDetail();
+    } catch (error) {
+      notify({ type: 'error', text: '관심 도서 등록 중 오류가 발생했습니다.' });
+    }
   };
   const favoriteCancel = async () => {
-    await removeFavoriteBookApi(Number(id));
-    fetchBookDetail();
+    try {
+      await removeFavoriteBookApi(Number(id));
+      notify({ type: 'success', text: '관심 도서가 해제제되었습니다.' });
+      fetchBookDetail();
+    } catch (error) {
+      notify({ type: 'error', text: '관심 도서 해제 중 오류가 발생했습니다.' });
+    }
   };
 
   const onPageChange = (pageNumber: number) => {

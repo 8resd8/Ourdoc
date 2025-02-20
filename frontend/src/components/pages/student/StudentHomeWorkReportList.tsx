@@ -13,6 +13,7 @@ import { Table, TableAlignType } from '../../atoms/Table';
 import { ReportBookCardListTile } from '../../atoms/ReportBookCardListTile';
 import { PaginationButton } from '../../atoms/PagenationButton';
 import { monthDayFormat } from '../../../utils/DateFormat';
+import { notify } from '../../commons/Toast';
 
 const PAGE_SIZE = 10;
 
@@ -74,15 +75,25 @@ const StudentHomeWorkReportList = () => {
   }, [homeworkId]);
 
   const favoriteBook = async () => {
-    if (homeworkDetail) {
-      await addFavoriteBookApi(homeworkDetail.bookId);
-      fetchHomeworkDetail();
+    try {
+      if (homeworkDetail) {
+        await addFavoriteBookApi(homeworkDetail.bookId);
+        notify({ type: 'success', text: '관심 도서가 등록되었습니다.' });
+        fetchHomeworkDetail();
+      }
+    } catch (error) {
+      notify({ type: 'error', text: '관심 도서 등록 중 오류가 발생했습니다.' });
     }
   };
   const favoriteCancel = async () => {
-    if (homeworkDetail) {
-      await removeFavoriteBookApi(homeworkDetail.bookId);
-      fetchHomeworkDetail();
+    try {
+      if (homeworkDetail) {
+        await removeFavoriteBookApi(homeworkDetail.bookId);
+        notify({ type: 'success', text: '관심 도서가 해제제되었습니다.' });
+        fetchHomeworkDetail();
+      }
+    } catch (error) {
+      notify({ type: 'error', text: '관심 도서 해제 중 오류가 발생했습니다.' });
     }
   };
 

@@ -62,6 +62,15 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
+export interface SetupStudentRequest {
+  schoolName: string;
+  schoolId: number;
+  classId: number;
+  grade: number;
+  classNumber: number;
+  studentNumber: number;
+}
+
 export const signupTeacherApi = async (
   requestData: SignupTeacherRequest,
   certificateFile: File
@@ -95,11 +104,6 @@ export const signinApi = async (data: LoginRequest): Promise<LoginResponse> => {
   try {
     const response = await api.post<LoginResponse>('/users/signin', data);
     const accessToken = response.headers['authorization'];
-
-    // notify({
-    //   type: 'info',
-    //   text: '로그인 성공!',
-    // });
 
     if (accessToken) {
       setRecoil(accessTokenState, accessToken);
@@ -174,4 +178,11 @@ export const changePasswordApi = async (
 // 회원 탈퇴
 export const deleteUserApi = async (userId: string): Promise<void> => {
   await api.delete(`/users/${userId}`);
+};
+
+// 학생 소속 변경(학급 가입 요청)
+export const setupStudentApi = async (
+  data: SetupStudentRequest
+): Promise<void> => {
+  const response = await api.post<boolean>('/students/request', data);
 };

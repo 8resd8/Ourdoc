@@ -1,27 +1,50 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Button from '../../atoms/Button';
 import InputField from '../../molecules/InputField';
 import classes from './StudentSetUp.module.css';
 import Modal from '../../commons/Modal';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  LoginResponse,
+  setupStudentApi,
+  SetupStudentRequest,
+  signinApi,
+} from '../../../services/usersService';
+import { notify } from '../../commons/Toast';
 
 const StudentSetup = () => {
   const [userType, setUserType] = useState('학생');
   const [loginInfo, setLoginInfo] = useState({ loginId: '', password: '' });
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
   const [studentNumber, setStudentNumber] = useState('');
+  const [user, setuser] = useState<LoginResponse>();
   const router = useNavigate();
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+
+  const schoolName = queryParams.get('schoolName');
+  const schoolId = queryParams.get('schoolId');
+  const grade = queryParams.get('grade');
+  const classNumber = queryParams.get('classNumber');
+  const classId = queryParams.get('classId');
+
   const handleInputChange = (id: string, value: string) => {
     setLoginInfo((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleLogin = async () => {
     try {
-      const response = await signInApi({
+      const response = await signinApi({
         userType,
         loginId: loginInfo.loginId,
         password: loginInfo.password,
       });
+
+      notify({ type: 'success', text: `반갑습니다, ${response.name}님!` });
+
+      setuser(response);
       setIsLoggedIn(true);
     } catch (error) {
       console.error('로그인 실패:', error);
@@ -30,6 +53,16 @@ const StudentSetup = () => {
 
   const handleSetUp = async () => {
     try {
+      const request: SetupStudentRequest = {
+        classId: parseInt(classId!),
+        classNumber: parseInt(classNumber!),
+        grade: parseInt(grade!),
+        schoolId: parseInt(schoolId!),
+        schoolName: schoolName!,
+        studentNumber: parseInt(studentNumber!),
+      };
+
+      await setupStudentApi(request);
       router('/pending');
     } catch (error) {}
   };
@@ -56,6 +89,11 @@ const StudentSetup = () => {
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+    const isValid = Object.values(loginInfo).every((value) => value !== '');
+    setIsFormValid(isValid);
+  }, [loginInfo]);
+
   return (
     <div className={classes.root}>
       <div className={`${classes.base}`}>
@@ -70,7 +108,7 @@ const StudentSetup = () => {
           <div>
             <div>
               <span className="headline-medium text-primary-500 mb-2">
-                성룡 초등학교 1학년 3반
+                {schoolName} {grade}학년 {classNumber}반
               </span>
               <span className="headline-medium text-gray-800 mb-2">
                 에 오신 것을 환영해요!
@@ -82,7 +120,14 @@ const StudentSetup = () => {
             <div className="caption-medium text-gray-800 mt-1">
               모든 칸은 필수 입력 칸입니다.
             </div>
-            <div className={classes.input}>
+            <div
+              className={classes.input}
+              onKeyDown={(e) => {
+                if (e.key == 'Enter') {
+                  handleSignUpClick();
+                }
+              }}
+            >
               <InputField
                 value=""
                 inputType="text"
@@ -98,6 +143,7 @@ const StudentSetup = () => {
                 type="filled"
                 color="primary"
                 title="소속변경"
+                disabled={studentNumber == ''}
                 onClick={handleSignUpClick}
               />
             </div>
@@ -105,15 +151,8 @@ const StudentSetup = () => {
         ) : (
           <div>
             <div>
-              <img
-                className={`${classes.logo_img}`}
-                alt="logoImage"
-                src="/assets/images/logo1.png"
-              />
-            </div>
-            <div>
               <span className="headline-medium text-primary-500 mb-2">
-                성룡 초등학교 1학년 3반
+                {schoolName} {grade}학년 {classNumber}반
               </span>
               <span className="headline-medium text-gray-800 mb-2">
                 에 오신 것을 환영해요!
@@ -135,9 +174,8 @@ const StudentSetup = () => {
             </div>
             <div className={classes.input} onKeyDown={handleKeyPress}>
               <InputField
-                value=""
-                inputType="text"
-                validate="warning"
+                inputType="password"
+                validate=""
                 id="password"
                 label="비밀번호"
                 placeholder="비밀번호를 입력해주세요"
@@ -149,6 +187,7 @@ const StudentSetup = () => {
                 type="filled"
                 color="primary"
                 title="로그인"
+                disabled={!isFormValid}
                 onClick={handleLogin}
               />
             </div>
@@ -163,11 +202,10 @@ const StudentSetup = () => {
         body={
           <div>
             <div className="text-primary-500">
-              성룡 초등학교 1학년 3반 12번, 김미소님!
+              {schoolName} {grade}학년 {classNumber}반 {studentNumber}번,{' '}
+              {user?.name}님! 학년 반 번호가 정확하다면 소속 변경을
+              진행해주세요.
             </div>
-            <div>생년월일은 2000년 4월 23일,</div>
-            <div>성별은 남자,</div>
-            <div>사용하시려는 아이디는 smile0423 입니다.</div>
             <div className="mt-4 headline-small">소속변경을 진행할까요?</div>
           </div>
         }
@@ -179,10 +217,3 @@ const StudentSetup = () => {
 };
 
 export default StudentSetup;
-function signInApi(arg0: {
-  userType: string;
-  loginId: string;
-  password: string;
-}) {
-  throw new Error('Function not implemented.');
-}

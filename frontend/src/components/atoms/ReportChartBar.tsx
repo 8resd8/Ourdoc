@@ -4,7 +4,7 @@ type BarProps = {
   onClick: () => void;
 };
 const MAX_CHART_BAR_HEIGHT = 206.97;
-const BAR_HEIGHT_PER_COUNT = 8.4;
+const BAR_HEIGHT_PER_COUNT = 4.2;
 
 export const ReportChartBar = ({ count, top, onClick }: BarProps) => {
   return (
