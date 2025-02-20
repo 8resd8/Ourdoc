@@ -79,8 +79,9 @@ public class TeacherQueryRepositoryImpl implements TeacherQueryRepository {
 			.join(teacherClass).on(teacherClass.user.id.eq(user.id))
 			.join(teacherClass.classRoom, classRoom)
 			.join(classRoom.school, school)
-			.where(user.id.eq(userId),
-				teacherClass.active.eq(활성))
+			.where(user.id.eq(userId))
+			.orderBy(teacherClass.updatedAt.desc(), teacherClass.active.asc())
+			.limit(1)
 			.fetchOne();
 	}
 
