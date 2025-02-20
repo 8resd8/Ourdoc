@@ -64,15 +64,6 @@ const TeacherReportList = () => {
     setReports([]);
     setSelectedStudent(null);
   };
-
-  const param = {
-    page: 0,
-    size: 10,
-    year: '',
-    studentNumber: '',
-    studentName: '',
-    schoolName: '',
-  };
   const getReportsByStudent = async (page = 0, param: any) => {
     try {
       const response = await getTeacherBookReportsList(param);
@@ -85,6 +76,7 @@ const TeacherReportList = () => {
   const onPageChange = (pageNumber: number) => {
     if (pageNumber >= 0 && pageNumber < totalPages) {
       getReportsByStudent(pageNumber, {
+        page: pageNumber,
         year: selectedYear,
         studentNumber: selectedStudent?.studentNumber,
         studentName: selectedStudent?.studentName,
@@ -201,9 +193,9 @@ const TeacherReportList = () => {
             <div className="left-[16px] py-4 px-5 text-center text-gray-800 caption-medium">
               학생별 보기
             </div>
-            {students.map((student: any) => (
+            {students.map((student: any, idx) => (
               <div
-                key={student.studentNumber}
+                key={idx + 1}
                 className={`h-10 py-2 ${
                   selectedStudent &&
                   selectedStudent.studentNumber === student.studentNumber
@@ -212,7 +204,8 @@ const TeacherReportList = () => {
                 } justify-start items-center gap-2 inline-flex cursor-pointer`}
                 onClick={() => {
                   setSelectedStudent(student);
-                  getReportsByStudent(0, {
+                  getReportsByStudent(currentPage, {
+                    page: currentPage,
                     year: selectedYear,
                     studentNumber: student.studentNumber,
                     studentName: student.studentName,

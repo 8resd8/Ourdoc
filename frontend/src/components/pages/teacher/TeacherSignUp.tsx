@@ -129,6 +129,18 @@ const TeacherSignUp = () => {
         value === signUpRequest.password ? 'success' : 'danger'
       );
     }
+    if (id === 'phone') {
+      // 숫자만 추출
+      const numericValue = value.replace(/\D/g, '');
+      // 000-0000-0000 형식으로 포맷팅
+      const formattedValue = numericValue.replace(
+        /(\d{3})(\d{4})(\d{4})/,
+        '$1-$2-$3'
+      );
+      setSignUpRequest((prev) => ({ ...prev, [id]: formattedValue }));
+    } else {
+      setSignUpRequest((prev) => ({ ...prev, [id]: value }));
+    }
   };
 
   const handleCheckDuplicateId = async () => {
@@ -196,12 +208,6 @@ const TeacherSignUp = () => {
           </div>
         </div>
         <div className={`${classes.input}`}>
-          {/* <InputField
-            id="loginId"
-            label="아이디"
-            placeholder="아이디를 입력해주세요"
-            onChange={(value) => handleInputChange('loginId', value)}
-          /> */}
           <SignupIdField
             id="loginId"
             label="아이디"
@@ -213,6 +219,7 @@ const TeacherSignUp = () => {
         </div>
         <div className={classes.input}>
           <InputField
+            value=""
             inputType="password"
             validate=""
             id="password"
@@ -224,6 +231,7 @@ const TeacherSignUp = () => {
 
         <div className={classes.input}>
           <InputField
+            value=""
             inputType="password"
             validate={passwordValidate}
             id="passwordCheck"
@@ -234,6 +242,7 @@ const TeacherSignUp = () => {
         </div>
         <div className={classes.input}>
           <InputField
+            value=""
             validate=""
             inputType="text"
             id="name"
@@ -244,6 +253,7 @@ const TeacherSignUp = () => {
         </div>
         <div className={classes.input}>
           <InputField
+            value=""
             inputType="text"
             validate=""
             id="email"
@@ -254,11 +264,12 @@ const TeacherSignUp = () => {
         </div>
         <div className={classes.input}>
           <InputField
+            value={signUpRequest.phone}
             inputType="text"
             validate=""
             id="phone"
             label="전화번호"
-            placeholder="전화번호를 입력해주세요"
+            placeholder="(-)를 빼고 입력해주세요"
             onChange={(value) => handleInputChange('phone', value)}
           />
         </div>

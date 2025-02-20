@@ -129,6 +129,7 @@ const StudentSetup = () => {
               }}
             >
               <InputField
+                value=""
                 inputType="text"
                 validate=""
                 id="studentNumber"
@@ -162,6 +163,7 @@ const StudentSetup = () => {
             </div>
             <div className={classes.input}>
               <InputField
+                value=""
                 inputType="text"
                 validate=""
                 id="loginId"
