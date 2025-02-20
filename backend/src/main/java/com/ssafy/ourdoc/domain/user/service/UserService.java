@@ -142,14 +142,14 @@ public class UserService {
 
 	private User validation(LoginRequest request) {
 		User user = userRepository.findByLoginId(request.loginId())
-			.orElseThrow(() -> new UserFailedException("로그인 실패: 아이디가 존재하지 않습니다."));
+			.orElseThrow(() -> new NoSuchElementException("로그인 실패: 아이디가 존재하지 않습니다."));
 
 		if (!BCrypt.checkpw(request.password(), user.getPassword())) {
-			throw new UserFailedException("로그인 실패: 비밀번호가 틀렸습니다.");
+			throw new IllegalArgumentException("로그인 실패: 비밀번호가 틀렸습니다.");
 		}
 
 		if (user.getUserType() != request.userType()) {
-			throw new UserFailedException("로그인 실패: 유저 타입이 일치하지 않습니다.");
+			throw new IllegalArgumentException("로그인 실패: 유저 타입이 일치하지 않습니다.");
 		}
 		return user;
 	}
