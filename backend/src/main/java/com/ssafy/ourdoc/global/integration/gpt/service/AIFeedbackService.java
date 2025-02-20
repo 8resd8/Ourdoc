@@ -12,6 +12,7 @@ import com.ssafy.ourdoc.domain.user.student.entity.StudentClass;
 import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackRequest;
+import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackPasing;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackResponse;
 import com.ssafy.ourdoc.global.integration.gpt.dto.SpellingRequest;
 import com.ssafy.ourdoc.global.integration.gpt.dto.SpellingResponse;
@@ -38,13 +39,24 @@ public class AIFeedbackService {
 	public FeedbackResponse feedback(User user, FeedbackRequest request) {
 		int studentGrade = getStudentGrade(user);
 		String feedback = chatModel.call(Prompt.feedback(studentGrade, request));
-		return getFeedbackResponse(feedback);
+		FeedbackPasing aiFeedback = getFeedbackResponse(feedback);
+		StringBuilder sb = new StringBuilder();
+		StringBuilder response = sb
+			.append(aiFeedback.summary())
+			.append("\n\n")
+			.append("잘한점: \n")
+			.append(aiFeedback.strength())
+			.append("\n\n")
+			.append("개선점: \n")
+			.append(aiFeedback.improvement());
+
+		return new FeedbackResponse(response.toString());
 	}
 
-	private static FeedbackResponse getFeedbackResponse(String feedback) {
+	private FeedbackPasing getFeedbackResponse(String feedback) {
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			return objectMapper.readValue(feedback, FeedbackResponse.class);
+			return objectMapper.readValue(feedback, FeedbackPasing.class);
 		} catch (JsonProcessingException e) {
 			throw new IllegalStateException("JSON 파싱 실패", e);
 		}

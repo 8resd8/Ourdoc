@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ssafy.ourdoc.domain.user.entity.User;
 import com.ssafy.ourdoc.global.annotation.Login;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackRequest;
+import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackPasing;
 import com.ssafy.ourdoc.global.integration.gpt.dto.FeedbackResponse;
 import com.ssafy.ourdoc.global.integration.gpt.dto.SpellingRequest;
 import com.ssafy.ourdoc.global.integration.gpt.dto.SpellingResponse;
