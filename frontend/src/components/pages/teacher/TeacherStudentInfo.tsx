@@ -119,9 +119,13 @@ const TeacherStudentInfo = () => {
             <div className="w-[630px] h-[518px] bg-gray-0 rounded-xl shadow-xsmall p-6">
               <h2 className="headline-medium font-bold mb-3">상장</h2>
               <div className="grid grid-cols-4 gap-3">
-                {awards.map((award, index) => (
-                  <TrophyAwardItem key={index} award={award} />
-                ))}
+                {awards.length == 0 ? (
+                  <div className="text-gray-500 ">상장이 없습니다.</div>
+                ) : (
+                  awards.map((award, index) => (
+                    <TrophyAwardItem key={index} award={award} />
+                  ))
+                )}
               </div>
             </div>
             <div>
