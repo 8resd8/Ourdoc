@@ -18,6 +18,10 @@ public record BookReportDetailResponse(
 	String afterContent,
 	String aiComment,
 	String teacherComment,
-	ApproveStatus bookReportApproveStatus
+	ApproveStatus bookReportApproveStatus,
+	String schoolName,
+	Integer grade,
+	Integer classNumber,
+	Integer studentNumber
 ) {
 }

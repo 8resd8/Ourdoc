@@ -28,7 +28,7 @@ public class BookReportController {
 
 	@CheckOwner(target = "bookReportId")
 	@GetMapping("/{bookReportId}")
-	public BookReportDetailResponse getBookReportList(@Login User user,
+	public BookReportDetailResponse getBookReportDetail(@Login User user,
 		@PathVariable("bookReportId") Long bookReportId) {
 		return bookReportService.getBookReportDetail(bookReportId);
 	}

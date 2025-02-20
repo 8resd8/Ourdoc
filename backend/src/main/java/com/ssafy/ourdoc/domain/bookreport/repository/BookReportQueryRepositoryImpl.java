@@ -116,13 +116,20 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 				bookReport.afterContent.as("afterContent"),
 				aiFeedBack.comment.as("aiComment"),
 				teacherFeedBack.comment.as("teacherComment"),
-				bookReport.approveTime
+				bookReport.approveTime,
+				school.schoolName,
+				classRoom.grade,
+				classRoom.classNumber,
+				studentClass.studentNumber
 			))
 			.from(bookReport)
 			.leftJoin(aiFeedBack).on(aiFeedBack.bookReport.id.eq(bookReport.id)
 				.and(aiFeedBack.evaluatorType.eq(인공지능)))
 			.leftJoin(teacherFeedBack).on(teacherFeedBack.bookReport.id.eq(bookReport.id)
 				.and(teacherFeedBack.evaluatorType.eq(교사)))
+			.join(bookReport.studentClass, studentClass)
+			.join(studentClass.classRoom, classRoom)
+			.join(classRoom.school, school)
 			.where(bookReport.id.eq(bookReportId))
 			.orderBy(bookReport.createdAt.desc())
 			.fetchOne();
