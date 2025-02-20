@@ -11,6 +11,14 @@ import {
   getDebateDetailApi,
 } from '../../../services/debatesService';
 import { DateFormat } from '../../../utils/DateFormat';
+import { AddDivider } from '../../../utils/AddDivder';
+import { notify } from '../../commons/Toast';
+
+interface ParticipantProps {
+  id: string;
+  name: string;
+  userId: string;
+}
 
 const DebateRoom = () => {
   const navigate = useNavigate();
@@ -29,6 +37,7 @@ const DebateRoom = () => {
   const [isAudioActive, setIsAudioActive] = useState<boolean>(true);
   const [isVideoActive, setIsVideoActive] = useState<boolean>(true);
   const [isScreenSharing, setIsScreenSharing] = useState<boolean>(false);
+  const [participants, setParticipants] = useState<ParticipantProps[]>([]);
 
   const user = getRecoil(currentUserState);
 
@@ -59,7 +68,8 @@ const DebateRoom = () => {
     });
 
     const subscriberName =
-      JSON.parse(stream.connection.data).clientData || '익명 사용자';
+      JSON.parse(stream.connection.data).clientData.split('$')[2] ||
+      '익명 사용자';
 
     const nameTag = document.createElement('div');
     nameTag.className = 'text-center text-gray-800 body-medium';
@@ -105,12 +115,39 @@ const DebateRoom = () => {
 
     // 원격 스트림 종료 시 구독자 컨테이너 제거
     mySession.on('streamDestroyed', (event: any) => {
-      const subscriberContainer = document.getElementById(
-        `subscriber-${event.stream.streamId}`
+      const wrapper = document.getElementById(
+        `subscriber-wrapper-${event.stream.streamId}`
       );
-      if (subscriberContainer && subscribersRef.current) {
-        subscribersRef.current.removeChild(subscriberContainer);
+
+      if (wrapper && subscribersRef.current) {
+        subscribersRef.current.removeChild(wrapper);
       }
+    });
+
+    mySession.on('connectionCreated', (event) => {
+      const dataList = JSON.parse(event.connection.data).clientData.split('$');
+      const name = dataList[2];
+      const userId = dataList[1].split('UID')[1];
+
+      const newUser = {
+        id: event.connection.connectionId,
+        name: name || '익명 사용자',
+        userId: userId || 0,
+      };
+
+      setParticipants((prevParticipants) => [...prevParticipants, newUser]);
+    });
+
+    mySession.on('connectionDestroyed', (event) => {
+      console.log('나간 사용자:', event.connection);
+
+      // 나간 사용자의 ID 가져오기
+      const disconnectedUserId = event.connection.connectionId;
+
+      // 나간 사용자 리스트에서 제거하기
+      setParticipants((prevParticipants) =>
+        prevParticipants.filter((p) => p.id !== disconnectedUserId)
+      );
     });
 
     // 기존 사용자: 새 사용자가 동기화를 요청하면 sync-response 신호 전송
@@ -131,7 +168,7 @@ const DebateRoom = () => {
     });
 
     try {
-      const clientData = `${user.schoolName} ${user.name} ${user.role}`;
+      const clientData = `$UID${user.loginId}$${user.schoolName} ${user.name} ${user.role}`;
       await mySession.connect(token, { clientData: clientData });
 
       setSession(mySession);
@@ -227,6 +264,27 @@ const DebateRoom = () => {
     }
   };
 
+  useEffect(() => {
+    const storedRoom = sessionStorage.getItem('debateRoom');
+    let disconnectedRoom: DebateRoomDetail | undefined;
+    if (storedRoom) {
+      disconnectedRoom = JSON.parse(storedRoom);
+    }
+
+    const teacherAlive = participants.find((person) => {
+      return person.userId == 'teacher1';
+    });
+
+    if (!teacherAlive && participants.length != 0) {
+      notify({
+        type: 'error',
+        text: '세션이 종료되었습니다.',
+      });
+
+      leaveSession();
+    }
+  }, [participants]);
+
   // 세션 종료 처리
   const leaveSession = async () => {
     const storedRoom = sessionStorage.getItem('debateRoom');
@@ -247,6 +305,7 @@ const DebateRoom = () => {
     }
 
     await exitDebateApi(disconnectedRoom?.roomId!);
+
     if (user.name == disconnectedRoom?.creatorName) {
       await deleteDebateApi(disconnectedRoom?.roomId!);
     }
@@ -319,10 +378,7 @@ const DebateRoom = () => {
     <div className="flex flex-row w-dvw h-dvh bg-gray-0">
       <div className="w-full h-full p-10">
         <div className="w-full min-h-[calc(100vh-80px-80px)]">
-          <div
-            className="grid grid-cols-3 gap-x-[calc((100vh-80px-80px)/16*9/4)]"
-            ref={subscribersRef}
-          >
+          <div className="grid grid-cols-3 gap-x-[calc((100vh-80px-80px)/16*9/4)]">
             <div>
               <div
                 ref={publisherRef}
@@ -332,6 +388,7 @@ const DebateRoom = () => {
                 {user.name} (나)
               </div>
             </div>
+            <div ref={subscribersRef}></div>
           </div>
         </div>
         <div className="w-full h-20">
@@ -376,7 +433,7 @@ const DebateRoom = () => {
             </div>
             <button
               onClick={() => {
-                navigate(-1);
+                leaveSession();
               }}
               className={`items-center caption-medium py-2 px-3 gap-2 flex flex-col  text-system-danger cursor-pointer hover:brightness-80`}
             >
@@ -396,7 +453,16 @@ const DebateRoom = () => {
           <div className="body-medium">
             <div>담당 선생님 : {room?.creatorName}</div>
             <div>생성일시 : {DateFormat(room?.createdAt ?? '', '')}</div>
-            <div>최대인원 : {room?.maxPeople} 명</div>
+            <div>
+              인원 : {participants.length}/{room?.maxPeople} 명
+            </div>
+          </div>
+          <div className="border-t border-gray-300 py-4">
+            {AddDivider({
+              itemList: participants.map((person, index) => {
+                return <ParticipantTile key={index} name={person.name} />;
+              }),
+            })}
           </div>
         </div>
       </div>
@@ -405,3 +471,7 @@ const DebateRoom = () => {
 };
 
 export default DebateRoom;
+
+const ParticipantTile = ({ name }: { name: string }) => {
+  return <div className={`body-medium py-3`}>{name}</div>;
+};
