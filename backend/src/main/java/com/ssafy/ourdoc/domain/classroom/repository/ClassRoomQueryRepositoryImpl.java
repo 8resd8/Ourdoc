@@ -1,9 +1,7 @@
 package com.ssafy.ourdoc.domain.classroom.repository;
 
-import static com.querydsl.core.group.GroupBy.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QClassRoom.*;
 import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
-import static com.ssafy.ourdoc.domain.user.entity.QUser.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
@@ -14,22 +12,18 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.ourdoc.domain.classroom.dto.QSchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.dto.SchoolClassDto;
 import com.ssafy.ourdoc.domain.classroom.dto.teacher.QTeacherRoomStudentDto;
 import com.ssafy.ourdoc.domain.classroom.dto.teacher.QTeachersRoomDto;
-import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeacherClassRequest;
 import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeacherRoomStudentDto;
 import com.ssafy.ourdoc.domain.classroom.dto.teacher.TeachersRoomDto;
 import com.ssafy.ourdoc.domain.classroom.entity.ClassRoom;
 import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -121,11 +115,14 @@ public class ClassRoomQueryRepositoryImpl implements ClassRoomQueryRepository {
 	public List<TeacherRoomStudentDto> findByTeachersRoomStudent(Long userId, Long classId) {
 		return queryFactory
 			.select(new QTeacherRoomStudentDto(
-				user.name.as("studentName"),
+				studentClass.user.name.as("studentName"),
 				studentClass.studentNumber
 			))
 			.from(studentClass)
-			.where(studentClassAndClassEq(classId))
+			.where(
+				studentClassAndClassEq(classId),
+				studentClass.authStatus.eq(AuthStatus.승인)
+			)
 			.orderBy(studentClass.studentNumber.asc())
 			.fetch();
 	}
