@@ -45,8 +45,6 @@ const StudentReportDetail = () => {
   useEffect(() => {
     fetchReport();
   }, []);
-  const user = useRecoilValue(currentUserState);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="py-3.5">
@@ -64,8 +62,8 @@ const StudentReportDetail = () => {
               />
             </div>
             <div className="text-end text-gray-800 report-font">
-              {user.schoolName} {user.grade}학년 {user.classNumber}반{' '}
-              {user.studentNumber}번
+              {report?.schoolName} {report?.grade}학년 {report?.classNumber}반{' '}
+              {report?.studentNumber}번
             </div>
             <div className="flex flex-row">
               <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">

@@ -50,6 +50,10 @@ export interface BookReportDetail {
   aiComment: string;
   teacherComment: string;
   bookReportApproveStatus: string;
+  schoolName: string;
+  grade: number;
+  classNumber: number;
+  studentNumber: number;
 }
 
 export interface BookReportParams {

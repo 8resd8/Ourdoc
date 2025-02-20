@@ -73,11 +73,11 @@ const TeacherReportDetail = () => {
       text: '의견이 수정되었습니다.',
     });
   };
+  console.log(report);
 
   useEffect(() => {
     fetchReport();
   }, []);
-  const user = useRecoilValue(currentUserState);
 
   return (
     <div className="py-3.5">
@@ -95,8 +95,8 @@ const TeacherReportDetail = () => {
               />
             </div>
             <div className="text-end text-gray-800 report-font">
-              {user.schoolName} {user.grade}학년 {user.classNumber}반{' '}
-              {studentNumber}번 {name}
+              {report?.schoolName} {report?.grade}학년 {report?.classNumber}반{' '}
+              {report?.studentNumber}번 {name}
             </div>
             <div className="flex flex-row">
               <div className="w-[70px] py-[8px] px-[8px] border border-gray-900 justify-center items-center text-center text-gray-800 report-font truncate">
