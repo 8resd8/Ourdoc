@@ -107,6 +107,7 @@ public class BookReportQueryRepositoryImpl implements BookReportQueryRepository 
 
 		return queryFactory
 			.select(new QBookReportDetailDto(
+				bookReport.book.id.as("bookId"),
 				bookReport.book.title.as("bookTitle"),
 				bookReport.book.author,
 				bookReport.book.publisher,

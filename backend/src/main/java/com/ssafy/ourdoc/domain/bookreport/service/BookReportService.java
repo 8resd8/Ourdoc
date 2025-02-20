@@ -38,6 +38,7 @@ public class BookReportService {
 		String teacherComment = detailDto.teacherComment() == null ? "없음" : detailDto.teacherComment();
 
 		return BookReportDetailResponse.builder()
+			.bookId(detailDto.bookId())
 			.bookTitle(detailDto.bookTitle())
 			.author(detailDto.author())
 			.publisher(detailDto.publisher())

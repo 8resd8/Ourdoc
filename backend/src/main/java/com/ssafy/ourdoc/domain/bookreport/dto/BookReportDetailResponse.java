@@ -9,6 +9,7 @@ import lombok.Builder;
 // 승인여부 변환 레코드
 @Builder
 public record BookReportDetailResponse(
+	Long bookId,
 	String bookTitle,
 	String author,
 	String publisher,
