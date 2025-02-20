@@ -122,21 +122,6 @@
 <img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Ajax.png?raw=true" width="80">
 </div>
 
-### Infra
-
-<div>
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/AWSEC2.png?raw=true" width="80">
-</div>
-
-### Tools
-
-<div>
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Github.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Notion.png?raw=true" width="80">
-</div>
-
-<br />
-
 ## 🛠️ 프로젝트 아키텍쳐
 
 ![프로젝트 아키텍쳐](images%2Fsystem_architecture.png)
@@ -170,7 +155,7 @@
   <h3>FrontEnd</h3>
   <img src="images/skill/TypeScript.png" width="120"/>
   <img src="images/skill/React.png" width="120"/>
-  <img src="images/skill/TailwindCSS-Light.svg" width="120"/>
+  <img src="images/skill/Tailwind.png" width="120"/>
 </div>
 
 <div>
