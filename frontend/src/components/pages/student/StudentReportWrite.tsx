@@ -6,7 +6,7 @@ import {
 import Modal from '../../commons/Modal';
 import { useState } from 'react';
 import { convertHandToTextApi } from '../../../services/ocrSService';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentUserState } from '../../../recoil';
 import {
   getAIFeedbackApi,
@@ -40,6 +40,7 @@ const StudentReportWrite = () => {
     // homeworkId: homeworkId,
   };
   const user = useRecoilValue(currentUserState);
+  const [loading, setLoading] = useRecoilState(loadingState);
   const navigate = useNavigate();
   const writeReport = async () => {
     try {
@@ -67,7 +68,7 @@ const StudentReportWrite = () => {
       });
 
       setRecoil(loadingState, false);
-      navigate(-1);
+      navigate(`/student/report/detail/${write}`);
     } catch (error) {
       setRecoil(loadingState, false);
     }
@@ -76,11 +77,13 @@ const StudentReportWrite = () => {
   const handleOCR = async () => {
     if (selectedImage) {
       try {
+        setLoading(true);
         const response = await convertHandToTextApi(selectedImage);
         setReportContent(response.enhancerContent);
         setOcrImagePath(response.ocrImagePath);
         setIsModalOpen(false);
         setOcrCheck(true);
+        setLoading(false);
       } catch (error) {
         console.error('OCR 변환 중 오류 발생:', error);
       }
