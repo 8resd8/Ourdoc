@@ -29,6 +29,7 @@ import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
@@ -84,7 +85,7 @@ public class BookRecommendService {
 		ClassRoom userClassRoom = classService.getUserClassRoom(user);
 		Long schoolId = userClassRoom.getSchool().getId();
 		int grade = userClassRoom.getGrade();
-		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
+		int studentCount = studentClassRepository.countByClassRoomAndAuthStatus(userClassRoom, AuthStatus.승인);
 
 		List<ClassRoom> sameGradeClass = classRoomRepository.findActiveClassBySchoolAndGrade(schoolId, grade);
 		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoomIn(sameGradeClass, pageable);
@@ -99,7 +100,7 @@ public class BookRecommendService {
 
 	public BookRecommendTeacherResponse getBookRecommendsTeacherClass(User user, Pageable pageable) {
 		ClassRoom userClassRoom = classService.getUserClassRoom(user);
-		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
+		int studentCount = studentClassRepository.countByClassRoomAndAuthStatus(userClassRoom, AuthStatus.승인);
 
 		Page<BookRecommend> bookRecommends = bookRecommendRepository.findByClassRoom(userClassRoom, pageable);
 

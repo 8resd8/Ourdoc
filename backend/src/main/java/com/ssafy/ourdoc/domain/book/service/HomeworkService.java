@@ -35,6 +35,7 @@ import com.ssafy.ourdoc.domain.user.student.repository.StudentClassRepository;
 import com.ssafy.ourdoc.domain.user.teacher.entity.TeacherClass;
 import com.ssafy.ourdoc.domain.user.teacher.repository.TeacherClassRepository;
 import com.ssafy.ourdoc.global.common.enums.Active;
+import com.ssafy.ourdoc.global.common.enums.AuthStatus;
 import com.ssafy.ourdoc.global.common.enums.UserType;
 import com.ssafy.ourdoc.global.exception.ForbiddenException;
 
@@ -94,7 +95,7 @@ public class HomeworkService {
 
 	public HomeworkTeacherResponse getHomeworkTeacherClass(User user, Pageable pageable) {
 		ClassRoom userClassRoom = classService.getTecherClassRoom(user);
-		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
+		int studentCount = studentClassRepository.countByClassRoomAndAuthStatus(userClassRoom, AuthStatus.승인);
 
 		Page<Homework> homeworks = homeworkRepository.findByClassRoom(userClassRoom, pageable);
 
