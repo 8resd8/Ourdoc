@@ -66,7 +66,7 @@ const TeacherProfileUpdate = () => {
         loginId: formData.loginId || '',
         email: formData.email || '',
         phone: formData.phone || '',
-        schoolId: schoolId || 0,
+        schoolId: formData.schoolId || 0,
         year: Number(formData.year) || 0,
         grade: Number(formData.grade) || 0,
         classNumber: Number(formData.classNumber) || 0,
