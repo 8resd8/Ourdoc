@@ -44,25 +44,24 @@ const Modal = ({
         });
         return;
       }
-      onClose();
       const response = await changePasswordApi({ newPassword: password });
-      console.log(response);
-    } catch (error) {}
-  };
-
-  const updatepassword = () => {
-    if (passwordValidate == 'danger') {
+      onClose();
+    } catch (error) {
       notify({
         type: 'error',
-        text: '비밀번호를 확인하세요.',
+        text: '비밀번호를 다시 확인해주세요.',
       });
-      return;
     }
-    updatePassword();
   };
+
   const enterEvent = (e: any) => {
     if (e.key == 'Enter') {
       loginClick(password);
+    }
+  };
+  const enterPassword = (e: any) => {
+    if (e.key == 'Enter') {
+      update();
     }
   };
   const [passwordCheck, setPasswordCheck] = useState('');
@@ -128,6 +127,7 @@ const Modal = ({
               className="mt-4 w-full border-b border-gray-800 p-2"
               placeholder="비밀번호 확인"
               onChange={(e) => handleInputChange('check', e.target.value)}
+              onKeyDown={enterPassword}
             />
             <div className={` mt-[8px] w-96 text-gray-800 caption-small`}>
               <span>
