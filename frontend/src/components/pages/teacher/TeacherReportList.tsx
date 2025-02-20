@@ -9,7 +9,7 @@ import { getTeacherBookReportsList } from '../../../services/bookReportsService'
 import { Table, TableAlignType } from '../../atoms/Table';
 import { PaginationButton } from '../../atoms/PagenationButton';
 import { TeacherAllReportListTile } from '../../commons/TeacherAllReportListTile';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { monthDayFormat } from '../../../utils/DateFormat';
 
 const TABLE_HEADER = [
@@ -39,6 +39,7 @@ const TABLE_HEADER = [
 
 const TeacherReportList = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [selectedClass, setSelectedClass] = useState<TeachersRoom | null>(null);
@@ -51,6 +52,7 @@ const TeacherReportList = () => {
   const [reports, setReports] = useState<any[]>([]);
   const [sortedClasses, setsortedClasses] =
     useState<[string, TeachersRoom[]][]>();
+  const [isFirst, setIsFirst] = useState(true);
 
   const fetchClass = async () => {
     const response = await searchClass();
@@ -69,8 +71,20 @@ const TeacherReportList = () => {
       setSelectedStudent(teacherClassStudent);
     } else {
       if (response.teachersClassStudents.length != 0) {
-        setSelectedStudent(response.teachersClassStudents[0]);
-        getReportsByStudent(0, response.teachersClassStudents[0]);
+        if (location.state && isFirst) {
+          setSelectedStudent({
+            studentName: location.state.name,
+            studentNumber: location.state.studentNumber,
+          });
+          getReportsByStudent(0, {
+            studentName: location.state.name,
+            studentNumber: location.state.studentNumber,
+          });
+          setIsFirst(false);
+        } else {
+          setSelectedStudent(response.teachersClassStudents[0]);
+          getReportsByStudent(0, response.teachersClassStudents[0]);
+        }
       }
     }
   };
@@ -110,6 +124,7 @@ const TeacherReportList = () => {
   };
 
   useEffect(() => {
+    setIsFirst(true);
     fetchClass();
   }, []);
 
