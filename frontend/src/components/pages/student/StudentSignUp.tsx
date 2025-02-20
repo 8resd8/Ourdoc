@@ -154,7 +154,7 @@ const StudentSignUp = () => {
         </div>
         <div>
           <div className="headline-medium text-gray-800 mb-2">
-            성룡 초등학교 1학년 3반에 오신 것을 환영해요!
+            {schoolName} {grade}학년 {classNumber}반에 오신 것을 환영해요!
           </div>
           <span className="headline-medium text-gray-800">빈칸을 채우고, </span>
 
@@ -162,7 +162,7 @@ const StudentSignUp = () => {
           <span className="headline-medium text-gray-800">
             을 진행해주세요!
           </span>
-          <div className="caption-medium text-gray-800 mb-4">
+          <div className="caption-medium text-gray-800 mt-1 mb-4">
             모든 칸은 필수 입력 칸입니다.
           </div>
         </div>
@@ -265,7 +265,7 @@ const StudentSignUp = () => {
           <Button
             title="회원가입"
             onClick={handleSignUpClick}
-            // disabled={!isFormValid}
+            disabled={!isFormValid}
             type={'filled'}
             color={'primary'}
           />

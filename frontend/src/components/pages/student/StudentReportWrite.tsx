@@ -98,7 +98,7 @@ const StudentReportWrite = () => {
 
   const today = new Date().toISOString();
   return (
-    <div className="flex flex-row justify-center">
+    <div className="flex flex-row justify-center pt-4 pb-10">
       <div className="flex flex-col w-[600px]">
         <div className="flex flex-col w-[600px]">
           <div className="flex flex-row justify-between">

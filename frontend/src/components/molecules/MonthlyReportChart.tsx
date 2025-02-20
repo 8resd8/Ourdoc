@@ -8,7 +8,7 @@ import { ReportChartMonthTile } from '../atoms/ReportChartMonthTile';
 //차트 상수
 const MAX_CHART_BAR_TOP = 34.03;
 const MIN_CHART_BAR_TOP = 241.97;
-const BAR_HEIGHT_PER_COUNT = 8.4;
+const BAR_HEIGHT_PER_COUNT = 4.2;
 
 export const MonthlyReportChart = ({
   mockMonthlyReport,
@@ -56,12 +56,12 @@ export const MonthlyReportChart = ({
           ))}
         </div>
         <div className="h-[276px] px-3 py-6 left-0 top-0 absolute flex-col justify-between items-end inline-flex">
-          <div className="text-right text-gray-800 body-medium">25권</div>
+          <div className="text-right text-gray-800 body-medium">50권</div>
+          <div className="text-right text-gray-800 body-medium">40권</div>
+          <div className="text-right text-gray-800 body-medium">30권</div>
           <div className="text-right text-gray-800 body-medium">20권</div>
-          <div className="text-right text-gray-800 body-medium">15권</div>
-          <div className="text-right text-gray-800 body-medium">10권</div>
           <div className="self-stretch text-right text-gray-800 body-medium">
-            5권
+            10권
           </div>
           <div className="text-right text-gray-800 body-medium">0권</div>
         </div>
