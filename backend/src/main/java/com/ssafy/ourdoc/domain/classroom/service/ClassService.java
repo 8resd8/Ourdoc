@@ -88,4 +88,10 @@ public class ClassService {
 		}
 		throw new NoSuchElementException("현재 유효한 상태의 학급 정보가 없습니다.");
 	}
+
+	public ClassRoom getTecherClassRoom(User user) {
+		return teacherClassRepository.findByUserIdAndActive(user.getId(), Active.활성)
+			.map(TeacherClass::getClassRoom)
+			.orElse(null);
+	}
 }
