@@ -1,11 +1,13 @@
 <div align="center">
 
-<h1><img src="images/logo1.png" width="588"/></h1>
+<img src="images/logo1.png" width="588"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="images/logo2.png" width="300"/>
 
 
 </div> 
 
-# 📚 서비스명
+# 📘 서비스명
 
 ## 우리들의 독서기록
 
@@ -57,73 +59,47 @@
 
 ## 교사
 
-|                                  로그인 화면                                  |                                교사 숙세도서 현황                                |
-|:------------------------------------------------------------------------:|:------------------------------------------------------------------------:|
-|                     ![login.png](images%2Flogin.png)                     |          ![teacher_book.png](images/teacher%2Fteacher_book.png)          |
-|                               교사 학생 독서록 관리                               |                                 교사 학급관리                                  |
-|       ![teacher_booklog.png](images/teacher%2Fteacher_booklog.png)       |         ![teacher_class.png](images/teacher%2Fteacher_class.png)         |
-|                                 교사 메인화면                                  |                                  학생 통계1                                  |
-|          ![teacher_main.png](images/teacher%2Fteacher_main.png)          |        ![student_award2.png](images/student%2Fstudent_award2.png)        |
-|                                  학생 통계2                                  |                              학생 독서록 목록 입장화면                              |
-|        ![student_award3.png](images/student%2Fstudent_award3.png)        | ![student_mybookreadlog.png](images/student%2Fstudent_mybookreadlog.png) |
-|                                 학생 숙제도서                                  |                               학생 독서감상문 작성                                |
-| ![student_homework_look.png](images/student%2Fstudent_homework_look.png) |  ![student_booklog_save.png](images/student%2Fstudent_booklog_save.png)  |
-|                                독서감상문 피드백                                 |                                                                          |
-|  ![student_booklog_look.png](images/student%2Fstudent_booklog_look.png)  |         ![student_award.png](images/student%2Fstudent_award.png)         |
-|                               교사 독서토론 방 개설                               |                                Screen #6                                 |
-|          ![teacher_room.png](images/teacher%2Fteacher_room.png)          |          ![teacher_room.png](images/teacher%2Fteacher_room.png)          |
+|           **교사 회원가입**           |        **교사 QR 생성 학생초대**        |
+|:-------------------------------:|:-------------------------------:|
+|  ![사진0](images/teacher/t0.png)  |  ![사진1](images/teacher/t1.png)  |
+|        **교사 학급학생 정보보**기         |           **학급 학생보기**           |
+|  ![사진2](images/teacher/t2.png)  |  ![사진3](images/teacher/t3.png)  |
+|          **학생 인증 관리**           |           **학생 상세보기**           |
+|  ![사진4](images/teacher/t4.png)  |  ![사진5](images/teacher/t5.png)  |
+|           **숙제도서 현황**           |        **숙제도서 학급도서 등록**         |
+|  ![사진6](images/teacher/t6.png)  |  ![사진7](images/teacher/t7.png)  |
+|         **학급학생 독서록 관리**         |        **학생 독서감상문 의견작성**        |
+|  ![사진8](images/teacher/t8.png)  |  ![사진9](images/teacher/t9.png)  |
+|        **독서감상문 칭찬도장 찍기**        |          **독서토론방 개설**           |
+| ![사진10](images/teacher/t10.png) | ![사진12](images/teacher/t11.png) |
+|        **실시간 독서토론 방 현황**        |
+| ![사진13](images/teacher/t12.png) |
 
 ## 학생
 
-| 1 | 2 |
-|:-------------------------5-------:|:------------------------------------------------------:|
-| ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
-| 3 | 4 |
-| ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
-| 5 | 5 |
-| ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
-| 6 | 7 |
-| ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
-| 8 | 9 |
-| ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
-| 10 | 11 |
-| ![login.png](images%2Flogin.png) | ![teacher_book.png](images/teacher%2Fteacher_book.png) |
+|           **로그인 화면**            |           **학생 메인화면**           |
+|:-------------------------------:|:-------------------------------:|
+|  ![사진0](images/student/s0.png)  |  ![사진1](images/student/s1.png)  |
+|           **독서록 알림함**           |           **숙제도서 확인**           |
+|  ![사진2](images/student/s2.png)  |  ![사진3](images/student/s3.png)  |
+|            **도서 검색**            |          **책 독서록 현황**           |
+|  ![사진4](images/student/s4.png)  |  ![사진5](images/student/s5.png)  |
+|          **독서 감상문 작성**          |         **독서록 이미지 업로드**         |
+|  ![사진6](images/student/s6.png)  |  ![사진7](images/student/s7.png)  |
+|        **독서록 AI 맞춤법 검사**        |        **독서록 선생님 의견 보기**        |
+|  ![사진8](images/student/s8.png)  |  ![사진9](images/student/s9.png)  |
+|       **학생 독서록 성취도 페이지**        |          **독서토론 방 목록**          |
+| ![사진11](images/student/s10.png) | ![사진11](images/student/s11.png) |
+|         **실시간 독서토론 화면**         |
+| ![사진12](images/student/s12.png) |
 
 ## 프로젝트 API 설계
 
-- [👉🏻 API](https://www.notion.so/API-b47f3630abc64a7ebda056f0cb098cbe?pvs=25)
-
-# <br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2025.01.06~2025.02.21-green?style=flat&logo=&logoColor=white" />]()
-
-### 아이디어 선정: 01.06 ~ 01.15 (10일)
-
-# 프로젝트 2025년 일정
-
-### 기획: 02.15 ~ 01.17 (3일)
-
-### 개발: 01.17 ~ 02.17 (1달)
-
-### 테스트 및 QA: 02.15 ~ 02.20 (5일)
-
-### 프로젝트 종료: 2.21
-
-## 🗂️ APIs
-
-👉🏻 [API 명세서](/backend/APIs.md)
-
-### Back-end
-
-<div>
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Java.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringBoot.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/SpringDataJPA.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Mysql.png?raw=true" width="80">
-<img src="https://github.com/yewon-Noh/readme-template/blob/main/skills/Ajax.png?raw=true" width="80">
-</div>
+## [👉🏻 API](https://www.notion.so/API-b47f3630abc64a7ebda056f0cb098cbe?pvs=25)
 
 ## 🛠️ 프로젝트 아키텍쳐
 
-![프로젝트 아키텍쳐](images%2Fsystem_architecture.png)
+<img src="images/system_architecture.png" width="5000"/>
 
 <br />
 
@@ -161,6 +137,8 @@
   <img src="images/skill/Tailwind.png" width="120"/>
   <img src="images/skill/Vite.png" width="120"/>
   <img src="images/skill/Yarn.png" width="120"/>
+  <img src="images/skill/Axios.png" width="120"/>
+  <img src="images/skill/Recoil.png" width="120"/>
 
 </div>
 
@@ -185,17 +163,31 @@
 </div>
 <br>
 
+# <br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2025.01.06~2025.02.21-green?style=flat&logo=&logoColor=white" />]()
+
+### 아이디어 선정: 01.06 ~ 01.15 (10일)
+
+# 프로젝트 2025년 일정
+
+### 기획: 02.15 ~ 01.17 (3일)
+
+### 개발: 01.17 ~ 02.17 (1달)
+
+### 테스트 및 QA: 02.10 ~ 02.20 (11일)
+
+### 프로젝트 종료: 02.21
+
 ## 💁‍♂️ 프로젝트 팀원
 
-|             Backend              |              Backend              |              Frontend              |
-|:--------------------------------:|:---------------------------------:|:----------------------------------:|
-| ![김현우](images/team_hyunwoo.png)  |   ![김보민](images/team_bomin.png)   | ![양영조.png](images/team_yungjo.png) |
-| [김현우](https://github.com/8resd8) | [김보민](https://github.com/mokbee1) | [양영조](https://github.com/10019610) |
+|               Backend                |              Backend               |                Frontend                 |
+|:------------------------------------:|:----------------------------------:|:---------------------------------------:|
+| ![김현우](images/team/team_hyunwoo.png) | ![김보민](images/team/team_bomin.png) | ![양영조.png](images/team/team_yungjo.png) |
+|   [김현우](https://github.com/8resd8)   | [김보민](https://github.com/mokbee1)  |   [양영조](https://github.com/10019610)    |
 
-|              Backend               |              Backend               |                  Frontend                  |
-|:----------------------------------:|:----------------------------------:|:------------------------------------------:|
-|   ![윤윤호](images/team_yoonho.png)   |  ![방승윤](images/team_seungyun.png)  |       ![상한규](images/team_hangu.png)        |
-| [윤윤호](https://github.com/10019610) | [방승윤](https://github.com/sybang97) | [상한규](https://github.com/littlewaterdrops) |
+|               Backend               |                Backend                |                  Frontend                  |
+|:-----------------------------------:|:-------------------------------------:|:------------------------------------------:|
+| ![윤윤호](images/team/team_yoonho.png) | ![방승윤](images/team/team_seungyun.png) |     ![상한규](images/team/team_hangu.png)     |
+| [윤윤호](https://github.com/10019610)  |  [방승윤](https://github.com/sybang97)   | [상한규](https://github.com/littlewaterdrops) |
 
 ## 프로젝트 팀원 역할
 
