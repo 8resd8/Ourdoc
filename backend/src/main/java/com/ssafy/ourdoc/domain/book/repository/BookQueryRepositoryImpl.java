@@ -7,7 +7,6 @@ import static com.ssafy.ourdoc.domain.classroom.entity.QSchool.*;
 import static com.ssafy.ourdoc.domain.user.student.entity.QStudentClass.*;
 import static com.ssafy.ourdoc.domain.user.teacher.entity.QTeacherClass.*;
 
-import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -60,23 +58,20 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 	}
 
 	public BookMostDto findBookGradeMost(Long userId) {
-		Tuple tuple = queryFactory
-			.select(classRoom.year, classRoom.grade)
+		int grade = Optional.ofNullable(queryFactory
+			.select(classRoom.grade)
 			.from(teacherClass)
 			.join(teacherClass.classRoom, classRoom)
 			.where(
 				teacherClass.user.id.eq(userId),
 				teacherClass.active.eq(Active.활성)
-			).fetchOne();
+			).fetchOne()).orElse(0);
 
-		int year = Optional.ofNullable(tuple)
-			.map(t -> t.get(classRoom.year))
-			.map(Year::getValue)
-			.orElse(0);
-		int grade = Optional.ofNullable(tuple)
-			.map(t -> t.get(classRoom.grade))
-			.orElse(0);
-		Long schoolId = queryFactory
+		if (grade == 0) {
+
+		}
+
+		Long schoolId = Optional.ofNullable(queryFactory
 			.select(school.id)
 			.from(teacherClass)
 			.join(teacherClass.classRoom, classRoom)
@@ -84,7 +79,7 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 			.where(
 				teacherClass.user.id.eq(userId),
 				teacherClass.active.eq(Active.활성)
-			).fetchOne();
+			).fetchOne()).orElse(0L);
 
 		return queryFactory
 			.select(Projections.constructor(
@@ -116,13 +111,13 @@ public class BookQueryRepositoryImpl implements BookQueryRepository {
 	}
 
 	public BookMostDto findBookClassMost(Long userId) {
-		Long classRoomId = queryFactory
+		Long classRoomId = Optional.ofNullable(queryFactory
 			.select(teacherClass.classRoom.id)
 			.from(teacherClass)
 			.where(
 				teacherClass.user.id.eq(userId),
 				teacherClass.active.eq(Active.활성)
-			).fetchOne();
+			).fetchOne()).orElse(0L);
 
 		return queryFactory
 			.select(Projections.constructor(

@@ -7,7 +7,7 @@ export interface AIFeedbackRequest {
 }
 
 export interface AIFeedbackResponse {
-  feedbackContent: string;
+  aiFeedbackContent: string;
 }
 
 export const getAIFeedbackApi = async (

@@ -48,7 +48,7 @@ public class BookReportStatisticRepository {
 	}
 
 	public double classAverageBookReportsCount(Long userId, int grade) {
-		Long classRoomId = queryFactory
+		Long classRoomId = Optional.ofNullable(queryFactory
 			.select(studentClass.classRoom.id)
 			.from(studentClass)
 			.join(studentClass.classRoom, classRoom)
@@ -56,10 +56,10 @@ public class BookReportStatisticRepository {
 				studentClass.user.id.eq(userId),
 				classRoom.grade.eq(grade)
 			).orderBy(classRoom.createdAt.desc())
-			.fetchFirst();
+			.fetchFirst()).orElse(0L);
 
-		if (classRoomId == null) {
-			return 0L;
+		if (classRoomId == 0L) {
+			return 0.0;
 		}
 
 		long count = Optional.ofNullable(
@@ -72,6 +72,10 @@ public class BookReportStatisticRepository {
 						classRoom.id.eq(classRoomId)
 					).fetchOne())
 			.orElse(0L);
+
+		if (count == 0L) {
+			return 0.0;
+		}
 
 		long studentCount = Optional.ofNullable(
 			queryFactory
@@ -86,7 +90,7 @@ public class BookReportStatisticRepository {
 	}
 
 	public long classHighestBookReportCount(Long userId, int grade) {
-		Long classRoomId = queryFactory
+		Long classRoomId = Optional.ofNullable(queryFactory
 			.select(studentClass.classRoom.id)
 			.from(studentClass)
 			.join(studentClass.classRoom, classRoom)
@@ -94,9 +98,9 @@ public class BookReportStatisticRepository {
 				studentClass.user.id.eq(userId),
 				classRoom.grade.eq(grade)
 			).orderBy(classRoom.createdAt.desc())
-			.fetchFirst();
+			.fetchFirst()).orElse(0L);
 
-		if (classRoomId == null) {
+		if (classRoomId == 0L) {
 			return 0L;
 		}
 
@@ -127,10 +131,6 @@ public class BookReportStatisticRepository {
 					).fetchFirst())
 			.orElse(Year.of(0));
 
-		if (year.equals(Year.of(0))) {
-			return new ArrayList<>();
-		}
-
 		List<Tuple> tuples = queryFactory
 			.select(monthExpression, bookReport.count())
 			.from(bookReport)
@@ -147,13 +147,7 @@ public class BookReportStatisticRepository {
 	}
 
 	public List<BookReportMonthlyStatisticsDto> classMonthlyBookReportCount(Long userId) {
-		Long classRoomId = queryFactory
-			.select(teacherClass.classRoom.id)
-			.from(teacherClass)
-			.where(
-				teacherClass.user.id.eq(userId),
-				teacherClass.active.eq(Active.활성)
-			).fetchOne();
+		Long classRoomId = findActiveClassRoomId(userId);
 
 		List<Tuple> tuples = queryFactory
 			.select(monthExpression, bookReport.count())
@@ -201,10 +195,6 @@ public class BookReportStatisticRepository {
 					).fetchFirst())
 			.orElse(Year.of(0));
 
-		if (year.equals(Year.of(0))) {
-			return new ArrayList<>();
-		}
-
 		List<Tuple> tuples = queryFactory
 			.select(dayExpression, bookReport.count())
 			.from(bookReport)
@@ -233,17 +223,7 @@ public class BookReportStatisticRepository {
 					).fetchOne())
 			.orElse(Year.of(0));
 
-		if (year.equals(Year.of(0))) {
-			return new ArrayList<>();
-		}
-
-		Long classRoomId = queryFactory
-			.select(teacherClass.classRoom.id)
-			.from(teacherClass)
-			.where(
-				teacherClass.user.id.eq(userId),
-				teacherClass.active.eq(Active.활성)
-			).fetchOne();
+		Long classRoomId = findActiveClassRoomId(userId);
 
 		List<Tuple> tuples = queryFactory
 			.select(dayExpression, bookReport.count())
@@ -261,13 +241,7 @@ public class BookReportStatisticRepository {
 	}
 
 	public List<BookReportRankDto> bookReportRank(Long userId) {
-		Long classRoomId = queryFactory
-			.select(teacherClass.classRoom.id)
-			.from(teacherClass)
-			.where(
-				teacherClass.user.id.eq(userId),
-				teacherClass.active.eq(Active.활성)
-			).fetchOne();
+		Long classRoomId = findActiveClassRoomId(userId);
 
 		return queryFactory
 			.select(Projections.constructor(
@@ -290,13 +264,13 @@ public class BookReportStatisticRepository {
 	}
 
 	public List<BookReportMyRankDto> myBookReportRank(Long userId) {
-		Long classRoomId = queryFactory
+		Long classRoomId = Optional.ofNullable(queryFactory
 			.select(studentClass.classRoom.id)
 			.from(studentClass)
 			.where(
 				studentClass.user.id.eq(userId),
 				studentClass.active.eq(Active.활성)
-			).fetchOne();
+			).fetchOne()).orElse(0L);
 
 		return queryFactory
 			.select(Projections.constructor(
@@ -358,5 +332,15 @@ public class BookReportStatisticRepository {
 	private final NumberExpression<Integer> dayExpression = Expressions.numberTemplate(
 		Integer.class, "function('DAY', {0})", bookReport.createdAt
 	);
+
+	private Long findActiveClassRoomId(Long userId) {
+		return Optional.ofNullable(queryFactory
+			.select(teacherClass.classRoom.id)
+			.from(teacherClass)
+			.where(
+				teacherClass.user.id.eq(userId),
+				teacherClass.active.eq(Active.활성)
+			).fetchOne()).orElse(0L);
+	}
 
 }

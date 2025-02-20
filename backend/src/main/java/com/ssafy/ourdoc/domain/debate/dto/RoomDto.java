@@ -10,6 +10,7 @@ public record RoomDto(
 	Long currentPeople,
 	String schoolName,
 	LocalDateTime createdAt,
-	String sessionId
+	String sessionId,
+	Long creatorId
 ) {
 }

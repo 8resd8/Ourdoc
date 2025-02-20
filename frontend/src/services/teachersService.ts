@@ -223,12 +223,12 @@ export const updateTeacherProfileApi = async (
     const fileType = certificateFile.type;
     if (fileType === 'application/pdf') {
       const pdfBlob = new Blob([certificateFile], { type: 'application/pdf' });
-      formData.append('certificateFile', pdfBlob, certificateFile.name);
+      formData.append('profileImage', pdfBlob, certificateFile.name);
+      console.log(certificateFile);
     } else {
-      formData.append('certificateFile', certificateFile);
+      formData.append('profileImage', certificateFile);
+      console.log(certificateFile);
     }
-  } else {
-    formData.append('certificateFile', '');
   }
 
   await multipartApi.patch(`/teachers/profile`, formData);

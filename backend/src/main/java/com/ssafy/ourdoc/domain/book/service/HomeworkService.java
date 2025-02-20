@@ -93,7 +93,7 @@ public class HomeworkService {
 	}
 
 	public HomeworkTeacherResponse getHomeworkTeacherClass(User user, Pageable pageable) {
-		ClassRoom userClassRoom = classService.getUserClassRoom(user);
+		ClassRoom userClassRoom = classService.getTecherClassRoom(user);
 		int studentCount = studentClassRepository.countByClassRoom(userClassRoom);
 
 		Page<Homework> homeworks = homeworkRepository.findByClassRoom(userClassRoom, pageable);

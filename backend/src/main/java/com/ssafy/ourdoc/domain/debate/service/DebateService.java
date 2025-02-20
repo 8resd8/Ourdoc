@@ -47,7 +47,8 @@ public class DebateService {
 				currentPeople,
 				schoolName,
 				room.getCreatedAt(),
-				room.getSessionId()
+				room.getSessionId(),
+				room.getUser().getId()
 			);
 		});
 	}
@@ -60,7 +61,7 @@ public class DebateService {
 			.user(user)
 			.title(request.title())
 			.password(request.password())
-			.maxPeople(10)
+			.maxPeople(9)
 			.build();
 
 		debateRoomRepository.save(room);
@@ -168,6 +169,7 @@ public class DebateService {
 			room.getId(),
 			room.getTitle(),
 			room.getUser().getName(),
+			room.getUser().getLoginId(),
 			room.getMaxPeople(),
 			currentPeople,
 			room.getCreatedAt(),

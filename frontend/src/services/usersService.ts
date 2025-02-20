@@ -37,7 +37,7 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  id: string;
+  loginId: string;
   name: string;
   role: string;
   schoolName?: string;
