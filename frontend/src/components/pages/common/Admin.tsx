@@ -22,7 +22,6 @@ const Admin = () => {
         teacherId: teacherId,
       };
       const response = await verifyAdminTeacher(param);
-      console.log(response);
     } catch (error) {}
   };
 

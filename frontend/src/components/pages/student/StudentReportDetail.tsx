@@ -16,7 +16,6 @@ const StudentReportDetail = () => {
   const [report, setReport] = useState<BookReportDetail | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [feedbackView, setFeedbackView] = useState(false);
-  console.log(report);
 
   const fetchReport = async () => {
     if (id) {

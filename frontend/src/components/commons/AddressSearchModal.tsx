@@ -21,7 +21,6 @@ const AddressSearchModal = ({
     try {
       const response = await searchSchoolsApi(schoolName, page, size);
       setSchool(response.content);
-      console.log(response);
     } catch (error) {
       console.error(error);
     }

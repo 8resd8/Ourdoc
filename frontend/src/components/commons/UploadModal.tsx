@@ -52,7 +52,6 @@ const UploadModal = ({ type, isOpen, onConfirm, onCancel }: ModalProps) => {
     // 파일 입력 초기화
     event.target.value = '';
   };
-  console.log(selectedFile);
 
   const handleConfirm = () => {
     onConfirm(selectedFile);

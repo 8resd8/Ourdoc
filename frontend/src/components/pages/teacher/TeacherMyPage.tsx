@@ -188,7 +188,6 @@ const TeacherMyPage = () => {
     try {
       const response = await changePasswordApi({ newPassword: newPassword });
       setModalType(null);
-      console.log(response);
     } catch (error) {}
   };
 
@@ -196,7 +195,6 @@ const TeacherMyPage = () => {
     const response = await getTeacherProfileApi();
     setTeacherUser(response);
   };
-  console.log(teacherUser);
 
   const handleLogin = async (password: string) => {
     if (teacherUser)
@@ -220,7 +218,6 @@ const TeacherMyPage = () => {
   const createClass = async () => {
     try {
       const response = await createTeacherClass();
-      console.log(response);
     } catch (error) {}
   };
 
