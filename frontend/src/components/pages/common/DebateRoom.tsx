@@ -370,7 +370,10 @@ const DebateRoom = () => {
     <div className="flex flex-row w-dvw h-dvh bg-secondary-500">
       <div className="w-full h-full">
         <div className="w-full min-h-[calc(100vh-80px)] pt-10 px-10 bg-secondary-500 border-r border-secondary-700">
-          <div className="grid grid-cols-3 gap-x-[calc((100vh-80px)/16*9/4)]">
+          <div
+            className="grid grid-cols-3 gap-x-[calc((100vh-80px)/16*9/4)] gap-y-[calc((100vh-80px)/16*9/16)]"
+            ref={subscribersRef}
+          >
             <div>
               <div
                 ref={publisherRef}
@@ -380,7 +383,6 @@ const DebateRoom = () => {
                 {user.name} (나)
               </div>
             </div>
-            <div ref={subscribersRef}></div>
           </div>
         </div>
         <div className="w-full h-20 bg-yellow-900 border border-t-yellow-950 rounded-t-[5px] px-10">

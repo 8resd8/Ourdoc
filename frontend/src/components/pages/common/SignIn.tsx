@@ -35,8 +35,6 @@ const SignIn = () => {
         navigate('/teacher/main');
       }
     } catch (error: any) {
-      console.error('로그인 실패:', error);
-
       notify({
         type: 'error',
         text: '로그인이 실패했습니다.',

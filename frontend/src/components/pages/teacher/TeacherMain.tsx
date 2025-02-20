@@ -62,14 +62,14 @@ const TeacherMain = () => {
       {mostRead && (
         <div className="flex justify-between">
           <MostReadBookSection
-            title={'학년에서 가장 많이 '}
+            title={'학년에서 가장 많이 읽은 책'}
             book={mostRead?.gradeMost.book}
             count={mostRead?.gradeMost.submitCount}
           />
           <MostReadBookSection
             title={'반에서 가장 많이 읽은 책'}
             book={mostRead?.classMost.book}
-            count={mostRead?.gradeMost.submitCount}
+            count={mostRead?.classMost.submitCount}
           />
         </div>
       )}
