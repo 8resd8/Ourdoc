@@ -17,7 +17,7 @@ import { notify } from '../../commons/Toast';
 interface ParticipantProps {
   id: string;
   name: string;
-  userId: string;
+  loginId: string;
 }
 
 const DebateRoom = () => {
@@ -63,8 +63,8 @@ const DebateRoom = () => {
     subscriberContainer.id = `subscriber-${stream.streamId}`;
 
     // 클릭 시 확대/축소 기능 (CSS 클래스 토글)
-    subscriberContainer.addEventListener('click', () => {
-      subscriberContainer.classList.toggle(classes['enlarged']);
+    wrapper.addEventListener('click', () => {
+      wrapper.classList.toggle(classes['enlarged']);
     });
 
     const subscriberName =
@@ -72,7 +72,7 @@ const DebateRoom = () => {
       '익명 사용자';
 
     const nameTag = document.createElement('div');
-    nameTag.className = 'text-center text-gray-800 body-medium';
+    nameTag.className = 'text-center text-gray-0 body-medium';
     nameTag.innerText = subscriberName;
 
     wrapper.appendChild(subscriberContainer);
@@ -127,20 +127,18 @@ const DebateRoom = () => {
     mySession.on('connectionCreated', (event) => {
       const dataList = JSON.parse(event.connection.data).clientData.split('$');
       const name = dataList[2];
-      const userId = dataList[1].split('UID')[1];
+      const loginId = dataList[1].split('UID')[1];
 
       const newUser = {
         id: event.connection.connectionId,
         name: name || '익명 사용자',
-        userId: userId || 0,
+        loginId: loginId || 0,
       };
 
       setParticipants((prevParticipants) => [...prevParticipants, newUser]);
     });
 
     mySession.on('connectionDestroyed', (event) => {
-      console.log('나간 사용자:', event.connection);
-
       // 나간 사용자의 ID 가져오기
       const disconnectedUserId = event.connection.connectionId;
 
@@ -224,14 +222,7 @@ const DebateRoom = () => {
           }
         );
 
-        screenPub.on('accessAllowed', () => {
-          console.log('화면 공유 권한 허용됨');
-        });
-        screenPub.on('accessDenied', () => {
-          console.warn('화면 공유 권한 거부됨');
-        });
         screenPub.on('streamDestroyed', (event: any) => {
-          console.log('화면 공유가 중단되었습니다.');
           setIsScreenSharing(false);
           setScreenPublisher(null);
           // 카메라 publisher가 존재한다면 다시 publish
@@ -272,7 +263,7 @@ const DebateRoom = () => {
     }
 
     const teacherAlive = participants.find((person) => {
-      return person.userId == 'teacher1';
+      return person.loginId == disconnectedRoom?.creatorLoginId;
     });
 
     if (!teacherAlive && participants.length != 0) {
@@ -300,6 +291,10 @@ const DebateRoom = () => {
     }
     setSession(null);
     setPublisher(null);
+    setScreenPublisher(null);
+    setIsAudioActive(false);
+    setIsVideoActive(false);
+
     if (subscribersRef.current) {
       subscribersRef.current.innerHTML = '';
     }
@@ -363,9 +358,6 @@ const DebateRoom = () => {
           }
         }
       );
-      myPublisher.on('accessAllowed', () => {
-        console.log('카메라/마이크 접근 허용됨');
-      });
       myPublisher.on('accessDenied', () => {
         console.warn('카메라/마이크 접근 거부됨');
       });
@@ -375,30 +367,30 @@ const DebateRoom = () => {
   }, [session, publisher]);
 
   return (
-    <div className="flex flex-row w-dvw h-dvh bg-gray-0">
-      <div className="w-full h-full p-10">
-        <div className="w-full min-h-[calc(100vh-80px-80px)]">
-          <div className="grid grid-cols-3 gap-x-[calc((100vh-80px-80px)/16*9/4)]">
+    <div className="flex flex-row w-dvw h-dvh bg-secondary-500">
+      <div className="w-full h-full">
+        <div className="w-full min-h-[calc(100vh-80px)] pt-10 px-10 bg-secondary-500 border-r border-secondary-700">
+          <div className="grid grid-cols-3 gap-x-[calc((100vh-80px)/16*9/4)]">
             <div>
               <div
                 ref={publisherRef}
                 className="w-full max-w-[640px] aspect-[16/9] border border-gray-200 bg-gray-300 rounded-lg overflow-hidden relative mb-2"
               ></div>
-              <div className="text-center text-gray-800 body-medium">
+              <div className="text-center text-gray-0 body-medium">
                 {user.name} (나)
               </div>
             </div>
             <div ref={subscribersRef}></div>
           </div>
         </div>
-        <div className="w-full h-20">
-          <div className="flex flex-row items-center justify-between">
-            <button
+        <div className="w-full h-20 bg-yellow-900 border border-t-yellow-950 rounded-t-[5px] px-10">
+          <div className="flex flex-row h-full items-center justify-between">
+            {/* <button
               onClick={toggleScreenShare}
               className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
             >
               {isScreenSharing ? '화면 공유 중지' : '화면 공유'}
-            </button>
+            </button> */}
             <div className="flex flex-row gap-5 items-center justify-center">
               <button
                 onClick={() => {
@@ -408,7 +400,7 @@ const DebateRoom = () => {
                     setIsAudioActive(newAudioStatus);
                   }
                 }}
-                className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
+                className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-300 bg-transparent rounded-[100px] text-gray-0 cursor-pointer hover:brightness-80`}
               >
                 <img
                   src={`/assets/images/${isAudioActive ? 'mic_off' : 'mic_on'}.png`}
@@ -423,7 +415,7 @@ const DebateRoom = () => {
                     setIsVideoActive(newVideoStatus);
                   }
                 }}
-                className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-500 rounded-[100px] text-primary-500 cursor-pointer hover:brightness-80`}
+                className={`items-center body-medium py-2 px-3 gap-2 flex flex-row border border-primary-300 bg-transparent rounded-[100px] text-gray-0 cursor-pointer hover:brightness-80`}
               >
                 <img
                   src={`/assets/images/${isVideoActive ? 'video_off' : 'video_on'}.png`}
@@ -431,26 +423,34 @@ const DebateRoom = () => {
                 {isVideoActive ? '비디오 끄기' : '비디오 켜기'}
               </button>
             </div>
+            {/* <button
+              onClick={() => {
+                leaveSession();
+              }}
+              className={`items-center body-medium py-2 px-3 gap-2 flex flex-col  bg-system-danger text-primary-500 rounded-[15px] cursor-pointer hover:brightness-80`}
+            >
+              나가기
+            </button> */}
             <button
               onClick={() => {
                 leaveSession();
               }}
-              className={`items-center caption-medium py-2 px-3 gap-2 flex flex-col  text-system-danger cursor-pointer hover:brightness-80`}
+              className={`items-center body-medium py-2 pl-3 pr-4 gap-2 flex flex-row bg-system-danger rounded-[15px] text-gray-0 cursor-pointer hover:brightness-80`}
             >
-              <img src={`/assets/images/exit.png`} />
+              <img src={`/assets/images/exit.png`} className="w-5 h-5" />
               나가기
             </button>
           </div>
         </div>
       </div>
-      <div className="w-90 h-full bg-gray-100 px-6 py-10">
-        <div className="flex flex-col gap-3 text-gray-800">
+      <div className="w-90 h-full bg-secondary-600 px-6 py-10">
+        <div className="flex flex-col gap-3 text-gray-0">
           <div className="headline-medium">토론방 정보</div>
           <div className="headline-small w-full whitespace-normal break-words">
             주제 : {room?.title}
           </div>
 
-          <div className="body-medium">
+          <div className="body-medium pb-6">
             <div>담당 선생님 : {room?.creatorName}</div>
             <div>생성일시 : {DateFormat(room?.createdAt ?? '', '')}</div>
             <div>
