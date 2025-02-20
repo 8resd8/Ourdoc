@@ -47,7 +47,8 @@ public class DebateService {
 				currentPeople,
 				schoolName,
 				room.getCreatedAt(),
-				room.getSessionId()
+				room.getSessionId(),
+				room.getUser().getId()
 			);
 		});
 	}
