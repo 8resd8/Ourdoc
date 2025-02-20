@@ -146,15 +146,14 @@ const TeacherBookSearch = () => {
                   <div className="flex float-end gap-4">
                     <div className="flex float-end gap-4">
                       <IconButton
-                        icon="heart"
-                        text="관심"
+                        icon="homework"
+                        text="숙제"
                         onClick={() =>
-                          !book.bookStatus?.favorite
-                            ? addFavoriteBook(book.bookId)
-                            : removeFavoriteBook(book.bookId)
+                          !book.bookStatus?.homework
+                            ? addClassHomeworkBook(book.bookId)
+                            : removeClassHomeworkBook(book.bookId)
                         }
-                        // removeClick={()=>removeClassHomeworkBook(book.bookId)}
-                        isActive={book.bookStatus?.favorite} // 상태에 따라 변경
+                        isActive={book.bookStatus?.homework} // 상태에 따라 변경
                       />
                       <IconButton
                         icon="class"
@@ -167,14 +166,15 @@ const TeacherBookSearch = () => {
                         isActive={book.bookStatus?.recommend} // 상태에 따라 변경
                       />
                       <IconButton
-                        icon="homework"
-                        text="숙제"
+                        icon="heart"
+                        text="관심"
                         onClick={() =>
-                          !book.bookStatus?.homework
-                            ? addClassHomeworkBook(book.bookId)
-                            : removeClassHomeworkBook(book.bookId)
+                          !book.bookStatus?.favorite
+                            ? addFavoriteBook(book.bookId)
+                            : removeFavoriteBook(book.bookId)
                         }
-                        isActive={book.bookStatus?.homework} // 상태에 따라 변경
+                        // removeClick={()=>removeClassHomeworkBook(book.bookId)}
+                        isActive={book.bookStatus?.favorite} // 상태에 따라 변경
                       />
                     </div>
                   </div>
