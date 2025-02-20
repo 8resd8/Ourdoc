@@ -8,11 +8,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { DateFormat } from '../../../utils/DateFormat';
 import { useRecoilValue } from 'recoil';
 import { currentUserState } from '../../../recoil';
+import Modal from '../../commons/Modal';
 
 const StudentReportDetail = () => {
   const { id } = useParams();
   const [report, setReport] = useState<BookReportDetail | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [feedbackView, setFeedbackView] = useState(false);
 
   const fetchReport = async () => {
     if (id) {
@@ -38,6 +40,7 @@ const StudentReportDetail = () => {
     fetchReport();
   }, []);
   const user = useRecoilValue(currentUserState);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="py-3.5">
@@ -115,7 +118,9 @@ const StudentReportDetail = () => {
           <div>
             <div className="text-gray-800 body-small">AI 선생님 의견</div>
             <div className="report-font tracking-widest w-[413px] h-[421px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
-              <div className="w-[389px]">{report?.aiComment}</div>
+              <div className="w-[389px] whitespace-pre-wrap">
+                {report?.aiComment}
+              </div>
             </div>
           </div>
           <div className="mt-3">

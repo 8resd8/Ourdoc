@@ -26,6 +26,7 @@ const TeacherReportDetail = () => {
     const response = await getBookReportDetailApi(Number(id));
     setReport(response);
     setTeacherComment(response.teacherComment);
+    console.log(response);
   };
 
   const reportApproveStamp = async (bookReportId: number) => {
@@ -136,7 +137,7 @@ const TeacherReportDetail = () => {
           <div>
             <div className="text-gray-800 body-small">AI 선생님 의견</div>
             <div className="w-[413px] h-[421px] px-6 py-4 rounded-[5px] border border-gray-200 justify-center items-center gap-2.5 inline-flex">
-              <div className="w-[389px] report-font tracking-widest">
+              <div className="w-[389px] report-font tracking-widest whitespace-pre-wrap">
                 {report?.aiComment}
               </div>
             </div>
