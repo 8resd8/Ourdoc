@@ -36,6 +36,7 @@ const TABLE_HEADER = [
 const TeacherReportList = () => {
   const [selectedYear, setSelectedYear] = useState<string>('');
   const [selectedClass, setSelectedClass] = useState<{
+    classId: number;
     schoolName: string;
     year: string;
     grade: number;
@@ -121,10 +122,14 @@ const TeacherReportList = () => {
           <div className="h-[100px] left-0 top-[164px]  flex-col justify-start items-start gap-4 inline-flex">
             {Object.entries(classes).map(([year, classes]) => (
               <div key={year} className="h-[136px] relative">
-                <div className="w-[226px] h-10 px-4 py-2 left-0 top-0  flex-col justify-start items-start gap-2 inline-flex">
+                <div className="w-[226px] h-10 px-4 py-2 left-0 top-0 flex-col justify-start items-start gap-2 inline-flex">
                   <div className="self-stretch grow shrink basis-0 justify-start items-center gap-2 inline-flex">
-                    <div data-svg-wrapper className="relative">
+                    <div data-svg-wrapper className="relative cursor-pointer">
                       <svg
+                        onClick={() => {
+                          setSelectedYear(year);
+                          selectedYear == year ? setSelectedYear('') : '';
+                        }}
                         width="16"
                         height="16"
                         viewBox="0 0 16 16"
@@ -157,15 +162,14 @@ const TeacherReportList = () => {
                 </div>
                 {selectedYear === year && (
                   <div>
-                    {classes.map((classInfo: any, index: any) => (
+                    {classes.map((classInfo: any) => (
                       <div
-                        key={index}
+                        key={classInfo.classId}
                         className={`cursor-pointer w-[226px] px-10 py-2 left-0 ${
-                          selectedClass?.classNumber === classInfo.classNumber
+                          selectedClass?.classId === classInfo.classId
                             ? 'bg-primary-50'
                             : 'bg-gray-0'
                         } flex-col justify-start items-start gap-2 inline-flex`}
-                        style={{ top: `${48 + index * 48}px` }}
                         onClick={() => {
                           setSelectedClass(classInfo);
                           getStudentByClass(classInfo.classId);
@@ -173,7 +177,7 @@ const TeacherReportList = () => {
                       >
                         <div
                           className={`${
-                            selectedClass?.classNumber === classInfo.classNumber
+                            selectedClass?.classId === classInfo.classId
                               ? 'text-primary-500 font-bold'
                               : 'text-gray-800'
                           } body-medium`}
